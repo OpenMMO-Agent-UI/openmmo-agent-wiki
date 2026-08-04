@@ -1,0 +1,270 @@
+---
+title: 角色與屬性
+description: 六屬性、職業修正表、種族加成,以及 Guard 與生命值怎麼算出來的。
+---
+
+import FilterTable from '../../../components/FilterTable.astro';
+import { classes, hiddenClasses, races, attributes, abilityModifier, guardFromDex, level1Hp, expectedHitDieGain } from '../../../lib/classes.js';
+
+角色創建的順序是**先選職業,再擲屬性**。這個順序很重要 ——
+職業修正是加在骰出來的數字上,然後才做總和重平衡。
+
+## 六個屬性
+
+範圍都是 **3–18**。
+
+<FilterTable
+  placeholder="搜尋屬性…"
+  columns={[
+    { key: 'abbr', label: '縮寫', align: 'center' },
+    { key: 'zh', label: '名稱' },
+    { key: 'en', label: '英文' },
+    { key: 'effect', label: '影響' },
+  ]}
+  rows={attributes.map((a) => ({ abbr: a.abbr, zh: a.zh, en: a.en, effect: a.effect }))}
+/>
+
+大部分屬性目前的實際作用集中在 **STR / DEX / CON** —— 它們直接決定你打不打得中、
+被不被打中、活得久不久。INT 和 WIS 對應的魔法與技能系統還沒完全展開,
+CHA 則實際影響**跟 NPC 議價的空間**。
+
+### 屬性調整值
+
+很多公式吃的不是屬性本身,而是**調整值**:
+
+```
+調整值 = (屬性 - 10) / 2      ← 整數除法,往 0 的方向捨去
+```
+
+<FilterTable
+  placeholder="輸入屬性值…"
+  columns={[
+    { key: 'score', label: '屬性值', align: 'right' },
+    { key: 'mod', label: '調整值', align: 'right' },
+  ]}
+  rows={Array.from({ length: 16 }, (_, n) => n + 3).map((score) => ({
+    score,
+    mod: abilityModifier(score) >= 0 ? `+${abilityModifier(score)}` : `${abilityModifier(score)}`,
+  }))}
+/>
+
+:::note[往 0 捨去,不是往下取整]
+負數的處理和一般的 `floor` 不一樣。屬性 7 的調整值是 `(7-10)/2 = -1.5` → **-1**,
+不是 -2。這是 Rust 整數除法的行為。
+:::
+
+## 屬性怎麼決定
+
+1. **選職業。**
+2. **每個屬性擲 4 顆 d6,去掉最低的一顆,剩下三顆相加。**
+   例:擲出 3、5、2、4 → 去掉 2 → 3+5+4 = **12**
+3. **套用職業修正**(下表)。
+4. **把六個屬性的總和重平衡到 72。** 不足就補低的屬性,超過就砍高的屬性,
+   全程維持在 3–18 範圍內。
+
+因為重平衡是在職業修正**之後**做的,所以**總和永遠是 72** ——
+沒有哪個職業能靠修正值拿到更多總點數。職業修正決定的是**分配傾向**,不是總量。
+
+## 職業修正表
+
+<FilterTable
+  placeholder="搜尋職業…"
+  columns={[
+    { key: 'zh', label: '職業' },
+    { key: 'en', label: '英文' },
+    { key: 'gender', label: '性別', align: 'center' },
+    { key: 'str', label: 'STR', align: 'right' },
+    { key: 'dex', label: 'DEX', align: 'right' },
+    { key: 'con', label: 'CON', align: 'right' },
+    { key: 'int', label: 'INT', align: 'right' },
+    { key: 'wis', label: 'WIS', align: 'right' },
+    { key: 'cha', label: 'CHA', align: 'right' },
+    { key: 'hd', label: '生命骰', align: 'center' },
+  ]}
+  rows={classes.flatMap((c) => {
+    const sign = (n) => (n > 0 ? `+${n}` : `${n}`);
+    const row = (adjust, gender) => ({
+      zh: c.zh, en: c.en, gender,
+      str: sign(adjust[0]), dex: sign(adjust[1]), con: sign(adjust[2]),
+      int: sign(adjust[3]), wis: sign(adjust[4]), cha: sign(adjust[5]),
+      hd: `d${c.hitDie}`,
+    });
+    return c.variants
+      ? [row(c.variants.M, '男'), row(c.variants.F, '女')]
+      : [row(c.adjust, '共通')];
+  })}
+/>
+
+**蠻族、穴居人、騎士**的修正值會依性別不同 —— 其他職業男女一樣。
+
+### 怎麼挑
+
+- **想耐打** → 生命骰 d10 的職業(騎士、蠻族、穴居人、女武神)。
+- **想不被打中** → DEX 修正高的職業。盜賊 +3 是全遊戲最高。
+- **想殺價** → CHA 修正高的職業。觀光客 +2 是玩家可選職業裡最高的。
+  CHA 越高,議價的價格帶越寬。
+- **觀光客要小心** —— 生命骰只有 d4,是全遊戲最脆的。
+
+### NPC 專用職業
+
+這兩個玩家選不到,列出來只是讓你知道遊戲裡的 NPC 是怎麼配的:
+
+<FilterTable
+  placeholder="搜尋…"
+  columns={[
+    { key: 'zh', label: '職業' },
+    { key: 'en', label: '英文' },
+    { key: 'who', label: '代表 NPC' },
+    { key: 'str', label: 'STR', align: 'right' },
+    { key: 'dex', label: 'DEX', align: 'right' },
+    { key: 'con', label: 'CON', align: 'right' },
+    { key: 'int', label: 'INT', align: 'right' },
+    { key: 'wis', label: 'WIS', align: 'right' },
+    { key: 'cha', label: 'CHA', align: 'right' },
+  ]}
+  rows={hiddenClasses.map((c) => {
+    const sign = (n) => (n > 0 ? `+${n}` : `${n}`);
+    return {
+      zh: c.zh, en: c.en, who: c.who,
+      str: sign(c.adjust[0]), dex: sign(c.adjust[1]), con: sign(c.adjust[2]),
+      int: sign(c.adjust[3]), wis: sign(c.adjust[4]), cha: sign(c.adjust[5]),
+    };
+  })}
+/>
+
+商人 CHA +3 是全遊戲最高 —— 這就是為什麼 Rica 是商人。
+
+## Guard —— 你有多難被打中
+
+創角時用**最終 DEX**(套完職業修正與重平衡之後)算出來並存起來:
+
+```
+Guard = clamp(10 + DEX 調整值, 1, 20)
+```
+
+<FilterTable
+  placeholder="輸入 DEX…"
+  columns={[
+    { key: 'dex', label: 'DEX', align: 'right' },
+    { key: 'mod', label: '調整值', align: 'right' },
+    { key: 'guard', label: '基礎 Guard', align: 'right' },
+  ]}
+  rows={Array.from({ length: 16 }, (_, n) => n + 3).map((dex) => ({
+    dex,
+    mod: abilityModifier(dex) >= 0 ? `+${abilityModifier(dex)}` : `${abilityModifier(dex)}`,
+    guard: guardFromDex(dex),
+  }))}
+/>
+
+實際的角色 Guard 大約落在 **7–14**,再加上裝備提供的 Guard。
+基準點是 10,詳細意義見[戰鬥系統](../combat/)。
+
+## 生命值
+
+等級 1 的最大生命:
+
+```
+最大生命 = 生命骰最大值 + CON 調整值 + 種族加成
+```
+
+### 種族加成
+
+<FilterTable
+  placeholder="搜尋種族…"
+  columns={[
+    { key: 'zh', label: '種族' },
+    { key: 'en', label: '英文' },
+    { key: 'bonus', label: '生命加成', align: 'right' },
+  ]}
+  rows={races.map((r) => ({ zh: r.zh, en: r.en, bonus: `+${r.hpBonus}` }))}
+/>
+
+### 等級 1 生命值對照
+
+橫向是 CON,縱向是職業(取人類 +2 的種族加成)。
+
+<FilterTable
+  placeholder="搜尋職業…"
+  columns={[
+    { key: 'cls', label: '職業' },
+    { key: 'hd', label: '生命骰', align: 'center' },
+    { key: 'con8', label: 'CON 8', align: 'right' },
+    { key: 'con10', label: 'CON 10', align: 'right' },
+    { key: 'con14', label: 'CON 14', align: 'right' },
+    { key: 'con18', label: 'CON 18', align: 'right' },
+  ]}
+  rows={classes.map((c) => ({
+    cls: c.zh,
+    hd: `d${c.hitDie}`,
+    con8: level1Hp(c.hitDie, 8, 2),
+    con10: level1Hp(c.hitDie, 10, 2),
+    con14: level1Hp(c.hitDie, 14, 2),
+    con18: level1Hp(c.hitDie, 18, 2),
+  }))}
+/>
+
+矮人再多 +2、精靈/侏儒/獸人則少 1。
+
+### 升級時的生命成長
+
+從等級 2 開始,每升一級:
+
+```
+擲 生命骰
+保證至少一半(不足就當一半算)
+再加上 CON 調整值
+```
+
+所以騎士(d10)擲到 3 也會當成 5 算。**每級的期望成長**:
+
+<FilterTable
+  placeholder="搜尋生命骰…"
+  columns={[
+    { key: 'hd', label: '生命骰', align: 'center' },
+    { key: 'classes', label: '職業' },
+    { key: 'min', label: '最低', align: 'right' },
+    { key: 'expected', label: '期望值', align: 'right' },
+    { key: 'max', label: '最高', align: 'right' },
+  ]}
+  rows={[10, 8, 6, 4].map((hd) => ({
+    hd: `d${hd}`,
+    classes: classes.filter((c) => c.hitDie === hd).map((c) => c.zh).join('、'),
+    min: hd / 2,
+    expected: expectedHitDieGain(hd).toFixed(2),
+    max: hd,
+  }))}
+/>
+
+表中還沒加 CON 調整值 —— CON 14 的騎士每級期望是 `6.5 + 2 = 8.5`。
+
+## 生命自然回復
+
+每 **16 秒**回復一次(伺服器基礎時間刻是 8 秒,兩刻回一次):
+
+```
+回復量 = max(1, 1 + floor(等級 / 5) + CON 調整值)
+```
+
+回復要滿足**全部**條件:
+
+- 還活著(生命 > 0)
+- 生命沒滿
+- **脫離戰鬥 10 秒以上** —— 最後一次攻擊或被攻擊算起
+- **不在衰弱或食物中毒狀態** —— 這兩個狀態會完全停止回復([食物與飽食度](../../database/food/))
+
+<FilterTable
+  placeholder="輸入等級…"
+  columns={[
+    { key: 'level', label: '等級', align: 'right' },
+    { key: 'con8', label: 'CON 8', align: 'right' },
+    { key: 'con10', label: 'CON 10', align: 'right' },
+    { key: 'con14', label: 'CON 14', align: 'right' },
+    { key: 'con18', label: 'CON 18', align: 'right' },
+  ]}
+  rows={[1, 5, 10, 15, 20, 25, 30].map((level) => {
+    const regen = (con) => Math.max(1, 1 + Math.floor(level / 5) + abilityModifier(con));
+    return { level, con8: `${regen(8)} HP`, con10: `${regen(10)} HP`, con14: `${regen(14)} HP`, con18: `${regen(18)} HP` };
+  })}
+/>
+
+單位是每 16 秒。等級 30、CON 18 的角色是每 16 秒回 11 點 —— 大約每分鐘 41 點。

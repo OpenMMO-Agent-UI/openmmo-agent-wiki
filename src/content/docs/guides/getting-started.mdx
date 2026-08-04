@@ -1,0 +1,186 @@
+---
+title: 新手入門
+description: 從登入到打倒第一隻怪物 —— 開局裝備、該去哪、該買什麼、該避開什麼。
+---
+
+import FilterTable from '../../../components/FilterTable.astro';
+import { items, itemsById, merchants, monsters, formatCoins, sellPrice } from '../../../lib/gamedata.js';
+import { itemName, monsterName } from '../../../lib/zh.js';
+import { monsterXp, hitChance, classes } from '../../../lib/classes.js';
+
+export const rica = merchants.find((m) => m.id === 'rica');
+
+## 怎麼開始玩
+
+兩條路,選一條:
+
+- **瀏覽器** —— 直接開 [openmmo.to.nexus](https://openmmo.to.nexus),用 Google 登入。
+  什麼都不用裝。
+- **桌面客戶端** —— [下載 OpenMMO Agent](../../client/download/)。多了多伺服器設定檔、
+  加密金鑰保存,以及**讓 LLM 替你的角色行動**並在旁邊觀戰。
+
+## 建立角色
+
+**先選職業,再擲屬性** —— 順序不能改,因為職業修正是加在骰子結果上的。
+
+每個帳號最多 **3 隻**角色。要填的是名稱、職業、性別。
+
+詳細的職業修正表與屬性公式在[角色與屬性](../character/)。三個重點:
+
+- **總點數永遠是 72**,不管選什麼職業。職業決定的是分配傾向,不是總量。
+- **想耐打就選生命骰 d10 的職業**:騎士、蠻族、穴居人、女武神。
+- **觀光客生命骰只有 d4**,是全遊戲最脆的。新手不建議。
+
+<FilterTable
+  placeholder="搜尋職業…"
+  columns={[
+    { key: 'zh', label: '職業' },
+    { key: 'hd', label: '生命骰', align: 'center' },
+    { key: 'suit', label: '適合' },
+  ]}
+  rows={classes.map((c) => {
+    const a = c.adjust ?? c.variants.M;
+    const traits = [];
+    if (c.hitDie >= 10) traits.push('耐打');
+    if (a[1] >= 2) traits.push('難被打中');
+    if (a[0] >= 2) traits.push('高傷害');
+    if (a[5] >= 2) traits.push('會殺價');
+    if (c.hitDie <= 4) traits.push('非常脆,不建議新手');
+    return { zh: c.zh, hd: `d${c.hitDie}`, suit: traits.join('、') || '中庸' };
+  })}
+/>
+
+## 你的起始配備
+
+- **金錢:0** —— 沒有起始資金,第一筆錢要靠賣東西。
+- **武器:{itemName('worn_iron_sword')}**(1d6)—— 注意它**沒有標價**,
+  商人不會收購。這是刻意的:防止有人反覆創角色、把起始裝備換成錢。
+- **飽食度:700** —— 位於飽足區間,有移動與攻擊速度 ×1.1、負重 ×1.15 的加成。
+
+:::tip[磨損版本 = 不能賣]
+遊戲裡凡是叫「磨損的 / 燒剩的」(Worn)的東西一律**不能賣錢**,
+但數值和正常版本一樣或只差一點。{itemName('worn_iron_sword')} 是 1d6,
+正式的 {itemName('iron_sword')} 是 1d8。
+:::
+
+## 第一件事:賺到第一筆錢
+
+你身上沒錢,所以第一步是打怪撿掉落物去賣。
+
+從**狗頭人**開始 —— 牠是等級 1、Guard 8,而且是**被攻擊才反擊**的類型,
+不會主動撲上來。你可以決定要不要打。
+
+<FilterTable
+  placeholder="搜尋怪物…"
+  columns={[
+    { key: 'name', label: '怪物' },
+    { key: 'level', label: '等級', align: 'right' },
+    { key: 'hp', label: '生命', align: 'right' },
+    { key: 'guard', label: 'Guard', align: 'right' },
+    { key: 'hit', label: '你的命中率', align: 'right' },
+    { key: 'dmg', label: '牠的傷害', align: 'center' },
+    { key: 'xp', label: 'XP', align: 'right' },
+    { key: 'drop', label: '掉落' },
+    { key: 'aggro', label: '會主動攻擊?', align: 'center' },
+  ]}
+  rows={monsters
+    .slice()
+    .sort((a, b) => a.level - b.level)
+    .map((m) => ({
+      name: monsterName(m.id),
+      level: m.level,
+      hp: m.healthEffective,
+      guard: m.guard,
+      hit: `${Math.round(hitChance(0, m.guard) * 100)}%`,
+      dmg: m.damageRollEffective,
+      xp: monsterXp(m.level, m.guard),
+      drop: m.weapon ? `${itemName(m.weapon)} ${Math.round(m.weaponDropChance * 100)}%` : '—',
+      aggro: m.behavior === 'timid' ? '否' : '是',
+    }))}
+/>
+
+「你的命中率」欄位是等級 1、STR 10(調整值 0)的情況。STR 高的話會更好。
+
+:::caution[等級 1 別碰的東西]
+**潛行者**雖然不會主動攻擊,但奔跑速度 8.0 —— 玩家基準速度只有 3.0,
+惹到牠**跑不掉**。
+**獸人督軍**在獸人巢穴最底層,120 血、命中 +6、傷害 2d8,等級 1 沒有勝算。
+:::
+
+## 第一次購物
+
+Rica 賣這些。以你剛開始的財力,優先順序大概是:
+
+<FilterTable
+  placeholder="搜尋商品…"
+  columns={[
+    { key: 'name', label: '商品' },
+    { key: 'price', label: '價格', align: 'right' },
+    { key: 'why', label: '為什麼要買' },
+  ]}
+  rows={[
+    { id: 'healing_potion', why: '回復 6d4(平均 15 點)。滿血或倒地時喝不會浪費,會留著' },
+    { id: 'bread', why: '飽食度最高的商店食物,一條撐一個遊戲日' },
+    { id: 'torch', why: '晚上與地城裡的照明。最便宜的必需品' },
+    { id: 'scroll_of_return', why: '瞬間回城。走太遠或快死掉時的保命符' },
+    { id: 'leather_pants', why: 'Guard +1。古墓 30% 才掉,買比較快' },
+    { id: 'spear', why: '1d6,和起始武器同級但可以賣錢' },
+    { id: 'fishing_rod', why: '想釣魚才需要。穩定但不多的收入' },
+    { id: 'campfire_kit', why: '野外生火烤魚。生魚會食物中毒' },
+  ].map((r) => ({
+    name: itemName(r.id),
+    price: formatCoins(itemsById.get(r.id)?.basePrice ?? null),
+    why: r.why,
+  }))}
+/>
+
+Rica 的收購價是基準價的 **{rica.sellRatePercent}%**,所以低買高賣賺不了錢。
+但她是 **LLM 驅動的 NPC,可以用對話殺價** —— 講個好故事、帶點消息,
+她真的會給折扣。CHA 越高,能談的空間越大。詳見[商店與經濟](../../database/economy/)。
+
+## 記得吃東西
+
+飽食度從 700 開始,**上線期間每 20 秒扣 1**(離線不扣)。掉到 **300 以下**就
+失去飽足加成,掉到 **100 以下**進入衰弱:移動與攻擊速度 ×0.75、負重 ×0.6、
+**生命自然回復完全停止**。
+
+好消息是**不會餓死** —— 歸零就停在那裡。但衰弱狀態下打架很吃虧。
+
+一個遊戲日(現實 3 小時)消耗 540,剛好等於一條麵包。**設計基準就是一天一餐。**
+
+完整對照見[食物與飽食度](../../database/food/)。
+
+## 死掉會怎樣
+
+- **不會掉裝備。**
+- 扣掉**本級進度的 15%** 經驗值。
+- 如果扣完低於本級起始值會**降一級**,但一次死亡最多降一級,等級 1 不會降。
+- 復活後回到原點 `(0, 0, 0)`,生命補滿,飽食度重設為 300。
+
+死亡成本不算高,但也不是沒有。詳見[戰鬥系統](../combat/)。
+
+## 接下來去哪
+
+1. **打狗頭人和哥布林**攢裝備和經驗,把掉落的武器賣給 Rica。
+2. **找到古墓**(Old Crypt)—— 5 層的第一階地城,確定掉落
+   {itemName('leather_helmet')},{itemName('leather_pants')} 和
+   {itemName('leather_belt')} 各 30%。湊齊皮甲套裝(Guard 合計 6)。
+3. **進獸人巢穴**(Orc Warrens)—— 10 層,補完皮甲的身體、手套、靴子,
+   還有鐵靴與鐵盔。頭目獸人督軍確定掉落 {itemName('iron_sword')}(1d8),
+   那是商店買不到的。
+
+兩座地城都在 **Aldermark** 附近,座標與距離見[世界地圖](../../database/map/)。
+
+:::note[地城是固定的]
+地城由種子決定,**同一個入口每次進去結構都一樣**,不會重新生成。
+所以走熟了就是你的主場。世界地圖會記錄你已經發現過的入口,但第一次要自己找到。
+:::
+
+## 幾個容易踩到的地方
+
+- **命中是嚴格大於** —— d20 + 命中加值剛好等於對方 Guard 是**落空**,不是命中。
+- **背包有重量上限**(STR × 15,飽足時 ×1.15)。超重不會擋你移動,
+  但**撿不了新東西也買不了東西**。
+- **掉在地上的東西誰都能撿。** 而且是分樓層的 —— 在房子二樓掉的東西只能在二樓撿。
+- **生魚會食物中毒** —— 5 分鐘各種數值 ×0.6 且回復停止。先烤過再吃。
+- **武器不會出現在寶箱裡。** 想要某把武器,就去打拿著那把武器的怪物。

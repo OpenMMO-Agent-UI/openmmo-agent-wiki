@@ -1,0 +1,331 @@
+---
+title: 戰鬥系統
+description: 命中判定、傷害計算、Guard 對照、經驗值公式、升級曲線與死亡懲罰。
+---
+
+import FilterTable from '../../../components/FilterTable.astro';
+import { monsters, items, averageRoll } from '../../../lib/gamedata.js';
+import { monsterName, itemName } from '../../../lib/zh.js';
+import { abilityModifier, hitChance, xpForLevel, monsterXp, expectedHitDieGain, classes } from '../../../lib/classes.js';
+
+所有判定都在**伺服器端**進行。客戶端只送出「我要攻擊這隻怪物」,結果由伺服器決定。
+
+## 命中判定
+
+擲一顆 20 面骰:
+
+```
+d20 + 命中加值 >  目標 Guard   →  命中
+d20 + 命中加值 ≤  目標 Guard   →  落空
+```
+
+注意是**嚴格大於**。骰出來剛好等於 Guard 是**落空**。
+
+**命中加值**:
+
+- 基礎 = `floor(等級 / 2)`
+- 玩家近戰再加上 **STR 調整值**
+- 怪物如果資料裡有指定就用指定值,沒有就用等級基礎值
+
+### 命中率對照
+
+橫向是目標 Guard,縱向是你的總命中加值。
+
+<FilterTable
+  placeholder="輸入命中加值…"
+  columns={[
+    { key: 'bonus', label: '命中加值', align: 'right' },
+    { key: 'g8', label: 'Guard 8', align: 'right' },
+    { key: 'g9', label: 'Guard 9', align: 'right' },
+    { key: 'g10', label: 'Guard 10', align: 'right' },
+    { key: 'g11', label: 'Guard 11', align: 'right' },
+    { key: 'g13', label: 'Guard 13', align: 'right' },
+    { key: 'g15', label: 'Guard 15', align: 'right' },
+  ]}
+  rows={Array.from({ length: 11 }, (_, n) => n).map((bonus) => {
+    const pct = (g) => `${Math.round(hitChance(bonus, g) * 100)}%`;
+    return {
+      bonus: `+${bonus}`,
+      g8: pct(8), g9: pct(9), g10: pct(10), g11: pct(11), g13: pct(13), g15: pct(15),
+    };
+  })}
+/>
+
+:::note[沒有「擲 1 必失敗」這條規則]
+和很多 D&D 系統不同,這裡**沒有**大失敗規則。只要
+`命中加值 ≥ 目標 Guard`,連擲出 1 都會命中 —— 命中率真的會到 **100%**。
+反過來,加值差太多時也可能是 **0%**,再怎麼擲都打不中。
+:::
+
+### 打各種怪物的命中率
+
+依你的總命中加值(等級一半 + STR 調整值)查:
+
+<FilterTable
+  placeholder="搜尋怪物…"
+  columns={[
+    { key: 'name', label: '怪物' },
+    { key: 'guard', label: 'Guard', align: 'right' },
+    { key: 'b0', label: '+0', align: 'right' },
+    { key: 'b2', label: '+2', align: 'right' },
+    { key: 'b4', label: '+4', align: 'right' },
+    { key: 'b6', label: '+6', align: 'right' },
+    { key: 'b8', label: '+8', align: 'right' },
+  ]}
+  rows={monsters
+    .slice()
+    .sort((a, b) => a.guard - b.guard)
+    .map((m) => {
+      const pct = (b) => `${Math.round(hitChance(b, m.guard) * 100)}%`;
+      return {
+        name: monsterName(m.id),
+        guard: m.guard,
+        b0: pct(0), b2: pct(2), b4: pct(4), b6: pct(6), b8: pct(8),
+      };
+    })}
+/>
+
+### 怪物打你的命中率
+
+反過來,依你的 Guard(DEX 決定的基礎值 + 裝備加總)查:
+
+<FilterTable
+  placeholder="搜尋怪物…"
+  columns={[
+    { key: 'name', label: '怪物' },
+    { key: 'atk', label: '命中加值', align: 'right' },
+    { key: 'g10', label: '你 Guard 10', align: 'right' },
+    { key: 'g14', label: '你 Guard 14', align: 'right' },
+    { key: 'g18', label: '你 Guard 18', align: 'right' },
+    { key: 'g22', label: '你 Guard 22', align: 'right' },
+    { key: 'dmg', label: '命中傷害', align: 'center' },
+  ]}
+  rows={monsters
+    .slice()
+    .sort((a, b) => a.level - b.level)
+    .map((m) => {
+      const pct = (g) => `${Math.round(hitChance(m.attackBonusEffective, g) * 100)}%`;
+      return {
+        name: monsterName(m.id),
+        atk: `+${m.attackBonusEffective}`,
+        g10: pct(10), g14: pct(14), g18: pct(18), g22: pct(22),
+        dmg: m.damageRollEffective,
+      };
+    })}
+/>
+
+**堆 Guard 的效益非常直接** —— 每 +1 Guard 就讓對方少 5% 命中率。
+一套完整的板甲(Guard 合計 19)幾乎能讓低階怪物完全打不到你。
+
+## 傷害
+
+只有命中才擲傷害。骰子表示法是 `{顆數}d{面數}`:
+
+```
+2d6  →  擲兩顆六面骰相加(2–12)
+```
+
+玩家近戰傷害會再加上 **STR 調整值**。
+
+### 武器傷害對照
+
+<FilterTable
+  placeholder="搜尋武器…"
+  columns={[
+    { key: 'name', label: '武器' },
+    { key: 'dice', label: '傷害骰', align: 'center' },
+    { key: 'min', label: '最低', align: 'right' },
+    { key: 'avg', label: '平均', align: 'right' },
+    { key: 'max', label: '最高', align: 'right' },
+    { key: 'weight', label: '重量', align: 'right' },
+  ]}
+  rows={items
+    .filter((i) => i.category === 'weapon' && i.dice)
+    .sort((a, b) => averageRoll(b.dice) - averageRoll(a.dice))
+    .map((i) => {
+      const [n, sides] = i.dice.split('d').map(Number);
+      return {
+        name: itemName(i.id),
+        dice: i.dice,
+        min: n,
+        avg: averageRoll(i.dice).toFixed(1),
+        max: n * sides,
+        weight: `${i.weight} kg`,
+      };
+    })}
+/>
+
+STR 調整值是**加在每一次命中上**的,所以高 STR 對低傷害武器的相對提升更大:
+STR 18(+4)拿匕首(1d4,平均 2.5)實際平均是 6.5,等於翻了 2.6 倍。
+
+## Guard 的意義
+
+Guard 是 NetHack 的 AC 反過來 —— **越高越好**。
+
+| Guard | 意義 |
+|---|---|
+| 0–7 | 幾乎不設防 |
+| 8–9 | 防禦薄弱 |
+| 10 | 普通 |
+| 11–13 | 防禦紮實 |
+| 14+ | 重裝以上 |
+
+對照 NetHack:`Guard = 10 − AC`。
+
+## 經驗值
+
+### 打倒怪物拿多少
+
+```
+XP = 1 + 等級² + max(Guard - 10, 0) × 2
+```
+
+Guard 超過 10 的部分會給獎勵 —— **難打的怪物給得多**。
+
+<FilterTable
+  placeholder="搜尋怪物…"
+  columns={[
+    { key: 'name', label: '怪物' },
+    { key: 'level', label: '等級', align: 'right' },
+    { key: 'guard', label: 'Guard', align: 'right' },
+    { key: 'xp', label: 'XP', align: 'right' },
+    { key: 'hp', label: '生命', align: 'right' },
+    { key: 'perHp', label: 'XP / 生命', align: 'right' },
+  ]}
+  rows={monsters
+    .slice()
+    .sort((a, b) => monsterXp(a.level, a.guard) - monsterXp(b.level, b.guard))
+    .map((m) => ({
+      name: monsterName(m.id),
+      level: m.level,
+      guard: m.guard,
+      xp: monsterXp(m.level, m.guard),
+      hp: m.healthEffective,
+      perHp: (monsterXp(m.level, m.guard) / m.healthEffective).toFixed(2),
+    }))}
+/>
+
+**XP / 生命**這欄是效率指標 —— 數字越高,代表每打掉一點血拿到的經驗越多。
+獸人督軍雖然 XP 最高,但 120 血打起來很久,效率反而不是最好的。
+
+### 升級需要多少
+
+```
+XP(n) = 20 × 2^(n-2)      (n ≥ 2)
+```
+
+**每一級都是前一級的兩倍**,是純指數曲線,沒有任何緩和。
+
+<FilterTable
+  placeholder="輸入等級…"
+  columns={[
+    { key: 'level', label: '等級', align: 'right' },
+    { key: 'total', label: '累積 XP', align: 'right' },
+    { key: 'band', label: '本級需要', align: 'right' },
+    { key: 'orcs', label: '約等於幾隻獸人', align: 'right' },
+  ]}
+  rows={Array.from({ length: 20 }, (_, n) => n + 1).map((level) => {
+    const orcXp = monsterXp(4, 11);
+    const band = level === 1 ? 0 : xpForLevel(level) - xpForLevel(level - 1);
+    return {
+      level,
+      total: xpForLevel(level).toLocaleString(),
+      band: level === 1 ? '—' : band.toLocaleString(),
+      orcs: level === 1 ? '—' : Math.ceil(band / orcXp).toLocaleString(),
+    };
+  })}
+/>
+
+最右欄以獸人(等級 4、Guard 11,每隻 {monsterXp(4, 11)} XP)換算。
+可以看到到了兩位數等級之後,靠現有怪物練等會非常慢 ——
+目前遊戲的內容量大致對應前 10 級左右。
+
+## 死亡懲罰
+
+死掉**不會掉裝備**,但會扣經驗值:
+
+```
+本級區間 = XP(L+1) - XP(L)
+扣除量   = max(1, floor(本級區間 × 0.15))
+```
+
+也就是**本級進度的 15%**。
+
+### 會不會掉級
+
+扣完之後如果 XP 低於本級的起始值,**降一級**。但有兩個保護:
+
+- **一次死亡最多只掉一級。**
+- **等級 1 不會掉級。**
+
+掉級之後,XP 會被拉到下一級區間的 **30% 進度**當作保底 ——
+不會讓你卡在剛好差一點升級的位置反覆折磨。
+
+<FilterTable
+  placeholder="輸入等級…"
+  columns={[
+    { key: 'level', label: '等級', align: 'right' },
+    { key: 'band', label: '本級區間', align: 'right' },
+    { key: 'penalty', label: '死亡扣除', align: 'right' },
+    { key: 'orcs', label: '約幾隻獸人補回', align: 'right' },
+  ]}
+  rows={Array.from({ length: 12 }, (_, n) => n + 2).map((level) => {
+    const band = xpForLevel(level + 1) - xpForLevel(level);
+    const penalty = Math.max(1, Math.floor(band * 0.15));
+    return {
+      level,
+      band: band.toLocaleString(),
+      penalty: penalty.toLocaleString(),
+      orcs: Math.ceil(penalty / monsterXp(4, 11)).toLocaleString(),
+    };
+  })}
+/>
+
+### 掉級時生命值也會降
+
+為了避免「反覆升級掉級」變成刷生命值的手段,**掉級時扣的生命值分布,
+和升級時加的生命值分布完全一樣**:
+
+```
+擲 生命骰,保證至少一半,再加 CON 調整值
+```
+
+所以長期期望值是 **0** —— 升降級來回不會有任何統計上的好處。
+生命值也不會低於等級 1 的初始值。
+
+<FilterTable
+  placeholder="搜尋生命骰…"
+  columns={[
+    { key: 'hd', label: '生命骰', align: 'center' },
+    { key: 'classes', label: '職業' },
+    { key: 'expected', label: '升 / 降級期望值', align: 'right' },
+  ]}
+  rows={[10, 8, 6, 4].map((hd) => ({
+    hd: `d${hd}`,
+    classes: classes.filter((c) => c.hitDie === hd).map((c) => c.zh).join('、'),
+    expected: expectedHitDieGain(hd).toFixed(2),
+  }))}
+/>
+
+**沒有掉級的話,生命值不會被扣。**
+
+## 復活
+
+死掉之後送出復活請求,伺服器確認生命為 0 後把你補滿並送回原點 `(0, 0, 0)`。
+飽食度會重設為 300(飽足區間的下限),不會讓你餓著復活又馬上衰弱。
+
+## 怪物 AI
+
+怪物的 AI 由客戶端運算,但**攻擊判定一律送伺服器決定**。
+
+| 狀態 | 說明 |
+|---|---|
+| `idle` | 待機(30% 機率隨機移動) |
+| `walk` | 移動中 |
+| `run` | 追擊玩家(進入追擊距離) |
+| `attack` | 攻擊中(進入攻擊距離) |
+| `hit` | 受擊硬直(約 800 毫秒) |
+| `dead` | 死亡 |
+
+怪物死亡後 **30 秒**才會從場上移除。各怪物的追擊距離與攻擊間隔見
+[怪物圖鑑](../../database/monsters/)。
