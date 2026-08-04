@@ -1,0 +1,174 @@
+---
+title: 怪物圖鑑
+description: OpenMMO 全部怪物的數值 —— 生命、Guard、傷害、行為、出現深度與掉落。
+---
+
+import FilterTable from '../../../components/FilterTable.astro';
+import { monsters, items, averageRoll, healthForLevel, attackBonusForLevel, damageRollForLevel } from '../../../lib/gamedata.js';
+import { monsterName, itemName, behaviorNames } from '../../../lib/zh.js';
+
+export const mark = (value, derived) => (derived ? `${value} *` : `${value}`);
+export const byLevel = (a, b) => a.level - b.level;
+
+目前共 **{monsters.length} 種**怪物。
+
+:::caution[表中標了 `*` 的數值是推算出來的]
+遊戲資料裡的生命、命中加值、傷害骰**留空代表「不覆寫」**,伺服器會依等級自動計算。
+留空不等於 0,所以這裡照伺服器的公式(`server/src/game/combat.rs`)補上實際值,
+並用 `*` 標示哪些是推算的:
+
+- 生命 = `無條件進位(等級 × 9 ÷ 2)`
+- 命中加值 = `無條件捨去(等級 ÷ 2)`
+- 傷害骰 = 依等級查表(見下方)
+:::
+
+## 全部怪物
+
+<FilterTable
+  placeholder="搜尋怪物…"
+  columns={[
+    { key: 'name', label: '名稱' },
+    { key: 'en', label: '遊戲內名稱' },
+    { key: 'level', label: '等級', align: 'right' },
+    { key: 'hp', label: '生命', align: 'right' },
+    { key: 'guard', label: 'Guard', align: 'right' },
+    { key: 'atk', label: '命中加值', align: 'right' },
+    { key: 'dmg', label: '傷害', align: 'center' },
+    { key: 'avg', label: '平均傷害', align: 'right' },
+    { key: 'behavior', label: '行為', align: 'center' },
+  ]}
+  rows={monsters
+    .slice()
+    .sort(byLevel)
+    .map((m) => ({
+      name: monsterName(m.id),
+      en: m.name,
+      level: m.level,
+      hp: mark(m.healthEffective, m.healthDerived),
+      guard: m.guard,
+      atk: mark(`+${m.attackBonusEffective}`, m.attackBonusDerived),
+      dmg: mark(m.damageRollEffective, m.damageRollDerived),
+      avg: averageRoll(m.damageRollEffective)?.toFixed(1) ?? '—',
+      behavior: behaviorNames[m.behavior] ?? m.behavior,
+    }))}
+/>
+
+**行為**只有兩種:*主動攻擊* 的怪物看到你就會撲上來,*受攻擊才反擊* 的則會等你先動手。
+狗頭人和潛行者屬於後者 —— 不想打就可以直接繞過。
+
+## 移動與攻擊參數
+
+想估算能不能逃掉、或抓攻擊空檔的話看這張表。追擊距離是它開始追你的距離,
+攻擊距離是它能打到你的距離。
+
+<FilterTable
+  placeholder="搜尋怪物…"
+  columns={[
+    { key: 'name', label: '名稱' },
+    { key: 'walk', label: '走路速度', align: 'right' },
+    { key: 'run', label: '奔跑速度', align: 'right' },
+    { key: 'atkRange', label: '攻擊距離', align: 'right' },
+    { key: 'chase', label: '追擊距離', align: 'right' },
+    { key: 'cooldown', label: '攻擊間隔', align: 'right' },
+  ]}
+  rows={monsters
+    .slice()
+    .sort(byLevel)
+    .map((m) => ({
+      name: monsterName(m.id),
+      walk: m.walkSpeed,
+      run: m.runSpeed,
+      atkRange: `${m.attackRange} m`,
+      chase: `${m.chaseRange} m`,
+      cooldown: `${(m.attackCooldown / 1000).toFixed(2)} 秒`,
+    }))}
+/>
+
+玩家的基準移動速度是 **3.0**(吃飽有 ×1.1 加成,鎖定 3.3)。對照上表:
+潛行者奔跑 8.0 遠比玩家快,**逃不掉**;獸人 4.5、哥布林酋長 4.0 也追得上你。
+只有狗頭人(3.2)勉強能甩開。
+
+## 出現位置
+
+怪物分兩種出現方式:**地城**依樓層深度生成,**地表**則在指定區域生成。
+權重越高代表在該深度範圍內出現得越頻繁。
+
+<FilterTable
+  placeholder="搜尋怪物…"
+  columns={[
+    { key: 'name', label: '名稱' },
+    { key: 'depth', label: '地城深度' },
+    { key: 'weight', label: '生成權重', align: 'right' },
+    { key: 'note', label: '備註' },
+  ]}
+  rows={monsters
+    .slice()
+    .sort(byLevel)
+    .map((m) => ({
+      name: monsterName(m.id),
+      depth: m.dungeonMinDepth !== null ? `${m.dungeonMinDepth} – ${m.dungeonMaxDepth} 層` : '不在地城生成',
+      weight: m.dungeonWeight ?? '—',
+      note: m.dungeonMinDepth === null ? '頭目,固定配置在地城最底層' : '',
+    }))}
+/>
+
+## 掉落
+
+怪物身上帶的武器就是它會掉的東西 —— 這是刻意的設計,**看得到就打得到**。
+一般怪物掉落率 10%,頭目 100% 確定掉落。
+
+<FilterTable
+  placeholder="搜尋怪物或掉落物…"
+  columns={[
+    { key: 'name', label: '怪物' },
+    { key: 'drop', label: '掉落武器' },
+    { key: 'chance', label: '掉落率', align: 'right' },
+    { key: 'dice', label: '武器傷害', align: 'center' },
+  ]}
+  rows={monsters
+    .filter((m) => m.weapon)
+    .sort(byLevel)
+    .map((m) => ({
+      name: monsterName(m.id),
+      drop: itemName(m.weapon),
+      chance: `${Math.round(m.weaponDropChance * 100)}%`,
+      dice: items.find((i) => i.id === m.weapon)?.dice ?? '—',
+    }))}
+/>
+
+獸人督軍是目前唯一確定掉落**鐵劍**(1d8)的來源 —— 鐵劍不在商店販售,
+所以打倒它是拿到這把武器最直接的方法。
+
+## 等級對應的預設值
+
+留空欄位就是用這張表的值。
+
+<FilterTable
+  placeholder="輸入等級…"
+  columns={[
+    { key: 'level', label: '等級', align: 'right' },
+    { key: 'hp', label: '生命', align: 'right' },
+    { key: 'atk', label: '命中加值', align: 'right' },
+    { key: 'dmg', label: '傷害骰', align: 'center' },
+    { key: 'avg', label: '平均傷害', align: 'right' },
+  ]}
+  rows={Array.from({ length: 12 }, (_, n) => n + 1).map((lv) => ({
+    level: lv,
+    hp: healthForLevel(lv),
+    atk: `+${attackBonusForLevel(lv)}`,
+    dmg: damageRollForLevel(lv),
+    avg: averageRoll(damageRollForLevel(lv)).toFixed(1),
+  }))}
+/>
+
+## 命中怎麼判定
+
+攻擊時擲一顆 20 面骰:
+
+```
+d20 + 命中加值 > 目標的 Guard  →  命中
+d20 + 命中加值 ≤ 目標的 Guard  →  落空
+```
+
+所以 Guard 就是「要擲到多少才打得中」的門檻。玩家的 Guard 由 DEX 決定
+(`clamp(10 + DEX 調整值, 1, 20)`,實際大約落在 7–14),再加上裝備的 Guard。

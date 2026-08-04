@@ -1,0 +1,159 @@
+---
+title: 商店與經濟
+description: Rica 的商品目錄、收購價、世界掉落機率,以及議價系統怎麼運作。
+---
+
+import FilterTable from '../../../components/FilterTable.astro';
+import { items, itemsById, merchants, npcs, worldDrops, formatCoins, sellPrice } from '../../../lib/gamedata.js';
+import { itemName, categoryNames } from '../../../lib/zh.js';
+
+export const rica = merchants.find((m) => m.id === 'rica');
+export const karl = npcs.find((n) => n.id === 'karl');
+
+## 貨幣
+
+只有一種貨幣,伺服器內部存成一個銅幣整數。顯示時換算:
+
+**1 金 (g) = 100 銀 (s) = 10,000 銅 (c)**
+
+新角色**沒有起始金錢**,第一筆收入要靠賣掉怪物掉落物。起始武器是
+**{itemName('worn_iron_sword')}**,故意設計成**沒有標價** —— 商人不收,
+所以不能靠反覆創角色換錢。
+
+## Rica 的商品
+
+Rica 賣 {rica.catalog.length} 種商品,收購價是基準價的 **{rica.sellRatePercent}%**。
+
+<FilterTable
+  placeholder="搜尋商品…"
+  columns={[
+    { key: 'name', label: '商品' },
+    { key: 'en', label: '遊戲內名稱' },
+    { key: 'category', label: '分類', align: 'center' },
+    { key: 'buy', label: '買入價', align: 'right' },
+    { key: 'sell', label: '賣回價', align: 'right' },
+    { key: 'weight', label: '重量', align: 'right' },
+  ]}
+  rows={rica.catalog.map((id) => {
+    const i = itemsById.get(id);
+    return {
+      name: itemName(id),
+      en: i?.name ?? id,
+      category: categoryNames[i?.category] ?? i?.category ?? '—',
+      buy: formatCoins(i?.basePrice ?? null),
+      sell: formatCoins(sellPrice(i?.basePrice ?? null, rica.sellRatePercent)),
+      weight: i ? `${i.weight} kg` : '—',
+    };
+  })}
+/>
+
+商店的品項是**刻意保持精簡**的。設計原則:只賣「第一階地城不會確定掉落」的部位,
+當作運氣太差的玩家的保險。確定掉落的東西不需要保險,高階部位則要保護打寶循環。
+
+所以 **{itemName('leather_helmet')}**(古墓的確定掉落)、
+**{itemName('iron_sword')}** 這類東西**不會出現在商店**。
+
+### 賣錯了可以買回來
+
+賣給商人的東西,最近 **10 件**可以用原價買回 —— 就是賣掉的金額,不多不少。
+這是給誤賣用的補救,來回是金錢中性的,所以不影響價差結構
+(用議價賣高的東西,買回來也一樣貴)。
+
+清單是「角色 × 商人」各自保存的,重新連線也還在、沒有時間限制,
+但**伺服器重啟就會消失**。
+
+## 議價
+
+Rica 是 LLM 驅動的 NPC,**可以用對話殺價**。但價格保護全部在伺服器端:
+
+1. 伺服器先算出價格帶 `[最低價, 最高價]`,由基準價、價差、**CHA 加成**決定。
+2. LLM 只能在帶內選一個調整幅度,不能給絕對價格。超出範圍會被夾住或拒絕。
+3. 伺服器保證**永遠套不了利** —— 最大折扣的買價一定高於最高的賣價。
+4. 有每日預算和冷卻:商人每遊戲日 1 金、每位玩家 40 銀,議價冷卻 **30 秒**,
+   談成的優惠**只能用一次、5 分鐘後失效**。
+
+CHA 越高,伺服器給的價格帶越寬(約 ±5～25 個百分點) —— 所以魅力高的角色真的比較會殺價。
+
+:::tip
+講個好故事、帶點消息、適度奉承,Rica 真的會給折扣。反過來,態度惡劣也可能被**加價** ——
+這是對稱的,而且符合她的人設。
+:::
+
+## 非商人 NPC
+
+不是只有商人能交易。衛兵 **Karl** 有自己的願望清單,
+會用**基準價的 {karl.wishlistRatePercent}%** 收購他要的東西:
+
+<FilterTable
+  placeholder="搜尋…"
+  columns={[
+    { key: 'npc', label: 'NPC' },
+    { key: 'wants', label: '想要的東西' },
+    { key: 'rate', label: '收購價', align: 'right' },
+    { key: 'value', label: '實際金額', align: 'right' },
+    { key: 'ricaSell', label: '賣給 Rica', align: 'right' },
+  ]}
+  rows={karl.wishlist.map((id) => {
+    const i = itemsById.get(id);
+    return {
+      npc: karl.npcName,
+      wants: itemName(id),
+      rate: `${karl.wishlistRatePercent}%`,
+      value: formatCoins(i?.basePrice ? Math.floor(i.basePrice * karl.wishlistRatePercent / 100) : null),
+      ricaSell: formatCoins(sellPrice(i?.basePrice ?? null, rica.sellRatePercent)),
+    };
+  })}
+/>
+
+**從 Rica 買來、賣給 Karl 是有賺頭的** —— 這是刻意保留的內容,
+等於自然發生的跑腿任務。規模被 Karl 的錢包上限
+({formatCoins(karl.walletCap)})卡住,不會失控。他的錢來自每遊戲日
+{formatCoins(karl.salaryPerDay)} 的薪水,存滿上限就停發。
+
+要注意的是他**只在願望清單沒被滿足時才會買** —— 背包裡已經有的東西就不想要了。
+
+## 世界掉落
+
+打倒怪物時,除了牠身上的武器之外,還有機率直接掉出這些東西:
+
+<FilterTable
+  placeholder="搜尋掉落物…"
+  columns={[
+    { key: 'name', label: '道具' },
+    { key: 'en', label: '遊戲內名稱' },
+    { key: 'chance', label: '掉落率', align: 'right' },
+    { key: 'expected', label: '平均幾隻掉一個', align: 'right' },
+    { key: 'value', label: '賣出價', align: 'right' },
+  ]}
+  rows={worldDrops
+    .sort((a, b) => b.chance - a.chance)
+    .map((d) => {
+      const i = itemsById.get(d.id);
+      return {
+        name: itemName(d.id),
+        en: i?.name ?? d.id,
+        chance: `${(d.chance * 100).toFixed(1)}%`,
+        expected: `${Math.round(1 / d.chance)} 隻`,
+        value: formatCoins(sellPrice(i?.basePrice ?? null, rica.sellRatePercent)),
+      };
+    })}
+/>
+
+**{itemName('iron_sword')}** 有 1% 的世界掉落率,是除了打獸人督軍以外的另一條取得路線 ——
+但期望要打 100 隻。
+
+## 錢從哪來
+
+遊戲刻意讓金錢流入受控。可重複的來源只有三個:
+
+| 來源 | 金額 |
+|---|---|
+| 錢幣堆(地城寶箱) | 1–10 銅 |
+| 地城寶箱金幣 | 深度 × 500 ～ 深度 × 1500 |
+| 釣魚 | 每次期望 8–24 銅 |
+
+對照 NPC 衛兵的日薪是 {formatCoins(karl.salaryPerDay)}。
+
+怪物掉的武器**大多是無法販售的「磨損」版本**,這是刻意的 ——
+高階武器如果能從一般怪物身上穩定變現,就會變成印鈔機。
+一般帶武器的怪物掉落率只有 10%,頭目才是確定掉落。

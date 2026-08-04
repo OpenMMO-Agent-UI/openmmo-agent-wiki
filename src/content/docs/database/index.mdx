@@ -1,0 +1,56 @@
+---
+title: 遊戲資料庫
+description: OpenMMO 的道具、怪物、地城、釣魚、食物、經濟與地圖完整數值表。
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import { items, monsters, dungeons, mapLabels } from '../../../lib/gamedata.js';
+
+所有數值直接取自遊戲的原始資料檔(`data-src/`),與伺服器實際載入的內容一致 ——
+不是手抄的,所以不會抄錯,上游改數值時同步一次就更新。
+
+<CardGrid>
+  <Card title={`道具 ${items.length} 件`} icon="seti:db">
+    武器、防具、飾品、消耗品的完整數值:傷害骰、Guard、重量、價格與取得方式。
+    [查看](./items/)
+  </Card>
+  <Card title={`怪物 ${monsters.length} 種`} icon="seti:pipeline">
+    生命、Guard、命中、傷害、移動速度、追擊距離、出現深度與掉落。
+    [查看](./monsters/)
+  </Card>
+  <Card title={`地城 ${dungeons.length} 座`} icon="seti:folder">
+    位置、樓層數、頭目數值,以及寶箱掉落規則與各階級的裝備池。
+    [查看](./dungeons/)
+  </Card>
+  <Card title="釣魚" icon="seti:image">
+    漁獲表、稀有度權重、等級解鎖、體型與獎盃門檻,以及收益期望值。
+    [查看](./fishing/)
+  </Card>
+  <Card title="食物與飽食度" icon="seti:favicon">
+    飽食度區間與增益效果、食物效率對照、營火燒烤與食物中毒。
+    [查看](./food/)
+  </Card>
+  <Card title="商店與經濟" icon="seti:shell">
+    Rica 的商品目錄、收購價、議價機制、世界掉落率與金錢來源。
+    [查看](./economy/)
+  </Card>
+  <Card title={`世界地圖 ${mapLabels.length} 個地點`} icon="seti:config">
+    大陸、城市、海域、島嶼的座標,以及地城入口位置。
+    [查看](./map/)
+  </Card>
+</CardGrid>
+
+## 資料怎麼來的
+
+`scripts/sync-gamedata.mjs` 從上游 repo 抓 `data-src/*.csv`,存進本站的
+`src/data/game/`。網站建置時直接讀這些 CSV 產生表格。
+
+有兩件事是這裡做、而原始 CSV 沒有的:
+
+1. **補上推算值** —— 怪物的生命、命中加值、傷害骰在資料裡留空時代表
+   「不覆寫」,伺服器會依等級自動計算。直接顯示空白是錯的,
+   所以這裡照伺服器的公式補上,並標記哪些是推算的。
+2. **換算貨幣** —— 遊戲內部只存一個銅幣整數,
+   1 金 = 100 銀 = 10,000 銅 是顯示層的慣例。
+
+上游改了數值之後重跑一次同步腳本就會更新,不需要人工核對。

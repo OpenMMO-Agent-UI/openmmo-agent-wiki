@@ -1,0 +1,145 @@
+---
+title: 地城
+description: OpenMMO 地城的位置、樓層數、頭目與寶箱掉落規則。
+---
+
+import FilterTable from '../../../components/FilterTable.astro';
+import { dungeons, monsters, items, worldDrops } from '../../../lib/gamedata.js';
+import { dungeonNames, monsterName, itemName } from '../../../lib/zh.js';
+
+export const dungeonName = (d) => dungeonNames[d.id] ?? d.name;
+export const chestPool = (tier) => items.filter((i) => i.chestTier === tier);
+
+目前開放 **{dungeons.length} 座**地城。地城是**種子決定**的 —— 同一個入口每次進去
+結構都一樣,不會重新生成。
+
+## 地城列表
+
+<FilterTable
+  placeholder="搜尋地城…"
+  columns={[
+    { key: 'name', label: '名稱' },
+    { key: 'en', label: '遊戲內名稱' },
+    { key: 'tier', label: '階級', align: 'center' },
+    { key: 'floors', label: '樓層數', align: 'right' },
+    { key: 'boss', label: '頭目' },
+    { key: 'signature', label: '確定掉落' },
+    { key: 'coords', label: '座標' },
+  ]}
+  rows={dungeons.map((d) => ({
+    name: dungeonName(d),
+    en: d.name,
+    tier: `T${d.chestTier}`,
+    floors: `${d.floors} 層`,
+    boss: d.boss ? monsterName(d.boss) : '—',
+    signature: d.chestDrops ? itemName(d.chestDrops) : '—',
+    coords: `${d.x}, ${d.z}`,
+  }))}
+/>
+
+世界地圖會記錄你**已經發現過**的地城入口,所以第一次要自己找。
+
+## 頭目
+
+<FilterTable
+  placeholder="搜尋頭目…"
+  columns={[
+    { key: 'name', label: '頭目' },
+    { key: 'dungeon', label: '所在地城' },
+    { key: 'level', label: '等級', align: 'right' },
+    { key: 'hp', label: '生命', align: 'right' },
+    { key: 'guard', label: 'Guard', align: 'right' },
+    { key: 'atk', label: '命中加值', align: 'right' },
+    { key: 'dmg', label: '傷害', align: 'center' },
+    { key: 'drop', label: '確定掉落武器' },
+  ]}
+  rows={dungeons
+    .filter((d) => d.boss)
+    .map((d) => {
+      const m = monsters.find((x) => x.id === d.boss);
+      return {
+        name: monsterName(m.id),
+        dungeon: dungeonName(d),
+        level: m.level,
+        hp: m.healthEffective,
+        guard: m.guard,
+        atk: `+${m.attackBonusEffective}`,
+        dmg: m.damageRollEffective,
+        drop: m.weapon ? itemName(m.weapon) : '—',
+      };
+    })}
+/>
+
+**獸人督軍**的落差很大 —— 生命 120 是資料裡直接指定的(不是等級推算的 45),
+Guard 13、命中 +6、傷害 2d8。獸人巢穴有 10 層,建議先把皮甲一套湊齊再下去。
+
+## 寶箱掉落規則
+
+每座地城的寶箱掉落分三部分:
+
+1. **確定掉落(signature)** —— 每座地城固定給一件,就是上表的「確定掉落」欄。
+2. **獨立擲骰** —— 該階級池裡的其他裝備,每件各自用自己的機率擲一次。
+3. **低階補償** —— 階級比地城低的裝備各有額外 10% 機率,讓你在高階地城補齊漏掉的部位。
+
+金幣是 `深度 × 500 ~ 深度 × 1500`。
+
+設計目標是**平均約 5 次**湊齊該階級首次出現的部位。
+
+<FilterTable
+  placeholder="搜尋裝備…"
+  columns={[
+    { key: 'name', label: '裝備' },
+    { key: 'en', label: '遊戲內名稱' },
+    { key: 'tier', label: '寶箱階級', align: 'center' },
+    { key: 'chance', label: '掉落機率', align: 'right' },
+    { key: 'guard', label: 'Guard', align: 'right' },
+  ]}
+  rows={items
+    .filter((i) => i.chestTier)
+    .sort((a, b) => a.chestTier - b.chestTier || (b.guard ?? 0) - (a.guard ?? 0))
+    .map((i) => ({
+      name: itemName(i.id),
+      en: i.name,
+      tier: `T${i.chestTier}`,
+      chance: i.chestChance ? `${Math.round(i.chestChance * 100)}%` : '確定掉落',
+      guard: i.guard ?? '—',
+    }))}
+/>
+
+:::note[武器不會出現在寶箱裡]
+武器一律走「拿著那把武器的怪物掉落」的路線,所以看到怪物拿什麼就知道能打到什麼。
+寶箱只給防具和飾品。
+:::
+
+## 地城裡會遇到什麼
+
+<FilterTable
+  placeholder="搜尋怪物…"
+  columns={[
+    { key: 'name', label: '怪物' },
+    { key: 'level', label: '等級', align: 'right' },
+    { key: 'depth', label: '出現深度' },
+    { key: 'weight', label: '權重', align: 'right' },
+    { key: 'hp', label: '生命', align: 'right' },
+    { key: 'dmg', label: '傷害', align: 'center' },
+  ]}
+  rows={monsters
+    .filter((m) => m.dungeonMinDepth !== null)
+    .sort((a, b) => a.dungeonMinDepth - b.dungeonMinDepth || a.level - b.level)
+    .map((m) => ({
+      name: monsterName(m.id),
+      level: m.level,
+      depth: `${m.dungeonMinDepth} – ${m.dungeonMaxDepth} 層`,
+      weight: m.dungeonWeight,
+      hp: m.healthEffective,
+      dmg: m.damageRollEffective,
+    }))}
+/>
+
+## 地城裡的其他東西
+
+- **木桶與木箱可以打破** —— 點一下,角色會走過去揮一刀。寶箱不會被打破。
+- **寶箱要用開的** —— 點下去角色會走過去掀開蓋子,前方會掉出一堆錢幣,
+  撿起來直接進錢包(1–10 銅),不佔背包格。
+- **走廊有門** —— 走廊通進房間的開口有木製雙開門,點擊開啟。
+- **走廊和房間的牆不一樣** —— 房間是中世紀石磚,走廊是岩壁,可以用來辨認自己在哪。

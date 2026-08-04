@@ -1,0 +1,247 @@
+---
+title: 道具一覽
+description: OpenMMO 全部道具的數值表 —— 傷害、防禦、重量、價格與取得方式,直接來自遊戲資料。
+---
+
+import FilterTable from '../../../components/FilterTable.astro';
+import { items, merchants, worldDrops, monsters, formatCoins, sellPrice, averageRoll } from '../../../lib/gamedata.js';
+import { itemName, itemDescriptions, slotNames, materialNames, categoryNames, monsterName } from '../../../lib/zh.js';
+
+export const rica = merchants.find((m) => m.id === 'rica');
+export const dropChance = new Map(worldDrops.map((d) => [d.id, d.chance]));
+export const monsterWeapons = monsters.filter((m) => m.weapon);
+
+export const sources = (id) => {
+  const out = [];
+  if (rica.catalog.includes(id)) out.push('商店');
+  if (dropChance.has(id)) out.push(`世界掉落 ${(dropChance.get(id) * 100).toFixed(1)}%`);
+  const carriers = monsterWeapons.filter((m) => m.weapon === id);
+  for (const m of carriers) {
+    out.push(`${monsterName(m.id)} ${Math.round(m.weaponDropChance * 100)}%`);
+  }
+  const it = items.find((i) => i.id === id);
+  if (it?.chestTier) out.push(`寶箱 T${it.chestTier}${it.chestChance ? ` ${Math.round(it.chestChance * 100)}%` : ' 確定'}`);
+  if (it?.grillsInto) out.push('釣魚');
+  return out.length ? out.join('、') : '—';
+};
+
+export const zh = (i) => itemName(i.id);
+export const desc = (i) => itemDescriptions[i.id] ?? i.description;
+export const byId = (a, b) => a.id.localeCompare(b.id);
+
+全部 **{items.length} 件**道具,資料直接取自遊戲的 `data-src/items.csv`,
+與伺服器實際載入的內容一致。
+
+:::note[貨幣怎麼讀]
+遊戲內部只用一個銅幣整數計價,顯示時換算成 **1 金 (g) = 100 銀 (s) = 10,000 銅 (c)**。
+沒有標價的道具(如「磨損的」系列)商人**不會收購** —— 這是防止新手裝備被換成錢的設計。
+
+**賣出價**是把東西賣給商人 Rica 拿到的錢,固定為基準價的 **{rica.sellRatePercent}%**。
+買賣有價差,所以低買高賣賺不了錢。
+:::
+
+## 武器
+
+傷害以骰子表示,`1d8` 就是一顆八面骰。**平均**欄位方便直接比較強弱。
+
+<FilterTable
+  placeholder="搜尋武器…"
+  columns={[
+    { key: 'name', label: '名稱' },
+    { key: 'en', label: '遊戲內名稱' },
+    { key: 'dice', label: '傷害', align: 'center' },
+    { key: 'avg', label: '平均', align: 'right' },
+    { key: 'weight', label: '重量', align: 'right' },
+    { key: 'price', label: '商店價', align: 'right' },
+    { key: 'sell', label: '賣出價', align: 'right' },
+    { key: 'source', label: '取得方式' },
+  ]}
+  rows={items
+    .filter((i) => i.category === 'weapon')
+    .sort((a, b) => (averageRoll(b.dice) ?? 0) - (averageRoll(a.dice) ?? 0))
+    .map((i) => ({
+      name: zh(i),
+      en: i.name,
+      dice: i.dice ?? '—',
+      avg: averageRoll(i.dice)?.toFixed(1) ?? '—',
+      weight: `${i.weight} kg`,
+      price: formatCoins(i.basePrice),
+      sell: formatCoins(sellPrice(i.basePrice, rica.sellRatePercent)),
+      source: sources(i.id),
+    }))}
+/>
+
+## 防具
+
+**Guard** 是被攻擊時的命中門檻,數字越高越難被打中。全身裝備的 Guard 會累加。
+
+<FilterTable
+  placeholder="搜尋防具…"
+  columns={[
+    { key: 'name', label: '名稱' },
+    { key: 'en', label: '遊戲內名稱' },
+    { key: 'slot', label: '部位', align: 'center' },
+    { key: 'guard', label: 'Guard', align: 'right' },
+    { key: 'weight', label: '重量', align: 'right' },
+    { key: 'material', label: '材質', align: 'center' },
+    { key: 'price', label: '商店價', align: 'right' },
+    { key: 'sell', label: '賣出價', align: 'right' },
+    { key: 'source', label: '取得方式' },
+  ]}
+  rows={items
+    .filter((i) => i.category === 'armor')
+    .sort((a, b) => (b.guard ?? 0) - (a.guard ?? 0))
+    .map((i) => ({
+      name: zh(i),
+      en: i.name,
+      slot: slotNames[i.equipSlot] ?? i.equipSlot ?? '—',
+      guard: i.guard ?? '—',
+      weight: `${i.weight} kg`,
+      material: materialNames[i.material] ?? i.material ?? '—',
+      price: formatCoins(i.basePrice),
+      sell: formatCoins(sellPrice(i.basePrice, rica.sellRatePercent)),
+      source: sources(i.id),
+    }))}
+/>
+
+## 飾品
+
+<FilterTable
+  placeholder="搜尋飾品…"
+  columns={[
+    { key: 'name', label: '名稱' },
+    { key: 'en', label: '遊戲內名稱' },
+    { key: 'slot', label: '部位', align: 'center' },
+    { key: 'guard', label: 'Guard', align: 'right' },
+    { key: 'weight', label: '重量', align: 'right' },
+    { key: 'price', label: '商店價', align: 'right' },
+    { key: 'sell', label: '賣出價', align: 'right' },
+    { key: 'source', label: '取得方式' },
+  ]}
+  rows={items
+    .filter((i) => i.category === 'accessory')
+    .sort(byId)
+    .map((i) => ({
+      name: zh(i),
+      en: i.name,
+      slot: slotNames[i.equipSlot] ?? '—',
+      guard: i.guard ?? '—',
+      weight: `${i.weight} kg`,
+      price: formatCoins(i.basePrice),
+      sell: formatCoins(sellPrice(i.basePrice, rica.sellRatePercent)),
+      source: sources(i.id),
+    }))}
+/>
+
+金戒指與銀項鍊沒有任何效果,而且**目前沒有取得管道** —— 它們沒有指定寶箱階級,
+所以不在寶箱池裡,現存的都是舊規則時期流通下來的。
+
+## 消耗品與工具
+
+<FilterTable
+  placeholder="搜尋消耗品…"
+  columns={[
+    { key: 'name', label: '名稱' },
+    { key: 'en', label: '遊戲內名稱' },
+    { key: 'category', label: '分類', align: 'center' },
+    { key: 'effect', label: '效果' },
+    { key: 'weight', label: '重量', align: 'right' },
+    { key: 'price', label: '商店價', align: 'right' },
+    { key: 'source', label: '取得方式' },
+  ]}
+  rows={items
+    .filter((i) => ['healing_potion', 'return_scroll', 'enchant_scroll', 'party_summon_scroll', 'fishing_rod', 'campfire_kit', 'furniture', 'currency'].includes(i.category))
+    .sort(byId)
+    .map((i) => ({
+      name: zh(i),
+      en: i.name,
+      category: categoryNames[i.category] ?? i.category,
+      effect: desc(i),
+      weight: `${i.weight} kg`,
+      price: formatCoins(i.basePrice),
+      source: sources(i.id),
+    }))}
+/>
+
+治療藥水的回復量是 `6d4`,平均 15 點,上限是最大生命值 —— 滿血或倒地時喝不會浪費,
+會留在背包裡。
+
+## 食物
+
+完整的飽食度說明在[食物與飽食度](../food/)。
+
+<FilterTable
+  placeholder="搜尋食物…"
+  columns={[
+    { key: 'name', label: '名稱' },
+    { key: 'en', label: '遊戲內名稱' },
+    { key: 'nutrition', label: '飽食度', align: 'right' },
+    { key: 'weight', label: '重量', align: 'right' },
+    { key: 'price', label: '商店價', align: 'right' },
+    { key: 'perWeight', label: '每公斤飽食度', align: 'right' },
+    { key: 'source', label: '取得方式' },
+  ]}
+  rows={items
+    .filter((i) => i.category === 'food')
+    .sort((a, b) => (b.nutrition ?? 0) - (a.nutrition ?? 0))
+    .map((i) => ({
+      name: zh(i),
+      en: i.name,
+      nutrition: i.nutrition ?? '—',
+      weight: `${i.weight} kg`,
+      price: formatCoins(i.basePrice),
+      perWeight: i.nutrition && i.weight ? Math.round(i.nutrition / i.weight) : '—',
+      source: sources(i.id),
+    }))}
+/>
+
+## 釣獲物
+
+生魚可以直接吃(飽食度固定 40)但**有機率食物中毒**,烤過就安全了。
+詳見[釣魚](../fishing/)。
+
+<FilterTable
+  placeholder="搜尋釣獲物…"
+  columns={[
+    { key: 'name', label: '名稱' },
+    { key: 'en', label: '遊戲內名稱' },
+    { key: 'category', label: '分類', align: 'center' },
+    { key: 'weight', label: '重量', align: 'right' },
+    { key: 'price', label: '商店價', align: 'right' },
+    { key: 'grill', label: '燒烤後' },
+  ]}
+  rows={items
+    .filter((i) => ['fish', 'junk', 'coin_catch'].includes(i.category))
+    .sort((a, b) => (b.basePrice ?? 0) - (a.basePrice ?? 0))
+    .map((i) => ({
+      name: zh(i),
+      en: i.name,
+      category: categoryNames[i.category] ?? i.category,
+      weight: `${i.weight} kg`,
+      price: formatCoins(i.basePrice),
+      grill: i.grillsInto ? itemName(i.grillsInto) : '不可燒烤',
+    }))}
+/>
+
+## 道具說明文字
+
+遊戲內的完整說明,方便搜尋。
+
+<FilterTable
+  placeholder="搜尋道具名稱或說明…"
+  columns={[
+    { key: 'name', label: '名稱' },
+    { key: 'en', label: '遊戲內名稱' },
+    { key: 'category', label: '分類', align: 'center' },
+    { key: 'desc', label: '說明' },
+  ]}
+  rows={items
+    .slice()
+    .sort((a, b) => (categoryNames[a.category] ?? a.category).localeCompare(categoryNames[b.category] ?? b.category, 'zh-Hant') || a.id.localeCompare(b.id))
+    .map((i) => ({
+      name: zh(i),
+      en: i.name,
+      category: categoryNames[i.category] ?? i.category,
+      desc: desc(i),
+    }))}
+/>

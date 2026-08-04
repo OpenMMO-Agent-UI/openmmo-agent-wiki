@@ -1,0 +1,137 @@
+---
+title: 食物與飽食度
+description: 飽食度區間與效果、食物營養值對照,以及該帶什麼上路。
+---
+
+import FilterTable from '../../../components/FilterTable.astro';
+import { items, merchants, formatCoins } from '../../../lib/gamedata.js';
+import { itemName } from '../../../lib/zh.js';
+
+export const rica = merchants.find((m) => m.id === 'rica');
+export const foods = items.filter((i) => i.category === 'food');
+
+角色有一個 **飽食度(satiation)** 數值,範圍 0–1000,新角色從 **700** 開始。
+
+- **消耗**:上線期間每 **20 秒減 1**,換算下來遊戲一天消耗 540。**離線不會減少。**
+- **恢復**:吃東西增加該food的營養值,上限 1000。
+- **不會餓死**:歸零後就停在 0,只保留衰弱效果。沒有餓死也沒有噎死。
+  死亡重生時會重設為 300。
+
+遊戲一天 = 現實 3 小時。設計基準是**遊戲一天吃一餐**。
+
+## 狀態區間
+
+這套系統是用**增益**的方式設計的:基準線就是一般數值,吃飽了拿加成,
+只有極端狀態才有懲罰。
+
+| 狀態 | 區間 | 移動速度 | 攻擊速度 | 最大負重 | 生命自然回復 |
+|---|---|:---:|:---:|:---:|:---:|
+| 過飽 (Stuffed) | 851–1000 | — | — | — | — |
+| **飽足 (Well-Fed)** | **300–850** | **×1.1** | **×1.1** | **×1.15** | — |
+| 飢餓 (Hungry) | 100–300 | — | — | — | — |
+| 衰弱 (Weak) | 0–100 | ×0.75 | ×0.75 | ×0.6 | **停止** |
+
+**你大部分時間應該待在飽足區間** —— 怪物難度等平衡基準就是照這個狀態抓的。
+
+:::note[過飽不是懲罰,但也沒好處]
+在 800 以下吃東西,結果會被**壓在 850** —— 所以不會因為隨手吃個肉乾就掉出飽足區間,
+超出的部分只是浪費掉。只有在 **800 以上再吃**,超出部分才會真的進去變成過飽,
+消化後會降回飽足。1000 就吃不下了。
+:::
+
+負重倍率是乘在 `STR × 15` 上。飽足加成消失或進入衰弱導致超重時,
+**不會禁止你移動**,只會拒絕你撿新東西或買東西。
+
+## 食物一覽
+
+<FilterTable
+  placeholder="搜尋食物…"
+  columns={[
+    { key: 'name', label: '名稱' },
+    { key: 'en', label: '遊戲內名稱' },
+    { key: 'nutrition', label: '飽食度', align: 'right' },
+    { key: 'gameTime', label: '約可撐', align: 'right' },
+    { key: 'weight', label: '重量', align: 'right' },
+    { key: 'perWeight', label: '每公斤飽食度', align: 'right' },
+    { key: 'price', label: '商店價', align: 'right' },
+    { key: 'perCoin', label: '每銅幣飽食度', align: 'right' },
+    { key: 'source', label: '取得' },
+  ]}
+  rows={foods
+    .sort((a, b) => (b.nutrition ?? 0) - (a.nutrition ?? 0))
+    .map((i) => ({
+      name: itemName(i.id),
+      en: i.name,
+      nutrition: i.nutrition,
+      gameTime: `遊戲 ${(i.nutrition / 540 * 24).toFixed(1)} 小時`,
+      weight: `${i.weight} kg`,
+      perWeight: Math.round(i.nutrition / i.weight),
+      price: formatCoins(i.basePrice),
+      perCoin: i.basePrice ? (i.nutrition / i.basePrice).toFixed(1) : '—',
+      source: rica.catalog.includes(i.id) ? '商店' : '燒烤釣獲的魚',
+    }))}
+/>
+
+## 該帶什麼
+
+看上表的兩個效率欄位就能決定:
+
+- **每公斤飽食度** —— 背包有重量上限,長途出門看這欄。
+- **每銅幣飽食度** —— 錢不夠的時候看這欄。
+
+商店食物裡,**{(() => { const best = foods.filter(f => rica.catalog.includes(f.id)).sort((a,b) => (b.nutrition/b.weight) - (a.nutrition/a.weight))[0]; return itemName(best.id); })()}**
+的每公斤效率最高,
+**{(() => { const best = foods.filter(f => rica.catalog.includes(f.id) && f.basePrice).sort((a,b) => (b.nutrition/b.basePrice) - (a.nutrition/a.basePrice))[0]; return itemName(best.id); })()}**
+的每銅幣效率最高。
+
+烤過的魚普遍比商店食物划算 —— 但要先釣到、還要有營火。
+
+## 營火與燒烤
+
+**營火組**({formatCoins(items.find((i) => i.id === 'campfire_kit').basePrice)},
+{items.find((i) => i.id === 'campfire_kit').weight} kg)可以在野外生火,燃燒 **10 分鐘**。
+
+生魚烤過之後:沒有食物中毒風險、飽食度大幅提高、賣價也更高。
+
+<FilterTable
+  placeholder="搜尋…"
+  columns={[
+    { key: 'raw', label: '生魚' },
+    { key: 'rawNutrition', label: '生食飽食度', align: 'right' },
+    { key: 'rawRisk', label: '生食風險' },
+    { key: 'grilled', label: '烤過' },
+    { key: 'grilledNutrition', label: '飽食度', align: 'right' },
+    { key: 'gain', label: '提升', align: 'right' },
+  ]}
+  rows={items
+    .filter((i) => i.grillsInto)
+    .map((i) => {
+      const g = items.find((x) => x.id === i.grillsInto);
+      return {
+        raw: itemName(i.id),
+        rawNutrition: 40,
+        rawRisk: '可能食物中毒',
+        grilled: itemName(g.id),
+        grilledNutrition: g.nutrition,
+        gain: `×${(g.nutrition / 40).toFixed(1)}`,
+      };
+    })}
+/>
+
+食物**不會回復生命** —— 那是藥水的領域。但生魚例外,它同時保有治療效果
+(見[釣魚](../fishing/))。
+
+## 食物中毒
+
+吃生魚有機率中毒,持續 **5 分鐘**:
+
+| 影響 | 倍率 |
+|---|:---:|
+| 移動速度 | ×0.6 |
+| 攻擊速度 | ×0.6 |
+| 最大負重 | ×0.6 |
+| 飽食度消耗 | **4 倍速** |
+| 生命自然回復 | **停止** |
+
+這些和當下的飽食狀態**相乘**:飽足時移動是 ×0.66(1.1 × 0.6),衰弱時是 ×0.45。
+重複中毒只會刷新持續時間,不會疊加。**不會造成生命傷害** —— 遊戲的原則是不讓你死於飢餓。

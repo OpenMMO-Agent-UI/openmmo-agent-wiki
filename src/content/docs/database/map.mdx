@@ -1,0 +1,92 @@
+---
+title: 世界地圖與地名
+description: 大陸、城市、海域與島嶼的名稱與座標,以及地城入口位置。
+---
+
+import FilterTable from '../../../components/FilterTable.astro';
+import { mapLabels, dungeons } from '../../../lib/gamedata.js';
+import { mapKindNames, dungeonNames } from '../../../lib/zh.js';
+
+世界是**程序生成**的,大小 **32 公里 × 32 公里**,東西兩端相連(往東走會繞回西邊)。
+地形、河流、海岸線、生態區、道路網、以及道路跨河處的橋樑全部自動生成。
+
+地圖上共有 **{mapLabels.length} 個**命名地點。
+
+## 地名一覽
+
+座標是遊戲世界的 X / Z 值,可以對照世界地圖找位置。
+
+<FilterTable
+  placeholder="搜尋地名…"
+  columns={[
+    { key: 'name', label: '名稱' },
+    { key: 'kind', label: '類型', align: 'center' },
+    { key: 'x', label: 'X', align: 'right' },
+    { key: 'z', label: 'Z', align: 'right' },
+  ]}
+  rows={mapLabels
+    .slice()
+    .sort((a, b) => {
+      const order = ['continent', 'capital', 'city', 'town', 'sea', 'island'];
+      return order.indexOf(a.kind) - order.indexOf(b.kind) || a.name.localeCompare(b.name);
+    })
+    .map((l) => ({
+      name: l.name,
+      kind: mapKindNames[l.kind] ?? l.kind,
+      x: l.x,
+      z: l.z,
+    }))}
+/>
+
+## 分類統計
+
+<FilterTable
+  placeholder="搜尋類型…"
+  columns={[
+    { key: 'kind', label: '類型' },
+    { key: 'count', label: '數量', align: 'right' },
+    { key: 'names', label: '地點' },
+  ]}
+  rows={['continent', 'capital', 'city', 'town', 'sea', 'island'].map((kind) => ({
+    kind: mapKindNames[kind] ?? kind,
+    count: mapLabels.filter((l) => l.kind === kind).length,
+    names: mapLabels.filter((l) => l.kind === kind).map((l) => l.name).join('、'),
+  }))}
+/>
+
+## 地城入口
+
+<FilterTable
+  placeholder="搜尋地城…"
+  columns={[
+    { key: 'name', label: '地城' },
+    { key: 'x', label: 'X', align: 'right' },
+    { key: 'z', label: 'Z', align: 'right' },
+    { key: 'nearest', label: '最近的地點' },
+    { key: 'distance', label: '距離', align: 'right' },
+  ]}
+  rows={dungeons.map((d) => {
+    const nearest = mapLabels
+      .filter((l) => ['capital', 'city', 'town'].includes(l.kind))
+      .map((l) => ({ l, dist: Math.hypot(l.x - d.x, l.z - d.z) }))
+      .sort((a, b) => a.dist - b.dist)[0];
+    return {
+      name: dungeonNames[d.id] ?? d.name,
+      x: d.x,
+      z: d.z,
+      nearest: nearest ? nearest.l.name : '—',
+      distance: nearest ? `${Math.round(nearest.dist)} m` : '—',
+    };
+  })}
+/>
+
+兩座地城都在 **Aldermark** 附近 —— 這是目前的主要活動區域。
+世界地圖會記錄你**已經發現過**的地城入口,第一次還是要自己走到才會標上去。
+
+## 地形特徵
+
+- **河流**會刻出真實的河道,有分岔的支流,入海口形成三角洲。
+- **道路網**連接各個聚落,跨河處自動架橋。
+- **草與植被**會隨風擺動。
+- **海浪**用 Gerstner 波模擬,河流有流動的漣漪;淡水入海處會做混合過渡。
+- **城鎮**是禁止怪物生成的區域,可以安心停留。

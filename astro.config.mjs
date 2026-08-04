@@ -33,6 +33,19 @@ export default defineConfig({
           ],
         },
         {
+          label: '遊戲資料庫',
+          items: [
+            { label: '總覽', link: '/database/' },
+            { label: '道具一覽', link: '/database/items/' },
+            { label: '怪物圖鑑', link: '/database/monsters/' },
+            { label: '地城', link: '/database/dungeons/' },
+            { label: '釣魚', link: '/database/fishing/' },
+            { label: '食物與飽食度', link: '/database/food/' },
+            { label: '商店與經濟', link: '/database/economy/' },
+            { label: '世界地圖與地名', link: '/database/map/' },
+          ],
+        },
+        {
           label: '更新日誌',
           items: [
             { label: '總覽', link: '/updates/' },

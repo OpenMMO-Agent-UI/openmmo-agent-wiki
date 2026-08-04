@@ -1,0 +1,116 @@
+---
+title: 釣魚
+description: 魚種、稀有度、體型骰、獎盃門檻與釣魚等級解鎖條件。
+---
+
+import FilterTable from '../../../components/FilterTable.astro';
+import { items, merchants, formatCoins, sellPrice, averageRoll } from '../../../lib/gamedata.js';
+import { itemName, categoryNames } from '../../../lib/zh.js';
+
+export const rica = merchants.find((m) => m.id === 'rica');
+export const catchables = items.filter((i) => i.catchWeight !== null);
+export const fish = catchables.filter((i) => i.category === 'fish');
+
+裝備**釣竿**後對著水面拋竿即可。目前有 **{catchables.length} 種**釣獲物,
+其中 **{fish.length} 種**是魚,其餘是雜物與釣到的錢財。
+
+## 漁獲表
+
+`catchWeight` 是在釣魚等級 0 時的相對權重 —— 數字越大越常釣到。
+
+<FilterTable
+  placeholder="搜尋釣獲物…"
+  columns={[
+    { key: 'name', label: '名稱' },
+    { key: 'en', label: '遊戲內名稱' },
+    { key: 'tier', label: '稀有度', align: 'center' },
+    { key: 'weight', label: '權重', align: 'right' },
+    { key: 'minLevel', label: '需要等級', align: 'right' },
+    { key: 'size', label: '體型骰', align: 'center' },
+    { key: 'avgSize', label: '平均長度', align: 'right' },
+    { key: 'trophy', label: '獎盃門檻', align: 'right' },
+    { key: 'price', label: '售價', align: 'right' },
+  ]}
+  rows={catchables
+    .sort((a, b) => (b.rarityTier ?? 0) - (a.rarityTier ?? 0) || (b.catchWeight ?? 0) - (a.catchWeight ?? 0))
+    .map((i) => ({
+      name: itemName(i.id),
+      en: i.name,
+      tier: i.rarityTier === 0 ? '雜物' : `★${i.rarityTier}`,
+      weight: i.catchWeight,
+      minLevel: i.minFishingLevel ?? 0,
+      size: i.sizeDice ?? '—',
+      avgSize: averageRoll(i.sizeDice) ? `${averageRoll(i.sizeDice).toFixed(0)} cm` : '—',
+      trophy: i.trophyCm ? `${i.trophyCm} cm` : '—',
+      price: formatCoins(i.basePrice),
+    }))}
+/>
+
+## 機率怎麼算
+
+- **兩個獨立的池**:雜物固定佔抽選的 **20%**,不管你等級多高都不會變少。
+  所以再怎麼練也還是會釣到破靴子。
+- **技能加成是乘法**:魚的權重每升一級、每一點稀有度增加 **3%**。
+  這代表練等會拉近稀有魚的機率,但**永遠不會顛倒順序** —— 黃金鱘不會比鰷魚常見。
+- **等級門檻**:河鮭需要釣魚等級 **10**,黃金鱘需要 **20**。沒到等級就完全不會出現。
+
+## 體型與獎盃
+
+長度 = `體型骰` 的結果,再加一次 d20 的品質判定。**擲出天然 20 會讓體型翻倍**,
+而且對魚來說一定是獎盃。
+
+獎盃只是魚的概念 —— 擲到天然 20 的破舊靴子只是一隻很大的靴子,沒什麼好慶祝的。
+
+體型**不會存在道具上**,只出現在釣到當下的公告訊息裡。
+
+## 這樣賺錢划算嗎
+
+每次釣獲的期望**賣出**價值,等級 0 約 **8 銅**,練到等級 30 上限約 **24 銅**。
+對照一下:
+
+- 錢幣堆:1–10 銅
+- NPC 經濟的日薪:50 銀
+
+所以認真釣一小時大約是衛兵半天的薪水。**穩定的零用錢,不是印鈔機** ——
+這是刻意設計的,有契約測試把每次釣獲的期望值鎖在 5–25 銅之間,
+而且保證練等永遠不會讓你變窮、上限也不會超過等級 0 的 4 倍。
+
+黃金鱘是那個大獎:賣 {formatCoins(items.find((i) => i.id === 'golden_sturgeon').basePrice)},
+相當於一把哥布林短劍,但即使練到等級 30 上限也只佔約 1.7% 的抽選機率。
+
+## 魚可以吃,但別吃生的
+
+魚同時是**食物**和**治療道具**:
+
+<FilterTable
+  placeholder="搜尋魚…"
+  columns={[
+    { key: 'name', label: '生魚' },
+    { key: 'heal', label: '回復生命', align: 'center' },
+    { key: 'avgHeal', label: '平均', align: 'right' },
+    { key: 'grill', label: '燒烤後' },
+    { key: 'grillNutrition', label: '烤後飽食度', align: 'right' },
+    { key: 'grillPrice', label: '烤後售價', align: 'right' },
+  ]}
+  rows={fish.map((i) => {
+    const grilled = items.find((g) => g.id === i.grillsInto);
+    return {
+      name: itemName(i.id),
+      heal: i.dice ?? '—',
+      avgHeal: averageRoll(i.dice)?.toFixed(1) ?? '—',
+      grill: grilled ? itemName(grilled.id) : '—',
+      grillNutrition: grilled?.nutrition ?? '—',
+      grillPrice: formatCoins(grilled?.basePrice ?? null),
+    };
+  })}
+/>
+
+:::caution[生魚會食物中毒]
+生魚的飽食度固定 **40**(不分魚種),而且**有機率食物中毒**:
+5 分鐘內移動速度 ×0.6、攻擊速度 ×0.6、最大負重 ×0.6、飽食度消耗變 4 倍、
+生命自然回復停止。這些效果和當下狀態是**相乘**的 —— 就算吃飽了移動也只剩 ×0.66。
+
+生吃是應急手段,正解是**用營火烤過**。烤過的魚沒有中毒風險,飽食度也高得多。
+:::
+
+每一次釣獲都佔一個獨立背包格(不可堆疊),所以背包本身就是你的釣魚紀錄。
