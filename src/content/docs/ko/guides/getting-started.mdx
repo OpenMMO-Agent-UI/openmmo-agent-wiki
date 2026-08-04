@@ -1,0 +1,195 @@
+---
+title: 처음 시작하기
+description: 로그인부터 첫 몬스터를 잡기까지 — 시작 장비, 어디로 갈지, 뭘 살지, 뭘 피할지.
+---
+
+import FilterTable from '../../../../components/FilterTable.astro';
+import { items, itemsById, merchants, monsters, formatCoins } from '../../../../lib/gamedata.js';
+import { itemName, monsterName, className } from '../../../../lib/ko.js';
+import { monsterXp, hitChance, classes } from '../../../../lib/classes.js';
+
+export const rica = merchants.find((m) => m.id === 'rica');
+
+## 어떻게 시작하나
+
+두 가지 중 하나:
+
+- **브라우저** — [openmmo.to.nexus](https://openmmo.to.nexus)에 접속해 Google로
+  로그인. 아무것도 설치할 필요 없습니다.
+- **데스크톱 클라이언트** — [OpenMMO Agent 다운로드](../../client/download/).
+  다중 서버 프로필, 암호화된 키 보관, 그리고 **LLM이 캐릭터를 대신 움직이게 하고
+  옆에서 관전**하는 기능이 추가됩니다.
+
+## 캐릭터 만들기
+
+**클래스를 먼저 고르고 능력치를 굴립니다** — 클래스 보정이 주사위 결과 위에
+더해지므로 순서를 바꿀 수 없습니다.
+
+계정당 캐릭터는 최대 **3개**입니다. 입력할 것은 이름, 클래스, 성별.
+
+자세한 보정표와 공식은 [캐릭터와 능력치](../character/)에 있습니다. 핵심 세 가지:
+
+- **총합은 항상 72**입니다. 어떤 클래스를 골라도 같습니다. 클래스가 정하는 것은
+  배분 성향이지 총량이 아닙니다.
+- **맞아도 버티고 싶다면 생명 주사위 d10 클래스**: 기사, 야만인, 혈거인, 발키리.
+- **관광객은 생명 주사위가 d4**로 게임에서 가장 약합니다. 초보자에게는 권하지 않습니다.
+
+<FilterTable
+  placeholder="클래스 검색…"
+  columns={[
+    { key: 'zh', label: '클래스' },
+    { key: 'hd', label: '생명 주사위', align: 'center' },
+    { key: 'suit', label: '특징' },
+  ]}
+  rows={classes.map((c) => {
+    const a = c.adjust ?? c.variants.M;
+    const traits = [];
+    if (c.hitDie >= 10) traits.push('튼튼함');
+    if (a[1] >= 2) traits.push('잘 안 맞음');
+    if (a[0] >= 2) traits.push('높은 피해');
+    if (a[5] >= 2) traits.push('흥정에 강함');
+    if (c.hitDie <= 4) traits.push('매우 약함, 초보 비권장');
+    return { zh: className(c.id), hd: `d${c.hitDie}`, suit: traits.join(', ') || '무난함' };
+  })}
+/>
+
+## 시작 장비
+
+- **돈: 0** — 시작 자금이 없습니다. 첫 수입은 뭔가를 팔아서 만듭니다.
+- **무기: {itemName('worn_iron_sword')}**(1d6) — **가격이 없어서** 상인이 매입하지
+  않습니다. 캐릭터를 반복 생성해 시작 장비를 현금화하는 걸 막는 의도적 설계입니다.
+- **포만도: 700** — 든든함 구간이라 이동·공격 속도 ×1.1, 하중 ×1.15 버프가 있습니다.
+
+:::tip[「낡은」이 붙으면 팔 수 없습니다]
+게임에서 「낡은 / 타다 남은」(Worn) 이름이 붙은 물건은 전부 **현금화가 안 됩니다.**
+수치는 정품과 같거나 조금 낮을 뿐입니다. {itemName('worn_iron_sword')}은 1d6,
+정품 {itemName('iron_sword')}은 1d8입니다.
+:::
+
+## 첫 번째 목표: 첫 수입 만들기
+
+돈이 없으니 몬스터를 잡고 드랍품을 팔아야 합니다.
+
+**코볼트**부터 시작하세요 — 레벨 1, Guard 8이고 **반격형**이라 먼저 달려들지 않습니다.
+싸울지 말지 당신이 정할 수 있습니다.
+
+<FilterTable
+  placeholder="몬스터 검색…"
+  columns={[
+    { key: 'name', label: '몬스터' },
+    { key: 'level', label: '레벨', align: 'right' },
+    { key: 'hp', label: '체력', align: 'right' },
+    { key: 'guard', label: 'Guard', align: 'right' },
+    { key: 'hit', label: '내 명중률', align: 'right' },
+    { key: 'dmg', label: '적의 피해', align: 'center' },
+    { key: 'xp', label: 'XP', align: 'right' },
+    { key: 'drop', label: '드랍' },
+    { key: 'aggro', label: '선제공격?', align: 'center' },
+  ]}
+  rows={monsters.slice().sort((a, b) => a.level - b.level).map((m) => ({
+    name: monsterName(m.id),
+    level: m.level,
+    hp: m.healthEffective,
+    guard: m.guard,
+    hit: `${Math.round(hitChance(0, m.guard) * 100)}%`,
+    dmg: m.damageRollEffective,
+    xp: monsterXp(m.level, m.guard),
+    drop: m.weapon ? `${itemName(m.weapon)} ${Math.round(m.weaponDropChance * 100)}%` : '—',
+    aggro: m.behavior === 'timid' ? '아니오' : '예',
+  }))}
+/>
+
+「내 명중률」은 레벨 1, STR 10(보정 0) 기준입니다. STR이 높으면 더 좋아집니다.
+
+:::caution[레벨 1에 건드리면 안 되는 것]
+**스토커**는 선제공격은 하지 않지만 달리기 속도가 8.0입니다 —
+플레이어 기본 속도는 3.0이라 건드리면 **도망칠 수 없습니다.**
+**오크 워로드**는 오크 소굴 최하층에 있고 체력 120, 명중 +6, 피해 2d8입니다.
+레벨 1로는 승산이 없습니다.
+:::
+
+## 첫 쇼핑
+
+Rica가 파는 것들입니다. 초반 자금 기준 우선순위는 대략 이렇습니다:
+
+<FilterTable
+  placeholder="상품 검색…"
+  columns={[
+    { key: 'name', label: '상품' },
+    { key: 'price', label: '가격', align: 'right' },
+    { key: 'why', label: '왜 사야 하나' },
+  ]}
+  rows={[
+    { id: 'healing_potion', why: '6d4(평균 15) 회복. 체력이 가득하거나 쓰러졌을 때 마셔도 낭비되지 않고 남습니다' },
+    { id: 'bread', why: '상점 음식 중 포만도가 가장 높음. 하나로 게임 하루를 버팁니다' },
+    { id: 'torch', why: '밤과 던전의 조명. 가장 싼 필수품' },
+    { id: 'scroll_of_return', why: '즉시 귀환. 너무 멀리 갔거나 죽을 것 같을 때의 보험' },
+    { id: 'leather_pants', why: 'Guard +1. 납골당에서 30%로만 나오니 사는 편이 빠릅니다' },
+    { id: 'spear', why: '1d6. 시작 무기와 같은 급이지만 팔 수 있습니다' },
+    { id: 'fishing_rod', why: '낚시를 하려면 필요. 많지는 않아도 꾸준한 수입' },
+    { id: 'campfire_kit', why: '야외에서 불을 피워 생선을 굽습니다. 날생선은 식중독을 일으킵니다' },
+  ].map((r) => ({
+    name: itemName(r.id),
+    price: formatCoins(itemsById.get(r.id)?.basePrice ?? null),
+    why: r.why,
+  }))}
+/>
+
+Rica의 매입가는 기준가의 **{rica.sellRatePercent}%**라 싸게 사서 비싸게 파는 건
+성립하지 않습니다. 다만 그녀는 **LLM이 조종하는 NPC라 대화로 값을 깎을 수 있습니다** —
+좋은 이야기를 하거나 소문을 물어다 주면 실제로 할인해 줍니다.
+CHA가 높을수록 협상 여지가 넓습니다. 자세한 건 [상점과 경제](../../database/economy/).
+
+## 먹는 걸 잊지 마세요
+
+포만도는 700에서 시작해 **접속 중 20초마다 1씩** 줄어듭니다(오프라인에서는 안 줄어듦).
+**300 아래**로 떨어지면 든든함 버프를 잃고, **100 아래**면 쇠약에 들어갑니다:
+이동·공격 속도 ×0.75, 하중 ×0.6, **체력 자연 회복 완전 정지**.
+
+다행히 **굶어 죽지는 않습니다** — 0에서 멈춥니다. 하지만 쇠약 상태로 싸우면 매우 불리합니다.
+
+게임 하루(현실 3시간)에 540이 소모되고, 이는 빵 하나와 정확히 같습니다.
+**설계 기준이 하루 한 끼**입니다.
+
+전체 비교는 [음식과 포만도](../../database/food/)를 보세요.
+
+## 죽으면 어떻게 되나
+
+- **장비는 잃지 않습니다.**
+- 현재 레벨 구간 경험치의 **15%**를 잃습니다.
+- 깎인 결과가 현재 레벨의 시작치보다 낮아지면 **한 레벨 떨어집니다.**
+  다만 한 번 죽어서 두 레벨 이상 떨어지지는 않고, 레벨 1은 떨어지지 않습니다.
+- 부활하면 원점 `(0, 0, 0)`으로 돌아가고 체력이 가득 차며 포만도는 300으로 초기화됩니다.
+
+사망 비용이 크지는 않지만 공짜도 아닙니다. 자세한 건 [전투 시스템](../combat/).
+
+## 다음에 갈 곳
+
+1. **코볼트와 고블린을 잡아** 장비와 경험치를 모으고, 드랍한 무기를 Rica에게 파세요.
+2. **오래된 납골당**을 찾으세요 — 5층짜리 1티어 던전이고
+   {itemName('leather_helmet')}이 확정 드랍,
+   {itemName('leather_pants')}과 {itemName('leather_belt')}이 각각 30%입니다.
+   가죽 세트(Guard 합계 6)를 맞추세요.
+3. **오크 소굴**로 — 10층이고, 가죽 세트의 몸통·장갑·부츠와 철 부츠·철 투구를
+   채웁니다. 보스 오크 워로드가 {itemName('iron_sword')}(1d8)을 확정으로 주는데,
+   이건 상점에서 살 수 없습니다.
+
+두 던전 모두 **Aldermark** 근처입니다. 좌표와 거리는 [월드맵](../../database/map/)에 있습니다.
+
+:::note[던전은 고정입니다]
+던전은 시드로 결정되므로 **같은 입구는 들어갈 때마다 구조가 같습니다.**
+익숙해지면 그곳이 당신의 홈그라운드가 됩니다.
+월드맵은 이미 발견한 입구를 기록해주지만 처음에는 직접 찾아야 합니다.
+:::
+
+## 자주 걸려 넘어지는 것들
+
+- **명중은 초과여야 합니다** — d20 + 명중 보너스가 상대 Guard와 **같으면 빗나갑니다.**
+- **가방에 무게 제한이 있습니다**(STR × 15, 든든함이면 ×1.15). 초과해도 이동은
+  막히지 않지만 **새로 줍거나 살 수 없습니다.**
+- **바닥에 떨어진 물건은 누구나 주울 수 있습니다.** 층 단위로 구분되어 집 2층에서
+  떨어뜨린 물건은 2층에서만 주울 수 있습니다.
+- **날생선은 식중독을 일으킵니다** — 5분간 각종 수치 ×0.6에 회복 정지.
+  구워서 드세요.
+- **무기는 상자에서 나오지 않습니다.** 원하는 무기가 있으면 그 무기를 든 몬스터를
+  잡으세요.

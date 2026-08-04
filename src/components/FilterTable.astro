@@ -2,14 +2,21 @@
 // A table with a client-side text filter. Everything is rendered server-side,
 // so the full contents are in the HTML for Pagefind to index and for anyone
 // with JS disabled — the filter only hides rows that are already there.
-const { columns, rows, placeholder = '輸入關鍵字篩選…', caption } = Astro.props;
+const STRINGS = {
+  'zh-TW': { placeholder: '輸入關鍵字篩選…', unit: '筆' },
+  ko: { placeholder: '키워드로 필터…', unit: '개' },
+  en: { placeholder: 'Filter…', unit: '' },
+};
+const t = STRINGS[Astro.currentLocale] ?? STRINGS['zh-TW'];
+const { columns, rows, placeholder = t.placeholder, caption } = Astro.props;
+const unit = t.unit;
 const id = `ft-${Math.abs(JSON.stringify(columns).split('').reduce((h, c) => (h * 31 + c.charCodeAt(0)) | 0, 7))}-${rows.length}`;
 ---
 
 <div class="filter-table" data-filter-table={id}>
   <label class="filter-table__search">
     <input type="search" placeholder={placeholder} aria-label={placeholder} />
-    <span class="filter-table__count" data-total={rows.length}>{rows.length} 筆</span>
+    <span class="filter-table__count" data-total={rows.length} data-unit={unit}>{rows.length} {unit}</span>
   </label>
 
   <div class="filter-table__scroll">
@@ -67,6 +74,7 @@ const id = `ft-${Math.abs(JSON.stringify(columns).split('').reduce((h, c) => (h 
     const count = root.querySelector('.filter-table__count');
     const rows = Array.from(root.querySelectorAll('tbody tr'));
     const total = Number(count.dataset.total);
+    const unit = count.dataset.unit || '';
     const haystacks = rows.map((r) => r.textContent.toLowerCase());
 
     input.addEventListener('input', () => {
@@ -77,7 +85,7 @@ const id = `ft-${Math.abs(JSON.stringify(columns).split('').reduce((h, c) => (h 
         row.hidden = !match;
         if (match) shown++;
       });
-      count.textContent = shown === total ? `${total} 筆` : `${shown} / ${total} 筆`;
+      count.textContent = shown === total ? `${total} ${unit}` : `${shown} / ${total} ${unit}`;
     });
   });
 </script>

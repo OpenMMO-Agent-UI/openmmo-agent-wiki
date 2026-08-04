@@ -1,0 +1,163 @@
+---
+title: 상점과 경제
+description: Rica의 카탈로그, 매입가, 월드 드랍 확률, 그리고 흥정이 작동하는 방식.
+---
+
+import FilterTable from '../../../../components/FilterTable.astro';
+import { items, itemsById, merchants, npcs, worldDrops, formatCoins, sellPrice } from '../../../../lib/gamedata.js';
+import { itemName, categoryNames } from '../../../../lib/ko.js';
+
+export const rica = merchants.find((m) => m.id === 'rica');
+export const karl = npcs.find((n) => n.id === 'karl');
+
+## 화폐
+
+화폐는 한 종류뿐이고 서버는 동화 정수 하나로 저장합니다. 표시할 때 환산합니다:
+
+**1골드(g) = 100실버(s) = 10,000동화(c)**
+
+새 캐릭터는 **시작 자금이 없습니다.** 첫 수입은 몬스터 드랍을 팔아서 만듭니다.
+시작 무기는 **{itemName('worn_iron_sword')}**이고 의도적으로 **가격이 없습니다** —
+상인이 매입하지 않으므로 캐릭터를 반복 생성해 현금화하는 짓이 막힙니다.
+
+## Rica의 상품
+
+Rica는 {rica.catalog.length}종을 팔고, 매입가는 기준가의 **{rica.sellRatePercent}%**입니다.
+
+<FilterTable
+  placeholder="상품 검색…"
+  columns={[
+    { key: 'name', label: '상품' },
+    { key: 'en', label: '게임 내 이름' },
+    { key: 'category', label: '분류', align: 'center' },
+    { key: 'buy', label: '구매가', align: 'right' },
+    { key: 'sell', label: '되팔기', align: 'right' },
+    { key: 'weight', label: '무게', align: 'right' },
+  ]}
+  rows={rica.catalog.map((id) => {
+    const i = itemsById.get(id);
+    return {
+      name: itemName(id), en: i?.name ?? id,
+      category: categoryNames[i?.category] ?? i?.category ?? '—',
+      buy: formatCoins(i?.basePrice ?? null),
+      sell: formatCoins(sellPrice(i?.basePrice ?? null, rica.sellRatePercent)),
+      weight: i ? `${i.weight} kg` : '—',
+    };
+  })}
+/>
+
+상점 품목은 **의도적으로 최소한**입니다. 설계 원칙은 「1티어 던전에서 확정으로
+나오지 않는 부위만 판다」 — 확률 굴림에 계속 실패한 사람을 위한 보험이 목적입니다.
+확정 드랍은 보험이 필요 없고, 상위 티어 부위는 파밍 루프를 지켜야 하니 팔지 않습니다.
+
+그래서 **{itemName('leather_helmet')}**(오래된 납골당의 확정 드랍)이나
+**{itemName('iron_sword')}** 같은 것은 **상점에 없습니다**.
+
+### 잘못 팔았으면 되살 수 있습니다
+
+상인에게 판 물건은 최근 **10개**까지 받은 금액 그대로 되살 수 있습니다.
+실수로 판 것을 되돌리기 위한 장치이고, 왕복이 골드 중립이라 가격 구조에 영향이
+없습니다(흥정으로 비싸게 판 물건은 되사기도 그만큼 비쌉니다).
+
+목록은 「캐릭터 × 상인」별로 보관되며 재접속해도 남고 시간 제한도 없지만,
+**서버가 재시작되면 사라집니다.**
+
+## 흥정
+
+Rica는 LLM이 조종하는 NPC라 **대화로 값을 깎을 수 있습니다.**
+다만 가격 보호는 전부 서버가 합니다:
+
+1. 서버가 먼저 가격대 `[최저가, 최고가]`를 계산합니다. 기준가, 스프레드,
+   **CHA 보정**으로 결정됩니다.
+2. LLM은 그 범위 안에서 조정폭만 고를 수 있고, 절대 가격을 정할 수 없습니다.
+   범위를 벗어나면 잘리거나 거부됩니다.
+3. 서버가 **차익이 절대 생기지 않도록** 보장합니다 — 최대 할인 구매가가 항상
+   최고 판매가보다 높습니다.
+4. 일일 예산과 쿨다운이 있습니다: 상인은 게임 하루에 1골드, 플레이어당 40실버,
+   흥정 쿨다운 **30초**, 성사된 할인은 **1회용이고 5분 뒤 만료**됩니다.
+
+CHA가 높을수록 서버가 주는 가격대가 넓어집니다(대략 ±5~25%p) —
+매력이 높은 캐릭터는 실제로 값을 잘 깎습니다.
+
+:::tip
+좋은 이야기, 소문, 적당한 아부에 Rica는 실제로 할인을 해줍니다.
+반대로 무례하게 굴면 **할증**될 수도 있습니다 — 대칭적이고, 그녀의 페르소나에
+맞는 반응입니다.
+:::
+
+## 상인이 아닌 NPC
+
+거래는 상인만 하는 게 아닙니다. 경비병 **Karl**은 자기 위시리스트가 있고
+**기준가의 {karl.wishlistRatePercent}%**로 사줍니다:
+
+<FilterTable
+  placeholder="검색…"
+  columns={[
+    { key: 'npc', label: 'NPC' },
+    { key: 'wants', label: '원하는 물건' },
+    { key: 'rate', label: '매입률', align: 'right' },
+    { key: 'value', label: '실제 금액', align: 'right' },
+    { key: 'ricaSell', label: 'Rica에게 팔면', align: 'right' },
+  ]}
+  rows={karl.wishlist.map((id) => {
+    const i = itemsById.get(id);
+    return {
+      npc: karl.npcName, wants: itemName(id),
+      rate: `${karl.wishlistRatePercent}%`,
+      value: formatCoins(i?.basePrice ? Math.floor(i.basePrice * karl.wishlistRatePercent / 100) : null),
+      ricaSell: formatCoins(sellPrice(i?.basePrice ?? null, rica.sellRatePercent)),
+    };
+  })}
+/>
+
+**Rica에게 사서 Karl에게 팔면 이득입니다** — 의도적으로 남겨둔 콘텐츠이고,
+사실상 자연 발생하는 배달 퀘스트입니다. 규모는 Karl의 지갑 상한
+({formatCoins(karl.walletCap)})에 막혀 폭주하지 않습니다.
+그의 돈은 게임 하루당 {formatCoins(karl.salaryPerDay)}의 급여에서 나오고,
+상한까지 차면 지급이 멈춥니다.
+
+주의할 점은 **위시리스트가 충족되지 않았을 때만 산다는 것**입니다 —
+가방에 이미 있는 물건은 더 이상 원하지 않습니다.
+
+## 월드 드랍
+
+몬스터를 잡으면 들고 있던 무기 외에 이런 것들이 확률적으로 떨어집니다:
+
+<FilterTable
+  placeholder="드랍품 검색…"
+  columns={[
+    { key: 'name', label: '아이템' },
+    { key: 'en', label: '게임 내 이름' },
+    { key: 'chance', label: '드랍률', align: 'right' },
+    { key: 'expected', label: '평균 몇 마리당', align: 'right' },
+    { key: 'value', label: '판매가', align: 'right' },
+  ]}
+  rows={worldDrops.sort((a, b) => b.chance - a.chance).map((d) => {
+    const i = itemsById.get(d.id);
+    return {
+      name: itemName(d.id), en: i?.name ?? d.id,
+      chance: `${(d.chance * 100).toFixed(1)}%`,
+      expected: `${Math.round(1 / d.chance)}마리`,
+      value: formatCoins(sellPrice(i?.basePrice ?? null, rica.sellRatePercent)),
+    };
+  })}
+/>
+
+**{itemName('iron_sword')}**은 월드 드랍률 1%로, 오크 워로드를 잡는 것 말고
+또 하나의 경로입니다 — 다만 기댓값으로 100마리를 잡아야 합니다.
+
+## 돈은 어디서 나오나
+
+골드 유입은 의도적으로 통제되어 있습니다. 반복 가능한 출처는 셋뿐입니다:
+
+| 출처 | 금액 |
+|---|---|
+| 동전 무더기(던전 상자) | 1–10동화 |
+| 던전 상자 골드 | 깊이 × 500 ~ 깊이 × 1500 |
+| 낚시 | 한 번에 기대 8–24동화 |
+
+NPC 경비병의 일급이 {formatCoins(karl.salaryPerDay)}인 것과 비교해 보세요.
+
+몬스터가 떨구는 무기는 **대부분 판매 불가인 「낡은」 버전**입니다 —
+상위 무기가 일반 몬스터에게서 꾸준히 현금화되면 인쇄기가 되기 때문입니다.
+무기를 든 일반 몬스터의 드랍률은 10%이고, 확정 드랍은 보스뿐입니다.

@@ -1,0 +1,225 @@
+// Korean names for game content. Same export shape as zh.js — the Korean
+// pages import this instead. The game itself is English, so every table still
+// shows the English name beside the translation.
+
+export const itemNames = {
+  iron_sword: '철검',
+  worn_iron_sword: '낡은 철검',
+  dagger: '단검',
+  goblin_sword: '고블린 검',
+  small_sword: '작은 검',
+  spear: '창',
+  torch: '횃불',
+  worn_torch: '타다 남은 횃불',
+  wooden_shield: '나무 방패',
+  raven_shield: '까마귀 방패',
+  leather_helmet: '가죽 투구',
+  iron_helmet: '철 투구',
+  plate_helmet: '판금 투구',
+  leather_armor: '가죽 갑옷',
+  chain_mail: '체인 메일',
+  breastplate: '흉갑',
+  leather_pants: '가죽 바지',
+  plate_greaves: '판금 그리브',
+  leather_boots: '가죽 부츠',
+  iron_boots: '철 부츠',
+  plate_boots: '판금 부츠',
+  leather_gloves: '가죽 장갑',
+  iron_gauntlets: '철 건틀릿',
+  plate_gauntlets: '판금 건틀릿',
+  ring_of_protection: '보호의 반지',
+  gold_ring: '금반지',
+  silver_necklace: '은목걸이',
+  leather_belt: '가죽 벨트',
+  coin_pile: '동전 무더기',
+  healing_potion: '치유 물약',
+  scroll_of_return: '귀환 주문서',
+  scroll_of_enchant_weapon: '무기 강화 주문서',
+  scroll_of_party_summon: '파티 소환 주문서',
+  table: '탁자',
+  fishing_rod: '낚싯대',
+  raw_minnow: '생 피라미',
+  raw_perch: '생 농어',
+  raw_trout: '생 송어',
+  river_salmon: '강 연어',
+  golden_sturgeon: '황금 철갑상어',
+  old_boot: '낡은 장화',
+  clump_of_kelp: '켈프 뭉치',
+  message_in_a_bottle: '유리병 편지',
+  sunken_coin_pouch: '가라앉은 돈주머니',
+  apple: '사과',
+  bread: '빵',
+  cheese: '치즈',
+  jerky: '육포',
+  grilled_minnow: '구운 피라미',
+  grilled_perch: '구운 농어',
+  grilled_trout: '구운 송어',
+  grilled_salmon: '구운 연어',
+  grilled_sturgeon: '구운 철갑상어',
+  campfire_kit: '모닥불 키트',
+};
+
+export const itemDescriptions = {
+  iron_sword: '튼튼한 철제 장검.',
+  worn_iron_sword: '오래 쓴 철제 장검. 상인은 사주지 않는다.',
+  dagger: '작지만 날카로운 단검.',
+  goblin_sword: '고블린과 오크가 즐겨 쓰는 조잡한 단검.',
+  small_sword: '작은 체구의 전사를 위한 짧은 조잡한 검.',
+  spear: '나무 자루에 철촉을 단 창.',
+  torch: '흔들리는 나무 횃불.',
+  worn_torch: '절반쯤 타버린 짧은 횃불. 상인은 사주지 않는다.',
+  wooden_shield: '둥근 나무 방패.',
+  raven_shield: '검은 까마귀 문장을 그린 둥근 나무 방패.',
+  leather_helmet: '단순한 가죽 투구.',
+  iron_helmet: '머리 전체를 감싸는 묵직한 철 투구.',
+  plate_helmet: '얼굴 가리개가 달린, 머리 전체를 감싸는 강철 투구.',
+  leather_armor: '가죽끈과 버클로 여민 부드러운 가죽 흉갑.',
+  chain_mail: '금속 고리를 엮어 만든 갑옷.',
+  breastplate: '광을 낸 강철 흉갑. 어지간한 공격은 튕겨낸다.',
+  leather_pants: '튼튼한 가죽 각반.',
+  plate_greaves: '다리를 보호하는 관절식 강철 그리브.',
+  leather_boots: '발소리가 적은 튼튼한 가죽 부츠.',
+  iron_boots: '묵직한 철 부츠.',
+  plate_boots: '발과 정강이를 덮는 겹친 강철판.',
+  leather_gloves: '그립이 좋은 부드러운 가죽 장갑.',
+  iron_gauntlets: '손과 손목을 보호하는 묵직한 철 건틀릿.',
+  plate_gauntlets: '손과 손목을 감싸는 관절식 강철 건틀릿.',
+  ring_of_protection: '십자 방패 문장이 새겨진 은반지. 공격을 빗나가게 한다.',
+  gold_ring: '수수한 금반지.',
+  silver_necklace: '섬세한 은사슬.',
+  leather_belt: '폭이 넓은 가죽 벨트.',
+  coin_pile: '흩어진 동화 한 무더기.',
+  healing_potion: '상처를 아물게 하고 활력을 되돌리는 진홍색 물약.',
+  scroll_of_return: '룬을 읽으면 빛과 함께 마을로 돌아간다.',
+  scroll_of_enchant_weapon: '손에 든 무기의 날을 벼리는 룬 — 욕심내어 거듭 읽으면 부서질 수 있다.',
+  scroll_of_party_summon: '룬을 읽으면 파티 전원을 곁으로 부른다 — 각자 응하거나 무시할 수 있다.',
+  table: '튼튼한 나무 탁자.',
+  fishing_rod: '말총 줄을 단 낭창한 나무 낚싯대. 물을 향해 던져 낚시한다.',
+  raw_minnow: '작은 은빛 물고기. 한 입 거리도 안 된다.',
+  raw_perch: '줄무늬가 있는 강 농어. 먹을 만하다.',
+  raw_trout: '점박이 송어. 낚시꾼이 인정하는 물고기.',
+  river_salmon: '힘 좋은 은빛 연어. 자랑할 만한 한 마리.',
+  golden_sturgeon: '왕국보다 오래된 강의 거인. 골판이 두들긴 금처럼 빛난다.',
+  old_boot: '물을 잔뜩 먹은 가죽 장화. 당신보다 더 안 좋은 하루를 보낸 사람이 있었다.',
+  clump_of_kelp: '바닥에서 건져 올린 미끈한 해초 뭉치.',
+  message_in_a_bottle: '쪽지가 든 밀봉된 병. 수집가라면 조금은 쳐줄지도.',
+  sunken_coin_pouch: '가라앉은 지갑. 동전 몇 닢이 남아 있다.',
+  apple: '아삭한 붉은 사과.',
+  bread: '갓 구운 빵 한 덩이.',
+  cheese: '단단한 치즈 한 조각. 길에서도 잘 상하지 않는다.',
+  jerky: '소금에 절여 말린 고기. 밀도가 높고 들고 다니기 좋다.',
+  grilled_minnow: '모닥불에 통째로 바삭하게 구운 작은 물고기.',
+  grilled_perch: '살이 부슬부슬해질 때까지 구운 줄무늬 농어.',
+  grilled_trout: '불향이 밴 점박이 송어.',
+  grilled_salmon: '직화에 구운 연어 필렛.',
+  grilled_sturgeon: '잉걸불에 구운 철갑상어의 최상급 부위.',
+  campfire_kit: '길에서 쓰도록 묶은 장작과 부싯깃. 10분간 탄다.',
+};
+
+export const monsterNames = {
+  scp939: '스토커',
+  kobold: '코볼트',
+  goblin: '고블린',
+  orc: '오크',
+  orc_female: '여성 오크',
+  orc_boss: '오크 워로드',
+  goblin_boss: '고블린 족장',
+};
+
+export const dungeonNames = {
+  old_crypt: '오래된 납골당',
+  orc_warrens: '오크 소굴',
+};
+
+export const categoryNames = {
+  weapon: '무기',
+  armor: '방어구',
+  accessory: '장신구',
+  food: '음식',
+  fish: '생선',
+  junk: '잡동사니',
+  coin_catch: '낚은 돈',
+  currency: '화폐',
+  healing_potion: '치유 물약',
+  return_scroll: '귀환 주문서',
+  enchant_scroll: '강화 주문서',
+  party_summon_scroll: '소환 주문서',
+  furniture: '가구',
+  fishing_rod: '낚시 도구',
+  campfire_kit: '모닥불',
+};
+
+export const slotNames = {
+  head: '머리',
+  main_hand: '주손',
+  off_hand: '보조손',
+  chest: '몸통',
+  hands: '손',
+  pants: '다리',
+  boots: '발',
+  belt: '벨트',
+  neck: '목',
+  ring: '반지',
+  ear: '귀',
+};
+
+export const materialNames = {
+  metal: '금속',
+  wood: '나무',
+  leather: '가죽',
+  flesh: '살점',
+};
+
+export const behaviorNames = {
+  brave: '선제공격',
+  timid: '반격형',
+};
+
+export const mapKindNames = {
+  continent: '대륙',
+  capital: '수도',
+  city: '도시',
+  town: '마을',
+  sea: '바다',
+  island: '섬',
+};
+
+export const itemName = (id) => itemNames[id] ?? id;
+export const monsterName = (id) => monsterNames[id] ?? id;
+
+export const classNames = {
+  barbarian: '야만인',
+  caveman: '혈거인',
+  knight: '기사',
+  valkyrie: '발키리',
+  ranger: '레인저',
+  samurai: '사무라이',
+  monk: '몽크',
+  priest: '사제',
+  archaeologist: '고고학자',
+  healer: '힐러',
+  rogue: '로그',
+  wizard: '위저드',
+  tourist: '관광객',
+  merchant: '상인',
+  guard: '경비병',
+};
+
+export const raceNames = {
+  Dwarf: '드워프',
+  Human: '인간',
+  Elf: '엘프',
+  Gnome: '노움',
+  Orc: '오크',
+};
+
+export const attributeNames = {
+  STR: '힘',
+  DEX: '민첩',
+  CON: '체질',
+  INT: '지능',
+  WIS: '지혜',
+  CHA: '매력',
+};
+
+export const className = (id) => classNames[id] ?? id;

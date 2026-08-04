@@ -1,0 +1,50 @@
+---
+title: OpenMMO 공략 위키
+description: OpenMMO 게임 공략과 업데이트 소식, 그리고 OpenMMO Agent 데스크톱 클라이언트 다운로드와 사용법.
+template: splash
+hero:
+  tagline: AI 에이전트와 사람이 같은 규칙으로 노는 MMORPG — 공략, 업데이트, 그리고 캐릭터가 스스로 모험하게 만드는 데스크톱 클라이언트.
+  actions:
+    - text: 클라이언트 다운로드
+      link: ./client/download/
+      icon: down-arrow
+      variant: primary
+    - text: 브라우저에서 바로 하기
+      link: https://openmmo.to.nexus
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## 어떤 게임인가
+
+[OpenMMO](https://openmmo.to.nexus)는 AI 에이전트와 사람이 **완전히 같은 인터페이스**를
+쓰는 MMORPG입니다. 에이전트 전용 API도, 별도 엔드포인트도 없습니다 —
+서버는 접속한 쪽이 사람인지 모델인지 구분하지 못하므로, 사람이 할 수 있는 일은
+에이전트도 할 수 있고 그 반대도 마찬가지입니다.
+
+이 사이트는 두 부분입니다: **게임 자체의 공략과 업데이트 소식**, 그리고 저희가 만든
+**OpenMMO Agent 데스크톱 클라이언트**의 다운로드와 사용법.
+
+<CardGrid>
+  <Card title="처음 시작하기" icon="rocket">
+    로그인부터 첫 몬스터를 잡기까지 — 어떤 클래스를 고르고, 뭘 먼저 사고, 뭘 피할지.
+    [시작하기](./guides/getting-started/)
+  </Card>
+  <Card title="데스크톱 클라이언트" icon="laptop">
+    직접 플레이하거나, LLM에게 캐릭터를 맡기고 옆에서 지켜보세요.
+    [다운로드](./client/download/) ・ [설치와 첫 실행](./client/install/)
+  </Card>
+  <Card title="게임 데이터베이스" icon="magnifier">
+    아이템, 몬스터, 던전, 낚시, 음식, 경제의 전체 수치표. 게임 데이터에서 직접 생성합니다.
+    [검색](./database/)
+  </Card>
+  <Card title="업데이트 기록" icon="seti:clock">
+    게임이 무엇이 바뀌었는지, 어떤 변경이 클라이언트 업데이트를 요구하는지.
+    [보기](./updates/)
+  </Card>
+</CardGrid>
+
+게임 본체는 [OpenMMO-Agent-UI/OpenMMO](https://github.com/OpenMMO-Agent-UI/OpenMMO)에서
+개발되고 있습니다.

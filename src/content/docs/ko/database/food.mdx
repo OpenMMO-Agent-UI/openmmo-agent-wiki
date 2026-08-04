@@ -1,0 +1,136 @@
+---
+title: 음식과 포만도
+description: 포만도 구간과 효과, 음식 효율 비교, 그리고 무엇을 들고 다닐지.
+---
+
+import FilterTable from '../../../../components/FilterTable.astro';
+import { items, merchants, formatCoins } from '../../../../lib/gamedata.js';
+import { itemName } from '../../../../lib/ko.js';
+
+export const rica = merchants.find((m) => m.id === 'rica');
+export const foods = items.filter((i) => i.category === 'food');
+
+캐릭터는 **포만도(satiation)** 수치를 갖습니다. 범위는 0–1000이고 새 캐릭터는
+**700**에서 시작합니다.
+
+- **감소**: 접속 중 **20초당 1**. **오프라인에서는 줄지 않습니다.**
+- **회복**: 음식을 먹으면 그 아이템의 영양값만큼. 1000이 상한.
+- **굶어 죽지 않습니다**: 0에서 멈추고 쇠약 효과만 유지됩니다.
+  사망 후 부활하면 300으로 초기화됩니다.
+
+게임 하루 = 현실 3시간. 설계 기준은 **게임 하루에 한 끼**입니다.
+
+## 상태 구간
+
+이 시스템은 **버프 프레이밍**으로 설계되었습니다. 기준선이 평범한 수치이고,
+잘 먹은 상태가 보너스를 받으며, 페널티는 극단에만 있습니다.
+
+| 상태 | 구간 | 이동 속도 | 공격 속도 | 최대 하중 | 체력 자연 회복 |
+|---|---|:---:|:---:|:---:|:---:|
+| 배부름 (Stuffed) | 851–1000 | — | — | — | — |
+| **든든함 (Well-Fed)** | **300–850** | **×1.1** | **×1.1** | **×1.15** | — |
+| 배고픔 (Hungry) | 100–300 | — | — | — | — |
+| 쇠약 (Weak) | 0–100 | ×0.75 | ×0.75 | ×0.6 | **정지** |
+
+**대부분의 시간을 든든함 구간에서 보내야 합니다** — 몬스터 난이도 같은 밸런스
+기준이 이 상태를 전제로 잡혀 있습니다.
+
+:::note[배부름은 페널티가 아니지만 이득도 없습니다]
+800 미만에서 먹으면 결과가 **850에서 잘립니다** — 육포 하나 먹었다고 든든함
+버프를 잃는 억울함이 없고, 초과분은 그냥 버려집니다.
+**800 이상에서 또 먹어야** 초과분이 실제로 들어가 배부름이 되고, 소화되면
+든든함으로 내려옵니다. 1000에서는 더 먹을 수 없습니다.
+:::
+
+하중 배수는 `STR × 15`에 곱해집니다. 든든함 버프가 풀리거나 쇠약이 되어 하중을
+초과하면 **이동을 막지는 않고**, 새로 줍거나 사는 것만 거부합니다.
+
+## 음식 목록
+
+<FilterTable
+  placeholder="음식 검색…"
+  columns={[
+    { key: 'name', label: '이름' },
+    { key: 'en', label: '게임 내 이름' },
+    { key: 'nutrition', label: '포만도', align: 'right' },
+    { key: 'gameTime', label: '버티는 시간', align: 'right' },
+    { key: 'weight', label: '무게', align: 'right' },
+    { key: 'perWeight', label: 'kg당 포만도', align: 'right' },
+    { key: 'price', label: '상점가', align: 'right' },
+    { key: 'perCoin', label: '동화당 포만도', align: 'right' },
+    { key: 'source', label: '획득' },
+  ]}
+  rows={foods.sort((a, b) => (b.nutrition ?? 0) - (a.nutrition ?? 0)).map((i) => ({
+    name: itemName(i.id), en: i.name,
+    nutrition: i.nutrition,
+    gameTime: `게임 ${(i.nutrition / 540 * 24).toFixed(1)}시간`,
+    weight: `${i.weight} kg`,
+    perWeight: Math.round(i.nutrition / i.weight),
+    price: formatCoins(i.basePrice),
+    perCoin: i.basePrice ? (i.nutrition / i.basePrice).toFixed(1) : '—',
+    source: rica.catalog.includes(i.id) ? '상점' : '낚은 생선 굽기',
+  }))}
+/>
+
+## 무엇을 들고 다닐까
+
+위 표의 효율 열 두 개로 결정하면 됩니다:
+
+- **kg당 포만도** — 가방에 무게 제한이 있으니 멀리 나갈 때는 이 열.
+- **동화당 포만도** — 돈이 빠듯할 때는 이 열.
+
+상점 음식 중에서는
+**{(() => { const b = foods.filter(f => rica.catalog.includes(f.id)).sort((a,b) => (b.nutrition/b.weight) - (a.nutrition/a.weight))[0]; return itemName(b.id); })()}**
+가 kg당 효율이 가장 좋고,
+**{(() => { const b = foods.filter(f => rica.catalog.includes(f.id) && f.basePrice).sort((a,b) => (b.nutrition/b.basePrice) - (a.nutrition/a.basePrice))[0]; return itemName(b.id); })()}**
+가 동화당 효율이 가장 좋습니다.
+
+구운 생선은 대체로 상점 음식보다 효율이 좋습니다 — 다만 먼저 낚아야 하고 모닥불도
+필요합니다.
+
+## 모닥불과 굽기
+
+**{itemName('campfire_kit')}**({formatCoins(items.find((i) => i.id === 'campfire_kit').basePrice)},
+{items.find((i) => i.id === 'campfire_kit').weight} kg)로 야외에서 불을 피울 수 있고
+**10분**간 탑니다.
+
+생선을 구우면 식중독 위험이 없어지고, 포만도가 크게 오르며, 판매가도 높아집니다.
+
+<FilterTable
+  placeholder="검색…"
+  columns={[
+    { key: 'raw', label: '생선' },
+    { key: 'rawNutrition', label: '날것 포만도', align: 'right' },
+    { key: 'rawRisk', label: '날것 위험' },
+    { key: 'grilled', label: '구운 것' },
+    { key: 'grilledNutrition', label: '포만도', align: 'right' },
+    { key: 'gain', label: '배율', align: 'right' },
+  ]}
+  rows={items.filter((i) => i.grillsInto).map((i) => {
+    const g = items.find((x) => x.id === i.grillsInto);
+    return {
+      raw: itemName(i.id), rawNutrition: 40, rawRisk: '식중독 가능',
+      grilled: itemName(g.id), grilledNutrition: g.nutrition,
+      gain: `×${(g.nutrition / 40).toFixed(1)}`,
+    };
+  })}
+/>
+
+음식은 **체력을 회복시키지 않습니다** — 그건 물약의 영역입니다.
+다만 생선은 예외로 치유 효과도 함께 갖습니다([낚시](../fishing/) 참고).
+
+## 식중독
+
+생선을 날로 먹으면 확률적으로 걸리며 **5분**간 지속됩니다:
+
+| 영향 | 배율 |
+|---|:---:|
+| 이동 속도 | ×0.6 |
+| 공격 속도 | ×0.6 |
+| 최대 하중 | ×0.6 |
+| 포만도 소모 | **4배속** |
+| 체력 자연 회복 | **정지** |
+
+현재 포만 상태와 **곱연산**됩니다: 든든함이어도 이동은 ×0.66(1.1 × 0.6),
+쇠약이면 ×0.45. 재감염은 지속시간만 갱신되고 중첩되지 않습니다.
+**체력 피해는 없습니다** — 굶주림으로 죽지 않는다는 원칙과 같은 맥락입니다.

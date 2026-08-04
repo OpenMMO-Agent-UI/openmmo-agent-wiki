@@ -1,0 +1,92 @@
+---
+title: 월드맵과 지명
+description: 대륙, 도시, 바다, 섬의 이름과 좌표, 그리고 던전 입구 위치.
+---
+
+import FilterTable from '../../../../components/FilterTable.astro';
+import { mapLabels, dungeons } from '../../../../lib/gamedata.js';
+import { mapKindNames, dungeonNames } from '../../../../lib/ko.js';
+
+세계는 **절차적으로 생성**되며 크기는 **32km × 32km**, 동서 양끝이 이어져 있습니다
+(동쪽으로 계속 가면 서쪽으로 돌아옵니다). 지형, 강, 해안선, 생물군계, 도로망,
+도로가 강을 건너는 곳의 다리까지 전부 자동 생성됩니다.
+
+지도에는 이름이 붙은 장소가 **{mapLabels.length}곳** 있습니다.
+
+## 지명 목록
+
+좌표는 게임 세계의 X / Z 값이며 월드맵과 대조해 위치를 찾을 수 있습니다.
+
+<FilterTable
+  placeholder="지명 검색…"
+  columns={[
+    { key: 'name', label: '이름' },
+    { key: 'kind', label: '종류', align: 'center' },
+    { key: 'x', label: 'X', align: 'right' },
+    { key: 'z', label: 'Z', align: 'right' },
+  ]}
+  rows={mapLabels
+    .slice()
+    .sort((a, b) => {
+      const order = ['continent', 'capital', 'city', 'town', 'sea', 'island'];
+      return order.indexOf(a.kind) - order.indexOf(b.kind) || a.name.localeCompare(b.name);
+    })
+    .map((l) => ({
+      name: l.name,
+      kind: mapKindNames[l.kind] ?? l.kind,
+      x: l.x, z: l.z,
+    }))}
+/>
+
+## 종류별 집계
+
+<FilterTable
+  placeholder="종류 검색…"
+  columns={[
+    { key: 'kind', label: '종류' },
+    { key: 'count', label: '개수', align: 'right' },
+    { key: 'names', label: '장소' },
+  ]}
+  rows={['continent', 'capital', 'city', 'town', 'sea', 'island'].map((kind) => ({
+    kind: mapKindNames[kind] ?? kind,
+    count: mapLabels.filter((l) => l.kind === kind).length,
+    names: mapLabels.filter((l) => l.kind === kind).map((l) => l.name).join(', '),
+  }))}
+/>
+
+## 던전 입구
+
+<FilterTable
+  placeholder="던전 검색…"
+  columns={[
+    { key: 'name', label: '던전' },
+    { key: 'x', label: 'X', align: 'right' },
+    { key: 'z', label: 'Z', align: 'right' },
+    { key: 'nearest', label: '가장 가까운 장소' },
+    { key: 'distance', label: '거리', align: 'right' },
+  ]}
+  rows={dungeons.map((d) => {
+    const nearest = mapLabels
+      .filter((l) => ['capital', 'city', 'town'].includes(l.kind))
+      .map((l) => ({ l, dist: Math.hypot(l.x - d.x, l.z - d.z) }))
+      .sort((a, b) => a.dist - b.dist)[0];
+    return {
+      name: dungeonNames[d.id] ?? d.name,
+      x: d.x, z: d.z,
+      nearest: nearest ? nearest.l.name : '—',
+      distance: nearest ? `${Math.round(nearest.dist)} m` : '—',
+    };
+  })}
+/>
+
+두 던전 모두 **Aldermark** 근처에 있습니다 — 현재의 주요 활동 지역입니다.
+월드맵은 **이미 발견한** 던전 입구를 기록해주지만, 처음에는 직접 걸어가야 표시됩니다.
+
+## 지형 특징
+
+- **강**은 실제 하도를 깎아내며 지류가 갈라지고, 하구에서 삼각주를 만듭니다.
+- **도로망**이 취락을 잇고, 강을 건너는 곳에는 다리가 자동으로 놓입니다.
+- **풀과 초목**이 바람에 흔들립니다.
+- **파도**는 Gerstner 파로 시뮬레이션되고, 강에는 흐르는 잔물결이 있습니다.
+  민물이 바다로 들어가는 곳은 자연스럽게 섞입니다.
+- **마을**은 몬스터가 생성되지 않는 구역이라 안심하고 머물 수 있습니다.

@@ -1,0 +1,243 @@
+---
+title: 아이템 목록
+description: OpenMMO 전체 아이템의 수치표 — 피해, 방어, 무게, 가격, 획득처. 게임 데이터에서 직접 생성.
+---
+
+import FilterTable from '../../../../components/FilterTable.astro';
+import { items, merchants, worldDrops, monsters, formatCoins, sellPrice, averageRoll } from '../../../../lib/gamedata.js';
+import { itemName, itemDescriptions, slotNames, materialNames, categoryNames, monsterName } from '../../../../lib/ko.js';
+
+export const rica = merchants.find((m) => m.id === 'rica');
+export const dropChance = new Map(worldDrops.map((d) => [d.id, d.chance]));
+export const monsterWeapons = monsters.filter((m) => m.weapon);
+
+export const sources = (id) => {
+  const out = [];
+  if (rica.catalog.includes(id)) out.push('상점');
+  if (dropChance.has(id)) out.push(`월드 드랍 ${(dropChance.get(id) * 100).toFixed(1)}%`);
+  for (const m of monsterWeapons.filter((m) => m.weapon === id)) {
+    out.push(`${monsterName(m.id)} ${Math.round(m.weaponDropChance * 100)}%`);
+  }
+  const it = items.find((i) => i.id === id);
+  if (it?.chestTier) out.push(`상자 T${it.chestTier}${it.chestChance ? ` ${Math.round(it.chestChance * 100)}%` : ' 확정'}`);
+  if (it?.grillsInto) out.push('낚시');
+  return out.length ? out.join(', ') : '—';
+};
+
+export const ko = (i) => itemName(i.id);
+export const desc = (i) => itemDescriptions[i.id] ?? i.description;
+export const byId = (a, b) => a.id.localeCompare(b.id);
+
+전체 **{items.length}종**의 아이템입니다. 게임의 `data-src/items.csv`에서 직접
+가져오므로 서버가 실제로 불러오는 내용과 일치합니다.
+
+:::note[화폐 읽는 법]
+게임 내부는 동화 정수 하나로만 계산하고, 표시할 때
+**1골드(g) = 100실버(s) = 10,000동화(c)**로 환산합니다.
+가격이 없는 아이템(「낡은」 계열)은 상인이 **매입하지 않습니다** —
+초보 장비를 현금화하지 못하게 막는 설계입니다.
+
+**판매가**는 상인 Rica에게 팔 때 받는 금액이며, 기준가의 **{rica.sellRatePercent}%**로
+고정입니다. 사고파는 데 차익이 있어 싸게 사서 비싸게 파는 건 성립하지 않습니다.
+:::
+
+## 무기
+
+피해는 주사위 표기입니다. `1d8`은 8면체 주사위 하나. **평균** 열로 바로 비교하세요.
+
+<FilterTable
+  placeholder="무기 검색…"
+  columns={[
+    { key: 'name', label: '이름' },
+    { key: 'en', label: '게임 내 이름' },
+    { key: 'dice', label: '피해', align: 'center' },
+    { key: 'avg', label: '평균', align: 'right' },
+    { key: 'weight', label: '무게', align: 'right' },
+    { key: 'price', label: '상점가', align: 'right' },
+    { key: 'sell', label: '판매가', align: 'right' },
+    { key: 'source', label: '획득처' },
+  ]}
+  rows={items
+    .filter((i) => i.category === 'weapon')
+    .sort((a, b) => (averageRoll(b.dice) ?? 0) - (averageRoll(a.dice) ?? 0))
+    .map((i) => ({
+      name: ko(i), en: i.name,
+      dice: i.dice ?? '—',
+      avg: averageRoll(i.dice)?.toFixed(1) ?? '—',
+      weight: `${i.weight} kg`,
+      price: formatCoins(i.basePrice),
+      sell: formatCoins(sellPrice(i.basePrice, rica.sellRatePercent)),
+      source: sources(i.id),
+    }))}
+/>
+
+## 방어구
+
+**Guard**는 공격받을 때의 명중 기준값이며, 높을수록 맞기 어렵습니다.
+착용한 장비의 Guard는 합산됩니다.
+
+<FilterTable
+  placeholder="방어구 검색…"
+  columns={[
+    { key: 'name', label: '이름' },
+    { key: 'en', label: '게임 내 이름' },
+    { key: 'slot', label: '부위', align: 'center' },
+    { key: 'guard', label: 'Guard', align: 'right' },
+    { key: 'weight', label: '무게', align: 'right' },
+    { key: 'material', label: '재질', align: 'center' },
+    { key: 'price', label: '상점가', align: 'right' },
+    { key: 'sell', label: '판매가', align: 'right' },
+    { key: 'source', label: '획득처' },
+  ]}
+  rows={items
+    .filter((i) => i.category === 'armor')
+    .sort((a, b) => (b.guard ?? 0) - (a.guard ?? 0))
+    .map((i) => ({
+      name: ko(i), en: i.name,
+      slot: slotNames[i.equipSlot] ?? i.equipSlot ?? '—',
+      guard: i.guard ?? '—',
+      weight: `${i.weight} kg`,
+      material: materialNames[i.material] ?? i.material ?? '—',
+      price: formatCoins(i.basePrice),
+      sell: formatCoins(sellPrice(i.basePrice, rica.sellRatePercent)),
+      source: sources(i.id),
+    }))}
+/>
+
+## 장신구
+
+<FilterTable
+  placeholder="장신구 검색…"
+  columns={[
+    { key: 'name', label: '이름' },
+    { key: 'en', label: '게임 내 이름' },
+    { key: 'slot', label: '부위', align: 'center' },
+    { key: 'guard', label: 'Guard', align: 'right' },
+    { key: 'weight', label: '무게', align: 'right' },
+    { key: 'price', label: '상점가', align: 'right' },
+    { key: 'sell', label: '판매가', align: 'right' },
+    { key: 'source', label: '획득처' },
+  ]}
+  rows={items
+    .filter((i) => i.category === 'accessory')
+    .sort(byId)
+    .map((i) => ({
+      name: ko(i), en: i.name,
+      slot: slotNames[i.equipSlot] ?? '—',
+      guard: i.guard ?? '—',
+      weight: `${i.weight} kg`,
+      price: formatCoins(i.basePrice),
+      sell: formatCoins(sellPrice(i.basePrice, rica.sellRatePercent)),
+      source: sources(i.id),
+    }))}
+/>
+
+금반지와 은목걸이는 아무 효과가 없고, **현재 획득 경로가 없습니다** —
+상자 티어가 지정되지 않아 풀에서 빠져 있고, 지금 남아 있는 것은 옛 규칙 시절에
+유통된 물량입니다.
+
+## 소모품과 도구
+
+<FilterTable
+  placeholder="소모품 검색…"
+  columns={[
+    { key: 'name', label: '이름' },
+    { key: 'en', label: '게임 내 이름' },
+    { key: 'category', label: '분류', align: 'center' },
+    { key: 'effect', label: '효과' },
+    { key: 'weight', label: '무게', align: 'right' },
+    { key: 'price', label: '상점가', align: 'right' },
+    { key: 'source', label: '획득처' },
+  ]}
+  rows={items
+    .filter((i) => ['healing_potion', 'return_scroll', 'enchant_scroll', 'party_summon_scroll', 'fishing_rod', 'campfire_kit', 'furniture', 'currency'].includes(i.category))
+    .sort(byId)
+    .map((i) => ({
+      name: ko(i), en: i.name,
+      category: categoryNames[i.category] ?? i.category,
+      effect: desc(i),
+      weight: `${i.weight} kg`,
+      price: formatCoins(i.basePrice),
+      source: sources(i.id),
+    }))}
+/>
+
+치유 물약의 회복량은 `6d4`(평균 15)이고 최대 체력이 상한입니다 —
+체력이 가득하거나 쓰러진 상태에서 마시면 낭비되지 않고 가방에 남습니다.
+
+## 음식
+
+포만도에 대한 자세한 설명은 [음식과 포만도](../food/)를 보세요.
+
+<FilterTable
+  placeholder="음식 검색…"
+  columns={[
+    { key: 'name', label: '이름' },
+    { key: 'en', label: '게임 내 이름' },
+    { key: 'nutrition', label: '포만도', align: 'right' },
+    { key: 'weight', label: '무게', align: 'right' },
+    { key: 'price', label: '상점가', align: 'right' },
+    { key: 'perWeight', label: 'kg당 포만도', align: 'right' },
+    { key: 'source', label: '획득처' },
+  ]}
+  rows={items
+    .filter((i) => i.category === 'food')
+    .sort((a, b) => (b.nutrition ?? 0) - (a.nutrition ?? 0))
+    .map((i) => ({
+      name: ko(i), en: i.name,
+      nutrition: i.nutrition ?? '—',
+      weight: `${i.weight} kg`,
+      price: formatCoins(i.basePrice),
+      perWeight: i.nutrition && i.weight ? Math.round(i.nutrition / i.weight) : '—',
+      source: sources(i.id),
+    }))}
+/>
+
+## 조과물
+
+생선은 그냥 먹을 수도 있지만(포만도 고정 40) **식중독 확률**이 있습니다.
+구우면 안전합니다. 자세한 내용은 [낚시](../fishing/).
+
+<FilterTable
+  placeholder="조과물 검색…"
+  columns={[
+    { key: 'name', label: '이름' },
+    { key: 'en', label: '게임 내 이름' },
+    { key: 'category', label: '분류', align: 'center' },
+    { key: 'weight', label: '무게', align: 'right' },
+    { key: 'price', label: '상점가', align: 'right' },
+    { key: 'grill', label: '구우면' },
+  ]}
+  rows={items
+    .filter((i) => ['fish', 'junk', 'coin_catch'].includes(i.category))
+    .sort((a, b) => (b.basePrice ?? 0) - (a.basePrice ?? 0))
+    .map((i) => ({
+      name: ko(i), en: i.name,
+      category: categoryNames[i.category] ?? i.category,
+      weight: `${i.weight} kg`,
+      price: formatCoins(i.basePrice),
+      grill: i.grillsInto ? itemName(i.grillsInto) : '구울 수 없음',
+    }))}
+/>
+
+## 아이템 설명문
+
+게임 내 설명 전문입니다. 검색용.
+
+<FilterTable
+  placeholder="아이템 이름이나 설명 검색…"
+  columns={[
+    { key: 'name', label: '이름' },
+    { key: 'en', label: '게임 내 이름' },
+    { key: 'category', label: '분류', align: 'center' },
+    { key: 'desc', label: '설명' },
+  ]}
+  rows={items
+    .slice()
+    .sort((a, b) => (categoryNames[a.category] ?? a.category).localeCompare(categoryNames[b.category] ?? b.category, 'ko') || a.id.localeCompare(b.id))
+    .map((i) => ({
+      name: ko(i), en: i.name,
+      category: categoryNames[i.category] ?? i.category,
+      desc: desc(i),
+    }))}
+/>

@@ -1,0 +1,123 @@
+---
+title: 낚시
+description: 어종, 희귀도, 크기 주사위, 트로피 기준과 레벨 해금 조건.
+---
+
+import FilterTable from '../../../../components/FilterTable.astro';
+import { items, merchants, formatCoins, averageRoll } from '../../../../lib/gamedata.js';
+import { itemName, categoryNames } from '../../../../lib/ko.js';
+
+export const catchables = items.filter((i) => i.catchWeight !== null);
+export const fish = catchables.filter((i) => i.category === 'fish');
+
+**낚싯대**를 장착하고 물을 향해 던지면 됩니다. 현재 **{catchables.length}종**의
+조과물이 있고 그중 **{fish.length}종**이 생선, 나머지는 잡동사니와 낚은 돈입니다.
+
+실제로 어떻게 낚는지(챔질, 파이팅 요령)는 [낚시 플레이](../../guides/fishing/)를 보세요.
+
+## 조과표
+
+`catchWeight`는 낚시 레벨 0에서의 상대 가중치입니다 — 클수록 자주 걸립니다.
+
+<FilterTable
+  placeholder="조과물 검색…"
+  columns={[
+    { key: 'name', label: '이름' },
+    { key: 'en', label: '게임 내 이름' },
+    { key: 'tier', label: '희귀도', align: 'center' },
+    { key: 'weight', label: '가중치', align: 'right' },
+    { key: 'minLevel', label: '필요 레벨', align: 'right' },
+    { key: 'size', label: '크기 주사위', align: 'center' },
+    { key: 'avgSize', label: '평균 길이', align: 'right' },
+    { key: 'trophy', label: '트로피 기준', align: 'right' },
+    { key: 'price', label: '판매가', align: 'right' },
+  ]}
+  rows={catchables
+    .sort((a, b) => (b.rarityTier ?? 0) - (a.rarityTier ?? 0) || (b.catchWeight ?? 0) - (a.catchWeight ?? 0))
+    .map((i) => ({
+      name: itemName(i.id), en: i.name,
+      tier: i.rarityTier === 0 ? '잡동사니' : `★${i.rarityTier}`,
+      weight: i.catchWeight,
+      minLevel: i.minFishingLevel ?? 0,
+      size: i.sizeDice ?? '—',
+      avgSize: averageRoll(i.sizeDice) ? `${averageRoll(i.sizeDice).toFixed(0)} cm` : '—',
+      trophy: i.trophyCm ? `${i.trophyCm} cm` : '—',
+      price: formatCoins(i.basePrice),
+    }))}
+/>
+
+## 확률은 어떻게 계산되나
+
+- **독립된 두 개의 풀**: 잡동사니가 추첨의 **20%**를 고정으로 가져갑니다.
+  레벨이 아무리 높아도 줄지 않으므로, 아무리 숙련돼도 낡은 장화는 계속 걸립니다.
+- **숙련 보정은 곱연산**: 생선의 가중치가 레벨당·희귀도 1당 **3%**씩 늘어납니다.
+  희귀한 물고기와의 격차를 좁히지만 **순서를 뒤집지는 못합니다** —
+  황금 철갑상어가 피라미보다 흔해지는 일은 없습니다.
+- **레벨 제한**: 강 연어는 낚시 레벨 **10**, 황금 철갑상어는 **20**이 필요합니다.
+  레벨이 안 되면 아예 나오지 않습니다.
+
+## 크기와 트로피
+
+길이 = `크기 주사위` 결과에 d20 품질 판정이 더해집니다.
+**자연 20이 나오면 크기가 두 배**가 되고, 생선이라면 무조건 트로피입니다.
+
+트로피는 생선만의 개념입니다 — 자연 20이 나온 낡은 장화는 그냥 아주 큰 장화일 뿐,
+축하할 일이 아닙니다.
+
+크기는 **아이템에 저장되지 않고**, 낚은 순간의 알림 메시지에만 나타납니다.
+
+## 돈벌이가 되나
+
+한 번 낚을 때의 기대 **판매** 가치는 레벨 0에서 약 **8동화**,
+레벨 30 상한에서 약 **24동화**입니다. 비교하자면:
+
+- 동전 무더기: 1–10동화
+- NPC 경제의 일급: 50실버
+
+즉 열심히 한 시간 낚으면 경비병 반나절 급여 정도입니다.
+**꾸준한 용돈이지 인쇄기가 아닙니다** — 의도된 설계이며, 한 번의 조과 기대값을
+5–25동화 사이로 묶는 계약 테스트가 있습니다. 숙련이 오히려 가난하게 만들지 않고,
+상한이 레벨 0의 4배를 넘지 않는 것도 함께 검증합니다.
+
+황금 철갑상어가 대박입니다:
+{formatCoins(items.find((i) => i.id === 'golden_sturgeon').basePrice)}로 고블린 검
+한 자루 값이지만, 레벨 30 상한에서도 추첨의 약 1.7%에 불과합니다.
+
+## 생선은 먹을 수 있지만 날로는 먹지 마세요
+
+생선은 **음식**이면서 동시에 **치유 아이템**입니다:
+
+<FilterTable
+  placeholder="생선 검색…"
+  columns={[
+    { key: 'name', label: '생선' },
+    { key: 'heal', label: '체력 회복', align: 'center' },
+    { key: 'avgHeal', label: '평균', align: 'right' },
+    { key: 'grill', label: '구우면' },
+    { key: 'grillNutrition', label: '구운 뒤 포만도', align: 'right' },
+    { key: 'grillPrice', label: '구운 뒤 판매가', align: 'right' },
+  ]}
+  rows={fish.map((i) => {
+    const g = items.find((x) => x.id === i.grillsInto);
+    return {
+      name: itemName(i.id),
+      heal: i.dice ?? '—',
+      avgHeal: averageRoll(i.dice)?.toFixed(1) ?? '—',
+      grill: g ? itemName(g.id) : '—',
+      grillNutrition: g?.nutrition ?? '—',
+      grillPrice: formatCoins(g?.basePrice ?? null),
+    };
+  })}
+/>
+
+:::caution[날생선은 식중독을 일으킵니다]
+날생선의 포만도는 어종과 무관하게 **40** 고정이고, **식중독 확률**이 있습니다:
+5분간 이동 속도 ×0.6, 공격 속도 ×0.6, 최대 하중 ×0.6, 포만도 소모 4배속,
+체력 자연 회복 정지. 현재 상태와 **곱연산**되므로 배가 불러도 이동은 ×0.66입니다.
+
+날로 먹는 건 비상수단이고, 정답은 **모닥불에 굽는 것**입니다.
+구운 생선은 중독 위험이 없고 포만도도 훨씬 높습니다.
+:::
+
+한 번의 조과는 각각 독립된 가방 칸을 차지하므로(스택 불가), 가방 자체가 조행 기록이
+됩니다.

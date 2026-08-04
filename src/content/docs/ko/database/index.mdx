@@ -1,0 +1,59 @@
+---
+title: 게임 데이터베이스
+description: OpenMMO의 아이템, 몬스터, 던전, 낚시, 음식, 경제, 지도 전체 수치표.
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import { items, monsters, dungeons, mapLabels } from '../../../../lib/gamedata.js';
+
+모든 수치는 게임의 원본 데이터 파일(`data-src/`)에서 직접 가져오므로 서버가 실제로
+불러오는 내용과 일치합니다 — 손으로 옮겨 적은 것이 아니라서 오타가 없고,
+업스트림이 수치를 바꾸면 동기화 한 번으로 갱신됩니다.
+
+<CardGrid>
+  <Card title={`아이템 ${items.length}종`} icon="seti:db">
+    무기, 방어구, 장신구, 소모품의 전체 수치: 피해 주사위, Guard, 무게, 가격, 획득처.
+    [보기](./items/)
+  </Card>
+  <Card title={`몬스터 ${monsters.length}종`} icon="seti:pipeline">
+    체력, Guard, 명중, 피해, 이동 속도, 추적 거리, 출현 심도, 드랍.
+    [보기](./monsters/)
+  </Card>
+  <Card title={`던전 ${dungeons.length}곳`} icon="seti:folder">
+    위치, 층수, 보스 수치, 상자 드랍 규칙과 티어별 장비 풀.
+    [보기](./dungeons/)
+  </Card>
+  <Card title="낚시" icon="seti:image">
+    조과표, 희귀도 가중치, 레벨 해금, 크기와 트로피 기준, 기대 수익.
+    [보기](./fishing/)
+  </Card>
+  <Card title="음식과 포만도" icon="seti:favicon">
+    포만도 구간과 버프, 음식 효율 비교, 모닥불 조리와 식중독.
+    [보기](./food/)
+  </Card>
+  <Card title="상점과 경제" icon="seti:shell">
+    Rica의 카탈로그, 매입가, 흥정 구조, 월드 드랍 확률, 골드 유입원.
+    [보기](./economy/)
+  </Card>
+  <Card title={`월드맵 ${mapLabels.length}곳`} icon="seti:config">
+    대륙, 도시, 바다, 섬의 좌표와 던전 입구 위치.
+    [보기](./map/)
+  </Card>
+</CardGrid>
+
+## 데이터는 어떻게 만들어지나
+
+`scripts/sync-gamedata.mjs`가 업스트림 저장소에서 `data-src/*.csv`를 받아
+이 사이트의 `src/data/game/`에 저장합니다. 사이트를 빌드할 때 그 CSV를 직접 읽어
+표를 만듭니다.
+
+원본 CSV에는 없는데 여기서 하는 일이 두 가지 있습니다:
+
+1. **유도값 채우기** — 몬스터의 체력, 명중 보너스, 피해 주사위는 데이터에서 비어
+   있으면 「덮어쓰지 않음」을 뜻하고, 서버가 레벨에서 계산합니다.
+   빈칸으로 보여주는 건 틀린 표시이므로 서버와 같은 공식으로 채우고,
+   어떤 값이 유도된 것인지 표시합니다.
+2. **화폐 환산** — 게임 내부는 동화 정수 하나만 저장하며,
+   1골드 = 100실버 = 10,000동화는 표시 계층의 관례입니다.
+
+업스트림이 수치를 바꾸면 동기화 스크립트를 다시 돌리는 것만으로 갱신됩니다.

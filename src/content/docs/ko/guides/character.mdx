@@ -1,0 +1,289 @@
+---
+title: 캐릭터와 능력치
+description: 여섯 능력치, 클래스 보정표, 종족 보너스, 그리고 Guard와 체력이 어떻게 정해지는지.
+---
+
+import FilterTable from '../../../../components/FilterTable.astro';
+import { classes, hiddenClasses, races, attributes, abilityModifier, guardFromDex, level1Hp, expectedHitDieGain } from '../../../../lib/classes.js';
+import { className, raceNames, attributeNames } from '../../../../lib/ko.js';
+
+캐릭터 생성은 **클래스를 먼저 고르고 능력치를 굴리는** 순서입니다.
+이 순서가 중요합니다 — 클래스 보정은 굴린 숫자 위에 더해지고, 그다음에 총합
+재조정이 일어나기 때문입니다.
+
+## 여섯 능력치
+
+범위는 모두 **3–18**입니다.
+
+<FilterTable
+  placeholder="능력치 검색…"
+  columns={[
+    { key: 'abbr', label: '약자', align: 'center' },
+    { key: 'ko', label: '이름' },
+    { key: 'en', label: '영문' },
+    { key: 'effect', label: '영향' },
+  ]}
+  rows={attributes.map((a) => ({
+    abbr: a.abbr,
+    ko: attributeNames[a.abbr] ?? a.zh,
+    en: a.en,
+    effect: {
+      STR: '근접 공격력과 명중, 장비 제한, 최대 하중(STR × 15)',
+      DEX: 'Guard(맞기 어려운 정도) 결정, 회피, 원거리 공격',
+      CON: '체력 보너스, 체력 자연 회복량',
+      INT: '마법 효과, 스킬',
+      WIS: '회복력, 저항력',
+      CHA: 'NPC 반응, 거래 흥정의 가격대 폭',
+    }[a.abbr],
+  }))}
+/>
+
+현재 실질적인 효과는 **STR / DEX / CON**에 집중되어 있습니다 —
+때릴 수 있는지, 맞는지, 오래 버티는지를 직접 결정합니다.
+INT와 WIS에 대응하는 마법·스킬 시스템은 아직 완전히 펼쳐지지 않았고,
+CHA는 **NPC와의 흥정 여지**에 실제로 영향을 줍니다.
+
+### 능력치 보정값
+
+많은 공식이 능력치 자체가 아니라 **보정값**을 씁니다:
+
+```
+보정값 = (능력치 - 10) / 2      ← 정수 나눗셈, 0 쪽으로 버림
+```
+
+<FilterTable
+  placeholder="능력치 값 입력…"
+  columns={[
+    { key: 'score', label: '능력치', align: 'right' },
+    { key: 'mod', label: '보정값', align: 'right' },
+  ]}
+  rows={Array.from({ length: 16 }, (_, n) => n + 3).map((score) => ({
+    score,
+    mod: abilityModifier(score) >= 0 ? `+${abilityModifier(score)}` : `${abilityModifier(score)}`,
+  }))}
+/>
+
+:::note[0 쪽으로 버림이지 내림이 아닙니다]
+음수 처리가 일반적인 `floor`와 다릅니다. 능력치 7의 보정값은
+`(7-10)/2 = -1.5` → **-1**이지 -2가 아닙니다. Rust 정수 나눗셈의 동작입니다.
+:::
+
+## 능력치는 어떻게 정해지나
+
+1. **클래스를 고릅니다.**
+2. **능력치마다 d6를 네 개 굴려 가장 낮은 하나를 빼고 셋을 더합니다.**
+   예: 3, 5, 2, 4 → 2를 빼고 3+5+4 = **12**
+3. **클래스 보정을 적용합니다**(아래 표).
+4. **여섯 능력치의 합을 72로 재조정합니다.** 모자라면 낮은 것을 올리고,
+   넘치면 높은 것을 내립니다. 전 과정에서 3–18 범위를 유지합니다.
+
+재조정이 클래스 보정 **다음에** 일어나므로 **총합은 언제나 72**입니다 —
+어떤 클래스도 보정으로 총점을 더 얻지 못합니다. 클래스가 정하는 것은
+**배분 성향**이지 총량이 아닙니다.
+
+## 클래스 보정표
+
+<FilterTable
+  placeholder="클래스 검색…"
+  columns={[
+    { key: 'ko', label: '클래스' },
+    { key: 'en', label: '영문' },
+    { key: 'gender', label: '성별', align: 'center' },
+    { key: 'str', label: 'STR', align: 'right' },
+    { key: 'dex', label: 'DEX', align: 'right' },
+    { key: 'con', label: 'CON', align: 'right' },
+    { key: 'int', label: 'INT', align: 'right' },
+    { key: 'wis', label: 'WIS', align: 'right' },
+    { key: 'cha', label: 'CHA', align: 'right' },
+    { key: 'hd', label: '생명 주사위', align: 'center' },
+  ]}
+  rows={classes.flatMap((c) => {
+    const sign = (n) => (n > 0 ? `+${n}` : `${n}`);
+    const row = (adjust, gender) => ({
+      ko: className(c.id), en: c.en, gender,
+      str: sign(adjust[0]), dex: sign(adjust[1]), con: sign(adjust[2]),
+      int: sign(adjust[3]), wis: sign(adjust[4]), cha: sign(adjust[5]),
+      hd: `d${c.hitDie}`,
+    });
+    return c.variants
+      ? [row(c.variants.M, '남'), row(c.variants.F, '여')]
+      : [row(c.adjust, '공통')];
+  })}
+/>
+
+**야만인, 혈거인, 기사**는 성별에 따라 보정이 다릅니다. 나머지는 남녀가 같습니다.
+
+### 어떻게 고를까
+
+- **버티고 싶다면** → 생명 주사위 d10 클래스(기사, 야만인, 혈거인, 발키리).
+- **안 맞고 싶다면** → DEX 보정이 높은 클래스. 로그의 +3이 게임 최고입니다.
+- **값을 깎고 싶다면** → CHA 보정이 높은 클래스. 관광객의 +2가 플레이어가 고를 수
+  있는 클래스 중 최고입니다. CHA가 높을수록 흥정 가격대가 넓어집니다.
+- **관광객은 조심하세요** — 생명 주사위가 d4로 게임에서 가장 약합니다.
+
+### NPC 전용 클래스
+
+플레이어는 고를 수 없습니다. 게임 속 NPC가 어떻게 구성되는지 참고용입니다:
+
+<FilterTable
+  placeholder="검색…"
+  columns={[
+    { key: 'ko', label: '클래스' },
+    { key: 'en', label: '영문' },
+    { key: 'who', label: '대표 NPC' },
+    { key: 'str', label: 'STR', align: 'right' },
+    { key: 'dex', label: 'DEX', align: 'right' },
+    { key: 'con', label: 'CON', align: 'right' },
+    { key: 'int', label: 'INT', align: 'right' },
+    { key: 'wis', label: 'WIS', align: 'right' },
+    { key: 'cha', label: 'CHA', align: 'right' },
+  ]}
+  rows={hiddenClasses.map((c) => {
+    const sign = (n) => (n > 0 ? `+${n}` : `${n}`);
+    return {
+      ko: className(c.id), en: c.en, who: c.who,
+      str: sign(c.adjust[0]), dex: sign(c.adjust[1]), con: sign(c.adjust[2]),
+      int: sign(c.adjust[3]), wis: sign(c.adjust[4]), cha: sign(c.adjust[5]),
+    };
+  })}
+/>
+
+상인의 CHA +3이 게임 최고입니다 — Rica가 상인인 이유입니다.
+
+## Guard — 얼마나 맞기 어려운가
+
+캐릭터 생성 시 **최종 DEX**(클래스 보정과 재조정을 마친 값)로 계산해 저장합니다:
+
+```
+Guard = clamp(10 + DEX 보정값, 1, 20)
+```
+
+<FilterTable
+  placeholder="DEX 입력…"
+  columns={[
+    { key: 'dex', label: 'DEX', align: 'right' },
+    { key: 'mod', label: '보정값', align: 'right' },
+    { key: 'guard', label: '기본 Guard', align: 'right' },
+  ]}
+  rows={Array.from({ length: 16 }, (_, n) => n + 3).map((dex) => ({
+    dex,
+    mod: abilityModifier(dex) >= 0 ? `+${abilityModifier(dex)}` : `${abilityModifier(dex)}`,
+    guard: guardFromDex(dex),
+  }))}
+/>
+
+실제 캐릭터의 Guard는 대략 **7–14**에 들어가고, 여기에 장비의 Guard가 더해집니다.
+기준점은 10이며 자세한 의미는 [전투 시스템](../combat/)을 보세요.
+
+## 체력
+
+레벨 1의 최대 체력:
+
+```
+최대 체력 = 생명 주사위 최댓값 + CON 보정값 + 종족 보너스
+```
+
+### 종족 보너스
+
+<FilterTable
+  placeholder="종족 검색…"
+  columns={[
+    { key: 'ko', label: '종족' },
+    { key: 'en', label: '영문' },
+    { key: 'bonus', label: '체력 보너스', align: 'right' },
+  ]}
+  rows={races.map((r) => ({ ko: raceNames[r.en] ?? r.zh, en: r.en, bonus: `+${r.hpBonus}` }))}
+/>
+
+### 레벨 1 체력 대조표
+
+가로가 CON, 세로가 클래스입니다(인간 +2 기준).
+
+<FilterTable
+  placeholder="클래스 검색…"
+  columns={[
+    { key: 'cls', label: '클래스' },
+    { key: 'hd', label: '생명 주사위', align: 'center' },
+    { key: 'con8', label: 'CON 8', align: 'right' },
+    { key: 'con10', label: 'CON 10', align: 'right' },
+    { key: 'con14', label: 'CON 14', align: 'right' },
+    { key: 'con18', label: 'CON 18', align: 'right' },
+  ]}
+  rows={classes.map((c) => ({
+    cls: className(c.id),
+    hd: `d${c.hitDie}`,
+    con8: level1Hp(c.hitDie, 8, 2),
+    con10: level1Hp(c.hitDie, 10, 2),
+    con14: level1Hp(c.hitDie, 14, 2),
+    con18: level1Hp(c.hitDie, 18, 2),
+  }))}
+/>
+
+드워프는 여기서 +2 더, 엘프/노움/오크는 1 적습니다.
+
+### 레벨업 시 체력 증가
+
+레벨 2부터, 레벨이 오를 때마다:
+
+```
+생명 주사위를 굴린다
+최소 절반은 보장(모자라면 절반으로 취급)
+거기에 CON 보정값을 더한다
+```
+
+그래서 기사(d10)가 3을 굴려도 5로 취급됩니다. **레벨당 기댓값**:
+
+<FilterTable
+  placeholder="생명 주사위 검색…"
+  columns={[
+    { key: 'hd', label: '생명 주사위', align: 'center' },
+    { key: 'classes', label: '클래스' },
+    { key: 'min', label: '최소', align: 'right' },
+    { key: 'expected', label: '기댓값', align: 'right' },
+    { key: 'max', label: '최대', align: 'right' },
+  ]}
+  rows={[10, 8, 6, 4].map((hd) => ({
+    hd: `d${hd}`,
+    classes: classes.filter((c) => c.hitDie === hd).map((c) => className(c.id)).join(', '),
+    min: hd / 2,
+    expected: expectedHitDieGain(hd).toFixed(2),
+    max: hd,
+  }))}
+/>
+
+표에는 CON 보정값이 아직 안 들어가 있습니다 — CON 14인 기사는 레벨당 기댓값이
+`6.5 + 2 = 8.5`입니다.
+
+## 체력 자연 회복
+
+**16초마다** 한 번 회복합니다(서버 기본 시간 틱이 8초, 두 틱에 한 번):
+
+```
+회복량 = max(1, 1 + floor(레벨 / 5) + CON 보정값)
+```
+
+회복하려면 **모든** 조건을 만족해야 합니다:
+
+- 살아 있을 것(체력 > 0)
+- 체력이 가득 차지 않았을 것
+- **전투에서 벗어난 지 10초 이상** — 마지막 공격 또는 피격 기준
+- **쇠약 또는 식중독 상태가 아닐 것** — 이 둘은 회복을 완전히 멈춥니다
+  ([음식과 포만도](../../database/food/))
+
+<FilterTable
+  placeholder="레벨 입력…"
+  columns={[
+    { key: 'level', label: '레벨', align: 'right' },
+    { key: 'con8', label: 'CON 8', align: 'right' },
+    { key: 'con10', label: 'CON 10', align: 'right' },
+    { key: 'con14', label: 'CON 14', align: 'right' },
+    { key: 'con18', label: 'CON 18', align: 'right' },
+  ]}
+  rows={[1, 5, 10, 15, 20, 25, 30].map((level) => {
+    const regen = (con) => Math.max(1, 1 + Math.floor(level / 5) + abilityModifier(con));
+    return { level, con8: `${regen(8)} HP`, con10: `${regen(10)} HP`, con14: `${regen(14)} HP`, con18: `${regen(18)} HP` };
+  })}
+/>
+
+단위는 16초당입니다. 레벨 30, CON 18인 캐릭터는 16초마다 11 회복 —
+분당 약 41입니다.

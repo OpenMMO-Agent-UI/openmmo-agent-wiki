@@ -1,0 +1,234 @@
+---
+title: 패널 기능 상세
+description: 서랍 여섯 개, 설정 탭 네 개, 그리고 모든 설정 항목의 기본값과 역할.
+---
+
+import FilterTable from '../../../../components/FilterTable.astro';
+
+이 페이지는 클라이언트 패널의 기능을 하나씩 풀어 설명합니다.
+빠르게 시작하는 것만 원한다면 [설치와 첫 실행](../install/)으로 충분합니다.
+
+## 헤더
+
+| 요소 | 역할 |
+|---|---|
+| 접속 상태 | 서버에 붙어 있는지 |
+| 체력과 상태 | 캐릭터의 실시간 수치 |
+| 관전 메모리 사용량 | 3D 관전 화면이 쓰는 메모리 |
+| 새로고침 | 3D 관전 화면 다시 불러오기(멈추거나 깨졌을 때) |
+| **Apply & restart** | **에이전트 실행 중에 설정을 바꿨을 때만 나타남.** 에이전트는 시작할 때 설정을 한 번만 읽으므로 반드시 눌러야 반영됨 |
+| 수동 / AI 전환 | 두 모드를 즉시 전환 |
+| 캐릭터 변경 / 서버 변경 | 앞 화면으로 되돌아감 |
+
+## 왼쪽 서랍 여섯 개
+
+### Equipment — 장비
+
+착용 중인 장비를 슬롯별로 표시합니다.
+
+:::note[장비는 왜 중계를 통해 보나]
+에이전트 자신의 패널 API는 **가방만 보고하고 착용 장비는 보고하지 않습니다.**
+그래서 이 서랍의 데이터는 중계가 본 인벤토리 프레임에서 복원한 것입니다 —
+`agent-client`를 직접 돌리면 볼 수 없는, 데스크톱 클라이언트가 더해주는 것 중
+하나입니다.
+:::
+
+### Bag — 가방
+
+소지품을 보여주는 동시에, **에이전트가 그 물건을 처분해도 되는지 표시**할 수
+있습니다:
+
+- **S(Sellable)** — 팔아도 됨
+- **D(Dropable)** — 버려도 됨
+
+체크한 뒤 **Apply labels**를 눌러야 전송됩니다(하나 누를 때마다 보내지 않고
+모아서 보냅니다).
+
+에이전트가 물건을 함부로 처분하지 못하게 막는 관문입니다 —
+힘들게 얻은 장비는 표시하지 않으면 건드리지 않습니다.
+
+### Personality & Memory — 성격과 기억
+
+두 부분입니다:
+
+- **Personality** — 이 캐릭터 전용 프롬프트. 공용 규칙 위에 얹힙니다. 편집 가능.
+  **에이전트 실행 중에 저장하면 에이전트가 재시작됩니다.**
+- **Memory** — 이 캐릭터가 무엇을 기억하는지. **에이전트가 직접 쓰며 읽기 전용.**
+
+Personality는 행동을 조형하는 곳이고(「너는 신중한 사냥꾼이다. 체력이 절반
+아래로 떨어지면 후퇴하라」), Memory는 에이전트가 스스로 쌓은 것입니다.
+
+### Coordinates — 좌표
+
+장소 북마크입니다. **Use current position**으로 현재 위치를 바로 기록하고
+이름을 붙여 저장할 수 있습니다.
+
+Dispatch와 함께 쓰면 좋습니다: 낚시터, 던전 입구, 상점 위치를 저장해두고
+에이전트를 그리로 보내세요.
+
+### Dispatch Presets — 지시 프리셋
+
+자주 쓰는 지시를 이름 붙여 저장해두고 한 번에 보냅니다. 매번 다시 칠 필요가 없습니다.
+
+프리셋마다 **이름**과 **보낼 프롬프트**를 갖습니다. 저장하면 Dispatch 입력창 옆에
+버튼으로 나타납니다.
+
+### Activity — 활동
+
+탭 두 개:
+
+- **Thoughts** — 주고받은 모든 프롬프트와 응답, 시각 포함.
+  **필터**, **Follow**(최신으로 자동 스크롤), **Clear**가 있습니다.
+- **Log** — 에이전트 프로세스 자체의 stdout / stderr.
+
+에이전트가 왜 그런 판단을 했는지 궁금하면 Thoughts, 왜 죽었는지 궁금하면 Log를 보세요.
+
+## Dispatch
+
+게임 화면 아래의 그 줄이 **실행 중인 에이전트에게 말을 거는 유일한 통로**입니다.
+
+한 줄 지시를 입력하면 캐릭터의 다음 턴에 참고됩니다 —
+**최선을 다할 뿐, 그대로 한다는 보장은 없습니다.**
+「명령」이 아니라 「귓속말」입니다. 제안은 하되 결정권은 모델에 있습니다.
+
+## Settings의 네 개 탭
+
+### LLM
+
+<FilterTable
+  placeholder="설정 검색…"
+  columns={[
+    { key: 'field', label: '항목' },
+    { key: 'default', label: '기본값' },
+    { key: 'note', label: '설명' },
+  ]}
+  rows={[
+    { field: 'Backend', default: 'Codex CLI', note: '네 가지 중 선택. 아래 백엔드 설명 참고' },
+    { field: 'Model', default: '백엔드마다 다름', note: '추천 목록이 있고 직접 입력도 가능' },
+    { field: 'Base URL', default: 'https://ollama.com/v1', note: 'OpenAI 호환 백엔드에서만 나타남' },
+    { field: 'API key', default: '—', note: 'HTTP 계열 백엔드만 필요. OS 키체인에 저장' },
+    { field: 'Reasoning effort', default: 'none', note: 'none / low / medium / high. 지원 모델에서만 작동' },
+    { field: 'Maximum tokens', default: '4096', note: '한 번의 응답 길이 상한' },
+    { field: 'Temperature', default: '0.7', note: '낮으면 일관적, 높으면 변화가 큼' },
+  ]}
+/>
+
+#### 네 가지 백엔드
+
+<FilterTable
+  placeholder="백엔드 검색…"
+  columns={[
+    { key: 'backend', label: '백엔드' },
+    { key: 'kind', label: '종류', align: 'center' },
+    { key: 'models', label: '기본 선택지' },
+    { key: 'note', label: '설명' },
+  ]}
+  rows={[
+    { backend: 'Codex CLI', kind: 'CLI', models: 'gpt-5.4-mini, gpt-5.4, o4-mini', note: '로컬에 로그인된 Codex CLI를 사용. 여기에 API 키를 넣을 필요 없음' },
+    { backend: 'Claude CLI', kind: 'CLI', models: 'sonnet, opus, haiku', note: '로컬에 로그인된 Claude CLI를 사용. 마찬가지로 키 불필요' },
+    { backend: 'OpenRouter', kind: 'HTTP', models: 'qwen/qwen3.7-flash 등', note: 'API 키 필요. 모델 선택은 앞 페이지 참고' },
+    { backend: 'OpenAI 호환', kind: 'HTTP', models: '직접 입력', note: 'OpenAI 호환 엔드포인트 아무거나. 기본값이 Ollama라 로컬 모델 연결 가능' },
+  ]}
+/>
+
+:::tip[Claude나 Codex CLI가 이미 있다면 API 키를 따로 발급받을 필요 없습니다]
+CLI 계열 백엔드는 로컬에 로그인된 CLI를 그대로 씁니다.
+:::
+
+:::tip[완전히 로컬로 돌리고 싶다면]
+**OpenAI 호환**을 고르고 Base URL에 Ollama 주소(기본값이 이미 Ollama 형식),
+Model에 로컬 모델 이름을 넣으세요. API 비용이 전혀 없고 데이터도 PC를 떠나지
+않습니다 — 대신 로컬 모델은 `qwen3.7-flash`보다 느린 경우가 많아 게임의 턴
+주기를 못 따라갈 수 있습니다.
+:::
+
+### Automatic play
+
+<FilterTable
+  placeholder="설정 검색…"
+  columns={[
+    { key: 'field', label: '항목' },
+    { key: 'default', label: '기본값' },
+    { key: 'note', label: '설명' },
+  ]}
+  rows={[
+    { field: 'Active response', default: '5초', note: '무슨 일이 있을 때의 응답 주기. 짧을수록 민감하지만 API 비용이 늘어남' },
+    { field: 'Quiet-world patrol', default: '8초', note: '주변에 아무 일도 없을 때의 응답 주기' },
+    { field: 'Continue adventuring while alone', default: '켜짐', note: '끄면 근처에 다른 플레이어가 없을 때 에이전트가 조용해짐 — 방치할 때 비용 절약용' },
+  ]}
+/>
+
+이 두 주기가 **비용을 좌우하는 주 항목**입니다. 아끼려면 둘 다 늘리거나
+「혼자일 때 계속 모험」을 끄세요.
+
+### Advanced
+
+<FilterTable
+  placeholder="설정 검색…"
+  columns={[
+    { key: 'field', label: '항목' },
+    { key: 'default', label: '기본값' },
+    { key: 'note', label: '설명' },
+  ]}
+  rows={[
+    { field: 'Active interval (s)', default: '5', note: '위 슬라이더의 원본 값' },
+    { field: 'Idle interval (s)', default: '8', note: '위와 동일' },
+    { field: 'Watch port', default: '8808', note: '로컬 관전 패널 포트. 다른 프로그램과 충돌할 때만 변경' },
+    { field: 'Log level', default: 'info', note: 'info / debug / warn. 문제를 신고하기 전에 debug로 올려두세요' },
+    { field: 'Concurrent LLM calls', default: '2', note: '동시에 보내는 요청 수' },
+    { field: 'Request timeout (s)', default: '120', note: '한 요청을 얼마나 기다릴지. 로컬 모델이 느리면 늘리세요' },
+  ]}
+/>
+
+### Actions — 행동 알림의 겉모습
+
+에이전트가 행동할 때마다 알림(toast)이 뜹니다. 이 탭에서 겉모습을 조정하며,
+**실시간 미리보기**가 있습니다.
+
+<FilterTable
+  placeholder="설정 검색…"
+  columns={[
+    { key: 'field', label: '항목' },
+    { key: 'default', label: '기본값' },
+  ]}
+  rows={[
+    { field: 'Font size', default: '13' },
+    { field: 'Background transparency', default: '75' },
+    { field: 'Persist time', default: '7초' },
+    { field: 'Fade duration', default: '0.4초' },
+    { field: 'Max toasts shown', default: '10' },
+  ]}
+/>
+
+순수하게 겉모습 설정이며 에이전트 행동에는 영향이 없습니다.
+화면이 시끄럽다고 느끼면 개수와 유지 시간을 줄이세요.
+
+## 접속 프로필
+
+**Server** 화면에서 관리합니다. 기본 제공되는 `openmmo.to.nexus`는 고정이라
+수정할 수 없고, 직접 만든 것은 추가·편집·복제·삭제할 수 있으며
+**쓰기 전에 연결 테스트**를 할 수 있습니다.
+
+프로필 하나에 들어가는 것:
+
+| 항목 | 설명 |
+|---|---|
+| Profile name | 프로필 이름 |
+| Game server | 게임 서버의 WebSocket 주소 |
+| Terrain origin | 지형 리소스 출처 주소 |
+| Google client ID | 그 서버가 받아들이는 OAuth client |
+| Google client secret | 대응하는 비밀값, 암호화 저장 |
+
+**이 다섯은 한 세트여야 합니다** — 서버마다 자기 허용 목록에 있는 client ID로
+발급된 로그인 토큰만 받으므로, client ID를 서버 간에 돌려 쓸 수 없습니다.
+
+## 비밀값은 어디에 저장되나
+
+API 키와 접속 프로필의 비밀값은 운영체제 키체인으로 암호화되고
+(Electron `safeStorage`, 실패 시 AES-GCM으로 대체), **환경 변수**로 에이전트에
+전달됩니다.
+
+**`agent-client`의 설정 파일에는 기록되지 않습니다** — 그래서 설정 파일을 버그
+리포트에 붙여넣어도 자격 증명이 새지 않습니다. 설정 파일 자체는 실행할 때마다
+패널에서 다시 생성됩니다. 직접 작성해둔 파일이 있었다면 한 번 가져오고 옆에
+백업을 남깁니다.

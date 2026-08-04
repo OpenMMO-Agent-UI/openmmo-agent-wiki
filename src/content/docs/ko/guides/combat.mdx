@@ -1,0 +1,313 @@
+---
+title: 전투 시스템
+description: 명중 판정, 피해 계산, Guard 대조표, 경험치 공식, 성장 곡선과 사망 페널티.
+---
+
+import FilterTable from '../../../../components/FilterTable.astro';
+import { monsters, items, averageRoll } from '../../../../lib/gamedata.js';
+import { monsterName, itemName, className } from '../../../../lib/ko.js';
+import { abilityModifier, hitChance, xpForLevel, monsterXp, expectedHitDieGain, classes } from '../../../../lib/classes.js';
+
+모든 판정은 **서버에서** 이루어집니다. 클라이언트는 「이 몬스터를 공격하겠다」만
+보내고 결과는 서버가 정합니다.
+
+## 명중 판정
+
+20면체 주사위를 굴립니다:
+
+```
+d20 + 명중 보너스 >  대상 Guard   →  명중
+d20 + 명중 보너스 ≤  대상 Guard   →  빗나감
+```
+
+**초과**여야 합니다. 굴린 값이 Guard와 정확히 같으면 **빗나갑니다.**
+
+**명중 보너스**:
+
+- 기본 = `floor(레벨 / 2)`
+- 플레이어 근접 공격은 여기에 **STR 보정값**이 더해집니다
+- 몬스터는 데이터에 지정값이 있으면 그것을, 없으면 레벨 기본값을 씁니다
+
+### 명중률 대조표
+
+가로가 대상 Guard, 세로가 당신의 총 명중 보너스입니다.
+
+<FilterTable
+  placeholder="명중 보너스 입력…"
+  columns={[
+    { key: 'bonus', label: '명중 보너스', align: 'right' },
+    { key: 'g8', label: 'Guard 8', align: 'right' },
+    { key: 'g9', label: 'Guard 9', align: 'right' },
+    { key: 'g10', label: 'Guard 10', align: 'right' },
+    { key: 'g11', label: 'Guard 11', align: 'right' },
+    { key: 'g13', label: 'Guard 13', align: 'right' },
+    { key: 'g15', label: 'Guard 15', align: 'right' },
+  ]}
+  rows={Array.from({ length: 11 }, (_, n) => n).map((bonus) => {
+    const pct = (g) => `${Math.round(hitChance(bonus, g) * 100)}%`;
+    return { bonus: `+${bonus}`, g8: pct(8), g9: pct(9), g10: pct(10), g11: pct(11), g13: pct(13), g15: pct(15) };
+  })}
+/>
+
+:::note[대실패(크리티컬 미스) 규칙이 없습니다]
+많은 D&D 계열과 달리 이 게임에는 **대실패 규칙이 없습니다.**
+`명중 보너스 ≥ 대상 Guard`이면 1이 나와도 명중합니다 — 명중률이 실제로 **100%**에
+도달합니다. 반대로 차이가 너무 크면 **0%**가 되어 아무리 굴려도 맞지 않습니다.
+:::
+
+### 각 몬스터를 때릴 확률
+
+당신의 총 명중 보너스(레벨의 절반 + STR 보정값)로 찾아보세요:
+
+<FilterTable
+  placeholder="몬스터 검색…"
+  columns={[
+    { key: 'name', label: '몬스터' },
+    { key: 'guard', label: 'Guard', align: 'right' },
+    { key: 'b0', label: '+0', align: 'right' },
+    { key: 'b2', label: '+2', align: 'right' },
+    { key: 'b4', label: '+4', align: 'right' },
+    { key: 'b6', label: '+6', align: 'right' },
+    { key: 'b8', label: '+8', align: 'right' },
+  ]}
+  rows={monsters.slice().sort((a, b) => a.guard - b.guard).map((m) => {
+    const pct = (b) => `${Math.round(hitChance(b, m.guard) * 100)}%`;
+    return { name: monsterName(m.id), guard: m.guard, b0: pct(0), b2: pct(2), b4: pct(4), b6: pct(6), b8: pct(8) };
+  })}
+/>
+
+### 몬스터가 당신을 때릴 확률
+
+반대로, 당신의 Guard(DEX 기본값 + 장비 합계)로 찾아보세요:
+
+<FilterTable
+  placeholder="몬스터 검색…"
+  columns={[
+    { key: 'name', label: '몬스터' },
+    { key: 'atk', label: '명중 보너스', align: 'right' },
+    { key: 'g10', label: '내 Guard 10', align: 'right' },
+    { key: 'g14', label: '내 Guard 14', align: 'right' },
+    { key: 'g18', label: '내 Guard 18', align: 'right' },
+    { key: 'g22', label: '내 Guard 22', align: 'right' },
+    { key: 'dmg', label: '명중 시 피해', align: 'center' },
+  ]}
+  rows={monsters.slice().sort((a, b) => a.level - b.level).map((m) => {
+    const pct = (g) => `${Math.round(hitChance(m.attackBonusEffective, g) * 100)}%`;
+    return {
+      name: monsterName(m.id), atk: `+${m.attackBonusEffective}`,
+      g10: pct(10), g14: pct(14), g18: pct(18), g22: pct(22),
+      dmg: m.damageRollEffective,
+    };
+  })}
+/>
+
+**Guard를 쌓는 효율은 아주 직접적입니다** — Guard가 1 오를 때마다 상대의 명중률이
+5%씩 떨어집니다. 판금 세트를 완성하면(Guard 합계 19) 저레벨 몬스터는 거의 당신을
+때리지 못합니다.
+
+## 피해
+
+명중했을 때만 피해를 굴립니다. 주사위 표기는 `{개수}d{면수}`입니다:
+
+```
+2d6  →  6면체 두 개를 굴려 합산(2–12)
+```
+
+플레이어의 근접 피해에는 **STR 보정값**이 더해집니다.
+
+### 무기 피해 대조표
+
+<FilterTable
+  placeholder="무기 검색…"
+  columns={[
+    { key: 'name', label: '무기' },
+    { key: 'dice', label: '피해 주사위', align: 'center' },
+    { key: 'min', label: '최소', align: 'right' },
+    { key: 'avg', label: '평균', align: 'right' },
+    { key: 'max', label: '최대', align: 'right' },
+    { key: 'weight', label: '무게', align: 'right' },
+  ]}
+  rows={items
+    .filter((i) => i.category === 'weapon' && i.dice)
+    .sort((a, b) => averageRoll(b.dice) - averageRoll(a.dice))
+    .map((i) => {
+      const [n, sides] = i.dice.split('d').map(Number);
+      return {
+        name: itemName(i.id), dice: i.dice, min: n,
+        avg: averageRoll(i.dice).toFixed(1), max: n * sides,
+        weight: `${i.weight} kg`,
+      };
+    })}
+/>
+
+STR 보정값은 **명중할 때마다** 더해지므로, 피해가 낮은 무기일수록 상대적 상승폭이
+큽니다: STR 18(+4)로 단검(1d4, 평균 2.5)을 쓰면 실제 평균은 6.5로 2.6배가 됩니다.
+
+## Guard의 의미
+
+Guard는 NetHack의 AC를 뒤집은 값입니다 — **높을수록 좋습니다.**
+
+| Guard | 의미 |
+|---|---|
+| 0–7 | 거의 무방비 |
+| 8–9 | 방어가 약함 |
+| 10 | 보통 |
+| 11–13 | 단단함 |
+| 14+ | 중장갑 이상 |
+
+NetHack과의 대응: `Guard = 10 − AC`.
+
+## 경험치
+
+### 몬스터를 잡으면 얼마
+
+```
+XP = 1 + 레벨² + max(Guard - 10, 0) × 2
+```
+
+Guard가 10을 넘는 만큼 보너스가 붙습니다 — **잡기 어려운 몬스터가 더 많이 줍니다.**
+
+<FilterTable
+  placeholder="몬스터 검색…"
+  columns={[
+    { key: 'name', label: '몬스터' },
+    { key: 'level', label: '레벨', align: 'right' },
+    { key: 'guard', label: 'Guard', align: 'right' },
+    { key: 'xp', label: 'XP', align: 'right' },
+    { key: 'hp', label: '체력', align: 'right' },
+    { key: 'perHp', label: 'XP / 체력', align: 'right' },
+  ]}
+  rows={monsters.slice()
+    .sort((a, b) => monsterXp(a.level, a.guard) - monsterXp(b.level, b.guard))
+    .map((m) => ({
+      name: monsterName(m.id), level: m.level, guard: m.guard,
+      xp: monsterXp(m.level, m.guard), hp: m.healthEffective,
+      perHp: (monsterXp(m.level, m.guard) / m.healthEffective).toFixed(2),
+    }))}
+/>
+
+**XP / 체력** 열이 효율 지표입니다 — 클수록 체력 1점을 깎을 때 얻는 경험치가 많습니다.
+오크 워로드는 XP가 가장 높지만 120이나 되는 체력을 깎아야 해서 효율은 최고가
+아닙니다.
+
+### 레벨업에 필요한 양
+
+```
+XP(n) = 20 × 2^(n-2)      (n ≥ 2)
+```
+
+**한 레벨마다 정확히 두 배**인 순수 지수 곡선이며, 완화 구간이 전혀 없습니다.
+
+<FilterTable
+  placeholder="레벨 입력…"
+  columns={[
+    { key: 'level', label: '레벨', align: 'right' },
+    { key: 'total', label: '누적 XP', align: 'right' },
+    { key: 'band', label: '이 레벨에 필요', align: 'right' },
+    { key: 'orcs', label: '오크 몇 마리쯤', align: 'right' },
+  ]}
+  rows={Array.from({ length: 20 }, (_, n) => n + 1).map((level) => {
+    const orcXp = monsterXp(4, 11);
+    const band = level === 1 ? 0 : xpForLevel(level) - xpForLevel(level - 1);
+    return {
+      level,
+      total: xpForLevel(level).toLocaleString(),
+      band: level === 1 ? '—' : band.toLocaleString(),
+      orcs: level === 1 ? '—' : Math.ceil(band / orcXp).toLocaleString(),
+    };
+  })}
+/>
+
+맨 오른쪽 열은 오크(레벨 4, Guard 11, 마리당 {monsterXp(4, 11)} XP) 기준입니다.
+두 자릿수 레벨에 들어서면 현재 몬스터로 레벨을 올리는 게 매우 느려집니다 —
+지금 게임의 콘텐츠 분량은 대략 10레벨 언저리에 대응합니다.
+
+## 사망 페널티
+
+죽어도 **장비는 잃지 않지만** 경험치가 깎입니다:
+
+```
+현재 레벨 구간 = XP(L+1) - XP(L)
+차감량        = max(1, floor(구간 × 0.15))
+```
+
+즉 **현재 레벨 진행도의 15%**입니다.
+
+### 레벨이 떨어지나
+
+깎은 뒤 XP가 현재 레벨의 시작치보다 낮아지면 **한 레벨 떨어집니다.**
+다만 보호 장치가 둘 있습니다:
+
+- **한 번 죽어서 최대 한 레벨만** 떨어집니다.
+- **레벨 1은 떨어지지 않습니다.**
+
+레벨이 떨어지면 XP가 아래 구간의 **30% 진행도**로 보정됩니다 —
+승급 직전에서 계속 맴도는 상황을 막기 위해서입니다.
+
+<FilterTable
+  placeholder="레벨 입력…"
+  columns={[
+    { key: 'level', label: '레벨', align: 'right' },
+    { key: 'band', label: '레벨 구간', align: 'right' },
+    { key: 'penalty', label: '사망 차감', align: 'right' },
+    { key: 'orcs', label: '오크 몇 마리로 회복', align: 'right' },
+  ]}
+  rows={Array.from({ length: 12 }, (_, n) => n + 2).map((level) => {
+    const band = xpForLevel(level + 1) - xpForLevel(level);
+    const penalty = Math.max(1, Math.floor(band * 0.15));
+    return {
+      level, band: band.toLocaleString(), penalty: penalty.toLocaleString(),
+      orcs: Math.ceil(penalty / monsterXp(4, 11)).toLocaleString(),
+    };
+  })}
+/>
+
+### 레벨이 떨어지면 체력도 줄어듭니다
+
+「레벨업/다운을 반복해 체력을 불리는」 짓을 막기 위해, **레벨이 떨어질 때 깎이는
+체력의 분포가 레벨업 때 오르는 분포와 완전히 같습니다**:
+
+```
+생명 주사위를 굴리고, 최소 절반을 보장한 뒤, CON 보정값을 더한다
+```
+
+그래서 장기 기댓값이 **0**입니다 — 오르내림을 반복해도 통계적 이득이 없습니다.
+체력이 레벨 1의 초기값 아래로 내려가지도 않습니다.
+
+<FilterTable
+  placeholder="생명 주사위 검색…"
+  columns={[
+    { key: 'hd', label: '생명 주사위', align: 'center' },
+    { key: 'classes', label: '클래스' },
+    { key: 'expected', label: '상승 / 하락 기댓값', align: 'right' },
+  ]}
+  rows={[10, 8, 6, 4].map((hd) => ({
+    hd: `d${hd}`,
+    classes: classes.filter((c) => c.hitDie === hd).map((c) => className(c.id)).join(', '),
+    expected: expectedHitDieGain(hd).toFixed(2),
+  }))}
+/>
+
+**레벨이 떨어지지 않았다면 체력은 깎이지 않습니다.**
+
+## 부활
+
+죽은 뒤 부활을 요청하면 서버가 체력이 0인지 확인하고 가득 채운 뒤 원점 `(0, 0, 0)`으로
+보냅니다. 포만도는 300(든든함 구간의 하한)으로 초기화되어, 굶은 채로 부활해 바로
+쇠약해지는 일이 없습니다.
+
+## 몬스터 AI
+
+몬스터 AI는 클라이언트가 계산하지만 **공격 판정은 반드시 서버가 정합니다.**
+
+| 상태 | 설명 |
+|---|---|
+| `idle` | 대기(30% 확률로 무작위 이동) |
+| `walk` | 이동 중 |
+| `run` | 플레이어 추적(추적 거리 안) |
+| `attack` | 공격 중(공격 거리 안) |
+| `hit` | 피격 경직(약 800밀리초) |
+| `dead` | 사망 |
+
+몬스터는 죽은 뒤 **30초**가 지나야 사라집니다. 각 몬스터의 추적 거리와 공격 간격은
+[몬스터 도감](../../database/monsters/)에 있습니다.
