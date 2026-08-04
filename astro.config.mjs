@@ -25,6 +25,7 @@ export default defineConfig({
             { label: '新手入門', link: '/guides/getting-started/' },
             { label: '角色與屬性', link: '/guides/character/' },
             { label: '戰鬥系統', link: '/guides/combat/' },
+            { label: '釣魚玩法', link: '/guides/fishing/' },
           ],
         },
         {
