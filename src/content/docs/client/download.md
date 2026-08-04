@@ -17,12 +17,12 @@ OpenMMO Agent 是一個桌面客戶端,可以**手動遊玩**,也可以設定一
 
 | 平台 | 檔案 |
 |---|---|
-| macOS (Apple Silicon) | [openmmo-agent-macos-arm64.zip](https://github.com/OpenMMO-agent/openmmo-agent-wiki/releases/latest/download/openmmo-agent-macos-arm64.zip) |
-| Windows (x64) | [openmmo-agent-windows-x64.exe](https://github.com/OpenMMO-agent/openmmo-agent-wiki/releases/latest/download/openmmo-agent-windows-x64.exe) |
-| Linux (x64) | [openmmo-agent-linux-x64.AppImage](https://github.com/OpenMMO-agent/openmmo-agent-wiki/releases/latest/download/openmmo-agent-linux-x64.AppImage) |
+| macOS (Apple Silicon) | [openmmo-agent-macos-arm64.zip](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest/download/openmmo-agent-macos-arm64.zip) |
+| Windows (x64) | [openmmo-agent-windows-x64.exe](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest/download/openmmo-agent-windows-x64.exe) |
+| Linux (x64) | [openmmo-agent-linux-x64.AppImage](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest/download/openmmo-agent-linux-x64.AppImage) |
 
-校驗值:[SHA256SUMS.txt](https://github.com/OpenMMO-agent/openmmo-agent-wiki/releases/latest/download/SHA256SUMS.txt)
-・ 所有版本:[Releases 頁面](https://github.com/OpenMMO-agent/openmmo-agent-wiki/releases)
+校驗值:[SHA256SUMS.txt](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest/download/SHA256SUMS.txt)
+・ 所有版本:[Releases 頁面](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases)
 
 ## 系統需求
 

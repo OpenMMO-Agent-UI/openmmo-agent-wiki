@@ -3,7 +3,7 @@ import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 
 export default defineConfig({
-  site: 'https://openmmo-agent.github.io',
+  site: 'https://openmmo-agent-ui.github.io',
   base: '/openmmo-agent-wiki',
   integrations: [
     starlight({
@@ -15,7 +15,7 @@ export default defineConfig({
         en: { label: 'English', lang: 'en' },
       },
       social: [
-        { icon: 'github', label: 'GitHub', href: 'https://github.com/OpenMMO-agent/OpenMMO' },
+        { icon: 'github', label: 'GitHub', href: 'https://github.com/OpenMMO-Agent-UI/OpenMMO' },
       ],
       sidebar: [
         {

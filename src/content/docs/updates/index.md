@@ -47,5 +47,5 @@ description: OpenMMO 的遊戲更新內容,依協議版本整理。
 
 :::note
 更早的版本紀錄正在整理中。在此之前可以參考上游的
-[開發日誌](https://github.com/OpenMMO-agent/OpenMMO/blob/master/doc/devlog/README.md)。
+[開發日誌](https://github.com/OpenMMO-Agent-UI/OpenMMO/blob/master/doc/devlog/README.md)。
 :::

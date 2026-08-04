@@ -1,9 +1,9 @@
 # openmmo-agent-wiki
 
-[OpenMMO](https://github.com/OpenMMO-agent/OpenMMO) 攻略站,以及 OpenMMO Agent
+[OpenMMO](https://github.com/OpenMMO-Agent-UI/OpenMMO) 攻略站,以及 OpenMMO Agent
 桌面客戶端的下載與說明。
 
-**網站:** https://openmmo-agent.github.io/openmmo-agent-wiki/
+**網站:** https://openmmo-agent-ui.github.io/openmmo-agent-wiki/
 
 ## 開發
 
@@ -27,7 +27,7 @@ Pages 來源設定為 **GitHub Actions**(不是分支)。
 網站上的下載連結使用不含版本號的固定檔名:
 
 ```
-https://github.com/OpenMMO-agent/openmmo-agent-wiki/releases/latest/download/openmmo-agent-macos-arm64.zip
+https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest/download/openmmo-agent-macos-arm64.zip
 ```
 
 這樣發新版時網站不需要任何改動。
