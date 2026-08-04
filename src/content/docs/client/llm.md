@@ -7,13 +7,27 @@ description: 自動遊玩要用哪個 LLM、成本大概多少,以及該避開�
 
 ## 設定在哪裡
 
-**Settings** 有三個頁籤:
+**Settings** 有四個頁籤:**LLM**、**Automatic play**、**Advanced**、**Actions**。
+每一項的預設值與作用見[面板功能詳解](../panel/)。
 
-- **LLM** —— 後端、模型、API key
-- **Automatic play** —— 回應節奏調整、獨處時是否繼續冒險
-- **Advanced** —— 原始間隔值、watch port、日誌等級、並行數、請求逾時
+## 先決定用哪種後端
 
-## 該用哪個模型
+有四種,不是只有 OpenRouter:
+
+| 後端 | 要不要 API key | 適合 |
+|---|---|---|
+| **Codex CLI** | 不用 —— 直接用本機已登入的 CLI | 已經在用 Codex 的人 |
+| **Claude CLI** | 不用 —— 同上 | 已經在用 Claude Code 的人 |
+| **OpenRouter** | 要 | 想要最好的性價比,見下方實測 |
+| **OpenAI 相容** | 看端點 | 接本地模型(預設指向 Ollama)或自架服務 |
+
+**已經有 Claude 或 Codex CLI 的話,直接選 CLI 後端就好** —— 不用再辦一組 API key。
+
+想完全本地跑就選 OpenAI 相容,Base URL 填 Ollama 位址。沒有 API 費用、
+資料不出機器,代價是本地模型多半較慢,可能追不上遊戲的回合節奏
+(記得把 Advanced 的 Request timeout 調大)。
+
+## OpenRouter 該用哪個模型
 
 客戶端內附的 `scripts/bench-models.js` 會用實際出貨的提示詞測試候選模型,
 評分兩件事:**是否記得住背包裡實際有什麼**,以及**是否會放棄超出範圍的目標**。

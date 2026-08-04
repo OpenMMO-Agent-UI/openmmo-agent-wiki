@@ -34,6 +34,7 @@ export default defineConfig({
             { label: '下載', link: '/client/download/' },
             { label: '安裝與首次啟動', link: '/client/install/' },
             { label: '選擇模型與 AI 設定', link: '/client/llm/' },
+            { label: '面板功能詳解', link: '/client/panel/' },
           ],
         },
         {

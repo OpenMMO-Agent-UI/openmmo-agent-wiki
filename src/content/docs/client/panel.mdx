@@ -1,0 +1,220 @@
+---
+title: 面板功能詳解
+description: 六個抽屜、四個設定分頁,以及每一項設定的預設值與實際作用。
+---
+
+import FilterTable from '../../../components/FilterTable.astro';
+
+這頁把客戶端面板上的每個功能拆開講。只想快速上手的話看
+[安裝與首次啟動](../install/)就夠了。
+
+## 標題列
+
+| 元件 | 作用 |
+|---|---|
+| 連線狀態 | 目前是否連上伺服器 |
+| 生命與狀態 | 角色的即時數值 |
+| 觀戰記憶體用量 | 3D 觀戰畫面吃掉多少記憶體 |
+| 重新載入 | 重載 3D 觀戰畫面(畫面卡住或錯亂時用) |
+| **Apply & restart** | **只在 agent 執行中改了設定時才出現。** agent 只在啟動時讀一次設定,所以改完必須按這個 |
+| 手動 / AI 切換 | 兩種模式即時互換 |
+| 更換角色 / 更換伺服器 | 回到前面的畫面 |
+
+## 左側六個抽屜
+
+### Equipment — 裝備
+
+顯示目前穿戴的裝備,逐格列出。
+
+:::note[為什麼裝備要從中繼看]
+agent 自己的面板 API **只回報背包、不回報身上的裝備**。
+所以這個抽屜的資料是從中繼看到的庫存封包還原出來的 ——
+這是桌面客戶端加值的東西之一,直接跑 `agent-client` 看不到。
+:::
+
+### Bag — 背包
+
+顯示攜帶的物品。除了看,還可以**標記 agent 能不能處分某樣東西**:
+
+- **S(Sellable)** — 允許 agent 賣掉
+- **D(Dropable)** — 允許 agent 丟掉
+
+勾選後按 **Apply labels** 才會送出(是暫存的,不會勾一個送一次)。
+
+這是防止 agent 亂賣東西的閘門 —— 你辛苦打到的裝備,不標記它就不會處分。
+
+### Personality & Memory — 個性與記憶
+
+兩塊內容:
+
+- **Personality** —— 這隻角色專屬的提示詞,疊在共用規則之上。可以編輯。
+  **在 agent 執行中儲存會重啟 agent。**
+- **Memory** —— 這隻角色記得什麼,**由 agent 自己寫入,唯讀**。
+
+Personality 是你塑造角色行為的地方(「你是個謹慎的獵人,血量低於一半就撤退」),
+Memory 則是它自己累積下來的東西。
+
+### Coordinates — 座標
+
+存放地點書籤。可以用 **Use current position** 直接記下目前位置,再命名加入。
+
+配合 Dispatch 使用:記下釣點、地城入口、商店位置,之後叫 agent 去那裡。
+
+### Dispatch Presets — 派遣預設
+
+把常用的指令存成有名字的預設,之後一鍵送出,不用每次重打。
+
+每個預設有**名稱**和**要送出的提示詞**。存好之後會變成 Dispatch 輸入框旁的按鈕。
+
+### Activity — 活動
+
+兩個分頁:
+
+- **Thoughts** —— 每一次送出的提示與收到的回覆,附時間。
+  有**篩選器**、**Follow**(自動捲到最新)和 **Clear**。
+- **Log** —— agent 程序本身的 stdout / stderr。
+
+想知道 agent 為什麼做某個決定,看 Thoughts;想知道它為什麼壞掉,看 Log。
+
+## Dispatch
+
+遊戲畫面下方那一條,是**唯一能對執行中的 agent 說話的管道**。
+
+輸入一句指示,它會成為角色下一個回合的參考 —— **盡力而為,不保證照做**。
+它是「悄悄話」不是「指令」:你在建議,決定權還是在模型手上。
+
+## Settings 的四個分頁
+
+### LLM
+
+<FilterTable
+  placeholder="搜尋設定…"
+  columns={[
+    { key: 'field', label: '欄位' },
+    { key: 'default', label: '預設值' },
+    { key: 'note', label: '說明' },
+  ]}
+  rows={[
+    { field: 'Backend', default: 'Codex CLI', note: '四選一,見下方後端說明' },
+    { field: 'Model', default: '依後端而異', note: '有下拉建議,也可以直接打' },
+    { field: 'Base URL', default: 'https://ollama.com/v1', note: '只有 OpenAI 相容後端會出現' },
+    { field: 'API key', default: '—', note: 'HTTP 類後端才需要。存在作業系統鑰匙圈' },
+    { field: 'Reasoning effort', default: 'none', note: 'none / low / medium / high。支援的模型才有作用' },
+    { field: 'Maximum tokens', default: '4096', note: '單次回覆的長度上限' },
+    { field: 'Temperature', default: '0.7', note: '越低越穩定,越高越有變化' },
+  ]}
+/>
+
+#### 四種後端
+
+<FilterTable
+  placeholder="搜尋後端…"
+  columns={[
+    { key: 'backend', label: '後端' },
+    { key: 'kind', label: '類型', align: 'center' },
+    { key: 'models', label: '預設可選模型' },
+    { key: 'note', label: '說明' },
+  ]}
+  rows={[
+    { backend: 'Codex CLI', kind: 'CLI', models: 'gpt-5.4-mini、gpt-5.4、o4-mini', note: '用你本機已登入的 Codex CLI,不需要在這裡填 API key' },
+    { backend: 'Claude CLI', kind: 'CLI', models: 'sonnet、opus、haiku', note: '用你本機已登入的 Claude CLI,同樣不需要填 key' },
+    { backend: 'OpenRouter', kind: 'HTTP', models: 'qwen/qwen3.7-flash 等', note: '需要 API key。模型選擇建議見下一頁' },
+    { backend: 'OpenAI 相容', kind: 'HTTP', models: '自行填寫', note: '任何 OpenAI 相容端點。預設指向 Ollama,可以接本地模型' },
+  ]}
+/>
+
+:::tip[已經有 Claude 或 Codex CLI 就不用另外辦 API key]
+CLI 類後端直接用你本機那份已登入的 CLI,省掉再申請一組 key。
+:::
+
+:::tip[想完全本地跑]
+選 **OpenAI 相容**,Base URL 填你的 Ollama 位址(預設就是 Ollama 的格式),
+Model 填本地模型名稱。這樣不會有任何 API 費用,資料也不出你的機器 ——
+代價是本地模型多半比 `qwen3.7-flash` 慢,可能追不上遊戲的回合節奏。
+:::
+
+### Automatic play
+
+<FilterTable
+  placeholder="搜尋設定…"
+  columns={[
+    { key: 'field', label: '欄位' },
+    { key: 'default', label: '預設值' },
+    { key: 'note', label: '說明' },
+  ]}
+  rows={[
+    { field: 'Active response', default: '5 秒', note: '有事發生時的回應間隔。越短越靈敏,但 API 費用越高' },
+    { field: 'Quiet-world patrol', default: '8 秒', note: '周圍沒事時的回應間隔' },
+    { field: 'Continue adventuring while alone', default: '開啟', note: '關掉的話,附近沒有其他玩家時 agent 會安靜下來 —— 掛機時省錢用' },
+  ]}
+/>
+
+這兩個間隔是**費用的主要控制項**。想省錢就把兩個都拉長,
+或者關掉「獨自時繼續冒險」。
+
+### Advanced
+
+<FilterTable
+  placeholder="搜尋設定…"
+  columns={[
+    { key: 'field', label: '欄位' },
+    { key: 'default', label: '預設值' },
+    { key: 'note', label: '說明' },
+  ]}
+  rows={[
+    { field: 'Active interval (s)', default: '5', note: '上面那個滑桿的原始數值' },
+    { field: 'Idle interval (s)', default: '8', note: '同上' },
+    { field: 'Watch port', default: '8808', note: '本機觀戰面板的連接埠。和別的程式衝突才需要改' },
+    { field: 'Log level', default: 'info', note: 'info / debug / warn。回報問題前先開 debug' },
+    { field: 'Concurrent LLM calls', default: '2', note: '同時發出的請求數' },
+    { field: 'Request timeout (s)', default: '120', note: '單次請求等多久放棄。本地模型慢的話要調大' },
+  ]}
+/>
+
+### Actions —— 動作提示的外觀
+
+agent 每做一個動作會跳一個提示(toast)。這個分頁調它的外觀,附**即時預覽**。
+
+<FilterTable
+  placeholder="搜尋設定…"
+  columns={[
+    { key: 'field', label: '欄位' },
+    { key: 'default', label: '預設值' },
+  ]}
+  rows={[
+    { field: 'Font size', default: '13' },
+    { field: 'Background transparency', default: '75' },
+    { field: 'Persist time', default: '7 秒' },
+    { field: 'Fade duration', default: '0.4 秒' },
+    { field: 'Max toasts shown', default: '10' },
+  ]}
+/>
+
+純外觀設定,不影響 agent 行為。覺得畫面太吵就把數量和停留時間調小。
+
+## 連線設定檔
+
+在 **Server** 畫面管理。內建的 `openmmo.to.nexus` 是固定的,不能改;
+自訂的可以新增、編輯、複製、刪除,而且**使用前可以先測試連線**。
+
+一個設定檔包含:
+
+| 欄位 | 說明 |
+|---|---|
+| Profile name | 設定檔名稱 |
+| Game server | 遊戲伺服器的 WebSocket 位址 |
+| Terrain origin | 地形資源的來源位址 |
+| Google client ID | 該伺服器接受的 OAuth client |
+| Google client secret | 對應的密鑰,加密保存 |
+
+**這五項必須成套** —— 每台伺服器只接受自己允許清單內的 client ID 所簽發的登入憑證,
+所以 client ID 不能跨伺服器共用。
+
+## 你的機密資料放在哪
+
+API key 與連線設定檔的密鑰都用作業系統的鑰匙圈加密
+(Electron `safeStorage`,失敗時退回 AES-GCM),再以**環境變數**交給 agent。
+
+**不會寫進 `agent-client` 的設定檔** —— 所以把設定檔貼進 bug 回報不會外洩憑證。
+設定檔本身每次啟動都會從面板重新產生;如果你原本有手寫的設定檔,
+會被匯入一次並在旁邊留下備份。

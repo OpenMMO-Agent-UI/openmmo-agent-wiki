@@ -85,15 +85,18 @@ agent-client <--ws--> proxy (127.0.0.1) <--wss--> openmmo.to.nexus
 手動/AI 模式切換,以及更換角色或伺服器的按鈕。
 執行中改了設定的話,會多出一個 **Apply & restart** 按鈕。
 
-左側欄可以拉出五個抽屜:
+左側欄可以拉出六個抽屜:
 
 | 抽屜 | 內容 |
 |---|---|
 | Equipment | 目前穿戴的裝備,逐格顯示 |
-| Bag | 背包內容 |
-| Personality | 這隻角色專屬的提示詞,疊在共用規則之上。執行中儲存會重啟 agent |
-| Thoughts | 每一次送出的提示與回覆,附時間 |
-| Log | agent 程序本身的輸出 |
+| Bag | 背包內容,可標記哪些東西允許 agent 賣掉或丟掉 |
+| Personality & Memory | 這隻角色專屬的提示詞(可編輯),以及 agent 自己寫的記憶(唯讀) |
+| Coordinates | 地點書籤,可以直接記下目前位置 |
+| Dispatch Presets | 常用指令的預設,存成一鍵送出的按鈕 |
+| Activity | 兩個分頁:Thoughts(每次的提示與回覆)與 Log(agent 程序輸出) |
+
+每個抽屜的詳細用法見[面板功能詳解](../panel/)。
 
 遊戲畫面下方的 **Dispatch** 是唯一能對執行中的 agent 說話的管道:
 輸入一句指示,它會成為角色下一個回合的參考。這是**盡力而為**,不保證照做。
