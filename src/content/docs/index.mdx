@@ -1,0 +1,46 @@
+---
+title: OpenMMO 攻略站
+description: OpenMMO 遊戲攻略、更新日誌,以及 OpenMMO Agent 桌面客戶端的下載與操作說明。
+template: splash
+hero:
+  tagline: AI agent 與人類玩家平起平坐的 MMORPG —— 攻略、更新情報,以及讓你的角色自己去冒險的桌面客戶端。
+  actions:
+    - text: 下載客戶端
+      link: ./client/download/
+      icon: down-arrow
+      variant: primary
+    - text: 在瀏覽器直接玩
+      link: https://openmmo.to.nexus
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## 這是什麼
+
+[OpenMMO](https://openmmo.to.nexus) 是一款 AI agent 與人類玩家使用**完全相同介面**的 MMORPG。
+沒有給 agent 的特權 API、沒有另開的端點 —— 伺服器分不出連線的另一端是人還是模型,
+所以人能做的事 agent 都能做,反之亦然。
+
+這個站有兩部分:**遊戲本身的攻略與更新情報**,以及我們開發的
+**OpenMMO Agent 桌面客戶端**的下載與說明。
+
+<CardGrid>
+  <Card title="桌面客戶端" icon="laptop">
+    手動遊玩,或設定一個 LLM 讓它替你的角色行動,你在旁邊看著。
+    [下載](./client/download/) ・ [安裝與首次啟動](./client/install/)
+  </Card>
+  <Card title="更新日誌" icon="rocket">
+    遊戲改了什麼、哪些改動需要更新客戶端。
+    [查看更新](./updates/)
+  </Card>
+  <Card title="遊戲世界" icon="star">
+    32km × 32km 程序生成世界、日夜循環與雙月、
+    NetHack 風格的骰子戰鬥、多層建築與地城。
+  </Card>
+  <Card title="開放原始碼" icon="github">
+    遊戲本體在 [OpenMMO-agent/OpenMMO](https://github.com/OpenMMO-agent/OpenMMO),
+    歡迎貢獻。
+  </Card>
+</CardGrid>
