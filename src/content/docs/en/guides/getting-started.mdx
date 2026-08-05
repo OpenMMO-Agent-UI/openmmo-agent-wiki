@@ -1,0 +1,211 @@
+---
+title: Getting started
+description: From signing in to killing your first monster — starting gear, where to go, what to buy, what to avoid.
+---
+
+import FilterTable from '../../../../components/FilterTable.astro';
+import { items, itemsById, merchants, monsters, formatCoins } from '../../../../lib/gamedata.js';
+import { itemName } from '../../../../lib/en.js';
+import { monsterXp, hitChance, classes } from '../../../../lib/classes.js';
+
+export const rica = merchants.find((m) => m.id === 'rica');
+
+## How to start
+
+Two routes:
+
+- **Browser** — open [openmmo.to.nexus](https://openmmo.to.nexus) and sign in
+  with Google. Nothing to install.
+- **Desktop client** — [download OpenMMO Agent](../../client/download/). Adds
+  multiple server profiles, encrypted key storage, and **letting an LLM drive
+  your character** while you watch.
+
+## Creating a character
+
+**Pick a class first, then roll stats** — the order matters, because class
+modifiers are applied on top of the dice.
+
+Up to **3 characters** per account. You choose a name, class and gender.
+
+The full modifier table and formulas are in
+[Character and attributes](../character/). Three things to know:
+
+- **The total is always 72**, whatever class you pick. Class decides the
+  *shape* of your spread, not how much you get.
+- **Want to survive hits?** Pick a d10 hit-die class: Knight, Barbarian,
+  Caveman, Valkyrie.
+- **The Tourist has a d4 hit die** — the squishiest thing in the game. Not
+  recommended for a first character.
+
+<FilterTable
+  placeholder="Search classes…"
+  columns={[
+    { key: 'name', label: 'Class' },
+    { key: 'hd', label: 'Hit die', align: 'center' },
+    { key: 'suit', label: 'Good at' },
+  ]}
+  rows={classes.map((c) => {
+    const a = c.adjust ?? c.variants.M;
+    const traits = [];
+    if (c.hitDie >= 10) traits.push('Tough');
+    if (a[1] >= 2) traits.push('Hard to hit');
+    if (a[0] >= 2) traits.push('High damage');
+    if (a[5] >= 2) traits.push('Good at haggling');
+    if (c.hitDie <= 4) traits.push('Very fragile — not for beginners');
+    return { name: c.en, hd: `d${c.hitDie}`, suit: traits.join(', ') || 'Balanced' };
+  })}
+/>
+
+## What you start with
+
+- **Money: 0** — no starting funds. Your first income comes from selling
+  something.
+- **Weapon: {itemName('worn_iron_sword')}** (1d6) — note it **has no price**, so
+  merchants won't buy it. That's deliberate: it stops people rerolling
+  characters to cash out starting gear.
+- **Satiation: 700** — inside the Well-Fed band, so you have ×1.1 move and
+  attack speed and ×1.15 carry weight.
+
+:::tip["Worn" means unsellable]
+Anything named "Worn" in this game **cannot be turned into money**, though its
+stats match the real thing or come close. The
+{itemName('worn_iron_sword')} is 1d6; the proper
+{itemName('iron_sword')} is 1d8.
+:::
+
+## First job: earn some money
+
+You have nothing, so you need to kill something and sell what it drops.
+
+Start with the **Kobold** — level 1, Guard 8, and it **only fights back**, so it
+won't charge you. Whether you fight is your call.
+
+<FilterTable
+  placeholder="Search monsters…"
+  columns={[
+    { key: 'name', label: 'Monster' },
+    { key: 'level', label: 'Level', align: 'right' },
+    { key: 'hp', label: 'Health', align: 'right' },
+    { key: 'guard', label: 'Guard', align: 'right' },
+    { key: 'hit', label: 'Your hit chance', align: 'right' },
+    { key: 'dmg', label: 'Its damage', align: 'center' },
+    { key: 'xp', label: 'XP', align: 'right' },
+    { key: 'drop', label: 'Drops' },
+    { key: 'aggro', label: 'Attacks first?', align: 'center' },
+  ]}
+  rows={monsters.slice().sort((a, b) => a.level - b.level).map((m) => ({
+    name: m.name,
+    level: m.level,
+    hp: m.healthEffective,
+    guard: m.guard,
+    hit: `${Math.round(hitChance(0, m.guard) * 100)}%`,
+    dmg: m.damageRollEffective,
+    xp: monsterXp(m.level, m.guard),
+    drop: m.weapon ? `${itemName(m.weapon)} ${Math.round(m.weaponDropChance * 100)}%` : '—',
+    aggro: m.behavior === 'timid' ? 'No' : 'Yes',
+  }))}
+/>
+
+"Your hit chance" assumes level 1 with STR 10 (modifier 0). Higher STR improves
+it.
+
+:::caution[Do not touch these at level 1]
+The **Stalker** won't attack first, but it runs at 8.0 — your baseline is 3.0,
+so provoking one means **you cannot get away.**
+The **Orc Warlord** sits on the bottom floor of Orc Warrens with 120 health, +6
+to hit and 2d8 damage. Level 1 has no chance.
+:::
+
+## First shopping trip
+
+Rica sells the following. Rough priority for a broke character:
+
+<FilterTable
+  placeholder="Search stock…"
+  columns={[
+    { key: 'name', label: 'Item' },
+    { key: 'price', label: 'Price', align: 'right' },
+    { key: 'why', label: 'Why you want it' },
+  ]}
+  rows={[
+    { id: 'healing_potion', why: 'Heals 6d4 (average 15). Drinking at full health or while downed keeps it rather than wasting it' },
+    { id: 'bread', why: 'The most filling shop food — one loaf covers a whole game day' },
+    { id: 'torch', why: 'Light for nights and dungeons. The cheapest thing you actually need' },
+    { id: 'scroll_of_return', why: 'Instant trip home. Your insurance when you wandered too far or are about to die' },
+    { id: 'leather_pants', why: 'Guard +1. Only a 30% drop in the Crypt, so buying is faster' },
+    { id: 'spear', why: '1d6 — same tier as your starting weapon, but this one can be sold' },
+    { id: 'fishing_rod', why: 'Only if you want to fish. Modest but steady income' },
+    { id: 'campfire_kit', why: 'Light a fire to grill fish. Raw fish cause food poisoning' },
+  ].map((r) => ({
+    name: itemsById.get(r.id)?.name ?? r.id,
+    price: formatCoins(itemsById.get(r.id)?.basePrice ?? null),
+    why: r.why,
+  }))}
+/>
+
+Rica buys at **{rica.sellRatePercent}%** of base, so buying low and selling high
+doesn't work. But she is an **LLM-driven NPC, and you can talk her down** — a
+good story or a piece of news genuinely earns a discount, and higher CHA widens
+the room to negotiate. See [Shops and economy](../../database/economy/).
+
+## Remember to eat
+
+Satiation starts at 700 and drops **1 every 20 seconds while you're online**
+(not offline). Below **300** you lose the Well-Fed buff; below **100** you go
+Weak: move and attack speed ×0.75, carry ×0.6, and **HP regeneration stops
+entirely.**
+
+The good news is **you can't starve to death** — it stops at 0. But fighting
+while Weak is a bad deal.
+
+A game day (three real hours) burns 540, which is exactly one loaf of bread.
+**The design target is one meal a day.**
+
+Full comparison in [Food and satiation](../../database/food/).
+
+## What happens when you die
+
+- **You keep your equipment.**
+- You lose **15% of the current level's XP band.**
+- If that drops you below the level's starting XP you **lose a level** — but
+  never more than one per death, and never at level 1.
+- You respawn at the origin `(0, 0, 0)` at full health, with satiation reset to
+  300.
+
+Dying isn't cheap, but it isn't ruinous. Details in
+[Combat](../combat/).
+
+## Where to go next
+
+1. **Kill Kobolds and Goblins** for gear and XP, and sell the weapons they drop
+   to Rica.
+2. **Find the Old Crypt** — the 5-floor tier-1 dungeon. The
+   {itemName('leather_helmet')} is a guaranteed drop, and
+   {itemName('leather_pants')} and {itemName('leather_belt')} are 30% each.
+   Assemble the leather set (Guard 6 total).
+3. **Then Orc Warrens** — 10 floors, filling in the leather chest, gloves and
+   boots plus Iron Boots and an Iron Helmet. The boss, the Orc Warlord, is a
+   guaranteed {itemName('iron_sword')} (1d8) — which no shop sells.
+
+Both dungeons are near **Aldermark**; coordinates and distances are in
+[World map](../../database/map/).
+
+:::note[Dungeons are fixed]
+Dungeons are seed-determined, so **the same entrance always has the same
+layout.** Learn one and it becomes home ground. The world map records entrances
+you've already found, but you have to walk to one the first time.
+:::
+
+## Things that catch people out
+
+- **Hits must exceed, not match** — d20 plus your attack bonus landing exactly
+  on the target's Guard is a **miss**.
+- **The bag has a weight limit** (STR × 15, ×1.15 while Well-Fed). Going over
+  doesn't stop you moving, but it **refuses new pickups and purchases.**
+- **Anything dropped on the ground can be picked up by anyone.** It's
+  floor-aware: something dropped on a house's second floor can only be
+  retrieved from that floor.
+- **Raw fish cause food poisoning** — five minutes of ×0.6 to everything with
+  regeneration stopped. Grill it first.
+- **Weapons never come from chests.** Want a particular weapon? Kill the monster
+  carrying it.

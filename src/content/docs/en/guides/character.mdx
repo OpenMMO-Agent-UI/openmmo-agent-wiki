@@ -1,0 +1,289 @@
+---
+title: Character and attributes
+description: The six attributes, class modifiers, race bonuses, and how Guard and health are derived.
+---
+
+import FilterTable from '../../../../components/FilterTable.astro';
+import { classes, hiddenClasses, races, attributes, abilityModifier, guardFromDex, level1Hp, expectedHitDieGain } from '../../../../lib/classes.js';
+
+Character creation is **class first, then roll**. That order matters: class
+modifiers land on top of the dice, and the rebalance happens after that.
+
+## The six attributes
+
+All range **3–18**.
+
+<FilterTable
+  placeholder="Search attributes…"
+  columns={[
+    { key: 'abbr', label: 'Abbr', align: 'center' },
+    { key: 'en', label: 'Name' },
+    { key: 'effect', label: 'What it affects' },
+  ]}
+  rows={attributes.map((a) => ({
+    abbr: a.abbr,
+    en: a.en,
+    effect: {
+      STR: 'Melee damage and to-hit, equipment limits, max carry weight (STR × 15)',
+      DEX: 'Sets your Guard (how hard you are to hit), evasion, ranged attacks',
+      CON: 'Health bonus, health regeneration rate',
+      INT: 'Magic effects, skills',
+      WIS: 'Recovery, resistance',
+      CHA: 'NPC reactions, and the width of your haggling price band',
+    }[a.abbr],
+  }))}
+/>
+
+In practice the live effects concentrate in **STR / DEX / CON** — they decide
+whether you land hits, whether you get hit, and how long you last. The magic and
+skill systems behind INT and WIS aren't fully built out yet; CHA genuinely
+affects **how much room you have to haggle with NPCs.**
+
+### Ability modifiers
+
+Most formulas take the **modifier**, not the raw score:
+
+```
+modifier = (score - 10) / 2      ← integer division, truncated toward zero
+```
+
+<FilterTable
+  placeholder="Enter a score…"
+  columns={[
+    { key: 'score', label: 'Score', align: 'right' },
+    { key: 'mod', label: 'Modifier', align: 'right' },
+  ]}
+  rows={Array.from({ length: 16 }, (_, n) => n + 3).map((score) => ({
+    score,
+    mod: abilityModifier(score) >= 0 ? `+${abilityModifier(score)}` : `${abilityModifier(score)}`,
+  }))}
+/>
+
+:::note[Truncated toward zero, not floored]
+Negatives don't behave like `floor`. A score of 7 gives `(7-10)/2 = -1.5` →
+**-1**, not -2. That's Rust integer division.
+:::
+
+## How attributes are decided
+
+1. **Pick a class.**
+2. **For each attribute, roll 4d6, drop the lowest, sum the other three.**
+   e.g. 3, 5, 2, 4 → drop the 2 → 3+5+4 = **12**
+3. **Apply the class modifiers** (table below).
+4. **Rebalance the six attributes to a total of 72.** Short of it, low
+   attributes come up; over it, high ones come down. Everything stays in 3–18.
+
+Because the rebalance happens **after** the class modifiers, **the total is
+always 72** — no class gets extra points out of its modifiers. What class
+decides is the **shape**, not the size.
+
+## Class modifiers
+
+<FilterTable
+  placeholder="Search classes…"
+  columns={[
+    { key: 'en', label: 'Class' },
+    { key: 'gender', label: 'Gender', align: 'center' },
+    { key: 'str', label: 'STR', align: 'right' },
+    { key: 'dex', label: 'DEX', align: 'right' },
+    { key: 'con', label: 'CON', align: 'right' },
+    { key: 'int', label: 'INT', align: 'right' },
+    { key: 'wis', label: 'WIS', align: 'right' },
+    { key: 'cha', label: 'CHA', align: 'right' },
+    { key: 'hd', label: 'Hit die', align: 'center' },
+  ]}
+  rows={classes.flatMap((c) => {
+    const sign = (n) => (n > 0 ? `+${n}` : `${n}`);
+    const row = (adjust, gender) => ({
+      en: c.en, gender,
+      str: sign(adjust[0]), dex: sign(adjust[1]), con: sign(adjust[2]),
+      int: sign(adjust[3]), wis: sign(adjust[4]), cha: sign(adjust[5]),
+      hd: `d${c.hitDie}`,
+    });
+    return c.variants
+      ? [row(c.variants.M, 'M'), row(c.variants.F, 'F')]
+      : [row(c.adjust, 'Either')];
+  })}
+/>
+
+**Barbarian, Caveman and Knight** modify differently by gender. Every other
+class is the same either way.
+
+### How to choose
+
+- **To survive hits** → a d10 hit die: Knight, Barbarian, Caveman, Valkyrie.
+- **To avoid being hit** → high DEX modifier. The Rogue's +3 is the highest in
+  the game.
+- **To haggle** → high CHA. The Tourist's +2 is the best a player can pick, and
+  CHA widens the price band you can negotiate inside.
+- **Watch out for the Tourist** — a d4 hit die is the squishiest in the game.
+
+### NPC-only classes
+
+Players can't pick these; they're listed so you know how the game's NPCs are
+built:
+
+<FilterTable
+  placeholder="Search…"
+  columns={[
+    { key: 'en', label: 'Class' },
+    { key: 'who', label: 'Seen on' },
+    { key: 'str', label: 'STR', align: 'right' },
+    { key: 'dex', label: 'DEX', align: 'right' },
+    { key: 'con', label: 'CON', align: 'right' },
+    { key: 'int', label: 'INT', align: 'right' },
+    { key: 'wis', label: 'WIS', align: 'right' },
+    { key: 'cha', label: 'CHA', align: 'right' },
+  ]}
+  rows={hiddenClasses.map((c) => {
+    const sign = (n) => (n > 0 ? `+${n}` : `${n}`);
+    return {
+      en: c.en, who: c.who,
+      str: sign(c.adjust[0]), dex: sign(c.adjust[1]), con: sign(c.adjust[2]),
+      int: sign(c.adjust[3]), wis: sign(c.adjust[4]), cha: sign(c.adjust[5]),
+    };
+  })}
+/>
+
+The Merchant's CHA +3 is the highest in the game — which is why Rica is one.
+
+## Guard — how hard you are to hit
+
+Computed at creation from your **final DEX** (after class modifiers and the
+rebalance) and stored:
+
+```
+Guard = clamp(10 + DEX modifier, 1, 20)
+```
+
+<FilterTable
+  placeholder="Enter DEX…"
+  columns={[
+    { key: 'dex', label: 'DEX', align: 'right' },
+    { key: 'mod', label: 'Modifier', align: 'right' },
+    { key: 'guard', label: 'Base Guard', align: 'right' },
+  ]}
+  rows={Array.from({ length: 16 }, (_, n) => n + 3).map((dex) => ({
+    dex,
+    mod: abilityModifier(dex) >= 0 ? `+${abilityModifier(dex)}` : `${abilityModifier(dex)}`,
+    guard: guardFromDex(dex),
+  }))}
+/>
+
+Real characters land around **7–14**, plus whatever equipment adds. 10 is the
+reference point; see [Combat](../combat/) for what the numbers mean.
+
+## Health
+
+Max health at level 1:
+
+```
+max health = hit die maximum + CON modifier + race bonus
+```
+
+### Race bonuses
+
+<FilterTable
+  placeholder="Search races…"
+  columns={[
+    { key: 'en', label: 'Race' },
+    { key: 'bonus', label: 'Health bonus', align: 'right' },
+  ]}
+  rows={races.map((r) => ({ en: r.en, bonus: `+${r.hpBonus}` }))}
+/>
+
+### Level 1 health
+
+Columns are CON, rows are class (assuming Human, +2).
+
+<FilterTable
+  placeholder="Search classes…"
+  columns={[
+    { key: 'cls', label: 'Class' },
+    { key: 'hd', label: 'Hit die', align: 'center' },
+    { key: 'con8', label: 'CON 8', align: 'right' },
+    { key: 'con10', label: 'CON 10', align: 'right' },
+    { key: 'con14', label: 'CON 14', align: 'right' },
+    { key: 'con18', label: 'CON 18', align: 'right' },
+  ]}
+  rows={classes.map((c) => ({
+    cls: c.en,
+    hd: `d${c.hitDie}`,
+    con8: level1Hp(c.hitDie, 8, 2),
+    con10: level1Hp(c.hitDie, 10, 2),
+    con14: level1Hp(c.hitDie, 14, 2),
+    con18: level1Hp(c.hitDie, 18, 2),
+  }))}
+/>
+
+Dwarves add another +2; Elves, Gnomes and Orcs are 1 lower.
+
+### Health per level
+
+From level 2 onward, each level:
+
+```
+roll the hit die
+guarantee at least half (round up to half if the roll is lower)
+add your CON modifier
+```
+
+So a Knight (d10) rolling a 3 still counts it as 5. **Expected gain per
+level:**
+
+<FilterTable
+  placeholder="Search hit dice…"
+  columns={[
+    { key: 'hd', label: 'Hit die', align: 'center' },
+    { key: 'classes', label: 'Classes' },
+    { key: 'min', label: 'Min', align: 'right' },
+    { key: 'expected', label: 'Expected', align: 'right' },
+    { key: 'max', label: 'Max', align: 'right' },
+  ]}
+  rows={[10, 8, 6, 4].map((hd) => ({
+    hd: `d${hd}`,
+    classes: classes.filter((c) => c.hitDie === hd).map((c) => c.en).join(', '),
+    min: hd / 2,
+    expected: expectedHitDieGain(hd).toFixed(2),
+    max: hd,
+  }))}
+/>
+
+The CON modifier isn't in that table — a Knight with CON 14 expects
+`6.5 + 2 = 8.5` per level.
+
+## Health regeneration
+
+Every **16 seconds** (the server's base tick is 8 seconds; regeneration runs
+every second one):
+
+```
+regen = max(1, 1 + floor(level / 5) + CON modifier)
+```
+
+**All** of these must hold:
+
+- You're alive (health > 0)
+- Health isn't full
+- **At least 10 seconds out of combat** — measured from your last attack or the
+  last hit you took
+- **Not Weak and not food-poisoned** — both stop regeneration completely
+  ([Food and satiation](../../database/food/))
+
+<FilterTable
+  placeholder="Enter a level…"
+  columns={[
+    { key: 'level', label: 'Level', align: 'right' },
+    { key: 'con8', label: 'CON 8', align: 'right' },
+    { key: 'con10', label: 'CON 10', align: 'right' },
+    { key: 'con14', label: 'CON 14', align: 'right' },
+    { key: 'con18', label: 'CON 18', align: 'right' },
+  ]}
+  rows={[1, 5, 10, 15, 20, 25, 30].map((level) => {
+    const regen = (con) => Math.max(1, 1 + Math.floor(level / 5) + abilityModifier(con));
+    return { level, con8: `${regen(8)} HP`, con10: `${regen(10)} HP`, con14: `${regen(14)} HP`, con18: `${regen(18)} HP` };
+  })}
+/>
+
+Those are per 16 seconds. A level 30 character with CON 18 regains 11 every 16
+seconds — about 41 a minute.

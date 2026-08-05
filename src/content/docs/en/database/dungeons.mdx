@@ -1,0 +1,140 @@
+---
+title: Dungeons
+description: Dungeon locations, floor counts, bosses and the chest drop rules.
+---
+
+import FilterTable from '../../../../components/FilterTable.astro';
+import { dungeons, monsters, items } from '../../../../lib/gamedata.js';
+import { itemName } from '../../../../lib/en.js';
+
+**{dungeons.length} dungeons** are open. Dungeons are **seed-determined**: the
+same entrance always has the same layout and is never regenerated.
+
+## The dungeons
+
+<FilterTable
+  placeholder="Search dungeons…"
+  columns={[
+    { key: 'name', label: 'Name' },
+    { key: 'tier', label: 'Tier', align: 'center' },
+    { key: 'floors', label: 'Floors', align: 'right' },
+    { key: 'boss', label: 'Boss' },
+    { key: 'signature', label: 'Guaranteed drop' },
+    { key: 'coords', label: 'Coordinates' },
+  ]}
+  rows={dungeons.map((d) => ({
+    name: d.name,
+    tier: `T${d.chestTier}`,
+    floors: `${d.floors}`,
+    boss: d.boss ? monsters.find((m) => m.id === d.boss)?.name ?? d.boss : '—',
+    signature: d.chestDrops ? itemName(d.chestDrops) : '—',
+    coords: `${d.x}, ${d.z}`,
+  }))}
+/>
+
+The world map records dungeon entrances **you have already found** — you have
+to walk to one the first time.
+
+## Bosses
+
+<FilterTable
+  placeholder="Search bosses…"
+  columns={[
+    { key: 'name', label: 'Boss' },
+    { key: 'dungeon', label: 'Dungeon' },
+    { key: 'level', label: 'Level', align: 'right' },
+    { key: 'hp', label: 'Health', align: 'right' },
+    { key: 'guard', label: 'Guard', align: 'right' },
+    { key: 'atk', label: 'To-hit', align: 'right' },
+    { key: 'dmg', label: 'Damage', align: 'center' },
+    { key: 'drop', label: 'Guaranteed weapon' },
+  ]}
+  rows={dungeons.filter((d) => d.boss).map((d) => {
+    const m = monsters.find((x) => x.id === d.boss);
+    return {
+      name: m.name, dungeon: d.name,
+      level: m.level, hp: m.healthEffective, guard: m.guard,
+      atk: `+${m.attackBonusEffective}`, dmg: m.damageRollEffective,
+      drop: m.weapon ? itemName(m.weapon) : '—',
+    };
+  })}
+/>
+
+The **Orc Warlord** is a step up: its 120 health is set directly in the data
+(not the 45 the level would derive), with Guard 13, +6 to hit and 2d8 damage.
+Orc Warrens runs 10 floors, so put a full leather set together before going
+down.
+
+## Chest drop rules
+
+Each dungeon's chest drops come in three parts:
+
+1. **Signature drop** — one guaranteed item per dungeon, the "Guaranteed drop"
+   column above.
+2. **Independent rolls** — every other piece in that tier's pool rolls
+   separately at its own chance.
+3. **Lower-tier carry-over** — equipment from tiers below the dungeon each get
+   an extra 10% roll, so you can fill gaps in a higher dungeon.
+
+Gold is `depth × 500` to `depth × 1500`.
+
+The target is roughly **five runs on average** to collect everything a tier
+introduces.
+
+<FilterTable
+  placeholder="Search equipment…"
+  columns={[
+    { key: 'name', label: 'Equipment' },
+    { key: 'tier', label: 'Chest tier', align: 'center' },
+    { key: 'chance', label: 'Drop chance', align: 'right' },
+    { key: 'guard', label: 'Guard', align: 'right' },
+  ]}
+  rows={items
+    .filter((i) => i.chestTier)
+    .sort((a, b) => a.chestTier - b.chestTier || (b.guard ?? 0) - (a.guard ?? 0))
+    .map((i) => ({
+      name: i.name,
+      tier: `T${i.chestTier}`,
+      chance: i.chestChance ? `${Math.round(i.chestChance * 100)}%` : 'Guaranteed',
+      guard: i.guard ?? '—',
+    }))}
+/>
+
+:::note[Weapons never come from chests]
+Weapons are obtained exclusively from "the monster carrying it drops it", so
+what you can see is what you can get. Chests hold armor and accessories only.
+:::
+
+## What you'll meet down there
+
+<FilterTable
+  placeholder="Search monsters…"
+  columns={[
+    { key: 'name', label: 'Monster' },
+    { key: 'level', label: 'Level', align: 'right' },
+    { key: 'depth', label: 'Spawn depth' },
+    { key: 'weight', label: 'Weight', align: 'right' },
+    { key: 'hp', label: 'Health', align: 'right' },
+    { key: 'dmg', label: 'Damage', align: 'center' },
+  ]}
+  rows={monsters
+    .filter((m) => m.dungeonMinDepth !== null)
+    .sort((a, b) => a.dungeonMinDepth - b.dungeonMinDepth || a.level - b.level)
+    .map((m) => ({
+      name: m.name, level: m.level,
+      depth: `Floors ${m.dungeonMinDepth} – ${m.dungeonMaxDepth}`,
+      weight: m.dungeonWeight, hp: m.healthEffective, dmg: m.damageRollEffective,
+    }))}
+/>
+
+## Other things down there
+
+- **Barrels and crates break** — click one and your character walks up and
+  swings once. Treasure chests don't break.
+- **Chests are opened** — click one and your character walks over and lifts the
+  lid. A real coin pile drops in front of it; picking it up credits 1–10 copper
+  straight to your wallet without taking a bag slot.
+- **Corridors have doors** — where a corridor opens into a room there's a
+  clickable wooden double door.
+- **Corridor and room walls differ** — rooms use medieval stone, corridors use
+  rock. Useful for telling where you are.

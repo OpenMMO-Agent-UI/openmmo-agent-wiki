@@ -1,0 +1,170 @@
+---
+title: Shops and economy
+description: Rica's catalogue, sell rates, world drop chances, and how haggling works.
+---
+
+import FilterTable from '../../../../components/FilterTable.astro';
+import { items, itemsById, merchants, npcs, worldDrops, formatCoins, sellPrice } from '../../../../lib/gamedata.js';
+import { itemName, categoryNames } from '../../../../lib/en.js';
+
+export const rica = merchants.find((m) => m.id === 'rica');
+export const karl = npcs.find((n) => n.id === 'karl');
+
+## Currency
+
+There is one currency, stored server-side as a single copper integer and
+converted for display:
+
+**1 gold (g) = 100 silver (s) = 10,000 copper (c)**
+
+New characters get **no starting money.** Your first income comes from selling
+monster drops. The starting weapon is the **{itemName('worn_iron_sword')}**, and
+it deliberately **has no price** — merchants refuse it, which shuts down
+rerolling characters to cash out starting gear.
+
+## Rica's stock
+
+Rica sells {rica.catalog.length} things and buys at
+**{rica.sellRatePercent}%** of base price.
+
+<FilterTable
+  placeholder="Search stock…"
+  columns={[
+    { key: 'name', label: 'Item' },
+    { key: 'category', label: 'Category', align: 'center' },
+    { key: 'buy', label: 'You pay', align: 'right' },
+    { key: 'sell', label: 'She pays', align: 'right' },
+    { key: 'weight', label: 'Weight', align: 'right' },
+  ]}
+  rows={rica.catalog.map((id) => {
+    const i = itemsById.get(id);
+    return {
+      name: i?.name ?? id,
+      category: categoryNames[i?.category] ?? i?.category ?? '—',
+      buy: formatCoins(i?.basePrice ?? null),
+      sell: formatCoins(sellPrice(i?.basePrice ?? null, rica.sellRatePercent)),
+      weight: i ? `${i.weight} kg` : '—',
+    };
+  })}
+/>
+
+The shop list is **deliberately minimal.** The rule is: only stock the pieces a
+tier-1 dungeon does *not* drop reliably, as insurance for players whose rolls
+keep failing. Guaranteed drops need no insurance, and higher-tier pieces stay
+out to protect the farming loop.
+
+That's why the **{itemName('leather_helmet')}** (Old Crypt's guaranteed drop)
+and the **{itemName('iron_sword')}** are **not in the shop**.
+
+### Sold something by mistake?
+
+The last **10** items you sold to a merchant can be bought back for exactly what
+you were paid. It's a recovery path for misclicks, and the round trip is
+gold-neutral so it doesn't disturb the spread — something you haggled a high
+price for costs that much to buy back.
+
+The list is kept per character and per merchant, survives reconnecting, and has
+no time limit — but **it is lost when the server restarts.**
+
+## Haggling
+
+Rica is an LLM-driven NPC, so **you can talk the price down.** All the price
+protection sits on the server:
+
+1. The server computes a price band `[min, max]` from the base price, the
+   spread and a **CHA modifier**.
+2. The LLM can only pick an adjustment inside that band — never an absolute
+   price. Anything outside gets clamped or refused.
+3. The server guarantees **arbitrage is impossible** — the most discounted buy
+   price is always above the highest sell price.
+4. There are daily budgets and cooldowns: 1 gold per game day for the merchant,
+   40 silver per player, a **30-second** haggle cooldown, and any deal is
+   **single-use and expires after 5 minutes.**
+
+Higher CHA widens the band the server allows (roughly ±5 to 25 percentage
+points) — a charismatic character really does negotiate better.
+
+:::tip
+A good story, a piece of news or some judicious flattery genuinely earn a
+discount. Being rude can earn a **markup** — it's symmetric, and in character.
+:::
+
+## Non-merchant NPCs
+
+Merchants aren't the only ones who trade. The guard **Karl** has a wishlist and
+pays **{karl.wishlistRatePercent}%** of base for what he wants:
+
+<FilterTable
+  placeholder="Search…"
+  columns={[
+    { key: 'npc', label: 'NPC' },
+    { key: 'wants', label: 'Wants' },
+    { key: 'rate', label: 'Pays', align: 'right' },
+    { key: 'value', label: 'In coin', align: 'right' },
+    { key: 'ricaSell', label: 'Rica would pay', align: 'right' },
+  ]}
+  rows={karl.wishlist.map((id) => {
+    const i = itemsById.get(id);
+    return {
+      npc: karl.npcName, wants: i?.name ?? id,
+      rate: `${karl.wishlistRatePercent}%`,
+      value: formatCoins(i?.basePrice ? Math.floor(i.basePrice * karl.wishlistRatePercent / 100) : null),
+      ricaSell: formatCoins(sellPrice(i?.basePrice ?? null, rica.sellRatePercent)),
+    };
+  })}
+/>
+
+**Buying from Rica and selling to Karl turns a profit** — that's intended
+content, effectively an emergent delivery quest. It's capped by Karl's wallet
+({formatCoins(karl.walletCap)}), so it can't run away. His money comes from a
+{formatCoins(karl.salaryPerDay)} per game day salary that stops once the wallet
+is full.
+
+Note that he **only buys while the wishlist is unmet** — he doesn't want what's
+already in his bag.
+
+## World drops
+
+Beyond the weapon it was carrying, a killed monster can drop these outright:
+
+<FilterTable
+  placeholder="Search drops…"
+  columns={[
+    { key: 'name', label: 'Item' },
+    { key: 'chance', label: 'Drop rate', align: 'right' },
+    { key: 'expected', label: 'Kills per drop', align: 'right' },
+    { key: 'value', label: 'Sells for', align: 'right' },
+  ]}
+  rows={worldDrops.sort((a, b) => b.chance - a.chance).map((d) => {
+    const i = itemsById.get(d.id);
+    return {
+      name: i?.name ?? d.id,
+      chance: `${(d.chance * 100).toFixed(1)}%`,
+      expected: `${Math.round(1 / d.chance)}`,
+      value: formatCoins(sellPrice(i?.basePrice ?? null, rica.sellRatePercent)),
+    };
+  })}
+/>
+
+The **{itemName('iron_sword')}** has a 1% world drop rate, which is the other
+route to it besides killing the Orc Warlord — though that's 100 kills in
+expectation.
+
+## Where gold comes from
+
+Gold issuance is deliberately controlled. There are only three repeatable
+sources:
+
+| Source | Amount |
+|---|---|
+| Coin piles (dungeon chests) | 1–10 copper |
+| Dungeon chest gold | depth × 500 to depth × 1500 |
+| Fishing | 8–24 copper expected per catch |
+
+Compare that to the NPC guard's daily wage of
+{formatCoins(karl.salaryPerDay)}.
+
+Weapons dropped by monsters are **mostly unsellable "Worn" variants**, on
+purpose — if higher-tier weapons cashed out reliably from ordinary monsters
+they would be a money printer. Ordinary armed monsters drop at only 10%; only
+bosses are guaranteed.

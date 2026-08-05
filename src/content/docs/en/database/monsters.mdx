@@ -1,0 +1,166 @@
+---
+title: Monster index
+description: Stats for every monster in OpenMMO — health, Guard, damage, behaviour, spawn depth and drops.
+---
+
+import FilterTable from '../../../../components/FilterTable.astro';
+import { monsters, items, averageRoll, healthForLevel, attackBonusForLevel, damageRollForLevel } from '../../../../lib/gamedata.js';
+import { monsterName, itemName, behaviorNames } from '../../../../lib/en.js';
+
+export const mark = (value, derived) => (derived ? `${value} *` : `${value}`);
+export const byLevel = (a, b) => a.level - b.level;
+
+**{monsters.length} monsters** so far.
+
+:::caution[Values marked `*` are derived]
+A blank health, attack bonus or damage roll in the game data means **"don't
+override"** — the server computes it from the level. Blank is not zero. So the
+same formulas the server uses (`server/src/game/combat.rs`) run here, and
+derived values carry a `*`:
+
+- Health = `ceil(level × 9 ÷ 2)`
+- Attack bonus = `floor(level ÷ 2)`
+- Damage roll = a level lookup (table below)
+:::
+
+## All monsters
+
+<FilterTable
+  placeholder="Search monsters…"
+  columns={[
+    { key: 'name', label: 'Name' },
+    { key: 'level', label: 'Level', align: 'right' },
+    { key: 'hp', label: 'Health', align: 'right' },
+    { key: 'guard', label: 'Guard', align: 'right' },
+    { key: 'atk', label: 'To-hit', align: 'right' },
+    { key: 'dmg', label: 'Damage', align: 'center' },
+    { key: 'avg', label: 'Avg damage', align: 'right' },
+    { key: 'behavior', label: 'Behaviour', align: 'center' },
+  ]}
+  rows={monsters.slice().sort(byLevel).map((m) => ({
+    name: m.name,
+    level: m.level,
+    hp: mark(m.healthEffective, m.healthDerived),
+    guard: m.guard,
+    atk: mark(`+${m.attackBonusEffective}`, m.attackBonusDerived),
+    dmg: mark(m.damageRollEffective, m.damageRollDerived),
+    avg: averageRoll(m.damageRollEffective)?.toFixed(1) ?? '—',
+    behavior: behaviorNames[m.behavior] ?? m.behavior,
+  }))}
+/>
+
+There are only two behaviours. *Attacks on sight* monsters charge you;
+*fights back only* monsters wait for you to swing first. The Kobold and the
+Stalker are the latter, so you can walk past them if you'd rather not fight.
+
+## Movement and attack parameters
+
+Use this to work out whether you can outrun something, or time a gap between
+its swings. Chase range is where it starts following you; attack range is where
+it can reach you.
+
+<FilterTable
+  placeholder="Search monsters…"
+  columns={[
+    { key: 'name', label: 'Name' },
+    { key: 'walk', label: 'Walk speed', align: 'right' },
+    { key: 'run', label: 'Run speed', align: 'right' },
+    { key: 'atkRange', label: 'Attack range', align: 'right' },
+    { key: 'chase', label: 'Chase range', align: 'right' },
+    { key: 'cooldown', label: 'Attack interval', align: 'right' },
+  ]}
+  rows={monsters.slice().sort(byLevel).map((m) => ({
+    name: m.name,
+    walk: m.walkSpeed,
+    run: m.runSpeed,
+    atkRange: `${m.attackRange} m`,
+    chase: `${m.chaseRange} m`,
+    cooldown: `${(m.attackCooldown / 1000).toFixed(2)}s`,
+  }))}
+/>
+
+Your baseline movement speed is **3.0** (3.3 with the well-fed ×1.1 buff).
+Against that table: the Stalker runs at 8.0, so provoking one means **you
+cannot escape it**. The Orc at 4.5 and the Goblin Chief at 4.0 will also catch
+you. Only the Kobold (3.2) can be shaken off.
+
+## Where they spawn
+
+Dungeon monsters spawn by floor depth; surface monsters spawn in designated
+regions. A higher weight means it turns up more often within its depth range.
+
+<FilterTable
+  placeholder="Search monsters…"
+  columns={[
+    { key: 'name', label: 'Name' },
+    { key: 'depth', label: 'Dungeon depth' },
+    { key: 'weight', label: 'Spawn weight', align: 'right' },
+    { key: 'note', label: 'Notes' },
+  ]}
+  rows={monsters.slice().sort(byLevel).map((m) => ({
+    name: m.name,
+    depth: m.dungeonMinDepth !== null ? `Floors ${m.dungeonMinDepth} – ${m.dungeonMaxDepth}` : 'Does not spawn in dungeons',
+    weight: m.dungeonWeight ?? '—',
+    note: m.dungeonMinDepth === null ? 'Boss, placed on the dungeon’s bottom floor' : '',
+  }))}
+/>
+
+## Drops
+
+The weapon a monster carries is the weapon it drops — a deliberate design, so
+**what you can see is what you can get.** Ordinary monsters drop at 10%; bosses
+are guaranteed.
+
+<FilterTable
+  placeholder="Search monsters or drops…"
+  columns={[
+    { key: 'name', label: 'Monster' },
+    { key: 'drop', label: 'Weapon dropped' },
+    { key: 'chance', label: 'Drop rate', align: 'right' },
+    { key: 'dice', label: 'Weapon damage', align: 'center' },
+  ]}
+  rows={monsters.filter((m) => m.weapon).sort(byLevel).map((m) => ({
+    name: m.name,
+    drop: itemName(m.weapon),
+    chance: `${Math.round(m.weaponDropChance * 100)}%`,
+    dice: items.find((i) => i.id === m.weapon)?.dice ?? '—',
+  }))}
+/>
+
+The Orc Warlord is currently the only guaranteed source of the **Iron Sword**
+(1d8) — it isn't sold in shops, so killing that boss is the direct route to it.
+
+## Level defaults
+
+Blank fields use this table.
+
+<FilterTable
+  placeholder="Enter a level…"
+  columns={[
+    { key: 'level', label: 'Level', align: 'right' },
+    { key: 'hp', label: 'Health', align: 'right' },
+    { key: 'atk', label: 'To-hit', align: 'right' },
+    { key: 'dmg', label: 'Damage roll', align: 'center' },
+    { key: 'avg', label: 'Avg damage', align: 'right' },
+  ]}
+  rows={Array.from({ length: 12 }, (_, n) => n + 1).map((lv) => ({
+    level: lv,
+    hp: healthForLevel(lv),
+    atk: `+${attackBonusForLevel(lv)}`,
+    dmg: damageRollForLevel(lv),
+    avg: averageRoll(damageRollForLevel(lv)).toFixed(1),
+  }))}
+/>
+
+## How hits are resolved
+
+Attacks roll a d20:
+
+```
+d20 + attack bonus >  target Guard   →  hit
+d20 + attack bonus ≤  target Guard   →  miss
+```
+
+So Guard is the number you have to beat. Your own Guard comes from DEX
+(`clamp(10 + DEX modifier, 1, 20)`, which lands around 7–14 in practice) plus
+whatever your equipment adds.

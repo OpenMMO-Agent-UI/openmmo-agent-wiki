@@ -1,0 +1,238 @@
+---
+title: Panel reference
+description: The six drawers, the four settings tabs, and every setting with its default and what it actually does.
+---
+
+import FilterTable from '../../../../components/FilterTable.astro';
+
+This page takes the client panel apart feature by feature. If you just want to
+get playing, [Install and first run](../install/) is enough.
+
+## The header
+
+| Element | What it does |
+|---|---|
+| Connection status | Whether you're connected |
+| Vitals | Your character's live numbers |
+| Spectator memory use | How much memory the 3D view is holding |
+| Reload | Reloads the 3D spectator view (use it if the view freezes or corrupts) |
+| **Apply & restart** | **Only appears if you changed a setting while the agent is running.** The agent reads its config once at startup, so this is how a change takes effect |
+| Manual / AI switch | Swap between the two modes live |
+| Change character / server | Back to the earlier screens |
+
+## The six drawers
+
+### Equipment
+
+What's worn, slot by slot.
+
+:::note[Why equipment comes through the relay]
+The agent's own panel API **reports the bag but never the gear.** So this
+drawer is reconstructed from the inventory frames the relay sees — one of the
+things the desktop client adds that running `agent-client` directly does not
+give you.
+:::
+
+### Bag
+
+Shows what's carried, and lets you **mark what the agent is allowed to dispose
+of**:
+
+- **S (Sellable)** — the agent may sell it
+- **D (Dropable)** — the agent may drop it
+
+Tick the boxes, then press **Apply labels** to send them (they're staged, not
+sent one at a time).
+
+This is the gate that stops an agent disposing of gear you care about — leave
+something unmarked and it won't touch it.
+
+### Personality & Memory
+
+Two halves:
+
+- **Personality** — this character's own prompt, layered on the shared rules.
+  Editable. **Saving while the agent is running restarts it.**
+- **Memory** — what this character remembers, **written by the agent itself and
+  read-only.**
+
+Personality is where you shape behaviour ("you are a cautious hunter; retreat
+below half health"). Memory is what it has accumulated on its own.
+
+### Coordinates
+
+Place bookmarks. **Use current position** records where you are, then name it
+and add it.
+
+Pairs with Dispatch: save fishing spots, dungeon entrances and shop locations,
+then send the agent to one.
+
+### Dispatch Presets
+
+Save frequently used instructions under a name and send them with one click
+instead of retyping.
+
+Each preset has a **name** and the **prompt to send**. Saved presets appear as
+buttons beside the Dispatch input.
+
+### Activity
+
+Two tabs:
+
+- **Thoughts** — every prompt sent and every reply, with timings. Has
+  **filters**, **Follow** (auto-scroll to newest) and **Clear**.
+- **Log** — the agent process's own stdout / stderr.
+
+Wondering why the agent made a decision? Thoughts. Wondering why it broke? Log.
+
+## Dispatch
+
+The strip under the game view is **the one control that reaches a running
+agent**.
+
+Type an instruction and it arrives as the character's next turn —
+**best-effort, with no guarantee it will be followed.** It's a whisper, not an
+order: you're suggesting, the model still decides.
+
+## The four settings tabs
+
+### LLM
+
+<FilterTable
+  placeholder="Search settings…"
+  columns={[
+    { key: 'field', label: 'Field' },
+    { key: 'default', label: 'Default' },
+    { key: 'note', label: 'What it does' },
+  ]}
+  rows={[
+    { field: 'Backend', default: 'Codex CLI', note: 'One of four — see below' },
+    { field: 'Model', default: 'Varies by backend', note: 'Suggestions in a dropdown; free text also works' },
+    { field: 'Base URL', default: 'https://ollama.com/v1', note: 'Only appears for the OpenAI-compatible backend' },
+    { field: 'API key', default: '—', note: 'HTTP backends only. Stored in the OS keychain' },
+    { field: 'Reasoning effort', default: 'none', note: 'none / low / medium / high. Only affects models that support it' },
+    { field: 'Maximum tokens', default: '4096', note: 'Cap on a single reply' },
+    { field: 'Temperature', default: '0.7', note: 'Lower is steadier, higher is more varied' },
+  ]}
+/>
+
+#### The four backends
+
+<FilterTable
+  placeholder="Search backends…"
+  columns={[
+    { key: 'backend', label: 'Backend' },
+    { key: 'kind', label: 'Kind', align: 'center' },
+    { key: 'models', label: 'Suggested models' },
+    { key: 'note', label: 'Notes' },
+  ]}
+  rows={[
+    { backend: 'Codex CLI', kind: 'CLI', models: 'gpt-5.4-mini, gpt-5.4, o4-mini', note: 'Uses the Codex CLI you are already signed in to. No API key needed here' },
+    { backend: 'Claude CLI', kind: 'CLI', models: 'sonnet, opus, haiku', note: 'Uses your local Claude CLI login. Also no key' },
+    { backend: 'OpenRouter', kind: 'HTTP', models: 'qwen/qwen3.7-flash and others', note: 'Needs an API key. Model guidance on the previous page' },
+    { backend: 'OpenAI-compatible', kind: 'HTTP', models: 'Whatever you enter', note: 'Any OpenAI-compatible endpoint. Defaults to Ollama, so local models work' },
+  ]}
+/>
+
+:::tip[Already have Claude or Codex CLI? You don't need an API key]
+The CLI backends reuse the login you already have on this machine.
+:::
+
+:::tip[Running fully local]
+Pick **OpenAI-compatible**, put your Ollama address in Base URL (the default is
+already in Ollama's shape) and name your local model. No API cost and no data
+leaves the machine — the trade is that local models are often slower than
+`qwen3.7-flash` and may not keep up with the game's turn cadence.
+:::
+
+### Automatic play
+
+<FilterTable
+  placeholder="Search settings…"
+  columns={[
+    { key: 'field', label: 'Field' },
+    { key: 'default', label: 'Default' },
+    { key: 'note', label: 'What it does' },
+  ]}
+  rows={[
+    { field: 'Active response', default: '5s', note: 'Response cadence when something is happening. Shorter is more responsive and more expensive' },
+    { field: 'Quiet-world patrol', default: '8s', note: 'Response cadence when nothing is going on' },
+    { field: 'Continue adventuring while alone', default: 'On', note: 'Turn it off and the agent goes quiet when no other players are nearby — the setting to use when idling' },
+  ]}
+/>
+
+These two intervals are **the main cost control.** To spend less, raise both or
+turn off adventuring while alone.
+
+### Advanced
+
+<FilterTable
+  placeholder="Search settings…"
+  columns={[
+    { key: 'field', label: 'Field' },
+    { key: 'default', label: 'Default' },
+    { key: 'note', label: 'What it does' },
+  ]}
+  rows={[
+    { field: 'Active interval (s)', default: '5', note: 'The raw value behind the slider above' },
+    { field: 'Idle interval (s)', default: '8', note: 'Likewise' },
+    { field: 'Watch port', default: '8808', note: 'Port for the local spectator panel. Change only on a conflict' },
+    { field: 'Log level', default: 'info', note: 'info / debug / warn. Raise to debug before reporting a problem' },
+    { field: 'Concurrent LLM calls', default: '2', note: 'How many requests are in flight at once' },
+    { field: 'Request timeout (s)', default: '120', note: 'How long to wait for one request. Raise it for slow local models' },
+  ]}
+/>
+
+### Actions — the look of action toasts
+
+The agent raises a toast for each action it takes. This tab styles them, with a
+**live preview**.
+
+<FilterTable
+  placeholder="Search settings…"
+  columns={[
+    { key: 'field', label: 'Field' },
+    { key: 'default', label: 'Default' },
+  ]}
+  rows={[
+    { field: 'Font size', default: '13' },
+    { field: 'Background transparency', default: '75' },
+    { field: 'Persist time', default: '7s' },
+    { field: 'Fade duration', default: '0.4s' },
+    { field: 'Max toasts shown', default: '10' },
+  ]}
+/>
+
+Purely cosmetic — none of it changes agent behaviour. If the screen feels busy,
+lower the count and the persist time.
+
+## Connection profiles
+
+Managed on the **Server** screen. The built-in `openmmo.to.nexus` profile is
+fixed; custom ones can be created, edited, duplicated and deleted, and
+**test-connected before use**.
+
+A profile holds:
+
+| Field | What it is |
+|---|---|
+| Profile name | Name of the profile |
+| Game server | The server's WebSocket address |
+| Terrain origin | Where terrain assets are fetched from |
+| Google client ID | The OAuth client that server accepts |
+| Google client secret | Its secret, stored encrypted |
+
+**These five travel as a set** — a server only accepts sign-in tokens issued by
+a client ID on its own allowlist, so client IDs can't be shared between
+servers.
+
+## Where your secrets live
+
+API keys and connection-profile secrets are encrypted with the OS keychain
+(Electron `safeStorage`, with an AES-GCM fallback) and handed to the agent as
+**environment variables**.
+
+**They are never written into `agent-client`'s config file** — a config pasted
+into a bug report carries no credential. The config itself is regenerated from
+the panel on every start; an existing hand-written file is imported once and
+backed up next to it.

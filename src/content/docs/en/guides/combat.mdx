@@ -1,0 +1,320 @@
+---
+title: Combat
+description: Hit resolution, damage, the Guard scale, XP formulas, the levelling curve and the death penalty.
+---
+
+import FilterTable from '../../../../components/FilterTable.astro';
+import { monsters, items, averageRoll } from '../../../../lib/gamedata.js';
+import { itemName } from '../../../../lib/en.js';
+import { hitChance, xpForLevel, monsterXp, expectedHitDieGain, classes } from '../../../../lib/classes.js';
+
+Every roll happens **on the server**. The client only sends "I want to attack
+this monster"; the server decides what happened.
+
+## Hit resolution
+
+Attacks roll a d20:
+
+```
+d20 + attack bonus >  target Guard   →  hit
+d20 + attack bonus ≤  target Guard   →  miss
+```
+
+Note it's **strictly greater**. Rolling exactly the target's Guard is a
+**miss**.
+
+**Attack bonus**:
+
+- Base = `floor(level / 2)`
+- Player melee adds your **STR modifier**
+- Monsters use their data value if they have one, otherwise the level default
+
+### Hit chance
+
+Columns are the target's Guard, rows are your total attack bonus.
+
+<FilterTable
+  placeholder="Enter an attack bonus…"
+  columns={[
+    { key: 'bonus', label: 'Attack bonus', align: 'right' },
+    { key: 'g8', label: 'Guard 8', align: 'right' },
+    { key: 'g9', label: 'Guard 9', align: 'right' },
+    { key: 'g10', label: 'Guard 10', align: 'right' },
+    { key: 'g11', label: 'Guard 11', align: 'right' },
+    { key: 'g13', label: 'Guard 13', align: 'right' },
+    { key: 'g15', label: 'Guard 15', align: 'right' },
+  ]}
+  rows={Array.from({ length: 11 }, (_, n) => n).map((bonus) => {
+    const pct = (g) => `${Math.round(hitChance(bonus, g) * 100)}%`;
+    return { bonus: `+${bonus}`, g8: pct(8), g9: pct(9), g10: pct(10), g11: pct(11), g13: pct(13), g15: pct(15) };
+  })}
+/>
+
+:::note[There is no critical-fumble rule]
+Unlike most D&D-derived systems, this one has **no natural-1-always-misses
+rule.** If your `attack bonus ≥ target Guard`, even a 1 connects — hit chance
+really does reach **100%**. In the other direction it can reach **0%**, where no
+roll can land.
+:::
+
+### Hitting each monster
+
+Look up your total attack bonus (half your level, plus your STR modifier):
+
+<FilterTable
+  placeholder="Search monsters…"
+  columns={[
+    { key: 'name', label: 'Monster' },
+    { key: 'guard', label: 'Guard', align: 'right' },
+    { key: 'b0', label: '+0', align: 'right' },
+    { key: 'b2', label: '+2', align: 'right' },
+    { key: 'b4', label: '+4', align: 'right' },
+    { key: 'b6', label: '+6', align: 'right' },
+    { key: 'b8', label: '+8', align: 'right' },
+  ]}
+  rows={monsters.slice().sort((a, b) => a.guard - b.guard).map((m) => {
+    const pct = (b) => `${Math.round(hitChance(b, m.guard) * 100)}%`;
+    return { name: m.name, guard: m.guard, b0: pct(0), b2: pct(2), b4: pct(4), b6: pct(6), b8: pct(8) };
+  })}
+/>
+
+### Monsters hitting you
+
+The other direction, by your Guard (DEX base plus equipment):
+
+<FilterTable
+  placeholder="Search monsters…"
+  columns={[
+    { key: 'name', label: 'Monster' },
+    { key: 'atk', label: 'To-hit', align: 'right' },
+    { key: 'g10', label: 'Your Guard 10', align: 'right' },
+    { key: 'g14', label: 'Your Guard 14', align: 'right' },
+    { key: 'g18', label: 'Your Guard 18', align: 'right' },
+    { key: 'g22', label: 'Your Guard 22', align: 'right' },
+    { key: 'dmg', label: 'Damage on hit', align: 'center' },
+  ]}
+  rows={monsters.slice().sort((a, b) => a.level - b.level).map((m) => {
+    const pct = (g) => `${Math.round(hitChance(m.attackBonusEffective, g) * 100)}%`;
+    return {
+      name: m.name, atk: `+${m.attackBonusEffective}`,
+      g10: pct(10), g14: pct(14), g18: pct(18), g22: pct(22),
+      dmg: m.damageRollEffective,
+    };
+  })}
+/>
+
+**Stacking Guard pays off very directly** — each +1 costs the attacker 5% hit
+chance. A full plate set (19 Guard total) makes you nearly unhittable by
+low-level monsters.
+
+## Damage
+
+Damage is only rolled on a hit. Dice notation is `{count}d{sides}`:
+
+```
+2d6  →  roll two six-sided dice and sum (2–12)
+```
+
+Player melee adds your **STR modifier**.
+
+### Weapon damage
+
+<FilterTable
+  placeholder="Search weapons…"
+  columns={[
+    { key: 'name', label: 'Weapon' },
+    { key: 'dice', label: 'Damage', align: 'center' },
+    { key: 'min', label: 'Min', align: 'right' },
+    { key: 'avg', label: 'Avg', align: 'right' },
+    { key: 'max', label: 'Max', align: 'right' },
+    { key: 'weight', label: 'Weight', align: 'right' },
+  ]}
+  rows={items
+    .filter((i) => i.category === 'weapon' && i.dice)
+    .sort((a, b) => averageRoll(b.dice) - averageRoll(a.dice))
+    .map((i) => {
+      const [n, sides] = i.dice.split('d').map(Number);
+      return {
+        name: i.name, dice: i.dice, min: n,
+        avg: averageRoll(i.dice).toFixed(1), max: n * sides,
+        weight: `${i.weight} kg`,
+      };
+    })}
+/>
+
+The STR modifier applies **to every hit**, so it lifts low-damage weapons
+proportionally more: STR 18 (+4) with a Dagger (1d4, average 2.5) actually
+averages 6.5 — 2.6× the base.
+
+## The Guard scale
+
+Guard is NetHack's AC inverted — **higher is better.**
+
+| Guard | Meaning |
+|---|---|
+| 0–7 | Barely defended |
+| 8–9 | Light defence |
+| 10 | Ordinary |
+| 11–13 | Solid |
+| 14+ | Heavy armor and up |
+
+Against NetHack: `Guard = 10 − AC`.
+
+## Experience
+
+### XP per kill
+
+```
+XP = 1 + level² + max(Guard - 10, 0) × 2
+```
+
+Guard above 10 earns a bonus — **harder monsters pay more.**
+
+<FilterTable
+  placeholder="Search monsters…"
+  columns={[
+    { key: 'name', label: 'Monster' },
+    { key: 'level', label: 'Level', align: 'right' },
+    { key: 'guard', label: 'Guard', align: 'right' },
+    { key: 'xp', label: 'XP', align: 'right' },
+    { key: 'hp', label: 'Health', align: 'right' },
+    { key: 'perHp', label: 'XP / health', align: 'right' },
+  ]}
+  rows={monsters.slice()
+    .sort((a, b) => monsterXp(a.level, a.guard) - monsterXp(b.level, b.guard))
+    .map((m) => ({
+      name: m.name, level: m.level, guard: m.guard,
+      xp: monsterXp(m.level, m.guard), hp: m.healthEffective,
+      perHp: (monsterXp(m.level, m.guard) / m.healthEffective).toFixed(2),
+    }))}
+/>
+
+**XP / health** is the efficiency column — higher means more XP per point of
+health you have to chew through. The Orc Warlord gives the most XP but takes
+120 health to get there, so it isn't the most efficient.
+
+### XP to level
+
+```
+XP(n) = 20 × 2^(n-2)      (n ≥ 2)
+```
+
+**Every level costs exactly twice the last** — a pure exponential with no
+easing.
+
+<FilterTable
+  placeholder="Enter a level…"
+  columns={[
+    { key: 'level', label: 'Level', align: 'right' },
+    { key: 'total', label: 'Cumulative XP', align: 'right' },
+    { key: 'band', label: 'This level costs', align: 'right' },
+    { key: 'orcs', label: 'Orcs, roughly', align: 'right' },
+  ]}
+  rows={Array.from({ length: 20 }, (_, n) => n + 1).map((level) => {
+    const orcXp = monsterXp(4, 11);
+    const band = level === 1 ? 0 : xpForLevel(level) - xpForLevel(level - 1);
+    return {
+      level,
+      total: xpForLevel(level).toLocaleString(),
+      band: level === 1 ? '—' : band.toLocaleString(),
+      orcs: level === 1 ? '—' : Math.ceil(band / orcXp).toLocaleString(),
+    };
+  })}
+/>
+
+The last column converts to Orcs (level 4, Guard 11,
+{monsterXp(4, 11)} XP each). Past the first ten levels, grinding on the current
+monster roster gets very slow — the game's content today lines up with roughly
+the first ten levels.
+
+## The death penalty
+
+Dying **costs no equipment** but does cost XP:
+
+```
+level band = XP(L+1) - XP(L)
+penalty    = max(1, floor(band × 0.15))
+```
+
+That's **15% of your progress through the current level.**
+
+### Losing a level
+
+If the deduction drops you below the level's starting XP you **lose a level.**
+Two protections:
+
+- **At most one level per death.**
+- **Level 1 never drops.**
+
+After a drop your XP is floored at **30% through** the lower band, so you don't
+end up stuck just short of relevelling over and over.
+
+<FilterTable
+  placeholder="Enter a level…"
+  columns={[
+    { key: 'level', label: 'Level', align: 'right' },
+    { key: 'band', label: 'Level band', align: 'right' },
+    { key: 'penalty', label: 'Lost on death', align: 'right' },
+    { key: 'orcs', label: 'Orcs to recover', align: 'right' },
+  ]}
+  rows={Array.from({ length: 12 }, (_, n) => n + 2).map((level) => {
+    const band = xpForLevel(level + 1) - xpForLevel(level);
+    const penalty = Math.max(1, Math.floor(band * 0.15));
+    return {
+      level, band: band.toLocaleString(), penalty: penalty.toLocaleString(),
+      orcs: Math.ceil(penalty / monsterXp(4, 11)).toLocaleString(),
+    };
+  })}
+/>
+
+### Losing a level costs health too
+
+So that repeatedly levelling up and down can't be farmed for health, **the
+distribution of health lost on a level-down is identical to the health gained
+on a level-up**:
+
+```
+roll the hit die, guarantee at least half, add the CON modifier
+```
+
+The long-run expectation is therefore **zero** — no statistical gain from
+cycling. Health also never drops below your level 1 value.
+
+<FilterTable
+  placeholder="Search hit dice…"
+  columns={[
+    { key: 'hd', label: 'Hit die', align: 'center' },
+    { key: 'classes', label: 'Classes' },
+    { key: 'expected', label: 'Expected gain / loss', align: 'right' },
+  ]}
+  rows={[10, 8, 6, 4].map((hd) => ({
+    hd: `d${hd}`,
+    classes: classes.filter((c) => c.hitDie === hd).map((c) => c.en).join(', '),
+    expected: expectedHitDieGain(hd).toFixed(2),
+  }))}
+/>
+
+**If you didn't lose a level, you don't lose health.**
+
+## Respawning
+
+Request a respawn and the server confirms your health is 0, refills it and
+returns you to the origin `(0, 0, 0)`. Satiation resets to 300 — the bottom of
+the Well-Fed band — so you don't respawn starving and immediately go Weak.
+
+## Monster AI
+
+Monster AI runs on the client, but **attack resolution always goes to the
+server.**
+
+| State | Meaning |
+|---|---|
+| `idle` | Waiting (30% chance to wander) |
+| `walk` | Moving |
+| `run` | Chasing a player (within chase range) |
+| `attack` | Attacking (within attack range) |
+| `hit` | Stagger from being hit (~800 ms) |
+| `dead` | Dead |
+
+A dead monster is removed after **30 seconds**. Per-monster chase ranges and
+attack intervals are in [Monster index](../../database/monsters/).

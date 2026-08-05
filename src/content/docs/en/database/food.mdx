@@ -1,0 +1,141 @@
+---
+title: Food and satiation
+description: Satiation bands and their effects, food efficiency, and what to carry.
+---
+
+import FilterTable from '../../../../components/FilterTable.astro';
+import { items, merchants, formatCoins } from '../../../../lib/gamedata.js';
+import { itemName } from '../../../../lib/en.js';
+
+export const rica = merchants.find((m) => m.id === 'rica');
+export const foods = items.filter((i) => i.category === 'food');
+
+Your character carries a **satiation** value from 0 to 1000. New characters
+start at **700**.
+
+- **Decay**: 1 per 20 seconds while online. **It does not decay offline.**
+- **Recovery**: eating adds the item's nutrition, capped at 1000.
+- **You cannot starve to death**: it stops at 0 and only the Weak penalties
+  remain. Respawning after death resets it to 300.
+
+One game day is three real hours. The tuning anchor is **one meal per game
+day**.
+
+## The bands
+
+The system is framed as a **buff**: the baseline is ordinary, being well fed
+earns a bonus, and penalties only exist at the extremes.
+
+| State | Range | Move speed | Attack speed | Max carry | HP regen |
+|---|---|:---:|:---:|:---:|:---:|
+| Stuffed | 851–1000 | — | — | — | — |
+| **Well-Fed** | **300–850** | **×1.1** | **×1.1** | **×1.15** | — |
+| Hungry | 100–300 | — | — | — | — |
+| Weak | 0–100 | ×0.75 | ×0.75 | ×0.6 | **stops** |
+
+**You should spend most of your time Well-Fed** — monster difficulty and the
+rest of the balance are tuned assuming it.
+
+:::note[Stuffed isn't a penalty, but it isn't a bonus either]
+Eating below 800 **clamps the result at 850**, so a single piece of jerky can't
+knock you out of Well-Fed; the excess is simply discarded. Only eating **at 800
+or above** pushes the overflow through into Stuffed, which digests back down.
+At 1000 you can't eat at all.
+:::
+
+The carry multiplier applies to `STR × 15`. Losing the Well-Fed buff or going
+Weak can put you over the limit — that **doesn't stop you moving**, it just
+refuses new pickups and purchases.
+
+## Food list
+
+<FilterTable
+  placeholder="Search food…"
+  columns={[
+    { key: 'name', label: 'Name' },
+    { key: 'nutrition', label: 'Nutrition', align: 'right' },
+    { key: 'gameTime', label: 'Lasts about', align: 'right' },
+    { key: 'weight', label: 'Weight', align: 'right' },
+    { key: 'perWeight', label: 'Nutrition / kg', align: 'right' },
+    { key: 'price', label: 'Shop', align: 'right' },
+    { key: 'perCoin', label: 'Nutrition / copper', align: 'right' },
+    { key: 'source', label: 'Source' },
+  ]}
+  rows={foods.sort((a, b) => (b.nutrition ?? 0) - (a.nutrition ?? 0)).map((i) => ({
+    name: i.name,
+    nutrition: i.nutrition,
+    gameTime: `${(i.nutrition / 540 * 24).toFixed(1)} game hours`,
+    weight: `${i.weight} kg`,
+    perWeight: Math.round(i.nutrition / i.weight),
+    price: formatCoins(i.basePrice),
+    perCoin: i.basePrice ? (i.nutrition / i.basePrice).toFixed(1) : '—',
+    source: rica.catalog.includes(i.id) ? 'Shop' : 'Grill a fish you caught',
+  }))}
+/>
+
+## What to carry
+
+The two efficiency columns above answer it:
+
+- **Nutrition per kg** — the bag has a weight limit, so this is the column for
+  long trips.
+- **Nutrition per copper** — the column for when money is tight.
+
+Among shop food,
+**{(() => { const b = foods.filter(f => rica.catalog.includes(f.id)).sort((a,b) => (b.nutrition/b.weight) - (a.nutrition/a.weight))[0]; return b.name; })()}**
+is the most weight-efficient and
+**{(() => { const b = foods.filter(f => rica.catalog.includes(f.id) && f.basePrice).sort((a,b) => (b.nutrition/b.basePrice) - (a.nutrition/a.basePrice))[0]; return b.name; })()}**
+is the most cost-efficient.
+
+Grilled fish generally beat shop food — but you have to catch them and you need
+a fire.
+
+## Campfires and grilling
+
+A **{itemName('campfire_kit')}**
+({formatCoins(items.find((i) => i.id === 'campfire_kit').basePrice)},
+{items.find((i) => i.id === 'campfire_kit').weight} kg) lights a fire in the
+field and burns for **ten minutes**.
+
+Grilling a fish removes the poisoning risk, raises the nutrition sharply, and
+raises the sale price.
+
+<FilterTable
+  placeholder="Search…"
+  columns={[
+    { key: 'raw', label: 'Raw' },
+    { key: 'rawNutrition', label: 'Raw nutrition', align: 'right' },
+    { key: 'rawRisk', label: 'Raw risk' },
+    { key: 'grilled', label: 'Grilled' },
+    { key: 'grilledNutrition', label: 'Nutrition', align: 'right' },
+    { key: 'gain', label: 'Multiplier', align: 'right' },
+  ]}
+  rows={items.filter((i) => i.grillsInto).map((i) => {
+    const g = items.find((x) => x.id === i.grillsInto);
+    return {
+      raw: i.name, rawNutrition: 40, rawRisk: 'Can cause food poisoning',
+      grilled: g.name, grilledNutrition: g.nutrition,
+      gain: `×${(g.nutrition / 40).toFixed(1)}`,
+    };
+  })}
+/>
+
+Food **does not restore health** — that's the potion's job. Fish are the
+exception: they keep their healing effect as well (see [Fishing](../fishing/)).
+
+## Food poisoning
+
+Eating raw fish can cause it. It lasts **five minutes**:
+
+| Effect | Multiplier |
+|---|:---:|
+| Move speed | ×0.6 |
+| Attack speed | ×0.6 |
+| Max carry | ×0.6 |
+| Satiation decay | **4× faster** |
+| HP regen | **stops** |
+
+These **multiply** with your current satiation state: Well-Fed still leaves you
+at ×0.66 (1.1 × 0.6), and Weak at ×0.45. Re-infection only refreshes the
+duration; it doesn't stack. **It deals no damage** — consistent with the rule
+that hunger never kills you.

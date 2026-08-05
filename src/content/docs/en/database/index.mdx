@@ -1,0 +1,66 @@
+---
+title: Game database
+description: Full stat tables for OpenMMO's items, monsters, dungeons, fishing, food, economy and map.
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import { items, monsters, dungeons, mapLabels } from '../../../../lib/gamedata.js';
+
+Every number here comes straight from the game's own source data (`data-src/`),
+so it matches what the server actually loads. Nothing is transcribed by hand,
+which means nothing is mistyped, and one sync run picks up any upstream change.
+
+<CardGrid>
+  <Card title={`${items.length} items`} icon="seti:db">
+    Weapons, armor, accessories and consumables: damage dice, Guard, weight,
+    price and where to get them.
+    [Browse](./items/)
+  </Card>
+  <Card title={`${monsters.length} monsters`} icon="seti:pipeline">
+    Health, Guard, to-hit, damage, movement speed, chase range, spawn depth and
+    drops.
+    [Browse](./monsters/)
+  </Card>
+  <Card title={`${dungeons.length} dungeons`} icon="seti:folder">
+    Locations, floor counts, boss stats, and the chest drop rules with each
+    tier's equipment pool.
+    [Browse](./dungeons/)
+  </Card>
+  <Card title="Fishing" icon="seti:image">
+    The catch table, rarity weights, level gates, size and trophy thresholds,
+    and expected income.
+    [Browse](./fishing/)
+  </Card>
+  <Card title="Food and satiation" icon="seti:favicon">
+    Satiation bands and their buffs, food efficiency, campfire cooking and food
+    poisoning.
+    [Browse](./food/)
+  </Card>
+  <Card title="Shops and economy" icon="seti:shell">
+    Rica's catalogue, sell rates, how haggling works, world drop rates and where
+    gold comes from.
+    [Browse](./economy/)
+  </Card>
+  <Card title={`${mapLabels.length} map locations`} icon="seti:config">
+    Continents, cities, seas and islands with coordinates, plus dungeon
+    entrances.
+    [Browse](./map/)
+  </Card>
+</CardGrid>
+
+## How the data gets here
+
+`scripts/sync-gamedata.mjs` pulls `data-src/*.csv` from the upstream repository
+into this site's `src/data/game/`. The build reads those CSVs directly to
+generate the tables.
+
+Two things happen here that the raw CSV cannot do:
+
+1. **Derived values are filled in.** A blank monster health, attack bonus or
+   damage roll means "don't override" — the server computes it from the level.
+   Showing them empty would be wrong, so the same formulas run here and the
+   derived values are marked.
+2. **Currency is converted.** The game stores a single copper integer;
+   1g = 100s = 10,000c is a display-layer convention.
+
+When upstream changes a number, re-running the sync script is the whole update.

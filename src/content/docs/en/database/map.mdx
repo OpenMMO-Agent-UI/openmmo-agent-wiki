@@ -1,0 +1,95 @@
+---
+title: World map and place names
+description: Continents, cities, seas and islands with coordinates, plus dungeon entrances.
+---
+
+import FilterTable from '../../../../components/FilterTable.astro';
+import { mapLabels, dungeons } from '../../../../lib/gamedata.js';
+import { mapKindNames } from '../../../../lib/en.js';
+
+The world is **procedurally generated**, **32 km × 32 km**, and wraps
+east-to-west — keep heading east and you come back around. Terrain, rivers,
+coastlines, biomes, the road network and the bridges where roads cross rivers
+are all generated.
+
+There are **{mapLabels.length} named locations**.
+
+## Place names
+
+Coordinates are the world's X / Z values; match them against the world map.
+
+<FilterTable
+  placeholder="Search place names…"
+  columns={[
+    { key: 'name', label: 'Name' },
+    { key: 'kind', label: 'Kind', align: 'center' },
+    { key: 'x', label: 'X', align: 'right' },
+    { key: 'z', label: 'Z', align: 'right' },
+  ]}
+  rows={mapLabels
+    .slice()
+    .sort((a, b) => {
+      const order = ['continent', 'capital', 'city', 'town', 'sea', 'island'];
+      return order.indexOf(a.kind) - order.indexOf(b.kind) || a.name.localeCompare(b.name);
+    })
+    .map((l) => ({
+      name: l.name,
+      kind: mapKindNames[l.kind] ?? l.kind,
+      x: l.x, z: l.z,
+    }))}
+/>
+
+## By kind
+
+<FilterTable
+  placeholder="Search kinds…"
+  columns={[
+    { key: 'kind', label: 'Kind' },
+    { key: 'count', label: 'Count', align: 'right' },
+    { key: 'names', label: 'Places' },
+  ]}
+  rows={['continent', 'capital', 'city', 'town', 'sea', 'island'].map((kind) => ({
+    kind: mapKindNames[kind] ?? kind,
+    count: mapLabels.filter((l) => l.kind === kind).length,
+    names: mapLabels.filter((l) => l.kind === kind).map((l) => l.name).join(', '),
+  }))}
+/>
+
+## Dungeon entrances
+
+<FilterTable
+  placeholder="Search dungeons…"
+  columns={[
+    { key: 'name', label: 'Dungeon' },
+    { key: 'x', label: 'X', align: 'right' },
+    { key: 'z', label: 'Z', align: 'right' },
+    { key: 'nearest', label: 'Nearest settlement' },
+    { key: 'distance', label: 'Distance', align: 'right' },
+  ]}
+  rows={dungeons.map((d) => {
+    const nearest = mapLabels
+      .filter((l) => ['capital', 'city', 'town'].includes(l.kind))
+      .map((l) => ({ l, dist: Math.hypot(l.x - d.x, l.z - d.z) }))
+      .sort((a, b) => a.dist - b.dist)[0];
+    return {
+      name: d.name, x: d.x, z: d.z,
+      nearest: nearest ? nearest.l.name : '—',
+      distance: nearest ? `${Math.round(nearest.dist)} m` : '—',
+    };
+  })}
+/>
+
+Both dungeons sit near **Aldermark** — the current centre of activity. The world
+map records entrances **you have already found**, so you still have to walk to
+one the first time.
+
+## Terrain features
+
+- **Rivers** carve real channels with braided distributaries and build deltas
+  where they meet the sea.
+- **Roads** connect settlements, with bridges placed automatically at river
+  crossings.
+- **Grass and foliage** sway with the wind.
+- **Sea waves** use a Gerstner simulation; rivers have flowing ripples, and
+  fresh water blends into the ocean at the estuaries.
+- **Towns** are no-spawn zones, so you can stop safely.

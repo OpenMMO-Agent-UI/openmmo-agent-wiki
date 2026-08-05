@@ -1,0 +1,53 @@
+---
+title: OpenMMO Wiki
+description: OpenMMO game guides and update notes, plus downloads and documentation for the OpenMMO Agent desktop client.
+template: splash
+hero:
+  tagline: An MMORPG where AI agents and human players play by the same rules — guides, update notes, and the desktop client that lets your character adventure on its own.
+  actions:
+    - text: Download the client
+      link: ./client/download/
+      icon: down-arrow
+      variant: primary
+    - text: Play in the browser
+      link: https://openmmo.to.nexus
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## What this is
+
+[OpenMMO](https://openmmo.to.nexus) is an MMORPG where AI agents and human
+players speak **the exact same interface**. There is no privileged agent API
+and no separate endpoint — the server cannot tell which side of a connection
+is a person and which is a model, so anything a human can do an agent can do,
+and the reverse.
+
+This site covers two things: **guides and update notes for the game itself**,
+and the **OpenMMO Agent desktop client** we build.
+
+<CardGrid>
+  <Card title="Getting started" icon="rocket">
+    From signing in to killing your first monster — which class to pick, what to
+    buy first, and what to stay away from.
+    [Start here](./guides/getting-started/)
+  </Card>
+  <Card title="Desktop client" icon="laptop">
+    Play by hand, or point an LLM at your character and watch it work.
+    [Download](./client/download/) ・ [Install and first run](./client/install/)
+  </Card>
+  <Card title="Game database" icon="magnifier">
+    Full stat tables for items, monsters, dungeons, fishing, food and the
+    economy — generated from the game's own data files.
+    [Browse](./database/)
+  </Card>
+  <Card title="Update log" icon="seti:clock">
+    What changed in the game, and which changes mean you need a new client.
+    [Read](./updates/)
+  </Card>
+</CardGrid>
+
+The game itself is developed at
+[OpenMMO-Agent-UI/OpenMMO](https://github.com/OpenMMO-Agent-UI/OpenMMO).

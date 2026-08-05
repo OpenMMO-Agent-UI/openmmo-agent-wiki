@@ -1,0 +1,127 @@
+---
+title: Fishing
+description: Species, rarity, size dice, trophy thresholds and level gates.
+---
+
+import FilterTable from '../../../../components/FilterTable.astro';
+import { items, formatCoins, averageRoll } from '../../../../lib/gamedata.js';
+
+export const catchables = items.filter((i) => i.catchWeight !== null);
+export const fish = catchables.filter((i) => i.category === 'fish');
+
+Equip a **Fishing Rod** and cast at water. There are **{catchables.length}
+catchable things**, **{fish.length}** of them fish; the rest is flotsam and
+coin catches.
+
+How to actually fish — hooking, playing the fight — is in
+[Fishing gameplay](../../guides/fishing/).
+
+## The catch table
+
+`catchWeight` is the relative weight at fishing level 0 — bigger means more
+often.
+
+<FilterTable
+  placeholder="Search catches…"
+  columns={[
+    { key: 'name', label: 'Name' },
+    { key: 'tier', label: 'Rarity', align: 'center' },
+    { key: 'weight', label: 'Weight', align: 'right' },
+    { key: 'minLevel', label: 'Level required', align: 'right' },
+    { key: 'size', label: 'Size dice', align: 'center' },
+    { key: 'avgSize', label: 'Avg length', align: 'right' },
+    { key: 'trophy', label: 'Trophy at', align: 'right' },
+    { key: 'price', label: 'Sells for', align: 'right' },
+  ]}
+  rows={catchables
+    .sort((a, b) => (b.rarityTier ?? 0) - (a.rarityTier ?? 0) || (b.catchWeight ?? 0) - (a.catchWeight ?? 0))
+    .map((i) => ({
+      name: i.name,
+      tier: i.rarityTier === 0 ? 'Flotsam' : `★${i.rarityTier}`,
+      weight: i.catchWeight,
+      minLevel: i.minFishingLevel ?? 0,
+      size: i.sizeDice ?? '—',
+      avgSize: averageRoll(i.sizeDice) ? `${averageRoll(i.sizeDice).toFixed(0)} cm` : '—',
+      trophy: i.trophyCm ? `${i.trophyCm} cm` : '—',
+      price: formatCoins(i.basePrice),
+    }))}
+/>
+
+## How the odds work
+
+- **Two independent pools**: flotsam holds a flat **20%** of the draw at every
+  level. No amount of skill thins out the old boots.
+- **Skill is multiplicative**: a fish's weight grows **3%** per level per point
+  of rarity. That closes the gap on rare fish but **can never invert the
+  order** — a Golden Sturgeon will never be more common than a Minnow.
+- **Level gates**: River Salmon needs fishing level **10**, Golden Sturgeon
+  needs **20**. Below that they don't appear at all.
+
+## Size and trophies
+
+Length is the `size dice` roll plus a d20 quality roll. **A natural 20 doubles
+the size**, and for fish it's always a trophy.
+
+Trophies are a fish concept — a nat-20 Old Boot is just a very large boot, no
+celebration.
+
+Size is **not stored on the item**; it exists only in the catch announcement.
+
+## Is it worth the time?
+
+The expected **sell** value of one catch runs about **8 copper** at level 0 to
+about **24 copper** at the level-30 cap. For comparison:
+
+- Coin piles: 1–10 copper
+- An NPC's daily wage in this economy: 50 silver
+
+So an hour of active fishing is roughly half a guard's daily salary.
+**Steady pocket money, not a money printer** — that's deliberate, and a
+contract test pins the per-catch expected value between 5 and 25 copper while
+also proving that levelling never makes you poorer and the cap never earns more
+than 4× level 0.
+
+The Golden Sturgeon is the jackpot: it sells for
+{formatCoins(items.find((i) => i.id === 'golden_sturgeon').basePrice)} — a
+goblin sword's worth — but it's only about 1.7% of draws even at the level-30
+cap.
+
+## Fish are edible, but not raw
+
+Fish are both **food** and **healing items**:
+
+<FilterTable
+  placeholder="Search fish…"
+  columns={[
+    { key: 'name', label: 'Raw fish' },
+    { key: 'heal', label: 'Heals', align: 'center' },
+    { key: 'avgHeal', label: 'Avg', align: 'right' },
+    { key: 'grill', label: 'Grills into' },
+    { key: 'grillNutrition', label: 'Grilled nutrition', align: 'right' },
+    { key: 'grillPrice', label: 'Grilled price', align: 'right' },
+  ]}
+  rows={fish.map((i) => {
+    const g = items.find((x) => x.id === i.grillsInto);
+    return {
+      name: i.name,
+      heal: i.dice ?? '—',
+      avgHeal: averageRoll(i.dice)?.toFixed(1) ?? '—',
+      grill: g ? g.name : '—',
+      grillNutrition: g?.nutrition ?? '—',
+      grillPrice: formatCoins(g?.basePrice ?? null),
+    };
+  })}
+/>
+
+:::caution[Raw fish cause food poisoning]
+Raw fish give a fixed **40** nutrition regardless of species, and carry a
+**food poisoning risk**: five minutes of move speed ×0.6, attack speed ×0.6,
+max carry ×0.6, satiation draining 4× faster and HP regen stopped. These
+**multiply** with your current state — even Well-Fed leaves you moving at ×0.66.
+
+Eating raw is an emergency measure. The answer is **a campfire**. Grilled fish
+carry no risk and far more nutrition.
+:::
+
+Every catch takes its own bag slot (they don't stack), so your bag reads as a
+catch log.

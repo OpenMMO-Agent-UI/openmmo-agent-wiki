@@ -1,0 +1,315 @@
+---
+title: Fishing gameplay
+description: Casting, hooking and playing the fight — the tension/stamina trade-off, and what fishing levels actually buy you.
+---
+
+import FilterTable from '../../../../components/FilterTable.astro';
+import { items, itemsById, formatCoins } from '../../../../lib/gamedata.js';
+import { itemName } from '../../../../lib/en.js';
+
+Fishing is the game's first gathering profession and the first user of the
+**trained skill** system. Every timer, roll and outcome lives **on the server**;
+the client renders and responds.
+
+Species and price tables are in [Fishing data](../../database/fishing/). This
+page is about **how to actually fish.**
+
+## The loop
+
+```
+Cast ─► Casting (1 s) ─► Waiting (4–12 s, shortened by skill)
+                              │ the bite rolls species, size and trophy
+                              ▼
+                         Bite (2.5 s + 0.5 s latency grace)
+                         │ hook in time     │ too late / never
+                         ▼                  ▼
+                       Fight              Escaped
+            (continuous tension tug-of-war)
+                         │ exhaust it, then reel  │ line snaps / hook thrown
+                         ▼                        ▼
+                       Caught                  Escaped
+```
+
+## Getting set up
+
+Buy a **{itemName('fishing_rod')}**
+({formatCoins(itemsById.get('fishing_rod').basePrice)}) from Rica and
+**equip it in your main hand**.
+
+:::note[Rods never come from dungeon chests]
+They are bought tools, not endgame loot. Chests hold armor and accessories only.
+:::
+
+## Casting
+
+Click at water. You need:
+
+- A fishing rod in your main hand
+- To be on the **overworld** (no fishing in dungeons)
+- A target within **8 metres**
+- Actual **water** — the surface has to sit more than 0.1 m above the bed
+
+**Both ocean and rivers work.** A river's surface sits above its own bed even
+high in the hills, so inland rivers cast fine. On land the water surface
+collapses below the terrain, so clicking dry ground just walks you there.
+
+## Waiting and the bite
+
+The wait is **4–12 seconds** uniform, shortened **2% per fishing level** (never
+below half the minimum).
+
+On a bite the float dips hard. You have **2.5 seconds** to hook, plus **0.5
+seconds** of latency grace — judged against the **server's own clock**, so a
+laggy-but-in-time click is never punished and a hacked client can't stretch the
+window.
+
+:::caution[Don't hook early]
+Hooking *before* the bite scares the fish off. Wait for the float to go down.
+:::
+
+**To hook**: `SPACE`, any click, or a wheel flick.
+
+## The fight
+
+Hooking is only the start. The fight is a continuous tug-of-war the server
+simulates on a **250 ms tick** (four times a second).
+
+The fish alternates between two states:
+
+| State | Duration | What it means |
+|---|---|---|
+| **Running** | 2–3.5 s (longer for rarer fish) | Pulling hard, tension climbing |
+| **Resting** | 0.8–2 s | Catching its breath, less pressure |
+
+Most of the fight is spent running, so most of the time you are under pressure.
+
+### Three stances
+
+Switch at any time:
+
+| Stance | How | Effect on tension |
+|---|---|---|
+| **REEL** | Hold the button / hold `SPACE` / wheel down | **+14/s** |
+| **GIVE LINE** | Hold the button / hold `S` / wheel up | **−44/s** |
+| **HOLD** | Do nothing | Natural decay only |
+
+`ESC` reels in and gives up.
+
+### Tension — the thing that snaps
+
+The gauge on screen. **It snaps at 100 and the fish is gone.**
+
+| Source | Change |
+|---|---|
+| Starting tension on the hook-set | **30** |
+| A running fish pulls | **(20 + 2 × rarity) / s** |
+| ↳ scaled up to **×1.3** by how much line is out | |
+| ↳ reduced 1% per fishing level, **capped at 30%** | |
+| Reeling | **+14 / s** |
+| Natural decay while the fish rests | **−8 / s** |
+| Giving line | **−44 / s** |
+
+<FilterTable
+  placeholder="Search species…"
+  columns={[
+    { key: 'name', label: 'Species' },
+    { key: 'rarity', label: 'Rarity', align: 'center' },
+    { key: 'pull', label: 'Running pull', align: 'right' },
+    { key: 'pullMax', label: 'Max line out', align: 'right' },
+    { key: 'pullLv30', label: 'At level 30', align: 'right' },
+  ]}
+  rows={items
+    .filter((i) => i.category === 'fish')
+    .sort((a, b) => a.rarityTier - b.rarityTier)
+    .map((i) => {
+      const pull = 20 + 2 * i.rarityTier;
+      return {
+        name: i.name,
+        rarity: `★${i.rarityTier}`,
+        pull: `${pull} / s`,
+        pullMax: `${(pull * 1.3).toFixed(1)} / s`,
+        pullLv30: `${(pull * 0.7).toFixed(1)} / s`,
+      };
+    })}
+/>
+
+**The starting tension of 30 is deliberately hot** — leave an unanswered run
+alone and you're out of the safe range in about a second and snapped a few
+seconds later. You have to react immediately.
+
+:::tip[Giving line always beats the pull]
+Giving line sheds 44/s, **more than the strongest pull** (a Golden Sturgeon with
+maximum line out manages 39/s). So when the gauge is about to blow, giving line
+always brings it down — at the cost of more line out, which raises the
+multiplier on the next run.
+:::
+
+**Reeling adds 14/s against a resting decay of only 8/s**, so **you can't just
+hold the reel down.** That's deliberate: it forces you to alternate between
+winding in and bleeding off pressure.
+
+### Stamina — what you're actually depleting
+
+**Stamina isn't on the gauge**, but you can read it from the splash — smaller
+splash means a tired fish.
+
+Stamina pool: `38 + 12 × rarity`
+
+**Only drag burns it**, and two conditions must hold: the fish is **running**,
+and tension is **at least 20**.
+
+```
+drain per second = 2 + 12 × (tension / 100)²
+```
+
+That **square** is the heart of the system:
+
+<FilterTable
+  placeholder="Enter a tension…"
+  columns={[
+    { key: 'tension', label: 'Tension', align: 'right' },
+    { key: 'drain', label: 'Stamina / s', align: 'right' },
+    { key: 'minnow', label: 'Minnow (50)', align: 'right' },
+    { key: 'trout', label: 'Trout (74)', align: 'right' },
+    { key: 'sturgeon', label: 'Sturgeon (98)', align: 'right' },
+  ]}
+  rows={[20, 30, 40, 50, 60, 70, 80, 90, 95].map((t) => {
+    const drain = 2 + 12 * (t / 100) ** 2;
+    const secs = (pool) => `${(pool / drain).toFixed(0)} s`;
+    return {
+      tension: t, drain: `${drain.toFixed(2)}`,
+      minnow: secs(38 + 12 * 1), trout: secs(38 + 12 * 3), sturgeon: secs(38 + 12 * 5),
+    };
+  })}
+/>
+
+**A Golden Sturgeon takes 32 seconds at tension 30 and 8 seconds at tension 90 —
+four times the difference.**
+
+And that table only counts **time actually under pressure** (fish running,
+tension over the threshold), so real fights take longer because the fish rests.
+More importantly: **a slack line lets a resting fish recover stamina** — playing
+timid isn't just slow, it loses ground.
+
+### So the correct way to play
+
+**Ride the gauge high without blowing it.** Concretely:
+
+1. Tension starts at 30 after the hook-set, and the fish usually runs
+   immediately.
+2. **Reel** to push tension up into the 80–95 band.
+3. Watch the gauge; as it approaches 100, **give line** to bleed off (−44/s
+   brings you back inside in about a second).
+4. Around 60–70, stop giving line and start reeling again.
+5. When the fish **rests**, that's your chance to take distance — the pull is
+   weak and reeling is fast.
+
+The common beginner mistake is **giving line the whole fight to stay safe** —
+tension sits at 20–30, stamina barely moves, the fish recovers while resting,
+and three minutes later you're nowhere.
+
+### Distance and the endgame
+
+Distance isn't shown as a number — **the float is the fish.**
+
+| Situation | Reel speed |
+|---|---|
+| Fish resting | 1.6 m/s |
+| Fish running | 0.6 m/s |
+| Fish exhausted | 2.5 m/s |
+
+Runs take 1.1–1.5 m/s of line, but the fish **never leaves a 6-metre radius**
+around the cast point.
+
+At 0 stamina the fish goes **Exhausted** — reel it to within 0.3 m of the line
+floor and it lands.
+
+:::caution[Don't drag a lively fish in]
+A fish with stamina left, dragged within 1 metre of the floor, **panics into a
+fresh run.** Empty the stamina first.
+:::
+
+## What breaks a session
+
+**Aborts it**: moving, attacking, disconnecting, dying, stowing the rod
+(unequipping it or swapping a weapon into the main hand), or stopping
+deliberately.
+
+**Doesn't**: changing a hat, holding an off-hand torch — gear changes that leave
+the rod in hand don't break concentration.
+
+## Fishing levels
+
+Catches grant **fishing XP**: `10 × rarity²`
+
+<FilterTable
+  placeholder="Search catches…"
+  columns={[
+    { key: 'name', label: 'Catch' },
+    { key: 'rarity', label: 'Rarity', align: 'center' },
+    { key: 'xp', label: 'Fishing XP', align: 'right' },
+  ]}
+  rows={items
+    .filter((i) => i.catchWeight !== null)
+    .sort((a, b) => b.rarityTier - a.rarityTier)
+    .map((i) => ({
+      name: i.name,
+      rarity: i.rarityTier === 0 ? 'Flotsam' : `★${i.rarityTier}`,
+      xp: i.rarityTier === 0 ? '0' : 10 * i.rarityTier ** 2,
+    }))}
+/>
+
+- A hooked fish that **escapes** still consoles you with **2** XP. Escapes never
+  reveal what it was — a varying consolation would leak the hidden roll.
+- Flotsam is rarity 0, so it grants **nothing**.
+- **Fishing grants no character XP** — combat balance is untouched.
+
+### What levels buy you
+
+| Effect | Per level | Cap |
+|---|---|---|
+| Shorter waits | −2% | Half the minimum |
+| Rare species weighting | +3% per point of rarity | None (multiplicative, never inverts the order) |
+| Pull you absorb | −1% | **−30%** |
+| Reel speed | +1% | — |
+
+**Level 10** unlocks River Salmon, **level 20** the Golden Sturgeon. Below that
+they don't appear at all.
+
+## Flotsam
+
+Not everything that bites is a fish. Four flotsam rows hold a flat **20%** of the
+draw at every level:
+
+<FilterTable
+  placeholder="Search…"
+  columns={[
+    { key: 'name', label: 'Flotsam' },
+    { key: 'value', label: 'Value', align: 'right' },
+    { key: 'note', label: 'Notes' },
+  ]}
+  rows={[
+    { id: 'old_boot', note: 'Worthless. The classic fishing gag' },
+    { id: 'clump_of_kelp', note: 'Worthless' },
+    { id: 'message_in_a_bottle', note: 'Sells for a token amount' },
+    { id: 'sunken_coin_pouch', note: 'Double-click it in the bag to open: rolls 3d8 copper straight into your wallet' },
+  ].map((r) => ({
+    name: itemsById.get(r.id)?.name ?? r.id,
+    value: formatCoins(itemsById.get(r.id)?.basePrice ?? null),
+    note: r.note,
+  }))}
+/>
+
+Flotsam pulls and tires **exactly like an ordinary fish** during the fight, so
+the tension at the bite is real — you don't know whether you're bringing up a
+Golden Sturgeon or a boot.
+
+## AI agents can fish too
+
+The whole mechanic is **deliberately sized for both humans and agents** — the
+2.5-second window is comfortable for an agent-client's network round trip, and
+the fight simulation only advances four times a second, so being fast confers no
+real advantage.
+
+The desktop client's automatic mode hooks its own bites and plays each stance
+beat itself; the LLM only decides whether and where to fish.
