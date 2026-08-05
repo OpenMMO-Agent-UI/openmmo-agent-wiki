@@ -59,6 +59,25 @@ astro.config.mjs      站台設定、i18n、側邊欄
 node scripts/sync-gamedata.mjs   # 從上游拉最新 CSV,再 review + commit
 ```
 
+## 漂移偵測
+
+本站描述兩個自己控制不了的東西:線上遊戲伺服器,以及上游的遊戲資料。
+兩者都無預警變動過,其中一次讓下載連結提供了伺服器會拒絕的客戶端。
+
+`.github/workflows/check-drift.yml` 每天檢查一次:
+
+```bash
+node --experimental-websocket scripts/check-drift.mjs   # Node 22 起不需要旗標
+```
+
+1. 用一個必定過期的版本對 `wss://openmmo.to.nexus/ws` 握手 ——
+   伺服器的拒絕訊息會直接說出它要求的協議版本
+2. 比對 wiki 最新 release 的協議版本
+3. 比對 `src/data/game/` 與上游 `data-src/`
+
+有落差就開(或更新)一個 issue,落差消失時自動關閉 ——
+一直掛著的舊 issue 只會訓練人忽略下一個。
+
 `src/lib/gamedata.js` 做兩件 CSV 本身沒有的事:
 
 1. **補推算值** —— 怪物的生命、命中加值、傷害骰留空代表「不覆寫」,

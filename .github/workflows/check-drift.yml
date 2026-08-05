@@ -1,0 +1,87 @@
+name: Check for drift
+
+# The wiki describes two things it does not control: the live game server and
+# the upstream game data. Both have moved without warning, and once that meant
+# the download link served a client the server refuses — found only because
+# somebody thought to look. This asks daily instead.
+
+on:
+  schedule:
+    - cron: '17 3 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: check-drift
+  cancel-in-progress: false
+
+env:
+  ISSUE_TITLE: 'Wiki has drifted from the live game'
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Look for drift
+        id: check
+        run: |
+          set +e
+          report=$(node scripts/check-drift.mjs 2>&1)
+          status=$?
+          set -e
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+          {
+            echo 'report<<REPORT_EOF'
+            echo "$report"
+            echo 'REPORT_EOF'
+          } >> "$GITHUB_OUTPUT"
+          echo "$report"
+
+      # A stale issue is worse than no issue: it trains you to ignore the next
+      # one. So the same issue is reused while the drift lasts and closed the
+      # moment it clears, rather than opening a fresh one every night.
+      - name: Open, update or close the tracking issue
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          STATUS: ${{ steps.check.outputs.status }}
+          REPORT: ${{ steps.check.outputs.report }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+        run: |
+          existing=$(gh issue list --state open --search "$ISSUE_TITLE in:title" \
+            --json number,title --jq "[.[] | select(.title == env.ISSUE_TITLE)][0].number // empty")
+
+          body=$(printf '%s\n\n---\n\nChecked by [this run](%s). Reopened or updated automatically each day until it clears.\n' "$REPORT" "$RUN_URL")
+
+          if [[ "$STATUS" == "0" ]]; then
+            if [[ -n "$existing" ]]; then
+              gh issue comment "$existing" --body "Drift cleared — everything matches again."
+              gh issue close "$existing"
+            fi
+            echo "no drift"
+            exit 0
+          fi
+
+          # Exit 2 means a check could not run (server unreachable, API down).
+          # That is worth surfacing, but it is not the same as known drift.
+          if [[ "$STATUS" == "2" ]]; then
+            body=$(printf '⚠️ **A check could not complete** — the result below is incomplete.\n\n%s' "$body")
+          fi
+
+          if [[ -n "$existing" ]]; then
+            gh issue edit "$existing" --body "$body"
+            echo "updated issue #$existing"
+          else
+            gh issue create --title "$ISSUE_TITLE" --body "$body" --label drift 2>/dev/null \
+              || gh issue create --title "$ISSUE_TITLE" --body "$body"
+          fi
+          exit 1
