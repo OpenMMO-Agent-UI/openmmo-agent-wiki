@@ -16,6 +16,7 @@ import FilterTable from '../../../components/FilterTable.astro';
 | 生命與狀態 | 角色的即時數值 |
 | 觀戰記憶體用量 | 3D 觀戰畫面吃掉多少記憶體 |
 | 重新載入 | 重載 3D 觀戰畫面(畫面卡住或錯亂時用) |
+| **暫停 / 繼續(⏸ / ▶)** | 暫停執行中的 agent。暫停期間不會呼叫 LLM,也就不會計費 —— 想中途接手或省錢時用 |
 | **Apply & restart** | **只在 agent 執行中改了設定時才出現。** agent 只在啟動時讀一次設定,所以改完必須按這個 |
 | 手動 / AI 切換 | 兩種模式即時互換 |
 | 更換角色 / 更換伺服器 | 回到前面的畫面 |
@@ -133,7 +134,9 @@ Model 填本地模型名稱。這樣不會有任何 API 費用,資料也不出�
 代價是本地模型多半比 `qwen3.7-flash` 慢,可能追不上遊戲的回合節奏。
 :::
 
-### Automatic play
+### Agent
+
+舊版的 Automatic play 與 Advanced 兩個分頁在 v0.18 之後**合併成這一個**。
 
 <FilterTable
   placeholder="搜尋設定…"
@@ -145,23 +148,7 @@ Model 填本地模型名稱。這樣不會有任何 API 費用,資料也不出�
   rows={[
     { field: 'Active response', default: '5 秒', note: '有事發生時的回應間隔。越短越靈敏,但 API 費用越高' },
     { field: 'Quiet-world patrol', default: '8 秒', note: '周圍沒事時的回應間隔' },
-    { field: 'Continue adventuring while alone', default: '開啟', note: '關掉的話,附近沒有其他玩家時 agent 會安靜下來 —— 掛機時省錢用' },
-  ]}
-/>
-
-這兩個間隔是**費用的主要控制項**。想省錢就把兩個都拉長,
-或者關掉「獨自時繼續冒險」。
-
-### Advanced
-
-<FilterTable
-  placeholder="搜尋設定…"
-  columns={[
-    { key: 'field', label: '欄位' },
-    { key: 'default', label: '預設值' },
-    { key: 'note', label: '說明' },
-  ]}
-  rows={[
+    { field: 'Continue adventuring while alone', default: '開啟', note: '關掉的話,附近沒有其他玩家時就停止呼叫 AI —— 掛機時省錢用' },
     { field: 'Active interval (s)', default: '5', note: '上面那個滑桿的原始數值' },
     { field: 'Idle interval (s)', default: '8', note: '同上' },
     { field: 'Watch port', default: '8808', note: '本機觀戰面板的連接埠。和別的程式衝突才需要改' },
@@ -171,7 +158,9 @@ Model 填本地模型名稱。這樣不會有任何 API 費用,資料也不出�
   ]}
 />
 
-### Actions —— 動作提示的外觀
+前三項是**費用的主要控制項**。想省錢就把兩個間隔拉長,或者關掉「獨自時繼續冒險」。
+
+### Display —— 動作提示的外觀
 
 agent 每做一個動作會跳一個提示(toast)。這個分頁調它的外觀,附**即時預覽**。
 
@@ -191,6 +180,25 @@ agent 每做一個動作會跳一個提示(toast)。這個分頁調它的外觀,
 />
 
 純外觀設定,不影響 agent 行為。覺得畫面太吵就把數量和停留時間調小。
+
+### Audio
+
+<FilterTable
+  placeholder="搜尋設定…"
+  columns={[
+    { key: 'field', label: '欄位' },
+    { key: 'default', label: '預設值' },
+    { key: 'note', label: '說明' },
+  ]}
+  rows={[
+    { field: 'BGM volume', default: '100', note: '背景音樂音量,可靜音' },
+    { field: 'Sound effects', default: '100', note: '音效音量,可靜音' },
+  ]}
+/>
+
+這兩項調的是**內嵌遊戲畫面自己的音量** —— 面板透過 postMessage 推給它,
+實際的設定值存在那個 iframe 自己的 localStorage(不同來源),
+所以這裡只是把值推過去。
 
 ## 連線設定檔
 

@@ -16,6 +16,7 @@ get playing, [Install and first run](../install/) is enough.
 | Vitals | Your character's live numbers |
 | Spectator memory use | How much memory the 3D view is holding |
 | Reload | Reloads the 3D spectator view (use it if the view freezes or corrupts) |
+| **Pause / Resume (⏸ / ▶)** | Pauses a running agent. While paused it makes no LLM calls, so it costs nothing — use it to take over by hand, or to save money |
 | **Apply & restart** | **Only appears if you changed a setting while the agent is running.** The agent reads its config once at startup, so this is how a change takes effect |
 | Manual / AI switch | Swap between the two modes live |
 | Change character / server | Back to the earlier screens |
@@ -145,7 +146,10 @@ leaves the machine — the trade is that local models are often slower than
 `qwen3.7-flash` and may not keep up with the game's turn cadence.
 :::
 
-### Automatic play
+### Agent
+
+The old Automatic play and Advanced tabs were **merged into this one** in
+v0.18.
 
 <FilterTable
   placeholder="Search settings…"
@@ -157,23 +161,7 @@ leaves the machine — the trade is that local models are often slower than
   rows={[
     { field: 'Active response', default: '5s', note: 'Response cadence when something is happening. Shorter is more responsive and more expensive' },
     { field: 'Quiet-world patrol', default: '8s', note: 'Response cadence when nothing is going on' },
-    { field: 'Continue adventuring while alone', default: 'On', note: 'Turn it off and the agent goes quiet when no other players are nearby — the setting to use when idling' },
-  ]}
-/>
-
-These two intervals are **the main cost control.** To spend less, raise both or
-turn off adventuring while alone.
-
-### Advanced
-
-<FilterTable
-  placeholder="Search settings…"
-  columns={[
-    { key: 'field', label: 'Field' },
-    { key: 'default', label: 'Default' },
-    { key: 'note', label: 'What it does' },
-  ]}
-  rows={[
+    { field: 'Continue adventuring while alone', default: 'On', note: 'Turn it off and it stops calling the AI when no other players are nearby — the setting to use when idling' },
     { field: 'Active interval (s)', default: '5', note: 'The raw value behind the slider above' },
     { field: 'Idle interval (s)', default: '8', note: 'Likewise' },
     { field: 'Watch port', default: '8808', note: 'Port for the local spectator panel. Change only on a conflict' },
@@ -183,7 +171,10 @@ turn off adventuring while alone.
   ]}
 />
 
-### Actions — the look of action toasts
+The first three are **the main cost control.** To spend less, raise both
+intervals or turn off adventuring while alone.
+
+### Display — the look of action toasts
 
 The agent raises a toast for each action it takes. This tab styles them, with a
 **live preview**.
@@ -205,6 +196,25 @@ The agent raises a toast for each action it takes. This tab styles them, with a
 
 Purely cosmetic — none of it changes agent behaviour. If the screen feels busy,
 lower the count and the persist time.
+
+### Audio
+
+<FilterTable
+  placeholder="Search settings…"
+  columns={[
+    { key: 'field', label: 'Field' },
+    { key: 'default', label: 'Default' },
+    { key: 'note', label: 'What it does' },
+  ]}
+  rows={[
+    { field: 'BGM volume', default: '100', note: 'Background music volume, mutable' },
+    { field: 'Sound effects', default: '100', note: 'Sound effect volume, mutable' },
+  ]}
+/>
+
+These control **the embedded game view's own volume.** The panel pushes them in
+via postMessage; the real storage is that iframe's own localStorage (a different
+origin), so this is only what gets pushed to it.
 
 ## Connection profiles
 

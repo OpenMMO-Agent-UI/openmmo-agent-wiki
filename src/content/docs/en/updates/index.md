@@ -19,6 +19,34 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
+## Protocol v19 — client v0.19.0 (current)
+
+**This is what the live server requires.** Older clients are refused.
+
+**New item**
+
+- **Lembas Wafer** — elven waybread. 600 nutrition at only 0.15 kg for 60
+  copper, which makes it **the most weight-efficient food in the game**
+  (4,000 per kg against bread's 540) and the obvious choice for long trips.
+  Rica now stocks it.
+
+## Protocol v17 — client v0.18.0
+
+An interim version. The server has already moved past it to v19, so this client
+version can no longer connect either.
+
+## Client updates (nothing to do with the game server)
+
+**Client** ・ **Settings tabs reorganised** (from v0.18) — the old Automatic
+play and Advanced tabs merged into **Agent**, Actions was renamed **Display**,
+and a new **Audio** tab was added (BGM and sound effect volume).
+
+**Client** ・ A **pause button** in the header. While paused the agent makes no
+LLM calls, so it costs nothing — use it to take over by hand or to save money.
+
+**Client** ・ Amounts now display as **1g = 100s = 10,000c** rather than one
+long copper figure.
+
 ## Not yet in a client release
 
 These are live on the game server but don't correspond to any released client

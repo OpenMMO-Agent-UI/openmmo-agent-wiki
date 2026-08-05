@@ -16,6 +16,7 @@ import FilterTable from '../../../../components/FilterTable.astro';
 | 체력과 상태 | 캐릭터의 실시간 수치 |
 | 관전 메모리 사용량 | 3D 관전 화면이 쓰는 메모리 |
 | 새로고침 | 3D 관전 화면 다시 불러오기(멈추거나 깨졌을 때) |
+| **일시정지 / 재개(⏸ / ▶)** | 실행 중인 에이전트를 멈춤. 멈춰 있는 동안 LLM을 호출하지 않으므로 비용도 발생하지 않음 — 잠깐 직접 조종하거나 비용을 아낄 때 |
 | **Apply & restart** | **에이전트 실행 중에 설정을 바꿨을 때만 나타남.** 에이전트는 시작할 때 설정을 한 번만 읽으므로 반드시 눌러야 반영됨 |
 | 수동 / AI 전환 | 두 모드를 즉시 전환 |
 | 캐릭터 변경 / 서버 변경 | 앞 화면으로 되돌아감 |
@@ -142,7 +143,9 @@ Model에 로컬 모델 이름을 넣으세요. API 비용이 전혀 없고 데�
 주기를 못 따라갈 수 있습니다.
 :::
 
-### Automatic play
+### Agent
+
+예전의 Automatic play와 Advanced 두 탭이 v0.18부터 **이 하나로 합쳐졌습니다.**
 
 <FilterTable
   placeholder="설정 검색…"
@@ -154,23 +157,7 @@ Model에 로컬 모델 이름을 넣으세요. API 비용이 전혀 없고 데�
   rows={[
     { field: 'Active response', default: '5초', note: '무슨 일이 있을 때의 응답 주기. 짧을수록 민감하지만 API 비용이 늘어남' },
     { field: 'Quiet-world patrol', default: '8초', note: '주변에 아무 일도 없을 때의 응답 주기' },
-    { field: 'Continue adventuring while alone', default: '켜짐', note: '끄면 근처에 다른 플레이어가 없을 때 에이전트가 조용해짐 — 방치할 때 비용 절약용' },
-  ]}
-/>
-
-이 두 주기가 **비용을 좌우하는 주 항목**입니다. 아끼려면 둘 다 늘리거나
-「혼자일 때 계속 모험」을 끄세요.
-
-### Advanced
-
-<FilterTable
-  placeholder="설정 검색…"
-  columns={[
-    { key: 'field', label: '항목' },
-    { key: 'default', label: '기본값' },
-    { key: 'note', label: '설명' },
-  ]}
-  rows={[
+    { field: 'Continue adventuring while alone', default: '켜짐', note: '끄면 근처에 다른 플레이어가 없을 때 AI 호출을 멈춤 — 방치할 때 비용 절약용' },
     { field: 'Active interval (s)', default: '5', note: '위 슬라이더의 원본 값' },
     { field: 'Idle interval (s)', default: '8', note: '위와 동일' },
     { field: 'Watch port', default: '8808', note: '로컬 관전 패널 포트. 다른 프로그램과 충돌할 때만 변경' },
@@ -180,7 +167,10 @@ Model에 로컬 모델 이름을 넣으세요. API 비용이 전혀 없고 데�
   ]}
 />
 
-### Actions — 행동 알림의 겉모습
+앞의 세 항목이 **비용을 좌우하는 주 항목**입니다. 아끼려면 두 주기를 늘리거나
+「혼자일 때 계속 모험」을 끄세요.
+
+### Display — 행동 알림의 겉모습
 
 에이전트가 행동할 때마다 알림(toast)이 뜹니다. 이 탭에서 겉모습을 조정하며,
 **실시간 미리보기**가 있습니다.
@@ -202,6 +192,25 @@ Model에 로컬 모델 이름을 넣으세요. API 비용이 전혀 없고 데�
 
 순수하게 겉모습 설정이며 에이전트 행동에는 영향이 없습니다.
 화면이 시끄럽다고 느끼면 개수와 유지 시간을 줄이세요.
+
+### Audio
+
+<FilterTable
+  placeholder="설정 검색…"
+  columns={[
+    { key: 'field', label: '항목' },
+    { key: 'default', label: '기본값' },
+    { key: 'note', label: '설명' },
+  ]}
+  rows={[
+    { field: 'BGM volume', default: '100', note: '배경음악 음량, 음소거 가능' },
+    { field: 'Sound effects', default: '100', note: '효과음 음량, 음소거 가능' },
+  ]}
+/>
+
+이 둘은 **내장된 게임 화면 자체의 음량**을 조정합니다. 패널이 postMessage로
+밀어 넣고, 실제 설정값은 그 iframe 자신의 localStorage(다른 출처)에 있으므로
+여기서는 값을 전달할 뿐입니다.
 
 ## 접속 프로필
 
