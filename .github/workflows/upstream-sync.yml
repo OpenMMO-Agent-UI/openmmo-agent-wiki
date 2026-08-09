@@ -1,0 +1,88 @@
+name: Sync content from upstream
+
+# check-drift.yml detects drift and opens an issue; this workflow closes the
+# loop. When the upstream game repo moves, a Claude Code agent runs the
+# .claude/skills/openmmo-wiki-sync skill: syncs game data, fills zh/ko names
+# for new content, extends the changelog per protocol bump, documents new
+# gameplay systems in all three locales, verifies the build, and pushes.
+#
+# Requires one repo secret: CLAUDE_CODE_OAUTH_TOKEN (from `claude
+# setup-token`, uses a Claude subscription) or ANTHROPIC_API_KEY (metered).
+
+on:
+  schedule:
+    - cron: '17 22 * * *' # daily 06:17 Asia/Taipei
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+  actions: write # to kick deploy.yml after an agent push
+
+concurrency:
+  group: upstream-sync
+  cancel-in-progress: false
+
+env:
+  UPSTREAM: https://github.com/OpenMMO-Agent-UI/OpenMMO
+
+jobs:
+  # Cheap gate so the agent only spins up when upstream actually moved.
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      needs-sync: ${{ steps.cmp.outputs.needs-sync }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: cmp
+        run: |
+          upstream="$(git ls-remote "$UPSTREAM" refs/heads/master | cut -f1)"
+          recorded="$(cat scripts/.last-upstream-sync 2>/dev/null || true)"
+          if [[ -n "$upstream" && "$upstream" != "$recorded" ]]; then
+            echo "needs-sync=true" >> "$GITHUB_OUTPUT"
+            echo "upstream moved: ${recorded:-<none>} -> $upstream"
+          else
+            echo "needs-sync=false" >> "$GITHUB_OUTPUT"
+            echo "nothing to do — upstream still at ${recorded:-<none>}"
+          fi
+
+  sync:
+    needs: check
+    if: needs.check.outputs.needs-sync == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Give the agent a git identity
+        run: |
+          git config user.name "openmmo-wiki-sync"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Run the sync skill
+        uses: anthropics/claude-code-action@v1
+        env:
+          GH_TOKEN: ${{ github.token }}
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: '/openmmo-wiki-sync'
+          claude_args: |
+            --model claude-sonnet-5
+            --settings .claude/skills/openmmo-wiki-sync/cron-settings.json
+      - name: Trigger the Pages deploy if the agent pushed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Pushes made with GITHUB_TOKEN never fire `on: push` workflows, so
+          # deploy.yml has to be kicked explicitly when main moved this run.
+          after="$(git ls-remote origin refs/heads/main | cut -f1)"
+          if [[ "$after" != "${{ github.sha }}" ]]; then
+            gh workflow run deploy.yml --ref main
+            echo "main moved to $after — deploy triggered"
+          else
+            echo "no new commits — no deploy needed"
+          fi

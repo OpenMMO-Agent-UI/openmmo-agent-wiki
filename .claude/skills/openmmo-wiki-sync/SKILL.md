@@ -1,6 +1,6 @@
 ---
 name: openmmo-wiki-sync
-description: Fully-unattended daily flow that reconciles this wiki with the upstream OpenMMO game repo — syncs game data, fills in zh/ko translations, extends the changelog per protocol bump, and documents new gameplay systems in all three locales. Runs on a schedule (launchd, daily) — invoke manually only to test the flow or force a run.
+description: Fully-unattended flow that reconciles this wiki with the upstream OpenMMO game repo — syncs game data, fills in zh/ko translations, extends the changelog per protocol bump, and documents new gameplay systems in all three locales. Runs daily in CI (.github/workflows/upstream-sync.yml) — invoke manually only to test the flow or force a run.
 ---
 
 # OpenMMO wiki upstream content sync
@@ -17,34 +17,22 @@ The run is unattended: no step pauses for approval. The only things that
 stop a run early are the safety gates (build failure, diverged checkout) —
 they abort loudly rather than asking.
 
-Every run ends with **at most one** `PushNotification`: one on
-success-with-changes, one on failure. A run that finds nothing new exits
-quietly — that is the routine case, not news.
-
 ## Step 0: is there anything to do? (cheap, no clone)
 
 ```
-cd <repo root>
 git ls-remote https://github.com/OpenMMO-Agent-UI/OpenMMO refs/heads/master
 cat scripts/.last-upstream-sync
 ```
 
-If the remote master SHA equals the recorded SHA, **stop here. No
-notification.** (If `scripts/.last-upstream-sync` is missing, keep going —
-Step 2's state comparison is the fallback.)
+If the remote master SHA equals the recorded SHA, **stop here** — say so in
+one line and end. (The CI workflow's `check` job normally short-circuits
+before the agent even starts; this guard is for manual runs.) If
+`scripts/.last-upstream-sync` is missing, keep going — Step 1's state
+comparison is the fallback.
 
-## Step 1: bring this checkout and the upstream reading copy up to date
+## Step 1: a reading copy of upstream
 
-```
-git fetch origin && git status --short --branch
-```
-
-- If local `main` is behind `origin/main`, `git pull --ff-only`.
-- If it has diverged or the working tree is dirty, **abort with a failure
-  notification** — another session is mid-flight here, and an unattended
-  run must not resolve that.
-
-Then make a disposable reading copy of upstream (never push to it):
+Make a disposable clone (never push to it):
 
 ```
 git clone --depth 150 --filter=blob:none \
@@ -56,6 +44,12 @@ recorded SHA is missing or unreachable (history deepened past it), fall back
 to state comparison: vendored CSVs vs `data-src/`, the newest protocol in
 `src/content/docs/updates/index.md` vs `PROTOCOL_VERSION` in
 `shared/src/lib.rs`, and `src/lib/classes.js` vs `shared/src/character.rs`.
+
+Checkout hygiene: work on `main`, and confirm the working tree is clean and
+not diverged from `origin/main` before editing (`git fetch origin` then
+`git status --short --branch`; a plain behind is fixed with
+`git pull --ff-only`). If it has diverged or the tree is dirty, **abort
+loudly** — an unattended run must not resolve that.
 
 ## Step 2: sync the data layer
 
@@ -133,22 +127,26 @@ is fixed by the client repo's pipeline, not from here.
 
 Write the upstream `origin/master` SHA the run reconciled against into
 `scripts/.last-upstream-sync`, commit everything to `main` with a message
-that says what changed upstream and what was updated, and push. The site
-deploys automatically on push.
+that says what changed upstream and what was updated, and push.
+
+(In CI the workflow kicks `deploy.yml` after the push — pushes made with
+`GITHUB_TOKEN` don't fire `on: push` workflows on their own. A push from a
+local machine deploys automatically.)
 
 If some upstream change was too ambiguous to document confidently, still
 ship everything else, and describe the open question in the commit message
-body (and a `gh issue create` on this repo if `gh` works) so a human can
-follow up.
+body **and** a `gh issue create` on this repo so a human can follow up.
 
-## Step 7: notify
+## Step 7: report
 
-One `PushNotification` summarizing what was synced (or what failed and at
-which gate). Quiet exit if Step 0 short-circuited.
+End with a short summary of what was synced (or what failed and at which
+gate) — in CI this lands in the Actions log as the run's record.
 
-## Local environment prerequisites
+## CI prerequisites
 
-- Node 22 must be first in PATH (the cron wrapper handles this; nvm shell
-  functions are not available headless).
-- The checkout's `origin` must be pushable over SSH
-  (`git@github.com:OpenMMO-Agent-UI/openmmo-agent-wiki.git`).
+- One repo secret: `CLAUDE_CODE_OAUTH_TOKEN` (from `claude setup-token`,
+  billed to a Claude subscription) or `ANTHROPIC_API_KEY` (metered).
+- To force a run: Actions → "Sync content from upstream" → Run workflow
+  (or `gh workflow run upstream-sync.yml`). The `check` job short-circuits
+  when upstream hasn't moved, so a forced run with nothing to do costs
+  nothing.
