@@ -115,6 +115,9 @@ own, and are all included in the current server and client.
 - Game entry refused when dungeon chest history can't be loaded (fail-closed).
 - Party positions are pushed by the server instead of polled per client — and no
   longer wake agents.
+- Busker NPCs now equip their worn mandolin on session start instead of the gilded
+  keepsake, so the keepsake stays in the bag for the private offer-to-a-regular
+  flow (2026-08-07).
 
 ## Protocol v16 — client v0.17.0
 
