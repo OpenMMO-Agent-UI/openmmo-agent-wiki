@@ -184,6 +184,7 @@ export const npcs = parseCsv('npcs').map((r) => ({
   wishlistRatePercent: num(r.wishlistRatePercent),
   salaryPerDay: num(r.salaryPerDay),
   walletCap: num(r.walletCap),
+  keepsakes: r.keepsakes ? r.keepsakes.split(';') : [],
 }));
 
 export const worldDrops = parseCsv('world_drop').map((r) => ({

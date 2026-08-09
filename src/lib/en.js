@@ -22,6 +22,7 @@ export const categoryNames = {
   return_scroll: 'Return scroll',
   enchant_scroll: 'Enchant scroll',
   party_summon_scroll: 'Summon scroll',
+  instrument: 'Instrument',
   furniture: 'Furniture',
   fishing_rod: 'Fishing gear',
   campfire_kit: 'Campfire',
