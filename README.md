@@ -1,9 +1,29 @@
 # openmmo-agent-wiki
 
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-Support_this_project-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/dakywang)
+
 [OpenMMO](https://github.com/OpenMMO-Agent-UI/OpenMMO) 攻略站,以及 OpenMMO Agent
 桌面客戶端的下載與說明。
 
 **網站:** https://openmmo-agent-ui.github.io/openmmo-agent-wiki/
+
+## 下載 OpenMMO Agent
+
+以下連結永遠指向最新版本:
+
+| 平台 | 下載 |
+|---|---|
+| macOS (Apple Silicon) | [openmmo-agent-macos-arm64.zip](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest/download/openmmo-agent-macos-arm64.zip) |
+| Windows (x64) | [openmmo-agent-windows-x64.exe](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest/download/openmmo-agent-windows-x64.exe) |
+| Linux (x64) | [openmmo-agent-linux-x64.AppImage](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest/download/openmmo-agent-linux-x64.AppImage) |
+
+版本與遊戲協議相容性見[最新 release](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest),
+完整安裝步驟見[安裝指南](https://openmmo-agent-ui.github.io/openmmo-agent-wiki/client/install/)。
+下載後可用同時發佈的 `SHA256SUMS.txt` 校驗。
+
+OpenMMO Agent 是自由開源軟體(MIT)。覺得好玩的話,歡迎
+[請開發者喝杯咖啡](https://ko-fi.com/dakywang) ☕ —— 有助於支付簽署憑證費用,
+讓開發持續下去。
 
 ## 開發
 
