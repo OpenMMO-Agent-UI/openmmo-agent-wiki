@@ -67,6 +67,9 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         with:
+          # Passing the workflow's own token skips the action's OIDC/GitHub-App
+          # exchange, which would otherwise require the Claude GitHub App.
+          github_token: ${{ github.token }}
           claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           prompt: '/openmmo-wiki-sync'
