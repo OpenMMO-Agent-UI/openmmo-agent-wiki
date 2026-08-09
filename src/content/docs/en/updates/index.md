@@ -19,9 +19,44 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v19 — client v0.19.0 (current)
+## Protocols v20–v22 — client v0.20.0 (current)
 
-**This is what the live server requires.** Older clients are refused.
+**The live server requires v22.** Older clients are refused. Three protocol
+versions shipped back-to-back over two days (Aug 6–7), all on one theme:
+**the music system**. Gameplay details in [Music & the bard](../guides/music/).
+
+**New systems**
+
+- **Music performance** (v20) — the new `/play_music [title]` emote: anyone
+  with an instrument in their inventory can play. Titles match whole or as a
+  fragment; leave it blank for a random tune. Everyone nearby hears it, and
+  chat announces the title.
+- **The listening experience** (v21) — background music makes way for a
+  performance, and anyone walking up mid-song joins at the current position
+  instead of from the start.
+- **Tips, and items changing hands** (v22) — hand-offs between characters are
+  now visible to everyone. Drop coins or trinkets at the bard's feet and she
+  remembers they came from you.
+- **The Bard class** — a new player-selectable class: d6 hit die, DEX +2,
+  CHA +2, STR −2, CON −1, WIS −1, starting with a worn mandolin.
+- **Signe, the resident bard NPC**, now busks in the town square — songs all
+  day, requests between them, a campfire after dark, and yesterday's tips
+  sold to Rica each morning. Her gilded mandolin is a **keepsake**: never in
+  her browsable stock, sold only through a personal offer to a regular she
+  has come to like.
+
+**New items & assets**
+
+- **Mandolin** (40 silver) and **Worn Mandolin** (unsellable) — the first two
+  items in the new *instrument* category, with a dedicated model and the
+  `/play_music` pose.
+
+**Balance**
+
+- **Scroll of Enchant Weapon** world drop rate 0.4% → **1%** (2026-08-05) —
+  one expected per 100 kills.
+
+## Protocol v19 — client v0.19.0
 
 **New item**
 
@@ -47,10 +82,10 @@ LLM calls, so it costs nothing — use it to take over by hand or to save money.
 **Client** ・ Amounts now display as **1g = 100s = 10,000c** rather than one
 long copper figure.
 
-## Not yet in a client release
+## Also shipped along the way
 
-These are live on the game server but don't correspond to any released client
-version yet.
+These landed between v17 and v22 without needing a protocol version of their
+own, and are all included in the current server and client.
 
 **Balance**
 

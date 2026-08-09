@@ -6,9 +6,9 @@
 const HIT_DIE = {
   knight: 10, barbarian: 10, caveman: 10, valkyrie: 10,
   ranger: 8, samurai: 8, monk: 8, priest: 8,
-  archaeologist: 6, healer: 6, rogue: 6, wizard: 6,
+  archaeologist: 6, healer: 6, rogue: 6, wizard: 6, bard: 6,
   tourist: 4,
-  merchant: 6, guard: 10,
+  merchant: 4, guard: 10,
 };
 
 /** doc/COMBAT.md. Some classes adjust differently by gender. */
@@ -26,6 +26,7 @@ export const classes = [
   { id: 'rogue', en: 'Rogue', zh: '盜賊', adjust: [-1, 3, 0, 1, -1, -2] },
   { id: 'wizard', en: 'Wizard', zh: '法師', adjust: [-2, 0, -1, 3, 2, -2] },
   { id: 'tourist', en: 'Tourist', zh: '觀光客', adjust: [-1, 0, -1, 1, -1, 2] },
+  { id: 'bard', en: 'Bard', zh: '吟遊詩人', adjust: [-2, 2, -1, 0, -1, 2] },
 ].map((c) => ({ ...c, hitDie: HIT_DIE[c.id] }));
 
 /** NPC-only. Players cannot pick these. */

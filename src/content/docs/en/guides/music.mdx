@@ -1,0 +1,82 @@
+---
+title: Music & the bard
+description: How /play_music works, what listeners hear, the Bard class, and Signe in the town square — tips, requests, and the gilded mandolin she only sells to regulars.
+---
+
+import { itemsById, formatCoins } from '../../../../lib/gamedata.js';
+import { itemName } from '../../../../lib/en.js';
+
+Music is the game's first performance system (protocols v20–v22). Anyone with
+an instrument in their inventory can play; Bards start with one, and everyone
+else can try to earn the right to buy Signe's spare in the town square.
+
+## Playing
+
+Type in chat:
+
+```
+/play_music [title]
+```
+
+Everything is resolved server-side:
+
+- **You need an instrument** — anywhere in the inventory, bag or hands
+  (currently the two mandolins). Without one you get
+  "You need an instrument to play music."
+- **Titles match loosely** — whole or as a fragment, ignoring case. Leave it
+  blank and the server picks a tune at random. The songbook is the game's BGM
+  track list, so anything you have heard out in the world can be requested.
+- A query that matches nothing answers "No such song." — no performance wasted.
+
+While you play:
+
+- Your character strikes a performing pose and **everyone nearby hears the
+  track**; chat announces the title the way it announces a chest being
+  opened — you never have to say a word.
+- Background music makes way for the performance, and listeners who **walk up
+  mid-song join at the current position**, not from the start.
+- Several players can perform at once, and the performance ends with the track.
+
+## The Bard class
+
+Selectable at character creation. A d6 hit die with DEX +2, CHA +2, STR −2,
+CON −1, WIS −1 — full numbers on [Character & attributes](../character/).
+
+Bards start with a **{itemName('worn_mandolin')}** on top of the common kit,
+so they can perform from minute one. Like Signe's own, merchants won't buy
+it — it is a working tool, not loot.
+
+## Signe in the town square
+
+Signe is the resident bard NPC, and her day runs on a schedule:
+
+- She **busks in the town square** while anyone is around, one song after
+  another, chatting and taking requests between songs.
+- After dark she lights a campfire and plays by firelight; when it is time
+  for bed the day's music is over, and she is back on the square in the
+  morning.
+- Before the first song of the day she sells yesterday's tip trinkets to Rica.
+
+### Tips and requests
+
+To show appreciation, **drop coins or trinkets at her feet** — items changing
+hands are visible to everyone (protocol v22). She gathers tips between songs
+and remembers who gave what.
+
+### The gilded mandolin
+
+Signe carries two instruments: the {itemName('worn_mandolin')} she plays
+every day, and a **{itemName('mandolin')}**
+({formatCoins(itemsById.get('mandolin').basePrice)}) tucked in her bag. That
+one is a **keepsake** — it never shows up when you browse her stock, and
+asking to buy it gets you turned down.
+
+She only parts with it for **regulars she has come to like**. Tips,
+compliments, song requests, staying for whole sets — she remembers all of it.
+When she decides you have earned it, she will **make you a personal offer**:
+valid only for you, for a single mandolin, and it expires within minutes —
+take it or lose it. A sold keepsake is restocked after a while, but the next
+one goes to the next regular.
+
+The trading rule behind "sold only to a chosen buyer" is covered in the
+[economy database](../../database/economy/).

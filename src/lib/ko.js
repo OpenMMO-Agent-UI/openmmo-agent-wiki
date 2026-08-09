@@ -208,6 +208,7 @@ export const classNames = {
   rogue: '로그',
   wizard: '위저드',
   tourist: '관광객',
+  bard: '바드',
   merchant: '상인',
   guard: '경비병',
 };
