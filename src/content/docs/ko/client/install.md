@@ -1,31 +1,31 @@
 ---
 title: 설치와 첫 실행
-description: 서명 경고 통과, Google 로그인, 캐릭터 생성부터 플레이 시작까지.
+description: 처음 실행(macOS는 바로, Windows는 「실행」 클릭), Google 로그인, 캐릭터 생성부터 플레이 시작까지.
 ---
 
-## 서명 경고 통과하기
+## 처음 실행하기
 
-설치 파일에 서명이 없어 세 플랫폼 모두 한 번씩 막습니다.
+### macOS — 그냥 열면 됩니다
 
-### macOS
+**macOS 빌드는 Apple Developer ID로 서명되고, Apple 공증(notarization)까지
+마쳤으며, 티켓이 앱에 스테이플되어 있습니다.** 압축을 풀고 더블클릭하면
+Gatekeeper 경고 없이 실행됩니다.
 
-Gatekeeper가 더블클릭 실행을 거부합니다. 압축을 푼 뒤 둘 중 하나:
+우클릭으로 열 필요도, `xattr -cr`을 칠 필요도 없습니다 —
+서명되지 않은 앱을 위한 인터넷의 그 안내들은 이 빌드에 해당하지 않습니다.
 
-- **우클릭 → 열기**, 나오는 대화상자에서 다시 「열기」. 한 번만 하면 됩니다.
-- 또는 터미널에서 격리 속성 제거:
+### Windows — 한 번 더 눌러야 합니다
 
-  ```bash
-  xattr -cr "OpenMMO Agent.app"
-  ```
+**Windows 빌드는 서명되어 있지 않아** SmartScreen이 「PC를 보호했습니다」를
+띄웁니다. **추가 정보** → **실행**을 누르세요.
 
-### Windows
+코드 서명 인증서는 매년 비용이 들고, 지금은 macOS용만 있습니다.
+이 프로젝트가 쓸 만하다면 [후원](https://ko-fi.com/dakywang)이 Windows용
+인증서를 마련하는 데 보탬이 됩니다.
 
-SmartScreen이 「PC를 보호했습니다」를 띄웁니다.
-**추가 정보** → **실행**을 누르세요.
+### Linux — 실행 권한 주기
 
-### Linux
-
-AppImage에 실행 권한을 직접 줘야 합니다:
+AppImage에는 서명 개념이 없고, 실행 권한만 직접 주면 됩니다:
 
 ```bash
 chmod +x openmmo-agent-linux-x64.AppImage

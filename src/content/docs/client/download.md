@@ -6,9 +6,13 @@ description: OpenMMO Agent 桌面客戶端的下載連結、系統需求與檔�
 OpenMMO Agent 是一個桌面客戶端,可以**手動遊玩**,也可以設定一個 LLM
 **替你的角色行動**,你在旁邊即時觀看它的視角與思考過程。
 
-:::caution[所有版本皆未經簽章]
-安裝檔沒有經過 Apple 或 Microsoft 的簽章,系統會跳出警告。
-這是預期行為 —— 請照[安裝與首次啟動](../install/)的步驟繞過,不要直接按「取消」。
+:::note[macOS 可以直接開啟,Windows 需要多按一次]
+**macOS 版已由 Apple Developer ID 簽署並完成公證**,雙擊即可執行,不會跳警告。
+
+**Windows 版未經簽署**,SmartScreen 會擋一次 —— 這是預期行為,
+照[安裝與首次啟動](../install/)的步驟按「仍要執行」即可,不要直接按「取消」。
+
+Linux 的 AppImage 沒有簽章機制,只需要自己加執行權限。
 :::
 
 ## 下載

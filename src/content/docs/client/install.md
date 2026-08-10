@@ -1,30 +1,29 @@
 ---
 title: 安裝與首次啟動
-description: 繞過未簽章警告、完成 Google 登入、建立角色並開始遊玩。
+description: 第一次開啟(macOS 直接開、Windows 需按「仍要執行」)、Google 登入、建立角色並開始遊玩。
 ---
 
-## 繞過未簽章警告
+## 第一次開啟
 
-安裝檔沒有經過簽章,三個平台都會擋一次。
+### macOS —— 直接開就好
 
-### macOS
+**macOS 版已由 Apple Developer ID 簽署,並通過 Apple 公證(notarization),
+票證也已釘選在應用程式裡。** 解壓縮後雙擊即可執行,不會有 Gatekeeper 警告。
 
-Gatekeeper 會拒絕直接雙擊開啟。解壓縮後選其中一種:
+不需要右鍵開啟,也不需要 `xattr -cr` —— 網路上針對未簽章 app 的那些教學,
+對這個版本用不到。
 
-- **右鍵 → 開啟**,在跳出的對話框再按一次「開啟」。只需要做一次。
-- 或者用終端機清掉隔離屬性:
+### Windows —— 需要多按一次
 
-  ```bash
-  xattr -cr "OpenMMO Agent.app"
-  ```
+**Windows 版沒有簽署**,SmartScreen 會顯示「已保護您的電腦」。
+點**其他資訊** → **仍要執行**。
 
-### Windows
+程式碼簽署憑證每年要花錢,目前只有 macOS 那張。
+覺得這個專案有用的話,[贊助](https://ko-fi.com/dakywang)有助於補上 Windows 那張。
 
-SmartScreen 會顯示「已保護您的電腦」。點**其他資訊** → **仍要執行**。
+### Linux —— 加執行權限
 
-### Linux
-
-AppImage 需要自己加上執行權限:
+AppImage 沒有簽章機制,只要自己加上執行權限:
 
 ```bash
 chmod +x openmmo-agent-linux-x64.AppImage

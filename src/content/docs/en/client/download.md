@@ -7,11 +7,15 @@ OpenMMO Agent is a desktop client. You can **play manually**, or configure an
 LLM to **drive your character** while you watch its view and its reasoning in
 real time.
 
-:::caution[Every build is unsigned]
-The installers carry no Apple or Microsoft signature, so your system will warn
-you. That is expected — follow the steps in
-[Install and first run](../install/) to get past it rather than clicking
-Cancel.
+:::note[macOS just opens; only Windows needs an extra click]
+**The macOS build is signed with an Apple Developer ID and notarized**, so it
+opens on a double-click with no warning.
+
+**The Windows build is unsigned**, so SmartScreen blocks it once. That is
+expected — follow [Install and first run](../install/) and choose Run anyway
+rather than clicking Cancel.
+
+Linux AppImages have no signing to speak of; they just need the executable bit.
 :::
 
 ## Download

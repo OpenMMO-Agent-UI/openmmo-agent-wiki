@@ -1,31 +1,32 @@
 ---
 title: Install and first run
-description: Getting past the unsigned warnings, signing in with Google, creating a character and entering play.
+description: Opening it the first time (macOS just opens; Windows needs Run anyway), signing in with Google, creating a character and entering play.
 ---
 
-## Getting past the unsigned warnings
+## Opening it the first time
 
-The installers are unsigned, so all three platforms block them once.
+### macOS — it just opens
 
-### macOS
+**The macOS build is signed with an Apple Developer ID, notarized by Apple, and
+has the ticket stapled into the app.** Unzip it, double-click, and it runs with
+no Gatekeeper warning.
 
-Gatekeeper refuses a double-click. After unzipping, pick one:
+You do not need right-click → Open, and you do not need `xattr -cr` — the advice
+you'll find online for unsigned apps does not apply to this build.
 
-- **Right-click → Open**, then click Open again in the dialog. Once is enough.
-- Or clear the quarantine attribute from a terminal:
+### Windows — one extra click
 
-  ```bash
-  xattr -cr "OpenMMO Agent.app"
-  ```
+**The Windows build is unsigned**, so SmartScreen shows "Windows protected your
+PC". Click **More info** → **Run anyway**.
 
-### Windows
+Code signing certificates cost money every year and there is currently only one,
+for macOS. If the project is useful to you,
+[supporting it](https://ko-fi.com/dakywang) helps put a Windows certificate in
+reach.
 
-SmartScreen shows "Windows protected your PC". Click **More info** →
-**Run anyway**.
+### Linux — set the executable bit
 
-### Linux
-
-The AppImage needs the executable bit:
+AppImages have no signing to speak of; they just need to be executable:
 
 ```bash
 chmod +x openmmo-agent-linux-x64.AppImage
