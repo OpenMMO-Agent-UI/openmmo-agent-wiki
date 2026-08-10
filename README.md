@@ -107,9 +107,3 @@ node --experimental-websocket scripts/check-drift.mjs   # Node 22 起不需要�
    1 金 = 100 銀 = 10,000 銅 屬於顯示層慣例。
 
 上游改動資料結構(欄位增刪)時,除了重跑同步腳本,也要檢查這兩處。
-
-## Support
-
-OpenMMO Agent is free and open source. If it's been fun,
-[buy the developer a coffee](https://ko-fi.com/dakywang) ☕ — it helps cover
-release signing and keeps development going.
