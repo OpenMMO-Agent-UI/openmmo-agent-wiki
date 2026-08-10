@@ -9,6 +9,7 @@ import { itemName, categoryNames } from '../../../lib/zh.js';
 
 export const rica = merchants.find((m) => m.id === 'rica');
 export const karl = npcs.find((n) => n.id === 'karl');
+export const wick = merchants.find((m) => m.id === 'wick');
 
 ## 貨幣
 
@@ -62,6 +63,44 @@ Rica 賣 {rica.catalog.length} 種商品,收購價是基準價的 **{rica.sellRa
 清單是「角色 × 商人」各自保存的,重新連線也還在、沒有時間限制,
 但**伺服器重啟就會消失**。
 
+## 打烊怎麼辦:夜間商人 Wick
+
+Rica 晚上會回房睡覺,**睡著的商人連交易視窗都打不開**——連已經開著的也會被強制關掉。
+入夜後改到 Aldermark 大道找 **Wick**:他白天在城西邊界待機不營業,只在晚上擺攤。
+
+Wick 賣 {wick.catalog.length} 種商品,收購價是基準價的 **{wick.sellRatePercent}%**
+(比 Rica 的 {rica.sellRatePercent}% 低):
+
+<FilterTable
+  placeholder="搜尋商品…"
+  columns={[
+    { key: 'name', label: '商品' },
+    { key: 'en', label: '遊戲內名稱' },
+    { key: 'category', label: '分類', align: 'center' },
+    { key: 'buy', label: '買入價', align: 'right' },
+    { key: 'sell', label: '賣回價', align: 'right' },
+  ]}
+  rows={wick.catalog.map((id) => {
+    const i = itemsById.get(id);
+    return {
+      name: itemName(id),
+      en: i?.name ?? id,
+      category: categoryNames[i?.category] ?? i?.category ?? '—',
+      buy: formatCoins(i?.basePrice ?? null),
+      sell: formatCoins(sellPrice(i?.basePrice ?? null, wick.sellRatePercent)),
+    };
+  })}
+/>
+
+品項刻意**縮到只剩夜間必需品**——火把、治療藥水、營火包、口糧、返回卷軸,
+純粹是趕夜路的方便,不是比白天划算的管道。
+
+### 商人擺攤(/lay_stall)
+
+商人職業可以打 `/lay_stall` 在戶外攤開一張矮桌當作攤位視覺標記,
+`/pack_stall` 收起(登出也會自動收攤,一人限一個、只能在戶外)。
+純粹是場景道具——交易照樣走原本的視窗流程,攤位只是多一個「這裡有生意」的訊號。
+
 ## 議價
 
 Rica 是 LLM 驅動的 NPC,**可以用對話殺價**。但價格保護全部在伺服器端:
@@ -78,6 +117,11 @@ CHA 越高,伺服器給的價格帶越寬(約 ±5～25 個百分點) —— 所�
 講個好故事、帶點消息、適度奉承,Rica 真的會給折扣。反過來,態度惡劣也可能被**加價** ——
 這是對稱的,而且符合她的人設。
 :::
+
+### 不想被推銷?按「現在不要」
+
+NPC 主動推來的交易或優惠視窗,現在多一個「現在不要」可以按;放著不理、讓提示逾時消失也算拒絕。
+拒絕之後,**同一個 NPC 10 分鐘內不會再對你推播**交易邀約或優惠。
 
 ## 非商人 NPC
 
@@ -111,6 +155,18 @@ CHA 越高,伺服器給的價格帶越寬(約 ±5～25 個百分點) —— 所�
 {formatCoins(karl.salaryPerDay)} 的薪水,存滿上限就停發。
 
 要注意的是他**只在願望清單沒被滿足時才會買** —— 背包裡已經有的東西就不想要了。
+
+Karl 身上那把長槍和整套皮甲是**配發裝備**,上線時自動補發穿上,不算掉落物 ——
+這類裝備**不能販售**,不管是他賣給你還是你賣給他,免得靠上下線反覆刷裝備變成金幣水龍頭。
+
+### NPC 記得你(好感度)
+
+LLM 驅動的 NPC 會保留最近的對話(最近 30 行,附遊戲內時間戳),
+所以同一段對話跨好幾輪也不會前言不對後語;吟遊詩人另外還記得自己最近彈過的 8 首歌,避免一直重複。
+
+對話同時會累積一個**好感度**數值,LLM 每回合最多調整 ±1、總計上限 ±5,
+存在伺服器端。好感度到門檻的熟客,才會被 NPC 排進「私下交易」的對象名單——
+這就是下面「珍藏品」機制背後真正在算的東西。
 
 ### 珍藏品(keepsakes)
 

@@ -9,6 +9,7 @@ import { itemName, categoryNames } from '../../../../lib/ko.js';
 
 export const rica = merchants.find((m) => m.id === 'rica');
 export const karl = npcs.find((n) => n.id === 'karl');
+export const wick = merchants.find((m) => m.id === 'wick');
 
 ## 화폐
 
@@ -62,6 +63,45 @@ Rica는 {rica.catalog.length}종을 팔고, 매입가는 기준가의 **{rica.se
 목록은 「캐릭터 × 상인」별로 보관되며 재접속해도 남고 시간 제한도 없지만,
 **서버가 재시작되면 사라집니다.**
 
+## 문 닫은 뒤: 야간 상인 Wick
+
+Rica는 밤에 잠자리에 들고, **잠든 상인은 거래 창조차 열어 주지 않습니다** —
+이미 열려 있던 창도 강제로 닫힙니다. 해가 진 뒤에는 Aldermark 대로에서
+**Wick**을 찾으세요. 그는 낮에는 마을 서쪽 끝에서 대기하다가 밤에만 좌판을 폅니다.
+
+Wick은 {wick.catalog.length}종을 팔고, 매입가는 기준가의 **{wick.sellRatePercent}%**입니다
+(Rica의 {rica.sellRatePercent}%보다 낮습니다):
+
+<FilterTable
+  placeholder="상품 검색…"
+  columns={[
+    { key: 'name', label: '상품' },
+    { key: 'category', label: '분류', align: 'center' },
+    { key: 'buy', label: '구매가', align: 'right' },
+    { key: 'sell', label: '되팔기', align: 'right' },
+  ]}
+  rows={wick.catalog.map((id) => {
+    const i = itemsById.get(id);
+    return {
+      name: itemName(id),
+      category: categoryNames[i?.category] ?? i?.category ?? '—',
+      buy: formatCoins(i?.basePrice ?? null),
+      sell: formatCoins(sellPrice(i?.basePrice ?? null, wick.sellRatePercent)),
+    };
+  })}
+/>
+
+품목은 일부러 **야간 필수품으로만 좁혀져** 있습니다 — 횃불, 치료 물약, 모닥불
+키트, 식량, 귀환 스크롤. 밤길을 위한 편의일 뿐, 아침까지 기다리는 것보다
+이득인 경로는 아닙니다.
+
+### 상인 좌판(/lay_stall)
+
+상인 클래스는 `/lay_stall`로 눈앞에 좌판 테이블을 펼쳐 영업 중임을 알릴 수
+있고, `/pack_stall`로 접습니다(로그아웃해도 자동으로 접힙니다 — 1인 1개,
+야외 전용). 순수한 소품이라 거래 자체는 기존 창 그대로 진행되고, 좌판은
+「여기서 장사합니다」라는 신호일 뿐입니다.
+
 ## 흥정
 
 Rica는 LLM이 조종하는 NPC라 **대화로 값을 깎을 수 있습니다.**
@@ -84,6 +124,12 @@ CHA가 높을수록 서버가 주는 가격대가 넓어집니다(대략 ±5~25%
 반대로 무례하게 굴면 **할증**될 수도 있습니다 — 대칭적이고, 그녀의 페르소나에
 맞는 반응입니다.
 :::
+
+### 관심 없으면 "지금은 됐어요"
+
+NPC가 먼저 걸어오는 거래·제안 창에는 이제 "지금은 됐어요" 버튼이 있고,
+알림을 그냥 무시해서 시간이 지나 사라져도 거절로 처리됩니다. 거절하면
+**같은 NPC는 10분 동안 다시 제안을 걸어오지 않습니다.**
 
 ## 상인이 아닌 NPC
 
@@ -118,6 +164,22 @@ CHA가 높을수록 서버가 주는 가격대가 넓어집니다(대략 ±5~25%
 
 주의할 점은 **위시리스트가 충족되지 않았을 때만 산다는 것**입니다 —
 가방에 이미 있는 물건은 더 이상 원하지 않습니다.
+
+Karl의 장창과 가죽 갑옷 한 벌은 **지급 장비**로, 접속할 때마다 자동으로
+지급되고 착용됩니다 — 드랍 아이템이 아닙니다. 이 장비는 그가 팔든 플레이어가
+팔든 **판매가 불가능**해서, 접속·해제를 반복해 장비를 공짜로 얻는 수법을
+막습니다.
+
+### NPC는 당신을 기억합니다(호감도)
+
+LLM이 조종하는 NPC는 최근 대화(게임 시간 스탬프가 붙은 최근 30줄)를
+돌려가며 기억하므로, 여러 턴에 걸친 대화도 앞뒤가 맞습니다. 바드는 추가로
+최근에 연주한 8곡을 기억해서 같은 곡을 반복하지 않습니다.
+
+대화는 서버에 저장되는 **호감도** 수치도 쌓는데, LLM이 턴당 최대 ±1,
+누적 최대 ±5까지 조정할 수 있습니다. 호감도가 문턱을 넘은 플레이어는
+NPC가 개인 거래를 제안할 만한 단골로 대하기 시작합니다 — 아래 애장품
+시스템을 실제로 움직이는 메커니즘입니다.
 
 ### 애장품(keepsakes)
 

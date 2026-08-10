@@ -1,0 +1,68 @@
+---
+title: Friends
+description: How /friend requests and consent work, why blocking and friendship are mutually exclusive, the friend panel, and how online status is figured out.
+---
+
+The friend system shipped in protocol v23. Friendship needs **consent from
+both sides**, and it is tracked per **character**, not per account — log in
+on another character on the same account and the friend list is empty.
+
+## Adding a friend
+
+Type in chat:
+
+```
+/friend add <name>
+```
+
+`/f add <name>` is the short form; either works.
+
+- The other player gets a **request toast** and has **120 seconds** to
+  accept or decline; an unanswered request just expires.
+- If **both sides send a request to each other before either expires**,
+  you become friends immediately — no one has to click accept.
+- Each player can have **up to 5 pending requests** at once; past that,
+  new ones are refused until an old one expires or gets answered.
+- A declined request **stays around until its TTL runs out** instead of
+  disappearing immediately, so declining can't be used to free up a slot
+  for spam.
+
+## The friend panel
+
+Press **F**, or click the friend icon on the HUD. Next to each friend you can:
+
+- **Whisper them directly** — this prefills `/w <name> ` in the chat input
+  (it does not send automatically, so you can edit it first).
+- **Invite them to your party** — routes through the normal party-invite
+  flow, so failures are reported by the server the same way.
+
+## How online status is determined
+
+Friend presence is not pushed by the server — the **panel polls for it**:
+every **15 seconds** while the panel is open, dropping to every **60
+seconds** while it is closed. The "X came online" notice is derived by
+**diffing consecutive answers**, so it only exists client-side; the server
+has no concept of it.
+
+## Removing a friend
+
+```
+/friend remove <name>
+```
+
+`/friend delete` also works. Removal is **one-sided and takes effect for
+both of you immediately** — no consent needed, both lists update at once,
+and neither of you has to relog to see it.
+
+## Friendship and blocking are mutually exclusive
+
+You can't be someone's friend and have them blocked at the same time:
+
+- **Blocking a friend ends the friendship** immediately.
+- Sending a friend request to someone you've blocked is refused — and the
+  refusal message is **word-for-word identical** to "request sent, waiting
+  for a reply," so the other person can't tell they've been blocked.
+
+## Listing your friends
+
+Type `/friend` with no arguments, or just `/f`, to list your current friends.

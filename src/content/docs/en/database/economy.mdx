@@ -9,6 +9,7 @@ import { itemName, categoryNames } from '../../../../lib/en.js';
 
 export const rica = merchants.find((m) => m.id === 'rica');
 export const karl = npcs.find((n) => n.id === 'karl');
+export const wick = merchants.find((m) => m.id === 'wick');
 
 ## Currency
 
@@ -66,6 +67,47 @@ price for costs that much to buy back.
 The list is kept per character and per merchant, survives reconnecting, and has
 no time limit — but **it is lost when the server restarts.**
 
+## After hours: Wick, the night merchant
+
+Rica goes to bed at night, and **a sleeping merchant won't even open a trade
+window** — even one already open gets force-closed. After dark, head to the
+Aldermark road and find **Wick** instead: he sits idle at the western edge of
+town by day and only sets up shop at night.
+
+Wick sells {wick.catalog.length} things and buys at **{wick.sellRatePercent}%**
+of base price (lower than Rica's {rica.sellRatePercent}%):
+
+<FilterTable
+  placeholder="Search stock…"
+  columns={[
+    { key: 'name', label: 'Item' },
+    { key: 'category', label: 'Category', align: 'center' },
+    { key: 'buy', label: 'You pay', align: 'right' },
+    { key: 'sell', label: 'He pays', align: 'right' },
+  ]}
+  rows={wick.catalog.map((id) => {
+    const i = itemsById.get(id);
+    return {
+      name: i?.name ?? id,
+      category: categoryNames[i?.category] ?? i?.category ?? '—',
+      buy: formatCoins(i?.basePrice ?? null),
+      sell: formatCoins(sellPrice(i?.basePrice ?? null, wick.sellRatePercent)),
+    };
+  })}
+/>
+
+The stock is deliberately **narrowed to night-travel essentials** — a torch,
+healing, a campfire kit, rations, a scroll of return. It's a convenience for
+being out after dark, not a better deal than waiting for morning.
+
+### Merchant stalls (/lay_stall)
+
+Merchants can type `/lay_stall` to spread a table out as a visible sign
+they're open for business, and `/pack_stall` to fold it back up (logging out
+packs it up too — one stall per merchant, outdoors only). It's purely a prop:
+trading still runs through the normal window, the stall just signals "there's
+business here."
+
 ## Haggling
 
 Rica is an LLM-driven NPC, so **you can talk the price down.** All the price
@@ -88,6 +130,12 @@ points) — a charismatic character really does negotiate better.
 A good story, a piece of news or some judicious flattery genuinely earn a
 discount. Being rude can earn a **markup** — it's symmetric, and in character.
 :::
+
+### Not interested? Say "not now"
+
+A trade or deal window an NPC pushes at you now has a "Not now" button, and
+letting the toast time out unanswered counts as a decline too. Once declined,
+**that NPC won't push another offer at you for 10 minutes.**
 
 ## Non-merchant NPCs
 
@@ -122,6 +170,23 @@ is full.
 
 Note that he **only buys while the wishlist is unmet** — he doesn't want what's
 already in his bag.
+
+Karl's spear and full set of leather armor are **issued gear**, granted and
+equipped automatically whenever he comes online rather than being loot — that
+gear **can't be sold**, either direction, so logging an NPC in and out can't
+be farmed for free equipment.
+
+### NPCs remember you (favor)
+
+LLM-driven NPCs keep a rolling window of recent conversation (the last 30
+lines, timestamped to game time), so a back-and-forth stays coherent across
+several turns; bards additionally remember the last 8 songs they played, so
+they don't repeat themselves.
+
+Conversations also build up a **favor** score, server-side, adjustable by the
+LLM up to ±1 per turn and capped at ±5 total. Once a player's favor clears a
+threshold, the NPC starts treating them as a regular worth a private deal —
+that's the mechanism behind the keepsake system below.
 
 ### Keepsakes
 

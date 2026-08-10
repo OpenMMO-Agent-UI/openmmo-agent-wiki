@@ -28,6 +28,7 @@ export default defineConfig({
             { label: '戰鬥系統', translations: { ko: '전투 시스템' , en: 'Combat' }, link: '/guides/combat/' },
             { label: '釣魚玩法', translations: { ko: '낚시' , en: 'Fishing gameplay' }, link: '/guides/fishing/' },
             { label: '音樂與吟遊詩人', translations: { ko: '음악과 바드' , en: 'Music & the bard' }, link: '/guides/music/' },
+            { label: '好友系統', translations: { ko: '친구 시스템' , en: 'Friends' }, link: '/guides/friends/' },
           ],
         },
         {

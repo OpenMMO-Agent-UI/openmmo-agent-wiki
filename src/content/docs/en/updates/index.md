@@ -19,11 +19,71 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocols v20–v22 — client v0.20.0 (current)
+## Protocols v23–v25 — client v0.21.0 (current)
 
-**The live server requires v22.** Older clients are refused. Three protocol
-versions shipped back-to-back over two days (Aug 6–7), all on one theme:
-**the music system**. Gameplay details in [Music & the bard](../guides/music/).
+**The live server requires v25.** Older clients are refused. Three protocol
+versions shipped over four days (Aug 6–10), each its own system: friends,
+merchant stalls, and declining pushed trade offers.
+
+**New systems**
+
+- **Friend system** (v23) — `/friend add <name>` (or `/f`) sends a friend
+  request; the other player has 120 seconds to accept it on a toast, and
+  requesting each other simultaneously skips the answer and makes you
+  friends immediately. Press **F** for the friend panel — whisper or invite
+  to party in one click. Friendship and blocking are mutually exclusive:
+  blocking a friend ends the friendship. Full rules in
+  [Friends](../guides/friends/).
+- **Merchant stalls** (v24) — the new `/lay_stall` command, merchant-class
+  only, spreads a table outdoors as a visible "open for business" sign
+  (`/pack_stall` folds it up, and logging out does too). It's purely a
+  prop — trading still runs through the normal window.
+- **Declining pushed trade offers** (v25) — a trade or deal window an NPC
+  pushes at you now has a "Not now" button, and an unanswered toast that
+  times out counts as a decline too. Once declined, **that NPC won't push
+  another offer at you for 10 minutes.**
+
+**Balance**
+
+- **Wick, the night merchant**, now works the Aldermark road after dark,
+  selling only night-travel essentials — a torch, healing potions, a
+  campfire kit, bread, jerky, a scroll of return — and buying at **30%**
+  of base price (Rica pays 40%). It's a convenience for being out after
+  dark, not a better deal than waiting for Rica.
+- **Rica can't trade while asleep** (2026-08-05) — while she's in bed at
+  night, her shop window refuses to open (and an already-open one gets
+  closed), which is the direct reason Wick exists: the town can't go a
+  whole night with no counter open.
+- **Roster NPCs like the guard Karl** now get their gear **issued and
+  equipped automatically on login** (a spear plus a full leather armor
+  set) instead of relying on the model's default look. Issued gear
+  **can't be sold**, either direction, so logging an NPC in and out
+  can't be farmed for free equipment.
+- **NPCs remember you (favor)** — NPCs now keep a rolling window of the
+  last 30 lines of conversation, and bards additionally remember the
+  last 8 songs they played. Conversations also build up a **favor**
+  score (±1 per turn, capped at ±5 total); once a player clears the
+  threshold, the NPC starts treating them as a regular worth a private
+  deal — the mechanism behind the keepsake trades mentioned in
+  [Music & the bard](../guides/music/).
+
+**Fixes**
+
+- If an NPC agent process dies unexpectedly, the driver now respawns it
+  after a delay instead of leaving it gone for good.
+- Fixed surface objects (like shop signs) being visible floating in
+  mid-air while underground in a dungeon.
+- Fixed dungeon floor moves not snapping back into alignment with stairs
+  when the server corrected them.
+- Moves the server refuses (targets over 60m away, dead players,
+  non-finite coordinates) now reliably send a position-correction packet
+  back, instead of leaving agent NPCs stuck phantom-walking back and forth.
+
+## Protocols v20–v22 — client v0.20.0
+
+Three protocol versions shipped back-to-back over two days (Aug 6–7), all on
+one theme: **the music system**. Gameplay details in
+[Music & the bard](../guides/music/).
 
 **New systems**
 
