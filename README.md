@@ -42,7 +42,7 @@ Pages 來源設定為 **GitHub Actions**(不是分支)。
 
 安裝檔以 **GitHub Release 資產**的形式發佈在這個 repo,不進版本庫 ——
 單檔超過 GitHub 的 100MB 上限,走 Git LFS 會產生流量費用。
-`openmmo-client`(私有)的發佈流程建置完成後上傳到這裡,只保留最新版本。
+`openmmo-agent-ui`(私有)的發佈流程建置完成後上傳到這裡,只保留最新版本。
 
 網站上的下載連結使用不含版本號的固定檔名:
 
@@ -107,3 +107,9 @@ node --experimental-websocket scripts/check-drift.mjs   # Node 22 起不需要�
    1 金 = 100 銀 = 10,000 銅 屬於顯示層慣例。
 
 上游改動資料結構(欄位增刪)時,除了重跑同步腳本,也要檢查這兩處。
+
+## Support
+
+OpenMMO Agent is free and open source. If it's been fun,
+[buy the developer a coffee](https://ko-fi.com/dakywang) ☕ — it helps cover
+release signing and keeps development going.

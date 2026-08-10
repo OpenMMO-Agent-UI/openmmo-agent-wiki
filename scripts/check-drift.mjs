@@ -125,7 +125,7 @@ async function main() {
         `**The download link is broken.** The wiki serves protocol v${release.protocol} ` +
         `but the server requires v${serverProtocol}, so anyone downloading it right now ` +
         `cannot connect. Mirror the matching client release ` +
-        `(\`gh workflow run publish-downloads.yml --repo OpenMMO-Agent-UI/openmmo-client -f tag=vX.Y.Z\`).`
+        `(\`gh workflow run publish-downloads.yml --repo OpenMMO-Agent-UI/openmmo-agent-ui -f tag=vX.Y.Z\`).`
       );
     }
   } catch (err) {
