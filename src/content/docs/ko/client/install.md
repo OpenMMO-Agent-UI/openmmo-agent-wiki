@@ -28,8 +28,8 @@ Gatekeeper 경고 없이 실행됩니다.
 AppImage에는 서명 개념이 없고, 실행 권한만 직접 주면 됩니다:
 
 ```bash
-chmod +x openmmo-agent-linux-x64.AppImage
-./openmmo-agent-linux-x64.AppImage
+chmod +x openmmo-agent-*linux-x64.AppImage
+./openmmo-agent-*linux-x64.AppImage
 ```
 
 ## 첫 실행 흐름

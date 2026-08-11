@@ -29,8 +29,8 @@ reach.
 AppImages have no signing to speak of; they just need to be executable:
 
 ```bash
-chmod +x openmmo-agent-linux-x64.AppImage
-./openmmo-agent-linux-x64.AppImage
+chmod +x openmmo-agent-*linux-x64.AppImage
+./openmmo-agent-*linux-x64.AppImage
 ```
 
 ## First run

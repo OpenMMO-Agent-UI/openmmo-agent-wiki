@@ -3,6 +3,9 @@ title: 下載 OpenMMO Agent
 description: OpenMMO Agent 桌面客戶端的下載連結、系統需求與檔案校驗值。
 ---
 
+import release from '../../../data/release.json';
+export const dl = (f) => `https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest/download/${f}`;
+
 OpenMMO Agent 是一個桌面客戶端,可以**手動遊玩**,也可以設定一個 LLM
 **替你的角色行動**,你在旁邊即時觀看它的視角與思考過程。
 
@@ -17,15 +20,16 @@ Linux 的 AppImage 沒有簽章機制,只需要自己加執行權限。
 
 ## 下載
 
-以下連結永遠指向最新版本:
+目前版本:**v{release.version}**(協議 v{release.protocol})。
+檔名帶版本號,以下連結永遠指向最新版本:
 
 | 平台 | 檔案 |
 |---|---|
-| macOS (Apple Silicon) | [openmmo-agent-macos-arm64.zip](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest/download/openmmo-agent-macos-arm64.zip) |
-| Windows (x64) | [openmmo-agent-windows-x64.exe](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest/download/openmmo-agent-windows-x64.exe) |
-| Linux (x64) | [openmmo-agent-linux-x64.AppImage](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest/download/openmmo-agent-linux-x64.AppImage) |
+| macOS (Apple Silicon) | <a href={dl(release.files.mac)}>{release.files.mac}</a> |
+| Windows (x64) | <a href={dl(release.files.win)}>{release.files.win}</a> |
+| Linux (x64) | <a href={dl(release.files.linux)}>{release.files.linux}</a> |
 
-校驗值:[SHA256SUMS.txt](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest/download/SHA256SUMS.txt)
+校驗值:<a href={dl('SHA256SUMS.txt')}>SHA256SUMS.txt</a>
 ・ 所有版本:[Releases 頁面](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases)
 
 ## 系統需求

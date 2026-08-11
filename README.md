@@ -42,15 +42,12 @@ Pages 來源設定為 **GitHub Actions**(不是分支)。
 
 安裝檔以 **GitHub Release 資產**的形式發佈在這個 repo,不進版本庫 ——
 單檔超過 GitHub 的 100MB 上限,走 Git LFS 會產生流量費用。
-`openmmo-agent-ui`(私有)的發佈流程建置完成後上傳到這裡,只保留最新版本。
+`openmmo-agent-ui` 的發佈流程建置完成後上傳到這裡,只保留最新版本。
 
-網站上的下載連結使用不含版本號的固定檔名:
-
-```
-https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest/download/openmmo-agent-macos-arm64.zip
-```
-
-這樣發新版時網站不需要任何改動。
+檔名帶完整版本與協議號(`openmmo-agent-v<版本>-p<協議>-<平台>`),
+玩家下載後看檔名就知道自己拿的是哪一版。發新版時,`publish-downloads`
+流程會自動改寫 `src/data/release.json`(網站下載頁由它產生連結)
+和這個 README 裡的檔名,推上來後網站自動重建 —— 一樣不需要人工改動。
 
 ## 結構
 

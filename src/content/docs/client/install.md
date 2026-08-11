@@ -26,8 +26,8 @@ description: 第一次開啟(macOS 直接開、Windows 需按「仍要執行」)
 AppImage 沒有簽章機制,只要自己加上執行權限:
 
 ```bash
-chmod +x openmmo-agent-linux-x64.AppImage
-./openmmo-agent-linux-x64.AppImage
+chmod +x openmmo-agent-*linux-x64.AppImage
+./openmmo-agent-*linux-x64.AppImage
 ```
 
 ## 首次啟動流程

@@ -3,6 +3,9 @@ title: OpenMMO Agent 다운로드
 description: OpenMMO Agent 데스크톱 클라이언트의 다운로드 링크, 시스템 요구사항, 체크섬.
 ---
 
+import release from '../../../../data/release.json';
+export const dl = (f) => `https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest/download/${f}`;
+
 OpenMMO Agent는 데스크톱 클라이언트입니다. **직접 플레이**할 수도 있고,
 LLM을 설정해 **캐릭터를 대신 움직이게** 하고 그 시점과 사고 과정을 실시간으로
 지켜볼 수도 있습니다.
@@ -20,15 +23,16 @@ Linux의 AppImage에는 서명 개념이 없고, 실행 권한만 직접 주면 
 
 ## 다운로드
 
-아래 링크는 항상 최신 버전을 가리킵니다:
+현재 버전: **v{release.version}** (프로토콜 v{release.protocol}).
+파일명에 버전이 들어가며, 아래 링크는 항상 최신 버전을 가리킵니다:
 
 | 플랫폼 | 파일 |
 |---|---|
-| macOS (Apple Silicon) | [openmmo-agent-macos-arm64.zip](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest/download/openmmo-agent-macos-arm64.zip) |
-| Windows (x64) | [openmmo-agent-windows-x64.exe](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest/download/openmmo-agent-windows-x64.exe) |
-| Linux (x64) | [openmmo-agent-linux-x64.AppImage](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest/download/openmmo-agent-linux-x64.AppImage) |
+| macOS (Apple Silicon) | <a href={dl(release.files.mac)}>{release.files.mac}</a> |
+| Windows (x64) | <a href={dl(release.files.win)}>{release.files.win}</a> |
+| Linux (x64) | <a href={dl(release.files.linux)}>{release.files.linux}</a> |
 
-체크섬: [SHA256SUMS.txt](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest/download/SHA256SUMS.txt)
+체크섬: <a href={dl('SHA256SUMS.txt')}>SHA256SUMS.txt</a>
 ・ 모든 버전: [Releases 페이지](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases)
 
 ## 시스템 요구사항

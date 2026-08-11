@@ -3,6 +3,9 @@ title: Download OpenMMO Agent
 description: Download links, system requirements and checksums for the OpenMMO Agent desktop client.
 ---
 
+import release from '../../../../data/release.json';
+export const dl = (f) => `https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest/download/${f}`;
+
 OpenMMO Agent is a desktop client. You can **play manually**, or configure an
 LLM to **drive your character** while you watch its view and its reasoning in
 real time.
@@ -20,15 +23,16 @@ Linux AppImages have no signing to speak of; they just need the executable bit.
 
 ## Download
 
-These links always point at the latest release:
+Current release: **v{release.version}** (protocol v{release.protocol}).
+Filenames carry the version; these links always point at the latest release:
 
 | Platform | File |
 |---|---|
-| macOS (Apple Silicon) | [openmmo-agent-macos-arm64.zip](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest/download/openmmo-agent-macos-arm64.zip) |
-| Windows (x64) | [openmmo-agent-windows-x64.exe](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest/download/openmmo-agent-windows-x64.exe) |
-| Linux (x64) | [openmmo-agent-linux-x64.AppImage](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest/download/openmmo-agent-linux-x64.AppImage) |
+| macOS (Apple Silicon) | <a href={dl(release.files.mac)}>{release.files.mac}</a> |
+| Windows (x64) | <a href={dl(release.files.win)}>{release.files.win}</a> |
+| Linux (x64) | <a href={dl(release.files.linux)}>{release.files.linux}</a> |
 
-Checksums: [SHA256SUMS.txt](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest/download/SHA256SUMS.txt)
+Checksums: <a href={dl('SHA256SUMS.txt')}>SHA256SUMS.txt</a>
 ・ All releases: [Releases page](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases)
 
 ## System requirements
