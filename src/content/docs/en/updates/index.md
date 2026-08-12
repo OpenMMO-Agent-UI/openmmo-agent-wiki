@@ -19,11 +19,73 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocols v23–v25 — client v0.21.0 (current)
+## Protocols v26–v27 — client v0.23.0 (current)
 
-**The live server requires v25.** Older clients are refused. Three protocol
-versions shipped over four days (Aug 6–10), each its own system: friends,
-merchant stalls, and declining pushed trade offers.
+**The live server requires v27.** Older clients are refused. Two protocol
+versions shipped over two days (Aug 6–7), each its own system: party
+management and ground-item stacking. The same release window (Aug 6–12)
+also carried a lot that didn't need a protocol bump: a new admin command,
+an overhaul of ambient monster spawning, a change to dungeon chest loot,
+and a handful of anti-cheat fixes.
+
+**New systems**
+
+- **Party kick and leader handover** (v26) — the leader can remove a member
+  with `/party kick <name>` or hand the lead to someone else with
+  `/party leader <name>`; a non-leader, a self-target, or targeting a
+  non-member each get their own refusal reason. `/party leave` formally
+  joins the `/party` subcommand set. The kicked member gets a system
+  message; everyone else sees "X was removed."
+- **Party vitals sync** (v26) — the party panel now shows every member's
+  HP, max HP, and class live; the server pushes a party whose health
+  changed once a second.
+- **Ground-item stacking** (v27) — drop a stack of stackable items (say,
+  twelve potions) and it now lands as **one pile** with a count badge,
+  instead of twelve separate objects. Picking it up only takes what your
+  bag has weight headroom for, leaving the rest behind with the badge
+  updated — a pile too heavy to carry whole no longer blocks you from
+  taking any of it. Loot and world drops still land one at a time.
+- **Admin command `/spawnmob <type> [count]`** (admin-only) — spawns
+  aggressive monsters in a ring around the admin for combat testing;
+  capped at 10 per use and still bound by the global and spawn caps.
+
+**Balance**
+
+- **Party size cap 8 → 5** (2026-08-11).
+- **Ambient monster spawning overhaul** (Aug 6–12) — the spawn cap changed
+  from "server-wide × monster type" to **30 per player**, so monsters
+  clustered near one player no longer starve everyone else's spawns.
+  Monsters with no player around now **disappear immediately** instead of
+  waiting out the old 60-second grace period. Measured at 5,000
+  concurrent players / 134k monsters, peak monster count halved and a
+  roaming player gets the same spawn rate as one standing still.
+- **Dungeon boss chest loot now ejects onto the ground** (2026-08-11) —
+  gear rolled from a treasure chest no longer goes straight into your bag;
+  it scatters around the chest like regular loot, so anyone nearby can
+  grab it. Gold still lands straight in your wallet. Clicking a chest
+  already opened that night just shows you the lid swinging open on
+  nothing.
+
+**Fixes**
+
+- Fixed a forged vertical coordinate (Y) letting players and monsters walk
+  through walls and furniture — the server now derives collision height
+  from the terrain data itself instead of trusting the client's reported
+  Y (2026-08-11).
+- Reject a client reporting a monster as "dead" directly, closing off a way
+  to fake a kill and bypass the server's combat resolution (2026-08-07).
+- Batch buy/drop quantities are now checked for overflow, so an
+  oversized-quantity request can't cause an integer overflow (2026-08-08).
+- Picking up a coin pile now reports the actual copper amount in chat,
+  instead of a generic "picked up" line (2026-08-11).
+- Fixed unspaced chat text (common in Korean) overflowing the chat bubble —
+  word-wrap now breaks by grapheme, so it can't split an emoji in half
+  (2026-08-07).
+
+## Protocols v23–v25 — client v0.21.0
+
+Three protocol versions shipped over four days (Aug 6–10), each its own
+system: friends, merchant stalls, and declining pushed trade offers.
 
 **New systems**
 

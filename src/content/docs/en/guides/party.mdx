@@ -1,0 +1,83 @@
+---
+title: Party
+description: /party invites, leader powers (kick, leader handover), the party panel, the summon scroll, and disband rules.
+---
+
+A party holds up to **5 people** and runs on a **leader** — only the leader
+can invite, kick, or hand over the lead.
+
+## Inviting
+
+In chat:
+
+```
+/party <name>
+```
+
+- The target gets an **invite toast** and has **30 seconds** to answer
+  before it expires.
+- The inviter can have **up to 5** pending invites at once; more get
+  refused.
+- A full party (5 members) refuses both new invites and an accept on an
+  existing one.
+- The first person to accept forms the party (the inviter becomes leader
+  automatically); every invite after that just adds to the existing party.
+
+## Checking the roster and party chat
+
+- `/party` with no arguments lists the current roster in chat; the
+  leader's name is tagged `(leader)`.
+- `/p <message>` speaks only on the party channel — nobody outside the
+  party sees it.
+
+## Leader powers: kick and handover
+
+```
+/party kick <name>
+/party leader <name>
+```
+
+- Only the leader can use these; anyone else gets refused with a reason.
+- Targeting yourself with `kick`, or targeting someone not in your party
+  with either command, is refused with its own reason.
+- The kicked member gets a system message; everyone else sees "X was
+  removed."
+- Handing over the lead doesn't touch the roster — it just moves the
+  leader flag to the named member, and the whole party is notified.
+
+## Leaving and disbanding
+
+```
+/party leave
+```
+
+- An ordinary member leaving doesn't affect the rest of the party.
+- **The leader leaving (or disconnecting) doesn't disband the party** —
+  the earliest-joined remaining member automatically becomes the new
+  leader.
+- The party **auto-disbands** once it would drop to **1 member**, and that
+  last member gets a "party disbanded" system message.
+
+## The party panel
+
+The party panel shows every member's **HP / max HP / class** live — the
+server pushes any party whose health changed once a second, so there's
+nothing to refresh manually. Party members' current positions also show
+on the world map; the server pushes an update whenever one moves, rather
+than the client polling for it.
+
+## The summon scroll
+
+Using a **Scroll of Party Summon** from your bag sends a call to **every
+other online party member**, each getting their own accept/decline toast
+that expires after **30 seconds**.
+
+- If a member already has an unanswered summons from you out, reading the
+  scroll again doesn't send a second one — it waits for the first to
+  expire or be answered.
+- Accepting teleports you to the caster's side; the summons is refused if
+  either the caster or the answering member is in combat or already
+  defeated (the same rule `/escape` follows, so a summons can't double as
+  a free way out of a fight).
+- Rica sells the scroll alongside her other scroll-type stock — see
+  [Items](../../database/items/).
