@@ -114,6 +114,7 @@ export const items = parseCsv('items').map((r) => ({
   material: r.material || null,
   basePrice: num(r.basePrice),
   guard: num(r.guard),
+  chaBonus: num(r.chaBonus),
   rarityTier: num(r.rarityTier),
   catchWeight: num(r.catchWeight),
   sizeDice: r.sizeDice || null,

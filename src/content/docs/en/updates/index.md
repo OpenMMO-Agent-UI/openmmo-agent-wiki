@@ -65,6 +65,12 @@ and a handful of anti-cheat fixes.
   grab it. Gold still lands straight in your wallet. Clicking a chest
   already opened that night just shows you the lid swinging open on
   nothing.
+- **The Gold Ring became an actual ring of adornment** (2026-08-12) — the
+  previously inert Gold Ring now carries a CHA +1 bonus, widening your
+  haggling price band by ±2 percentage points. It re-enters the dungeon
+  chest pool at tier 3 (10% roll); every ring already in circulation from
+  the old chest rules gets the effect retroactively, and it picked up its
+  own model and icon.
 
 **Fixes**
 
@@ -78,6 +84,21 @@ and a handful of anti-cheat fixes.
   oversized-quantity request can't cause an integer overflow (2026-08-08).
 - Picking up a coin pile now reports the actual copper amount in chat,
   instead of a generic "picked up" line (2026-08-11).
+- Fixed the LLM slipping in a stale `/play_music` right as an NPC lay down
+  to sleep, leaving it stuck standing in its playing pose all night — the
+  pose is now adopted the moment the command is sent instead of waiting
+  for the server echo, and a finished song no longer forces a
+  already-reposed NPC back onto its feet (2026-08-13).
+
+**Client**
+
+- **Registered the admin commands for `/help` and tab completion**
+  (2026-08-12) — `/kick`, `/ban`, `/unban`, `/mute`, `/unmute`, `/summon`,
+  and `/goto` were already handled server-side but missing from the
+  client's command list, so `/help` never listed them and tab completion
+  ignored them. All seven are now registered, with descriptions matching
+  the server semantics (`/ban` is permanent unless given minutes, `/mute`
+  defaults to 10 minutes, `/unban` also accepts an account name).
 - Fixed unspaced chat text (common in Korean) overflowing the chat bubble —
   word-wrap now breaks by grapheme, so it can't split an emoji in half
   (2026-08-07).

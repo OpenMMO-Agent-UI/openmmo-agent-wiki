@@ -93,6 +93,7 @@ Guard 13、命中 +6、傷害 2d8。獸人巢穴有 10 層,建議先把皮甲一
     { key: 'tier', label: '寶箱階級', align: 'center' },
     { key: 'chance', label: '掉落機率', align: 'right' },
     { key: 'guard', label: 'Guard', align: 'right' },
+    { key: 'cha', label: 'CHA', align: 'right' },
   ]}
   rows={items
     .filter((i) => i.chestTier)
@@ -103,6 +104,7 @@ Guard 13、命中 +6、傷害 2d8。獸人巢穴有 10 層,建議先把皮甲一
       tier: `T${i.chestTier}`,
       chance: i.chestChance ? `${Math.round(i.chestChance * 100)}%` : '確定掉落',
       guard: i.guard ?? '—',
+      cha: i.chaBonus ? `+${i.chaBonus}` : '—',
     }))}
 />
 

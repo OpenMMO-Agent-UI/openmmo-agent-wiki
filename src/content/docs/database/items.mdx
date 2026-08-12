@@ -113,6 +113,7 @@ export const byId = (a, b) => a.id.localeCompare(b.id);
     { key: 'en', label: '遊戲內名稱' },
     { key: 'slot', label: '部位', align: 'center' },
     { key: 'guard', label: 'Guard', align: 'right' },
+    { key: 'cha', label: 'CHA', align: 'right' },
     { key: 'weight', label: '重量', align: 'right' },
     { key: 'price', label: '商店價', align: 'right' },
     { key: 'sell', label: '賣出價', align: 'right' },
@@ -126,6 +127,7 @@ export const byId = (a, b) => a.id.localeCompare(b.id);
       en: i.name,
       slot: slotNames[i.equipSlot] ?? '—',
       guard: i.guard ?? '—',
+      cha: i.chaBonus ? `+${i.chaBonus}` : '—',
       weight: `${i.weight} kg`,
       price: formatCoins(i.basePrice),
       sell: formatCoins(sellPrice(i.basePrice, rica.sellRatePercent)),
@@ -133,8 +135,9 @@ export const byId = (a, b) => a.id.localeCompare(b.id);
     }))}
 />
 
-金戒指與銀項鍊沒有任何效果,而且**目前沒有取得管道** —— 它們沒有指定寶箱階級,
-所以不在寶箱池裡,現存的都是舊規則時期流通下來的。
+金戒指是 CHA +1 的裝飾戒指,議價價格帶因此加寬 ±2 個百分點,從地城寶箱 T3(10% 機率)
+取得 —— 舊規則時期流通的金戒指已經追溯套用這個效果。銀項鍊仍然沒有任何效果,
+而且**目前沒有取得管道**,現存的都是舊規則時期流通下來的。
 
 ## 消耗品與工具
 

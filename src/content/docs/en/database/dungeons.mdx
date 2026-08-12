@@ -88,6 +88,7 @@ introduces.
     { key: 'tier', label: 'Chest tier', align: 'center' },
     { key: 'chance', label: 'Drop chance', align: 'right' },
     { key: 'guard', label: 'Guard', align: 'right' },
+    { key: 'cha', label: 'CHA', align: 'right' },
   ]}
   rows={items
     .filter((i) => i.chestTier)
@@ -97,6 +98,7 @@ introduces.
       tier: `T${i.chestTier}`,
       chance: i.chestChance ? `${Math.round(i.chestChance * 100)}%` : 'Guaranteed',
       guard: i.guard ?? '—',
+      cha: i.chaBonus ? `+${i.chaBonus}` : '—',
     }))}
 />
 

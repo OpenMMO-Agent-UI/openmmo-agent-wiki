@@ -87,6 +87,7 @@ export const dName = (d) => dungeonNames[d.id] ?? d.name;
     { key: 'tier', label: '상자 티어', align: 'center' },
     { key: 'chance', label: '드랍 확률', align: 'right' },
     { key: 'guard', label: 'Guard', align: 'right' },
+    { key: 'cha', label: 'CHA', align: 'right' },
   ]}
   rows={items
     .filter((i) => i.chestTier)
@@ -96,6 +97,7 @@ export const dName = (d) => dungeonNames[d.id] ?? d.name;
       tier: `T${i.chestTier}`,
       chance: i.chestChance ? `${Math.round(i.chestChance * 100)}%` : '확정 드랍',
       guard: i.guard ?? '—',
+      cha: i.chaBonus ? `+${i.chaBonus}` : '—',
     }))}
 />
 

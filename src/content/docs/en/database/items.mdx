@@ -110,6 +110,7 @@ Worn Guard adds up across slots.
     { key: 'name', label: 'Name' },
     { key: 'slot', label: 'Slot', align: 'center' },
     { key: 'guard', label: 'Guard', align: 'right' },
+    { key: 'cha', label: 'CHA', align: 'right' },
     { key: 'weight', label: 'Weight', align: 'right' },
     { key: 'price', label: 'Shop', align: 'right' },
     { key: 'sell', label: 'Sells for', align: 'right' },
@@ -122,6 +123,7 @@ Worn Guard adds up across slots.
       name: i.name,
       slot: slotNames[i.equipSlot] ?? '—',
       guard: i.guard ?? '—',
+      cha: i.chaBonus ? `+${i.chaBonus}` : '—',
       weight: `${i.weight} kg`,
       price: formatCoins(i.basePrice),
       sell: formatCoins(sellPrice(i.basePrice, rica.sellRatePercent)),
@@ -129,9 +131,12 @@ Worn Guard adds up across slots.
     }))}
 />
 
-The Gold Ring and Silver Necklace do nothing and **currently have no way to
-obtain them** — they have no chest tier, so they're out of the pool. Every one
-still in circulation dates from the old chest rules.
+The Gold Ring is a ring of adornment: CHA +1, which widens your haggling price
+band by ±2 percentage points. It drops from tier-3 dungeon chests (10% roll) —
+every ring already in circulation from the old chest rules gets the effect
+retroactively. The Silver Necklace still does nothing and **currently has no
+way to obtain it**; every one still in circulation dates from the old chest
+rules.
 
 ## Consumables and tools
 
