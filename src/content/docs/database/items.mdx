@@ -114,6 +114,7 @@ export const byId = (a, b) => a.id.localeCompare(b.id);
     { key: 'slot', label: '部位', align: 'center' },
     { key: 'guard', label: 'Guard', align: 'right' },
     { key: 'cha', label: 'CHA', align: 'right' },
+    { key: 'effect', label: '效果' },
     { key: 'weight', label: '重量', align: 'right' },
     { key: 'price', label: '商店價', align: 'right' },
     { key: 'sell', label: '賣出價', align: 'right' },
@@ -128,6 +129,7 @@ export const byId = (a, b) => a.id.localeCompare(b.id);
       slot: slotNames[i.equipSlot] ?? '—',
       guard: i.guard ?? '—',
       cha: i.chaBonus ? `+${i.chaBonus}` : '—',
+      effect: i.hasSustenance ? '飽食消耗 ×0.75' : '—',
       weight: `${i.weight} kg`,
       price: formatCoins(i.basePrice),
       sell: formatCoins(sellPrice(i.basePrice, rica.sellRatePercent)),
@@ -136,8 +138,9 @@ export const byId = (a, b) => a.id.localeCompare(b.id);
 />
 
 金戒指是 CHA +1 的裝飾戒指,議價價格帶因此加寬 ±2 個百分點,從地城寶箱 T3(10% 機率)
-取得 —— 舊規則時期流通的金戒指已經追溯套用這個效果。銀項鍊仍然沒有任何效果,
-而且**目前沒有取得管道**,現存的都是舊規則時期流通下來的。
+取得 —— 舊規則時期流通的金戒指已經追溯套用這個效果。銀項鍊裝備後讓飢餓消耗變成
+0.75 倍(衝刺消耗也算在內),從地城寶箱 T2(10% 機率)取得 —— 舊規則時期流通的
+銀項鍊也已追溯套用這個效果。
 
 ## 消耗品與工具
 
@@ -153,7 +156,7 @@ export const byId = (a, b) => a.id.localeCompare(b.id);
     { key: 'source', label: '取得方式' },
   ]}
   rows={items
-    .filter((i) => ['healing_potion', 'return_scroll', 'enchant_scroll', 'party_summon_scroll', 'fishing_rod', 'campfire_kit', 'furniture', 'currency'].includes(i.category))
+    .filter((i) => ['healing_potion', 'return_scroll', 'enchant_scroll', 'party_summon_scroll', 'fishing_rod', 'campfire_kit', 'tip_hat', 'furniture', 'currency'].includes(i.category))
     .sort(byId)
     .map((i) => ({
       name: zh(i),

@@ -19,7 +19,37 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocols v26–v27 — client v0.23.0 (current)
+## Protocol v28 — client not yet released (current)
+
+**Protocol bumped to v28** — the client is still waiting on a repackage, and
+older clients will be refused once the live server switches over. The same
+day (Aug 13) also carried two item changes that didn't need the protocol
+bump: the Silver Necklace got an effect and its own model, and the Coin Pile
+got its own icon.
+
+**New systems**
+
+- **Tip hat** (v28) — any class can use the `tip_hat` item to set a hat down
+  two cells ahead; using it again picks it back up. The item is never
+  consumed. The hat only exists while its owner stays close — straying past
+  5m, changing floor, or logging out packs it up automatically. Clicking
+  someone else's hat opens a tip dialog after walking into reach; type
+  `1g20s30c`-style amounts or a bare number for copper. The server checks
+  the wallet, the distance (within 5m), and blocks tipping yourself. Rica
+  stocks it for 200 copper.
+
+**New items & assets**
+
+- **Silver Necklace got an effect** (2026-08-13) — the previously inert
+  Silver Necklace now slows satiation drain to 0.75x while equipped
+  (sprinting included), and re-enters the dungeon chest pool at tier 2
+  (10% roll). Every necklace already in circulation from the old chest
+  rules gets the effect retroactively, and it picked up its own model and
+  icon.
+- **Coin Pile got its own icon** (2026-08-13) — it used to borrow the Iron
+  Sword's icon; now it has its own stacked-coins icon.
+
+## Protocols v26–v27 — client v0.23.0
 
 **The live server requires v27.** Older clients are refused. Two protocol
 versions shipped over two days (Aug 6–7), each its own system: party

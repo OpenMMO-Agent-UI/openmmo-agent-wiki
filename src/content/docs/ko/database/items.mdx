@@ -114,6 +114,7 @@ export const byId = (a, b) => a.id.localeCompare(b.id);
     { key: 'slot', label: '부위', align: 'center' },
     { key: 'guard', label: 'Guard', align: 'right' },
     { key: 'cha', label: 'CHA', align: 'right' },
+    { key: 'effect', label: '효과' },
     { key: 'weight', label: '무게', align: 'right' },
     { key: 'price', label: '상점가', align: 'right' },
     { key: 'sell', label: '판매가', align: 'right' },
@@ -127,6 +128,7 @@ export const byId = (a, b) => a.id.localeCompare(b.id);
       slot: slotNames[i.equipSlot] ?? '—',
       guard: i.guard ?? '—',
       cha: i.chaBonus ? `+${i.chaBonus}` : '—',
+      effect: i.hasSustenance ? '포만도 소모 ×0.75' : '—',
       weight: `${i.weight} kg`,
       price: formatCoins(i.basePrice),
       sell: formatCoins(sellPrice(i.basePrice, rica.sellRatePercent)),
@@ -136,9 +138,9 @@ export const byId = (a, b) => a.id.localeCompare(b.id);
 
 금반지는 CHA +1이 붙은 장신구용 반지로, 흥정 가격대가 ±2%p 넓어집니다. 던전 T3
 상자에서 10% 확률로 나옵니다 — 옛 상자 규칙 시절부터 돌아다니던 금반지에도
-이 효과가 소급 적용됩니다. 은목걸이는 여전히 아무 효과가 없고
-**현재 획득 경로가 없습니다**; 지금 남아 있는 것은 옛 규칙 시절에 유통된
-물량입니다.
+이 효과가 소급 적용됩니다. 은목걸이는 장착 시 포만도 소모를 0.75배로
+늦춥니다(스프린트 소모 포함). 던전 T2 상자에서 10% 확률로 나오며, 옛 상자
+규칙 시절부터 돌아다니던 은목걸이에도 이 효과가 소급 적용됩니다.
 
 ## 소모품과 도구
 
@@ -154,7 +156,7 @@ export const byId = (a, b) => a.id.localeCompare(b.id);
     { key: 'source', label: '획득처' },
   ]}
   rows={items
-    .filter((i) => ['healing_potion', 'return_scroll', 'enchant_scroll', 'party_summon_scroll', 'fishing_rod', 'campfire_kit', 'furniture', 'currency'].includes(i.category))
+    .filter((i) => ['healing_potion', 'return_scroll', 'enchant_scroll', 'party_summon_scroll', 'fishing_rod', 'campfire_kit', 'tip_hat', 'furniture', 'currency'].includes(i.category))
     .sort(byId)
     .map((i) => ({
       name: ko(i), en: i.name,

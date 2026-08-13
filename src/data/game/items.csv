@@ -1,4 +1,4 @@
-id,name,description,weight,equipSlot,stackable,icon,worldModel,category,dice,material,basePrice,guard,rarityTier,catchWeight,sizeDice,trophyCm,minFishingLevel,chestTier,chestChance,consumable,nutrition,grillsInto,chaBonus
+id,name,description,weight,equipSlot,stackable,icon,worldModel,category,dice,material,basePrice,guard,rarityTier,catchWeight,sizeDice,trophyCm,minFishingLevel,chestTier,chestChance,consumable,nutrition,grillsInto,effects
 iron_sword,Iron Sword,A sturdy iron longsword.,3,main_hand,false,iron_sword.png,weapons/sword.glb,weapon,1d8,metal,10000,,,,,,,,,,,,
 worn_iron_sword,Worn Iron Sword,A well-used iron longsword. Merchants won't pay for it.,3,main_hand,false,iron_sword.png,weapons/sword.glb,weapon,1d6,metal,,,,,,,,,,,,,
 wooden_shield,Wooden Shield,A round wooden shield.,6,off_hand,false,shield_wooden.png,armor/shield_wooden.glb,armor,,wood,2500,1,,,,,,,,,,,
@@ -16,8 +16,8 @@ plate_boots,Plate Boots,Overlapping steel plates that guard the feet and shins.,
 plate_helmet,Plate Helmet,A visored steel close helm that encases the whole head.,5,head,false,plate_helmet.png,armor/plate_helmet.glb,armor,,metal,15000,3,,,,,,4,0.3,,,,
 plate_gauntlets,Plate Gauntlets,Articulated steel gauntlets that encase the hands and wrists.,3,hands,false,plate_gauntlets.png,armor/plate_gauntlets.glb,armor,,metal,10000,3,,,,,,4,0.3,,,,
 ring_of_protection,Ring of Protection,A silver ring bearing a cross-emblazoned shield that wards off blows.,0.1,ring,false,cross_shield_ring.png,accessory/cross_shield_ring.glb,accessory,,metal,20000,1,,,,,,5,0.2,,,,
-gold_ring,Gold Ring,A plain gold ring.,0.1,ring,false,gold_ring.png,accessory/gold_ring.glb,accessory,,metal,12000,,,,,,,3,0.1,,,,1
-silver_necklace,Silver Necklace,A delicate silver chain.,0.3,neck,false,sword.png,,accessory,,metal,8000,,,,,,,,,,,,
+gold_ring,Gold Ring,A plain gold ring.,0.1,ring,false,gold_ring.png,accessory/gold_ring.glb,accessory,,metal,12000,,,,,,,3,0.1,,,,cha+1
+silver_necklace,Silver Necklace,A delicate silver chain with a harvest medallion.,0.3,neck,false,silver_necklace.png,accessory/silver_necklace.glb,accessory,,metal,8000,,,,,,,2,0.1,,,,sustenance
 leather_belt,Leather Belt,A wide leather belt.,1,belt,false,ornate_cross_belt.png,accessory/ornate_cross_belt.glb,accessory,,leather,800,,,,,,,1,0.3,,,,
 dagger,Dagger,A small but sharp dagger.,1,main_hand,false,dagger.png,weapons/dagger.glb,weapon,1d4,metal,2500,,,,,,,,,,,,
 goblin_sword,Goblin Sword,A crude short blade favored by goblins and orcs.,2,main_hand,false,goblin_sword.png,weapons/goblin_sword.glb,weapon,1d4,metal,2000,,,,,,,,,,,,
@@ -26,7 +26,7 @@ chain_mail,Chain Mail,Interlocking metal rings forming armor.,30,chest,false,cha
 torch,Torch,A flickering wooden torch.,1,off_hand,false,torch.png,weapons/torch.glb,weapon,1d4,wood,50,,,,,,,,,,,,
 worn_torch,Worn Torch,A stubby half-burnt torch. Merchants won't pay for it.,1,off_hand,false,torch.png,weapons/torch.glb,weapon,1d4,wood,,,,,,,,,,,,,
 spear,Spear,A long wooden-shafted spear tipped with iron.,4,main_hand,false,spear_icon.png,weapons/spear.glb,weapon,1d6,metal,3500,,,,,,,,,,,,
-coin_pile,Coin Pile,A small heap of loose copper coins.,0,,false,sword.png,objects/coin_pile_spill.glb,currency,,,,,,,,,,,,,,,
+coin_pile,Coin Pile,A small heap of loose copper coins.,0,,false,coin_pile.png,objects/coin_pile_spill.glb,currency,,,,,,,,,,,,,,,
 healing_potion,Healing Potion,A crimson brew that knits wounds and restores vitality.,0.5,,true,healing_potion.png,objects/health_potion.glb,healing_potion,6d4,,600,,,,,,,,,true,,,
 scroll_of_return,Scroll of Return,Reading the arcane runes whisks you back to town in a flash of light.,0.2,,true,scroll_of_return.png,objects/scroll.glb,return_scroll,,,800,,,,,,,,,true,,,
 scroll_of_enchant_weapon,Scroll of Enchant Weapon,Arcane runes that hone your wielded weapon's edge — though greedy re-reading may destroy it.,0.2,,true,scroll_of_enchant_weapon.png,objects/scroll_enchant.glb,enchant_scroll,,,1200,,,,,,,,,true,,,
@@ -56,3 +56,4 @@ grilled_trout,Grilled Trout,A speckled trout smoky from the fire.,1,,true,grille
 grilled_salmon,Grilled Salmon,A salmon fillet seared over open flame.,2,,true,grilled_salmon.png,,food,,,200,,,,,,,,,true,480,,
 grilled_sturgeon,Grilled Sturgeon,A royal cut of sturgeon roasted on embers.,4,,true,grilled_sturgeon.png,,food,,,1500,,,,,,,,,true,900,,
 campfire_kit,Campfire Kit,Firewood and tinder bundled for the road. Burns for ten minutes.,2,,true,campfire_kit.png,objects/campfire_kit.glb,campfire_kit,,,30,,,,,,,,,true,,,
+tip_hat,Busker's Hat,A weathered feathered hat. Set it down before a performance and listeners drop coins in it. Use it again to pick it up.,1,,false,tip_hat.png,objects/tip_hat.glb,tip_hat,,leather,200,,,,,,,,,true,,,

@@ -102,30 +102,38 @@ export function averageRoll(dice) {
 
 // --- loading ----------------------------------------------------------------
 
-export const items = parseCsv('items').map((r) => ({
-  id: r.id,
-  name: r.name,
-  description: r.description,
-  weight: num(r.weight),
-  equipSlot: r.equipSlot || null,
-  stackable: bool(r.stackable),
-  category: r.category,
-  dice: r.dice || null,
-  material: r.material || null,
-  basePrice: num(r.basePrice),
-  guard: num(r.guard),
-  chaBonus: num(r.chaBonus),
-  rarityTier: num(r.rarityTier),
-  catchWeight: num(r.catchWeight),
-  sizeDice: r.sizeDice || null,
-  trophyCm: num(r.trophyCm),
-  minFishingLevel: num(r.minFishingLevel),
-  chestTier: num(r.chestTier),
-  chestChance: num(r.chestChance),
-  consumable: bool(r.consumable),
-  nutrition: num(r.nutrition),
-  grillsInto: r.grillsInto || null,
-}));
+export const items = parseCsv('items').map((r) => {
+  const effects = r.effects ? r.effects.split(';') : [];
+  const chaBonus = effects
+    .filter((e) => e.startsWith('cha'))
+    .reduce((sum, e) => sum + Number(e.slice(3)), 0);
+  return {
+    id: r.id,
+    name: r.name,
+    description: r.description,
+    weight: num(r.weight),
+    equipSlot: r.equipSlot || null,
+    stackable: bool(r.stackable),
+    category: r.category,
+    dice: r.dice || null,
+    material: r.material || null,
+    basePrice: num(r.basePrice),
+    guard: num(r.guard),
+    effects,
+    chaBonus: chaBonus || null,
+    hasSustenance: effects.includes('sustenance'),
+    rarityTier: num(r.rarityTier),
+    catchWeight: num(r.catchWeight),
+    sizeDice: r.sizeDice || null,
+    trophyCm: num(r.trophyCm),
+    minFishingLevel: num(r.minFishingLevel),
+    chestTier: num(r.chestTier),
+    chestChance: num(r.chestChance),
+    consumable: bool(r.consumable),
+    nutrition: num(r.nutrition),
+    grillsInto: r.grillsInto || null,
+  };
+});
 
 export const itemsById = new Map(items.map((i) => [i.id, i]));
 

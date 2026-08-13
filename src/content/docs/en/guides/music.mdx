@@ -80,3 +80,19 @@ one goes to the next regular.
 
 The trading rule behind "sold only to a chosen buyer" is covered in the
 [economy database](../../database/economy/).
+
+## Tip hats (protocol v28)
+
+Signe collects tips through her own script; anyone else who wants tips needs
+the **{itemName('tip_hat')}** item — any class can use it, and Rica sells one
+for {formatCoins(itemsById.get('tip_hat').basePrice)}.
+
+- Using the item sets a hat down two cells ahead; using it again picks it
+  back up. The item itself is never consumed.
+- The hat only exists while its owner stays close — straying past 5m,
+  changing floor, or logging out packs it up automatically and returns it to
+  its owner.
+- Clicking someone else's hat walks you into reach and opens a tip dialog.
+  Type a mixed amount like `1g20s30c`, or a bare number for copper. The
+  server checks your wallet, that you are within 5m, and blocks tipping your
+  own hat.

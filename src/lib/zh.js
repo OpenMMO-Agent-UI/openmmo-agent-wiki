@@ -60,6 +60,7 @@ export const itemNames = {
   grilled_salmon: '烤鮭魚',
   grilled_sturgeon: '烤鱘魚',
   campfire_kit: '營火組',
+  tip_hat: '賣藝帽',
 };
 
 export const itemDescriptions = {
@@ -89,7 +90,7 @@ export const itemDescriptions = {
   plate_gauntlets: '包覆手與手腕的分節鋼製護手。',
   ring_of_protection: '鑲有十字盾紋章的銀戒,能擋開攻擊。',
   gold_ring: '樸素的金戒指。',
-  silver_necklace: '細緻的銀鍊。',
+  silver_necklace: '細緻的銀鍊,墜著一枚豐收徽章。',
   leather_belt: '寬版皮革腰帶。',
   coin_pile: '一小堆散落的銅幣。',
   healing_potion: '深紅色的藥劑,能癒合傷口、恢復活力。',
@@ -120,6 +121,7 @@ export const itemDescriptions = {
   grilled_salmon: '在明火上煎過的鮭魚排。',
   grilled_sturgeon: '在餘燼上烘烤的鱘魚上等部位。',
   campfire_kit: '打包好的柴薪與火種,可燃燒十分鐘。',
+  tip_hat: '一頂風霜的羽飾帽。表演前放下,聽眾就會把錢幣丟進去。再用一次可以收起來。',
 };
 
 export const monsterNames = {
@@ -154,6 +156,7 @@ export const categoryNames = {
   furniture: '家具',
   fishing_rod: '釣具',
   campfire_kit: '營火',
+  tip_hat: '賣藝帽',
 };
 
 export const slotNames = {

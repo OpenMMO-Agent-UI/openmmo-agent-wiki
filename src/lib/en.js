@@ -26,6 +26,7 @@ export const categoryNames = {
   furniture: 'Furniture',
   fishing_rod: 'Fishing gear',
   campfire_kit: 'Campfire',
+  tip_hat: 'Tip hat',
 };
 
 export const slotNames = {

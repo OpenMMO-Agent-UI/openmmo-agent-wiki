@@ -111,6 +111,7 @@ Worn Guard adds up across slots.
     { key: 'slot', label: 'Slot', align: 'center' },
     { key: 'guard', label: 'Guard', align: 'right' },
     { key: 'cha', label: 'CHA', align: 'right' },
+    { key: 'effect', label: 'Effect' },
     { key: 'weight', label: 'Weight', align: 'right' },
     { key: 'price', label: 'Shop', align: 'right' },
     { key: 'sell', label: 'Sells for', align: 'right' },
@@ -124,6 +125,7 @@ Worn Guard adds up across slots.
       slot: slotNames[i.equipSlot] ?? '—',
       guard: i.guard ?? '—',
       cha: i.chaBonus ? `+${i.chaBonus}` : '—',
+      effect: i.hasSustenance ? 'Satiation drain ×0.75' : '—',
       weight: `${i.weight} kg`,
       price: formatCoins(i.basePrice),
       sell: formatCoins(sellPrice(i.basePrice, rica.sellRatePercent)),
@@ -134,9 +136,10 @@ Worn Guard adds up across slots.
 The Gold Ring is a ring of adornment: CHA +1, which widens your haggling price
 band by ±2 percentage points. It drops from tier-3 dungeon chests (10% roll) —
 every ring already in circulation from the old chest rules gets the effect
-retroactively. The Silver Necklace still does nothing and **currently has no
-way to obtain it**; every one still in circulation dates from the old chest
-rules.
+retroactively. The Silver Necklace slows satiation drain to 0.75x while
+equipped (sprinting included), and drops from tier-2 dungeon chests (10%
+roll) — every necklace already in circulation from the old chest rules gets
+the effect retroactively too.
 
 ## Consumables and tools
 
@@ -151,7 +154,7 @@ rules.
     { key: 'source', label: 'Where to get it' },
   ]}
   rows={items
-    .filter((i) => ['healing_potion', 'return_scroll', 'enchant_scroll', 'party_summon_scroll', 'fishing_rod', 'campfire_kit', 'furniture', 'currency'].includes(i.category))
+    .filter((i) => ['healing_potion', 'return_scroll', 'enchant_scroll', 'party_summon_scroll', 'fishing_rod', 'campfire_kit', 'tip_hat', 'furniture', 'currency'].includes(i.category))
     .sort(byId)
     .map((i) => ({
       name: i.name,

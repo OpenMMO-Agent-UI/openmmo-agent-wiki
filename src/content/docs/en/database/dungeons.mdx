@@ -89,6 +89,7 @@ introduces.
     { key: 'chance', label: 'Drop chance', align: 'right' },
     { key: 'guard', label: 'Guard', align: 'right' },
     { key: 'cha', label: 'CHA', align: 'right' },
+    { key: 'effect', label: 'Effect' },
   ]}
   rows={items
     .filter((i) => i.chestTier)
@@ -99,6 +100,7 @@ introduces.
       chance: i.chestChance ? `${Math.round(i.chestChance * 100)}%` : 'Guaranteed',
       guard: i.guard ?? '—',
       cha: i.chaBonus ? `+${i.chaBonus}` : '—',
+      effect: i.hasSustenance ? 'Satiation drain ×0.75' : '—',
     }))}
 />
 

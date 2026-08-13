@@ -60,6 +60,7 @@ export const itemNames = {
   grilled_salmon: '구운 연어',
   grilled_sturgeon: '구운 철갑상어',
   campfire_kit: '모닥불 키트',
+  tip_hat: '버스킹 모자',
 };
 
 export const itemDescriptions = {
@@ -89,7 +90,7 @@ export const itemDescriptions = {
   plate_gauntlets: '손과 손목을 감싸는 관절식 강철 건틀릿.',
   ring_of_protection: '십자 방패 문장이 새겨진 은반지. 공격을 빗나가게 한다.',
   gold_ring: '수수한 금반지.',
-  silver_necklace: '섬세한 은사슬.',
+  silver_necklace: '수확 메달이 달린 섬세한 은사슬.',
   leather_belt: '폭이 넓은 가죽 벨트.',
   coin_pile: '흩어진 동화 한 무더기.',
   healing_potion: '상처를 아물게 하고 활력을 되돌리는 진홍색 물약.',
@@ -120,6 +121,7 @@ export const itemDescriptions = {
   grilled_salmon: '직화에 구운 연어 필렛.',
   grilled_sturgeon: '잉걸불에 구운 철갑상어의 최상급 부위.',
   campfire_kit: '길에서 쓰도록 묶은 장작과 부싯깃. 10분간 탄다.',
+  tip_hat: '풍상에 시달린 깃털 장식 모자. 공연 전에 내려놓으면 관객이 동전을 던져 넣는다. 다시 사용하면 다시 집어 든다.',
 };
 
 export const monsterNames = {
@@ -154,6 +156,7 @@ export const categoryNames = {
   furniture: '가구',
   fishing_rod: '낚시 도구',
   campfire_kit: '모닥불',
+  tip_hat: '버스킹 모자',
 };
 
 export const slotNames = {

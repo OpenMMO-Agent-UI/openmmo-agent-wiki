@@ -88,6 +88,7 @@ export const dName = (d) => dungeonNames[d.id] ?? d.name;
     { key: 'chance', label: '드랍 확률', align: 'right' },
     { key: 'guard', label: 'Guard', align: 'right' },
     { key: 'cha', label: 'CHA', align: 'right' },
+    { key: 'effect', label: '효과' },
   ]}
   rows={items
     .filter((i) => i.chestTier)
@@ -98,6 +99,7 @@ export const dName = (d) => dungeonNames[d.id] ?? d.name;
       chance: i.chestChance ? `${Math.round(i.chestChance * 100)}%` : '확정 드랍',
       guard: i.guard ?? '—',
       cha: i.chaBonus ? `+${i.chaBonus}` : '—',
+      effect: i.hasSustenance ? '포만도 소모 ×0.75' : '—',
     }))}
 />
 
