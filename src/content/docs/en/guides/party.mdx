@@ -66,6 +66,21 @@ nothing to refresh manually. Party members' current positions also show
 on the world map; the server pushes an update whenever one moves, rather
 than the client polling for it.
 
+## Kill XP sharing
+
+Killing a monster doesn't just pay out to whoever lands the finishing blow.
+
+- Any party member **alive on the killer's floor and within 150m** is
+  eligible and shares in the kill.
+- The XP pool gains **+25%** per eligible member beyond the first; the
+  boosted total is then **split equally** among every eligible member
+  (killer included), floored, with a **guaranteed minimum of 1**.
+- With two or more eligible members, each share is **guaranteed not to
+  exceed** what a solo kill would pay — padding the party can't beat
+  soloing.
+- With only 1 eligible member (or no party at all), XP is exactly the same
+  as a solo kill.
+
 ## The summon scroll
 
 Using a **Scroll of Party Summon** from your bag sends a call to **every

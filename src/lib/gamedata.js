@@ -164,6 +164,8 @@ export const monsters = parseCsv('monsters').map((r) => {
     dungeonMinDepth: num(r.dungeonMinDepth),
     dungeonMaxDepth: num(r.dungeonMaxDepth),
     dungeonWeight: num(r.dungeonWeight),
+    scale: num(r.scale),
+    boss: bool(r.boss),
   };
 });
 

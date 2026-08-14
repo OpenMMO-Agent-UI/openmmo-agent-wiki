@@ -108,7 +108,7 @@ export const byLevel = (a, b) => a.level - b.level;
       name: monsterName(m.id),
       depth: m.dungeonMinDepth !== null ? `${m.dungeonMinDepth} – ${m.dungeonMaxDepth} 層` : '不在地城生成',
       weight: m.dungeonWeight ?? '—',
-      note: m.dungeonMinDepth === null ? '頭目,固定配置在地城最底層' : '',
+      note: m.boss ? '頭目,固定配置在地城最底層' : '',
     }))}
 />
 

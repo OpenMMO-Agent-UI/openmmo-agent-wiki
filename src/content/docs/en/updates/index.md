@@ -37,6 +37,17 @@ got its own icon.
   `1g20s30c`-style amounts or a bare number for copper. The server checks
   the wallet, the distance (within 5m), and blocks tipping yourself. Rica
   stocks it for 200 copper.
+- **Party kill XP sharing** (2026-08-13) — when a monster dies, any party
+  member alive on the killer's floor and within 150m shares the kill: the
+  XP pool gains +25% per eligible member, and the boosted total is split
+  equally among everyone (killer included), floored, with a guaranteed
+  minimum of 1. With two or more eligible members, no share can exceed
+  what a solo kill would pay — padding the party can't beat soloing. With
+  only 1 eligible member or no party, XP is unchanged. Full rules in
+  [Party](../guides/party/).
+- **Admin command `/tp`** (admin-only) — `/tp <x> <z> [y]` teleports to
+  world coordinates, `/tp <name|number>` teleports to a named destination,
+  and a bare `/tp` lists the available destinations (2026-08-13).
 
 **New items & assets**
 
@@ -48,6 +59,27 @@ got its own icon.
   icon.
 - **Coin Pile got its own icon** (2026-08-13) — it used to borrow the Iron
   Sword's icon; now it has its own stacked-coins icon.
+
+**Fixes**
+
+- Fixed the first attack swing after a break in combat freezing on its
+  first frame — it played its sound but never animated (2026-08-13).
+- Fixed the first attack swing after a break in combat not turning to
+  face the target, keeping the old facing instead (2026-08-13).
+- Fixed the bottom-floor treasure chest rendering at the wrong angle with
+  no collision, so players could walk straight through it — it now faces
+  south and blocks movement (2026-08-14).
+- Fixed the dungeon floor slab flickering with self-shadow artifacts under
+  torchlight and z-fighting against the down-shaft's side wall — the slab
+  mesh was rebuilt seamless, clearing the seam artifacts while keeping
+  shadows (2026-08-14).
+
+**Client**
+
+- **Dungeon bosses are now visually distinct** (2026-08-13) — boss
+  monsters (the Goblin Chief, the Orc Warlord) no longer share regular
+  monsters' model scale; they now render larger with a gold nameplate.
+  Visual only — combat ranges and collision are unchanged.
 
 ## Protocols v26–v27 — client v0.23.0
 

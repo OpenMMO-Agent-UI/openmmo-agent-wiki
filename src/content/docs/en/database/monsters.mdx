@@ -101,7 +101,7 @@ regions. A higher weight means it turns up more often within its depth range.
     name: m.name,
     depth: m.dungeonMinDepth !== null ? `Floors ${m.dungeonMinDepth} – ${m.dungeonMaxDepth}` : 'Does not spawn in dungeons',
     weight: m.dungeonWeight ?? '—',
-    note: m.dungeonMinDepth === null ? 'Boss, placed on the dungeon’s bottom floor' : '',
+    note: m.boss ? 'Boss, placed on the dungeon’s bottom floor' : '',
   }))}
 />
 

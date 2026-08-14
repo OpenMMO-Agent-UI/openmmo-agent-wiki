@@ -100,7 +100,7 @@ export const byLevel = (a, b) => a.level - b.level;
     name: monsterName(m.id),
     depth: m.dungeonMinDepth !== null ? `${m.dungeonMinDepth} – ${m.dungeonMaxDepth}층` : '던전에 생성되지 않음',
     weight: m.dungeonWeight ?? '—',
-    note: m.dungeonMinDepth === null ? '보스, 던전 최하층에 고정 배치' : '',
+    note: m.boss ? '보스, 던전 최하층에 고정 배치' : '',
   }))}
 />
 
