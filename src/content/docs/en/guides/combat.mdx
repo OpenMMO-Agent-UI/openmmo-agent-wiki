@@ -13,11 +13,11 @@ this monster"; the server decides what happened.
 
 ## Hit resolution
 
-Attacks roll a d20:
+Attacks roll an **exploding d20**:
 
 ```
-d20 + attack bonus >  target Guard   →  hit
-d20 + attack bonus ≤  target Guard   →  miss
+roll total + attack bonus >  target Guard   →  hit
+roll total + attack bonus ≤  target Guard   →  miss
 ```
 
 Note it's **strictly greater**. Rolling exactly the target's Guard is a
@@ -25,9 +25,32 @@ Note it's **strictly greater**. Rolling exactly the target's Guard is a
 
 **Attack bonus**:
 
-- Base = `floor(level / 2)`
-- Player melee adds your **STR modifier**
-- Monsters use their data value if they have one, otherwise the level default
+- Player = `floor(level / 2)` + your **STR modifier** + weapon enchant `+N`
+- Monster = **level** (not halved) — steeper than the player curve, because
+  player Guard climbs from gear rather than level. A CSV `attackBonus` in
+  `monsters.csv` overrides the default, and dungeon depth scaling stacks on
+  top of whichever value applies.
+
+### Exploding d20
+
+Roll a d20. **On a 20, roll again and add it.** If that roll is also 20, add
+again (up to 5 extra rolls — a total of 120 already beats any Guard).
+
+```
+Roll 13          →  total 13
+Roll 20, 10      →  total 30
+Roll 20, 20, 4   →  total 44
+```
+
+**Why.** A flat "natural 20 always hits" rule floors hit chance at exactly
+5% — an artifact of the die having 20 faces, not a balance choice: a kobold
+would land a hit on a fully plate-armored player once every twenty swings no
+matter how much Guard you stack. The exploding die instead **shrinks the odds
+the further short you are, without ever flooring at zero**: every time the
+gap crosses another 20 points, the chance is cut by another 1/20. A kobold
+(+1) hits Guard 40 just 0.25% of the time — about once every 400 swings, or
+13 minutes at its 1.9s attack cooldown. A natural 1 gets no special
+treatment.
 
 ### Hit chance
 
@@ -50,11 +73,12 @@ Columns are the target's Guard, rows are your total attack bonus.
   })}
 />
 
-:::note[There is no critical-fumble rule]
+:::note[No critical-fumble rule — and no guaranteed miss either]
 Unlike most D&D-derived systems, this one has **no natural-1-always-misses
 rule.** If your `attack bonus ≥ target Guard`, even a 1 connects — hit chance
-really does reach **100%**. In the other direction it can reach **0%**, where no
-roll can land.
+really does reach **100%**. In the other direction, hit chance **approaches
+0% but never truly reaches it** — the exploding die always leaves a chance
+(see above), even if it takes hundreds or thousands of swings.
 :::
 
 ### Hitting each monster
@@ -103,9 +127,13 @@ The other direction, by your Guard (DEX base plus equipment):
   })}
 />
 
-**Stacking Guard pays off very directly** — each +1 costs the attacker 5% hit
-chance. A full plate set (19 Guard total) makes you nearly unhittable by
-low-level monsters.
+**Stacking Guard pays off very directly** — within the attacker's plain
+d20 range, each +1 costs them 5% hit chance. Past that range the exploding
+die takes over, and the odds drop much faster than 5% per point since each
+extra 20-point band costs another 1/20. A full plate set (19 Guard total)
+plus an armor enchant scroll makes you nearly unhittable by low-level
+monsters, but deep-dungeon monsters keep pace better since their attack
+bonus tracks their level directly.
 
 ## Damage
 

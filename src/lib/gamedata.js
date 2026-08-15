@@ -80,8 +80,9 @@ export function sellPrice(copper, ratePercent) {
 /** server/src/game/combat.rs: ceil(level * 9 / 2) */
 export const healthForLevel = (level) => Math.ceil(Math.max(level, 1) * 9 / 2);
 
-/** server/src/game/combat.rs: floor(level / 2) */
-export const attackBonusForLevel = (level) => Math.floor(level / 2);
+/** server/src/game/combat.rs: monster_attack_bonus — monsters scale on level,
+ *  not the player's floor(level / 2), since player guard climbs with gear. */
+export const attackBonusForLevel = (level) => level;
 
 /** server/src/game/combat.rs: monster_damage_roll_for_level */
 export function damageRollForLevel(level) {
@@ -166,6 +167,7 @@ export const monsters = parseCsv('monsters').map((r) => {
     dungeonWeight: num(r.dungeonWeight),
     scale: num(r.scale),
     boss: bool(r.boss),
+    sharedAnims: bool(r.sharedAnims),
   };
 });
 

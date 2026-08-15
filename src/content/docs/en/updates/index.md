@@ -48,6 +48,14 @@ got its own icon.
 - **Admin command `/tp`** (admin-only) — `/tp <x> <z> [y]` teleports to
   world coordinates, `/tp <name|number>` teleports to a named destination,
   and a bare `/tp` lists the available destinations (2026-08-13).
+- **New monster: Hobgoblin** (2026-08-14) — level 6, Guard 12, carries an
+  Iron Sword, spawns on dungeon depths 6–20.
+- **New monster: Gnoll** (2026-08-15) — level 6, Guard 13, unarmed and
+  attacks with claws (2d8 damage), spawns on dungeon depths 7–20.
+- **Looping dance emotes** (2026-08-15) — `/emote twist`, `/emote macarena`,
+  and `/emote chicken` join the emote list. Unlike the one-shot gestures
+  (`excited`, `clap`), a dance keeps playing until the dancer moves or
+  presses Escape.
 
 **New items & assets**
 
@@ -59,6 +67,22 @@ got its own icon.
   icon.
 - **Coin Pile got its own icon** (2026-08-13) — it used to borrow the Iron
   Sword's icon; now it has its own stacked-coins icon.
+- **Scroll of Enchant Armor** (2026-08-15) — new `scroll_of_enchant_armor`
+  item: reading it enchants a random worn armor piece +1 Guard, with the
+  same reading and consumption rules as the weapon scroll. Merchants don't
+  sell it — the only source is a 1% world drop, priced at 1,200 copper.
+  Full rules in [Enchanting](../guides/enchant/).
+
+**Balance**
+
+- **Hit rolls now use an exploding d20; monster attack bonus scales on full
+  level** (2026-08-15) — under the old rule, Guard 24 made some dungeon
+  monsters mathematically unable to land a hit. Now a natural 20 rolls
+  again and adds, so every Guard stays reachable even as the odds fall off
+  with the gap. Monster attack bonus also moved from half-level to full
+  level, so deeper floors hit harder — the Orc Warlord's odds against a
+  leather-set graduate go from 20% to 45%. Full numbers in
+  [Combat](../guides/combat/).
 
 **Fixes**
 
@@ -73,6 +97,14 @@ got its own icon.
   torchlight and z-fighting against the down-shaft's side wall — the slab
   mesh was rebuilt seamless, clearing the seam artifacts while keeping
   shadows (2026-08-14).
+- Fixed melee attacks landing through closed dungeon doors and stair-shaft
+  walls — attacks now run through the same passability check as movement,
+  and are blocked in both directions (2026-08-14).
+- Fixed merchant NPCs starting a scheduled move the instant it came due,
+  with no chance to pack up their stall or finish a song first — a
+  schedule change now posts a `[Schedule]` notice and holds the move for
+  one more NPC turn (or 30s), and a stall left standing at departure is
+  packed as a backstop (2026-08-15).
 
 **Client**
 
@@ -80,6 +112,11 @@ got its own icon.
   monsters (the Goblin Chief, the Orc Warlord) no longer share regular
   monsters' model scale; they now render larger with a gold nameplate.
   Visual only — combat ranges and collision are unchanged.
+- Fixed background music staying silent after being turned back on
+  (unmuted, volume raised, or combat ended) while a nearby performance was
+  already playing — it used to wait for the next song. Now it remembers
+  the track and rejoins at the current offset as soon as it can play again
+  (2026-08-15).
 
 ## Protocols v26–v27 — client v0.23.0
 

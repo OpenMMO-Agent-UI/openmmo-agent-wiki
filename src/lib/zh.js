@@ -35,6 +35,7 @@ export const itemNames = {
   healing_potion: '治療藥水',
   scroll_of_return: '回城捲軸',
   scroll_of_enchant_weapon: '武器強化捲軸',
+  scroll_of_enchant_armor: '防具強化捲軸',
   scroll_of_party_summon: '隊伍召集捲軸',
   table: '桌子',
   mandolin: '曼陀林',
@@ -96,6 +97,7 @@ export const itemDescriptions = {
   healing_potion: '深紅色的藥劑,能癒合傷口、恢復活力。',
   scroll_of_return: '誦讀神祕符文,在一道光芒中回到城鎮。',
   scroll_of_enchant_weapon: '能磨利手中武器的符文 —— 但貪心地反覆誦讀可能會毀掉它。',
+  scroll_of_enchant_armor: '能強化身上一件防具的符文 —— 但貪心地反覆誦讀可能會毀掉它。',
   scroll_of_party_summon: '誦讀符文可召集整支隊伍到身邊 —— 每個人都可以選擇響應或無視。',
   table: '堅固的木桌。',
   mandolin: '圓背鑲金琴格的曼陀林。用 /play_music 即可彈奏一曲。',
@@ -132,6 +134,8 @@ export const monsterNames = {
   orc_female: '女獸人',
   orc_boss: '獸人督軍',
   goblin_boss: '哥布林酋長',
+  hobgoblin: '半獸人',
+  gnoll: '豺狼人',
 };
 
 export const dungeonNames = {
@@ -151,6 +155,7 @@ export const categoryNames = {
   healing_potion: '治療藥水',
   return_scroll: '回城捲軸',
   enchant_scroll: '強化捲軸',
+  enchant_armor_scroll: '防具強化捲軸',
   party_summon_scroll: '召集捲軸',
   instrument: '樂器',
   furniture: '家具',

@@ -26,6 +26,7 @@ export default defineConfig({
             { label: '新手入門', translations: { ko: '처음 시작하기' , en: 'Getting started' }, link: '/guides/getting-started/' },
             { label: '角色與屬性', translations: { ko: '캐릭터와 능력치' , en: 'Character & attributes' }, link: '/guides/character/' },
             { label: '戰鬥系統', translations: { ko: '전투 시스템' , en: 'Combat' }, link: '/guides/combat/' },
+            { label: '強化系統', translations: { ko: '강화 시스템' , en: 'Enchanting' }, link: '/guides/enchant/' },
             { label: '釣魚玩法', translations: { ko: '낚시' , en: 'Fishing gameplay' }, link: '/guides/fishing/' },
             { label: '音樂與吟遊詩人', translations: { ko: '음악과 바드' , en: 'Music & the bard' }, link: '/guides/music/' },
             { label: '好友系統', translations: { ko: '친구 시스템' , en: 'Friends' }, link: '/guides/friends/' },

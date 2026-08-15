@@ -35,6 +35,7 @@ export const itemNames = {
   healing_potion: '치유 물약',
   scroll_of_return: '귀환 주문서',
   scroll_of_enchant_weapon: '무기 강화 주문서',
+  scroll_of_enchant_armor: '방어구 강화 주문서',
   scroll_of_party_summon: '파티 소환 주문서',
   table: '탁자',
   mandolin: '만돌린',
@@ -96,6 +97,7 @@ export const itemDescriptions = {
   healing_potion: '상처를 아물게 하고 활력을 되돌리는 진홍색 물약.',
   scroll_of_return: '룬을 읽으면 빛과 함께 마을로 돌아간다.',
   scroll_of_enchant_weapon: '손에 든 무기의 날을 벼리는 룬 — 욕심내어 거듭 읽으면 부서질 수 있다.',
+  scroll_of_enchant_armor: '착용한 방어구 한 점을 단단하게 만드는 룬 — 욕심내어 거듭 읽으면 부서질 수 있다.',
   scroll_of_party_summon: '룬을 읽으면 파티 전원을 곁으로 부른다 — 각자 응하거나 무시할 수 있다.',
   table: '튼튼한 나무 탁자.',
   mandolin: '금박 프렛이 박힌 둥근 몸통의 만돌린. /play_music으로 한 곡 연주할 수 있다.',
@@ -132,6 +134,8 @@ export const monsterNames = {
   orc_female: '여성 오크',
   orc_boss: '오크 워로드',
   goblin_boss: '고블린 족장',
+  hobgoblin: '홉고블린',
+  gnoll: '놀',
 };
 
 export const dungeonNames = {
@@ -151,6 +155,7 @@ export const categoryNames = {
   healing_potion: '치유 물약',
   return_scroll: '귀환 주문서',
   enchant_scroll: '강화 주문서',
+  enchant_armor_scroll: '방어구 강화 주문서',
   party_summon_scroll: '소환 주문서',
   instrument: '악기',
   furniture: '가구',

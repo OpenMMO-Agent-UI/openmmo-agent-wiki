@@ -1,0 +1,137 @@
+---
+title: Enchanting
+description: How weapon and armor enchant scrolls resolve, the success-rate ladder, expected costs, and the effect on Guard.
+---
+
+Enchanting only happens with **drop-only** scrolls. Reading one bumps a piece
+of gear by +1. Past a guaranteed band, failure **destroys the item** — a
+voluntary gold/gear sink instead of a durability system.
+
+There are two scrolls:
+
+| Scroll | Target | +N effect | Category | Price | World drop rate |
+|---|---|---|---|---:|---:|
+| Scroll of Enchant Weapon | Your equipped **main-hand weapon** | +N to hit and damage rolls | `enchant_scroll` | 1,200c | 1% |
+| Scroll of Enchant Armor | A **random** piece of worn armor | +N to Guard | `enchant_armor_scroll` | 1,200c | 1% |
+
+Merchants **don't sell** either scroll — the only source is a world drop, and
+you can sell one back if you find one you don't want.
+
+## Reading rules
+
+Common to both:
+
+- You can't read while **incapacitated** (downed) — the scroll isn't consumed.
+- No valid target (no weapon equipped / no armor worn) also gets rejected
+  without consuming the scroll.
+- If there's a target, **the scroll is consumed whether the roll succeeds or
+  destroys the item.**
+- The odds roll happens server-side outside the lock; the result comes back
+  with an updated inventory snapshot and Guard together.
+
+Armor-only rules:
+
+- The target is picked **uniformly at random** among currently worn
+  `category=armor` items — helmet, body armor, shield, gloves, pants, and
+  boots all count.
+- Weapons and accessories (rings, necklaces, belts) are never targeted.
+  `ring_of_protection` grants Guard but is an `accessory`, so it can't be
+  enchanted.
+- Only pieces worn **at the moment you read** are candidates — taking a piece
+  off removes it from the pool, which effectively lets you choose your target
+  (see "What the random target actually means" below).
+
+## The success ladder
+
+Weapons are **guaranteed through +5**; armor is **guaranteed through +3**.
+Past that, both follow the same curve (75% / 50% / 25% → halving from there
+→ a 1% floor), but armor's curve starts two steps earlier — armor has 6
+slots, so giving it the same guaranteed band as a single weapon would
+multiply total Guard gain by 6.
+
+| Current → next | Weapon success | Armor success |
+|---|---:|---:|
+| +0 → +1 | 100% | 100% |
+| +1 → +2 | 100% | 100% |
+| +2 → +3 | 100% | 100% |
+| +3 → +4 | 100% | **75%** |
+| +4 → +5 | 100% | 50% |
+| +5 → +6 | **75%** | 25% |
+| +6 → +7 | 50% | 12.5% |
+| +7 → +8 | 25% | 6.25% |
+| +8 → +9 | 12.5% | 3.12% |
+| +9 → +10 | 6.25% | 1.56% |
+| +10 → +11 | 3.12% | 1% (floor) |
+| +11 → +12 | 1.56% | 1% |
+| +12 and up | 1% (floor) | 1% |
+
+The failure chance is whatever's left over in that row, and **destruction is
+the only failure outcome**. The ladder stops thinning at 1% — there's no
+theoretical cap, just an exploding cost.
+
+## Expected cost
+
+Assuming a failure also loses the base item and resets to +0, here are the
+expected values (recurrence: `E[item](N) = E[item](N-1) / p_N`,
+`E[scroll](N) = (E[scroll](N-1) + 1) / p_N`):
+
+**Weapon** (one main-hand weapon):
+
+| Target | Last step's odds | Expected weapons | Expected scrolls |
+|---|---:|---:|---:|
+| +5 | 100% | 1 | 5 |
+| +6 | 75% | 1.3 | 8 |
+| +7 | 50% | 2.7 | 18 |
+| +8 | 25% | 10.7 | 76 |
+| +9 | 12.5% | 85.3 | 616 |
+| +10 | 6.25% | 1,365 | 9,872 |
+
+**Armor** (one slot):
+
+| Target | Last step's odds | Expected armor pieces | Expected scrolls |
+|---|---:|---:|---:|
+| +3 | 100% | 1 | 3 |
+| +4 | 75% | 1.3 | 5 |
+| +5 | 50% | 2.7 | 13 |
+| +6 | 25% | 10.7 | 55 |
+| +7 | 12.5% | 85.3 | 445 |
+| +8 | 6.25% | 1,365 | 7,141 |
+
+In practical terms: pouring scrolls into a +0 piece of armor gets it
+**destroyed after an average of 5.2 scrolls**, landing around +4 on average
+(a weapon takes an average of 7.2 scrolls, landing around +6). Realistic caps
+are roughly armor +5 (37.5% reach rate) to +6 (9.4%), and weapon +7 (37.5%)
+to +8 (9.4%).
+
+## Effect on Guard
+
+Armor +N is added straight to the wearer's Guard while worn — and Guard is
+the hit threshold an attacker has to clear (see [Combat](../combat/)), so
+each +1 drops every attack against that character by 5 percentage points
+(one d20 step). Past the attacker's plain roll range, the exploding die
+takes over and the drop gets much steeper — Guard 40 is 0.25% against a
+low-level monster, for example.
+
+- Maxing all 6 slots to the guaranteed band (+3) is +18 total Guard — but the
+  actual cost to get there depends heavily on how you play it (see below).
+- Weapon +N never touches Guard; armor +N never touches to-hit or damage.
+- A destroyed piece disappears from your equipment immediately and Guard
+  drops right away; the server pushes the updated snapshot and Guard
+  together, so the client never has to recompute it.
+
+## What the random target actually means
+
+The target pool is only **whatever's worn at the moment you read**, so
+taking off everything except the piece you want enchanted effectively lets
+you choose your target. The cost to bring all 6 slots to +3 differs sharply
+by playstyle (20,000-run simulation):
+
+| Playstyle | Expected scrolls | Expected destroyed | All 6 slots survive |
+|---|---:|---:|---:|
+| Wear one slot at a time and read | 18 | 0 | 100% |
+| Read while wearing all 6 | 25.7 | 3.1 | 2.8% |
+
+The random target only bites once you're past the guaranteed band — once a
+piece is already +3, getting picked means eating a 25% destroy chance, so
+reading while fully dressed loses an average of 3 pieces. Reading undressed
+keeps the guaranteed band fully guaranteed.

@@ -21,6 +21,7 @@ export const categoryNames = {
   healing_potion: 'Healing potion',
   return_scroll: 'Return scroll',
   enchant_scroll: 'Enchant scroll',
+  enchant_armor_scroll: 'Armor enchant scroll',
   party_summon_scroll: 'Summon scroll',
   instrument: 'Instrument',
   furniture: 'Furniture',

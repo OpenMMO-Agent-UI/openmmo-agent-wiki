@@ -65,11 +65,19 @@ export const xpForLevel = (level) => (level <= 1 ? 0 : 20 * 2 ** (level - 2));
 /** doc/COMBAT.md: xp = 1 + level^2 + max(guard - 10, 0) x 2 */
 export const monsterXp = (level, guard) => 1 + level ** 2 + Math.max(guard - 10, 0) * 2;
 
-/** d20 + bonus > guard. Natural range 1-20, so this can hit 0% or 95%. */
+/**
+ * Exploding d20 + bonus > guard (doc/COMBAT.md). A natural 20 rolls again
+ * and adds, so every gap stays reachable instead of flooring at 0%: each
+ * band of 20 needed above the first cuts the odds by another 1/20.
+ */
 export function hitChance(attackBonus, targetGuard) {
   const needed = targetGuard - attackBonus + 1;
-  const winning = 20 - Math.max(needed, 1) + 1;
-  return Math.min(Math.max(winning, 0), 20) / 20;
+  const atLeast = (t) => {
+    if (t <= 1) return 1;
+    if (t <= 20) return (21 - t) / 20;
+    return atLeast(t - 20) / 20;
+  };
+  return atLeast(needed);
 }
 
 /** Expected HP change per level, up or down — E(max(roll, HD/2)) before con_mod. */

@@ -19,7 +19,8 @@ same formulas the server uses (`server/src/game/combat.rs`) run here, and
 derived values carry a `*`:
 
 - Health = `ceil(level × 9 ÷ 2)`
-- Attack bonus = `floor(level ÷ 2)`
+- Attack bonus = `level` (monsters don't halve it the way players do — see
+  [Combat](../../guides/combat/))
 - Damage roll = a level lookup (table below)
 :::
 
@@ -154,11 +155,12 @@ Blank fields use this table.
 
 ## How hits are resolved
 
-Attacks roll a d20:
+Attacks roll an **exploding d20** (a natural 20 rolls again and adds — see
+[Combat](../../guides/combat/) for the full mechanic):
 
 ```
-d20 + attack bonus >  target Guard   →  hit
-d20 + attack bonus ≤  target Guard   →  miss
+roll total + attack bonus >  target Guard   →  hit
+roll total + attack bonus ≤  target Guard   →  miss
 ```
 
 So Guard is the number you have to beat. Your own Guard comes from DEX
