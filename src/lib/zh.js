@@ -9,6 +9,8 @@ export const itemNames = {
   goblin_sword: '哥布林短劍',
   small_sword: '小劍',
   spear: '長槍',
+  morningstar: '晨星錘',
+  greatclub: '巨棍',
   torch: '火把',
   worn_torch: '燒剩的火把',
   wooden_shield: '木盾',
@@ -71,6 +73,8 @@ export const itemDescriptions = {
   goblin_sword: '哥布林與獸人愛用的粗製短刃。',
   small_sword: '為小型戰士打造的緊湊粗刃。',
   spear: '木柄鐵尖的長槍。',
+  morningstar: '皮革纏柄的釘刺鐵頭錘。笨重粗糙,但沒有刃口需要保養。',
+  greatclub: '釘滿鐵刺的橡木棍棒。太重了,只有食人魔這種體型才揮得順手。',
   torch: '搖曳的木製火把。',
   worn_torch: '燒到一半的短火把。商人不會收購。',
   wooden_shield: '圓形木盾。',
@@ -136,6 +140,13 @@ export const monsterNames = {
   goblin_boss: '哥布林酋長',
   hobgoblin: '半獸人',
   gnoll: '豺狼人',
+  bugbear: '大鬼怪',
+  ogre: '食人魔',
+};
+
+export const debuffNames = {
+  bleed: '流血',
+  food_poisoning: '食物中毒',
 };
 
 export const dungeonNames = {
@@ -201,3 +212,4 @@ export const mapKindNames = {
 
 export const itemName = (id) => itemNames[id] ?? id;
 export const monsterName = (id) => monsterNames[id] ?? id;
+export const debuffName = (id) => debuffNames[id] ?? id;

@@ -59,9 +59,13 @@ Signe is the resident bard NPC, and her day runs on a schedule:
 
 ### Tips and requests
 
-To show appreciation, **drop coins or trinkets at her feet** — items changing
-hands are visible to everyone (protocol v22). She gathers tips between songs
-and remembers who gave what.
+To show appreciation — **as of protocol v29**, Signe sets down her own
+**{itemName('tip_hat')}** before she opens a set. Coins dropped in it go
+straight to her wallet, with just a system line in chat; trinkets still land
+**at her feet** as before — items changing hands are visible to everyone
+(protocol v22), and she gathers those between songs and remembers who gave
+what. When her schedule moves her — heading home, changing pitches — she
+packs up the stall and the hat together automatically.
 
 ### The gilded mandolin
 
@@ -83,9 +87,10 @@ The trading rule behind "sold only to a chosen buyer" is covered in the
 
 ## Tip hats (protocol v28)
 
-Signe collects tips through her own script; anyone else who wants tips needs
-the **{itemName('tip_hat')}** item — any class can use it, and Rica sells one
-for {formatCoins(itemsById.get('tip_hat').basePrice)}.
+Any player who wants tips uses the **{itemName('tip_hat')}** item — any
+class can use it, and Rica sells one for
+{formatCoins(itemsById.get('tip_hat').basePrice)}. Signe uses the same item
+herself (see above).
 
 - Using the item sets a hat down two cells ahead; using it again picks it
   back up. The item itself is never consumed.

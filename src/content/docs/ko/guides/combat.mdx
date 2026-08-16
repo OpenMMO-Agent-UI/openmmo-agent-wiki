@@ -4,8 +4,8 @@ description: 명중 판정, 피해 계산, Guard 대조표, 경험치 공식, �
 ---
 
 import FilterTable from '../../../../components/FilterTable.astro';
-import { monsters, items, averageRoll } from '../../../../lib/gamedata.js';
-import { monsterName, itemName, className } from '../../../../lib/ko.js';
+import { monsters, items, averageRoll, debuffs } from '../../../../lib/gamedata.js';
+import { monsterName, itemName, className, debuffName } from '../../../../lib/ko.js';
 import { abilityModifier, hitChance, xpForLevel, monsterXp, expectedHitDieGain, classes } from '../../../../lib/classes.js';
 
 모든 판정은 **서버에서** 이루어집니다. 클라이언트는 「이 몬스터를 공격하겠다」만
@@ -338,3 +338,43 @@ XP(n) = 20 × 2^(n-2)      (n ≥ 2)
 
 몬스터는 죽은 뒤 **30초**가 지나야 사라집니다. 각 몬스터의 추적 거리와 공격 간격은
 [몬스터 도감](../../database/monsters/)에 있습니다.
+
+## 디버프
+
+일부 몬스터의 공격과 음식은 **디버프**를 겁니다. 같은 디버프는 중첩되지 않고
+다시 걸리면 지속시간만 갱신되지만, 서로 다른 디버프는 동시에 걸릴 수 있고
+배수는 곱해서 적용됩니다.
+
+<FilterTable
+  placeholder="디버프 검색…"
+  columns={[
+    { key: 'name', label: '디버프' },
+    { key: 'chance', label: '확률', align: 'right' },
+    { key: 'duration', label: '지속시간', align: 'right' },
+    { key: 'dps', label: '초당 피해', align: 'right' },
+    { key: 'move', label: '이동 속도', align: 'right' },
+    { key: 'atkspd', label: '공격 속도', align: 'right' },
+    { key: 'carry', label: '최대 하중', align: 'right' },
+    { key: 'drain', label: '포만도 소비', align: 'right' },
+    { key: 'regen', label: '생명 자연 회복', align: 'center' },
+  ]}
+  rows={debuffs.map((d) => ({
+    name: debuffName(d.id),
+    chance: `${d.chance}%`,
+    duration: d.durationSecs >= 60 ? `${d.durationSecs / 60}분` : `${d.durationSecs}초`,
+    dps: d.dps ?? '—',
+    move: d.moveMult !== 1 ? `×${d.moveMult}` : '—',
+    atkspd: d.attackMult !== 1 ? `×${d.attackMult}` : '—',
+    carry: d.carryMult !== 1 ? `×${d.carryMult}` : '—',
+    drain: d.drainMult !== 1 ? `×${d.drainMult}` : '—',
+    regen: d.blocksRegen ? '정지' : '—',
+  }))}
+/>
+
+**출혈** — {monsterName('gnoll')}의 발톱 공격이 명중하면 확률적으로 걸립니다.
+이 새 효과를 감안해 {monsterName('gnoll')}의 피해 주사위는 2d8에서 2d6로
+낮아졌습니다. 출혈 자체로 사망할 수 있으며, 처치자 없이 일반 사망과 같이
+처리됩니다.
+
+**식중독** — 생선을 날로 먹었을 때의 위험입니다. 자세한 내용은
+[음식과 포만도](../../database/food/)를 참고하세요.

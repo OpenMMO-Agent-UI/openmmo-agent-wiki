@@ -16,6 +16,7 @@ import merchantsCsv from '../data/game/merchants.csv?raw';
 import npcsCsv from '../data/game/npcs.csv?raw';
 import worldDropCsv from '../data/game/world_drop.csv?raw';
 import mapLabelsCsv from '../data/game/map_labels.csv?raw';
+import debuffsCsv from '../data/game/debuffs.csv?raw';
 
 const sources = {
   items: itemsCsv,
@@ -25,6 +26,7 @@ const sources = {
   npcs: npcsCsv,
   world_drop: worldDropCsv,
   map_labels: mapLabelsCsv,
+  debuffs: debuffsCsv,
 };
 
 function parseCsv(name) {
@@ -133,6 +135,7 @@ export const items = parseCsv('items').map((r) => {
     consumable: bool(r.consumable),
     nutrition: num(r.nutrition),
     grillsInto: r.grillsInto || null,
+    useDebuff: r.useDebuff || null,
   };
 });
 
@@ -168,6 +171,7 @@ export const monsters = parseCsv('monsters').map((r) => {
     scale: num(r.scale),
     boss: bool(r.boss),
     sharedAnims: bool(r.sharedAnims),
+    hitDebuff: r.hitDebuff || null,
   };
 });
 
@@ -212,4 +216,17 @@ export const mapLabels = parseCsv('map_labels').map((r) => ({
   kind: r.kind,
   x: num(r.x),
   z: num(r.z),
+}));
+
+export const debuffs = parseCsv('debuffs').map((r) => ({
+  id: r.id,
+  name: r.name,
+  chance: num(r.chance),
+  durationSecs: num(r.durationSecs),
+  dps: num(r.dps),
+  moveMult: num(r.moveMult) ?? 1,
+  attackMult: num(r.attackMult) ?? 1,
+  carryMult: num(r.carryMult) ?? 1,
+  drainMult: num(r.drainMult) ?? 1,
+  blocksRegen: bool(r.blocksRegen),
 }));

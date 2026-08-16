@@ -9,6 +9,8 @@ export const itemNames = {
   goblin_sword: '고블린 검',
   small_sword: '작은 검',
   spear: '창',
+  morningstar: '모닝스타',
+  greatclub: '그레이트클럽',
   torch: '횃불',
   worn_torch: '타다 남은 횃불',
   wooden_shield: '나무 방패',
@@ -71,6 +73,8 @@ export const itemDescriptions = {
   goblin_sword: '고블린과 오크가 즐겨 쓰는 조잡한 단검.',
   small_sword: '작은 체구의 전사를 위한 짧은 조잡한 검.',
   spear: '나무 자루에 철촉을 단 창.',
+  morningstar: '가죽으로 감싼 자루에 쇠못을 박은 철퇴. 무겁고 조잡하지만 날을 벼릴 필요가 없다.',
+  greatclub: '쇠가시를 박은 참나무 몽둥이. 오우거만한 덩치가 아니면 제대로 휘두르기 힘들 만큼 무겁다.',
   torch: '흔들리는 나무 횃불.',
   worn_torch: '절반쯤 타버린 짧은 횃불. 상인은 사주지 않는다.',
   wooden_shield: '둥근 나무 방패.',
@@ -136,6 +140,13 @@ export const monsterNames = {
   goblin_boss: '고블린 족장',
   hobgoblin: '홉고블린',
   gnoll: '놀',
+  bugbear: '버그베어',
+  ogre: '오우거',
+};
+
+export const debuffNames = {
+  bleed: '출혈',
+  food_poisoning: '식중독',
 };
 
 export const dungeonNames = {
@@ -201,6 +212,7 @@ export const mapKindNames = {
 
 export const itemName = (id) => itemNames[id] ?? id;
 export const monsterName = (id) => monsterNames[id] ?? id;
+export const debuffName = (id) => debuffNames[id] ?? id;
 
 export const classNames = {
   barbarian: '야만인',

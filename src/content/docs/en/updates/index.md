@@ -19,7 +19,57 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v28 — client not yet released (current)
+## Protocol v29 — client not yet released (current)
+
+**Protocol bumped to v29** — the client is still waiting on a repackage, and
+older clients will be refused once the live server switches over.
+
+**New systems**
+
+- **Debuff system** (2026-08-16) — a data-driven debuff framework
+  (`data-src/debuffs.csv`) replaces the food-poisoning logic that used to be
+  hardcoded. The same debuff never stacks — retriggering it just refreshes
+  the duration — but different debuffs can be active together, and their
+  multipliers multiply. Two exist so far:
+  - **Bleeding** — a 35% chance on a hit from a gnoll's claws, lasting 8
+    seconds at 1 damage per second and blocking HP regen; it can kill
+    outright. The gnoll's damage die was lowered from 2d8 to 2d6 to make
+    room for the new effect.
+  - **Food Poisoning** — same numbers as before (70% chance on raw fish, 5
+    minutes, ×0.6 move/attack/carry, ×4 satiation drain, blocks HP regen),
+    just running through the new framework.
+
+  Full rules in [Combat](../guides/combat/).
+- **New monster: Bugbear** (2026-08-16) — level 7, Guard 14, carries a
+  Morningstar, spawns on dungeon depths 8–20.
+- **New monster: Ogre** (2026-08-16) — level 8, Guard 15, carries a
+  Greatclub (2d8 damage), flesh rather than leather, spawns on dungeon
+  depths 9–20.
+- **Signe uses her own tip hat** (2026-08-16) — the town-square bard now
+  sets down a busker's hat before she opens a set; coins dropped in it go
+  straight to her wallet, and her schedule transitions pack up the stall
+  and hat together automatically. Full rules in [Music](../guides/music/).
+
+**New items & assets**
+
+- **Morningstar, Greatclub** (2026-08-16) — the weapons the bugbear and
+  ogre carry: Morningstar deals 1d8 (6,000 copper), Greatclub deals 1d8
+  (600 copper). Neither is sold by merchants — the only source is drops.
+
+**Fixes**
+
+- Fixed the death animation index drifting out of sync with the animation
+  name list — death played the attack clip instead of the dying clip, and
+  the respawn dialog never opened (2026-08-16).
+
+**Client**
+
+- **Text selection is now opt-in** (2026-08-16) — dragging over the
+  inventory, character panel, or HUD text used to trigger the browser's
+  text selection by accident. Now only text inputs, the chat transcript,
+  announcement bodies, and login error messages allow it.
+
+## Protocol v28 — client not yet released
 
 **Protocol bumped to v28** — the client is still waiting on a repackage, and
 older clients will be refused once the live server switches over. The same

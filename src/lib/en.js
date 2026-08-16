@@ -2,12 +2,13 @@
 // English — item and monster names come straight from the CSV rather than a
 // hand-maintained table, so they cannot drift from what the client shows.
 
-import { items, monsters, dungeons } from './gamedata.js';
+import { items, monsters, dungeons, debuffs } from './gamedata.js';
 
 export const itemNames = Object.fromEntries(items.map((i) => [i.id, i.name]));
 export const itemDescriptions = Object.fromEntries(items.map((i) => [i.id, i.description]));
 export const monsterNames = Object.fromEntries(monsters.map((m) => [m.id, m.name]));
 export const dungeonNames = Object.fromEntries(dungeons.map((d) => [d.id, d.name]));
+export const debuffNames = Object.fromEntries(debuffs.map((d) => [d.id, d.name]));
 
 export const categoryNames = {
   weapon: 'Weapon',
@@ -76,4 +77,5 @@ export const attributeNames = {
 
 export const itemName = (id) => itemNames[id] ?? id;
 export const monsterName = (id) => monsterNames[id] ?? id;
+export const debuffName = (id) => debuffNames[id] ?? id;
 export const className = (id) => id.charAt(0).toUpperCase() + id.slice(1);

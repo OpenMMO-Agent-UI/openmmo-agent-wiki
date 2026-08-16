@@ -17,6 +17,7 @@ const FILES = [
   'npcs.csv',
   'world_drop.csv',
   'map_labels.csv',
+  'debuffs.csv',
 ];
 
 const outDir = join(dirname(fileURLToPath(import.meta.url)), '..', 'src', 'data', 'game');

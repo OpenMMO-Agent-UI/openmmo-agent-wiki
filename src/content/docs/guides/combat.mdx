@@ -4,8 +4,8 @@ description: 命中判定、傷害計算、Guard 對照、經驗值公式、升�
 ---
 
 import FilterTable from '../../../components/FilterTable.astro';
-import { monsters, items, averageRoll } from '../../../lib/gamedata.js';
-import { monsterName, itemName } from '../../../lib/zh.js';
+import { monsters, items, averageRoll, debuffs } from '../../../lib/gamedata.js';
+import { monsterName, itemName, debuffName } from '../../../lib/zh.js';
 import { abilityModifier, hitChance, xpForLevel, monsterXp, expectedHitDieGain, classes } from '../../../lib/classes.js';
 
 所有判定都在**伺服器端**進行。客戶端只送出「我要攻擊這隻怪物」,結果由伺服器決定。
@@ -351,3 +351,40 @@ XP(n) = 20 × 2^(n-2)      (n ≥ 2)
 
 怪物死亡後 **30 秒**才會從場上移除。各怪物的追擊距離與攻擊間隔見
 [怪物圖鑑](../../database/monsters/)。
+
+## 狀態異常
+
+部分怪物攻擊或食物會附加**狀態異常(debuff)**。同一種狀態異常不會疊加,
+再次觸發只會刷新持續時間;不同種類可以同時存在,倍率彼此相乘。
+
+<FilterTable
+  placeholder="搜尋狀態異常…"
+  columns={[
+    { key: 'name', label: '狀態異常' },
+    { key: 'chance', label: '觸發機率', align: 'right' },
+    { key: 'duration', label: '持續時間', align: 'right' },
+    { key: 'dps', label: '每秒傷害', align: 'right' },
+    { key: 'move', label: '移動速度', align: 'right' },
+    { key: 'atkspd', label: '攻擊速度', align: 'right' },
+    { key: 'carry', label: '最大負重', align: 'right' },
+    { key: 'drain', label: '飽食消耗', align: 'right' },
+    { key: 'regen', label: '生命自然回復', align: 'center' },
+  ]}
+  rows={debuffs.map((d) => ({
+    name: debuffName(d.id),
+    chance: `${d.chance}%`,
+    duration: d.durationSecs >= 60 ? `${d.durationSecs / 60} 分鐘` : `${d.durationSecs} 秒`,
+    dps: d.dps ?? '—',
+    move: d.moveMult !== 1 ? `×${d.moveMult}` : '—',
+    atkspd: d.attackMult !== 1 ? `×${d.attackMult}` : '—',
+    carry: d.carryMult !== 1 ? `×${d.carryMult}` : '—',
+    drain: d.drainMult !== 1 ? `×${d.drainMult}` : '—',
+    regen: d.blocksRegen ? '停止' : '—',
+  }))}
+/>
+
+**流血** —— {monsterName('gnoll')}的爪擊命中時有機率觸發。為了兼顧這個新效果,
+{monsterName('gnoll')}的傷害骰從 2d8 調降到 2d6。流血本身可以致死,死亡處理和
+一般攻擊致死相同,不會歸功於任何擊殺者。
+
+**食物中毒** —— 吃生魚的風險,細節見[食物與飽食度](../../database/food/)。

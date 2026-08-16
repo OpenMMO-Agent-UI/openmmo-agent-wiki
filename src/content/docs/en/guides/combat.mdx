@@ -4,8 +4,8 @@ description: Hit resolution, damage, the Guard scale, XP formulas, the levelling
 ---
 
 import FilterTable from '../../../../components/FilterTable.astro';
-import { monsters, items, averageRoll } from '../../../../lib/gamedata.js';
-import { itemName } from '../../../../lib/en.js';
+import { monsters, items, averageRoll, debuffs } from '../../../../lib/gamedata.js';
+import { itemName, debuffName } from '../../../../lib/en.js';
 import { hitChance, xpForLevel, monsterXp, expectedHitDieGain, classes } from '../../../../lib/classes.js';
 
 Every roll happens **on the server**. The client only sends "I want to attack
@@ -346,3 +346,43 @@ server.**
 
 A dead monster is removed after **30 seconds**. Per-monster chase ranges and
 attack intervals are in [Monster index](../../database/monsters/).
+
+## Debuffs
+
+Some monster attacks and foods attach a **debuff**. The same debuff never
+stacks — retriggering it just refreshes the duration — but different debuffs
+can be active at once, and their multipliers multiply together.
+
+<FilterTable
+  placeholder="Search debuffs…"
+  columns={[
+    { key: 'name', label: 'Debuff' },
+    { key: 'chance', label: 'Chance', align: 'right' },
+    { key: 'duration', label: 'Duration', align: 'right' },
+    { key: 'dps', label: 'DPS', align: 'right' },
+    { key: 'move', label: 'Move speed', align: 'right' },
+    { key: 'atkspd', label: 'Attack speed', align: 'right' },
+    { key: 'carry', label: 'Max carry', align: 'right' },
+    { key: 'drain', label: 'Satiation drain', align: 'right' },
+    { key: 'regen', label: 'HP regen', align: 'center' },
+  ]}
+  rows={debuffs.map((d) => ({
+    name: debuffName(d.id),
+    chance: `${d.chance}%`,
+    duration: d.durationSecs >= 60 ? `${d.durationSecs / 60} min` : `${d.durationSecs}s`,
+    dps: d.dps ?? '—',
+    move: d.moveMult !== 1 ? `×${d.moveMult}` : '—',
+    atkspd: d.attackMult !== 1 ? `×${d.attackMult}` : '—',
+    carry: d.carryMult !== 1 ? `×${d.carryMult}` : '—',
+    drain: d.drainMult !== 1 ? `×${d.drainMult}` : '—',
+    regen: d.blocksRegen ? 'Stops' : '—',
+  }))}
+/>
+
+**Bleeding** — rolled on a hit from a gnoll's claws. Its damage die was
+lowered from 2d8 to 2d6 to make room for the new effect. Bleeding can kill
+outright; the death is handled the same way as a monster kill, with no
+credited killer.
+
+**Food Poisoning** — the risk of eating raw fish; see
+[Food and satiation](../../database/food/).
