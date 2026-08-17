@@ -136,6 +136,7 @@ export const items = parseCsv('items').map((r) => {
     nutrition: num(r.nutrition),
     grillsInto: r.grillsInto || null,
     useDebuff: r.useDebuff || null,
+    untradeable: bool(r.untradeable),
   };
 });
 

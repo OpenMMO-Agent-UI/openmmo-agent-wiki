@@ -1,0 +1,131 @@
+---
+title: Player Trading
+description: The /trade command, the lock-then-confirm flow, its anti-scam design, soft reservation, and which items can never be traded.
+---
+
+Player trading shipped with protocol v30. It's a direct **player-to-player**
+exchange of items and gold, a completely separate system from haggling with
+an LLM merchant (see [Shops & economy](../../database/economy/)).
+
+## Starting a trade
+
+In chat:
+
+```
+/trade <name>
+```
+
+- The target gets an **invite toast**, using the same consent flow as
+  `/party` — a **30 second** TTL, up to **5** pending requests at once, and
+  a declined request stays around until its TTL expires. Anyone on your
+  **`/block`** list has their trade requests refused automatically.
+- **Proximity isn't just an entry condition — it's a standing one.** Moving
+  out of range during a trade cancels the whole session. This keeps trading
+  a visible, physical act and makes spamming invites from a distance
+  pointless.
+- Each player can only have **one trade session** open at a time.
+
+## Trading through a stall
+
+A merchant's [stall](../../database/economy/#merchant-stalls-lay_stall) isn't just
+set dressing anymore — **clicking someone else's laid-out stall opens a
+trade window with them directly**, no invite or accept step needed.
+
+- Distance is measured from the customer **to the stall**, not to the
+  owner — the owner just needs to be online, not standing behind the table.
+- If the stall's owner is an NPC, clicking it falls back to the normal
+  **priced shop** flow instead of a player trade.
+- If a customer leaves a stall trade unfinished, that same customer has to
+  wait **10 seconds** before reopening it at the same stall (stops a
+  cancel-and-reopen spam loop).
+- `/block` still applies at a stall — a blocked customer just sees "busy,"
+  without it revealing that they've been blocked.
+- Packing up the stall with `/pack_stall` ends any trade currently open
+  through it.
+
+## Lock, then confirm (the anti-scam core)
+
+The whole design exists to stop the classic swap-it-at-the-last-second
+scam — showing a legendary weapon, then pulling it for a wooden sword the
+instant the other side clicks accept.
+
+- Each side goes through two stages: **lock**, then **confirm**. Changing
+  the offer at any point **resets both sides' confirmations** — once
+  locked, the contents can't move, so "confirmed" is guaranteed to mean
+  "what you actually saw."
+- Every offer change bumps a **revision number**. A confirm packet must
+  carry the revision it saw, and the server refuses a confirm quoting a
+  stale one — this closes the race where a click sent before a reset
+  notice arrives could otherwise sneak through.
+- Offer state is sent as a **full snapshot on every change**, never a
+  delta, so losing a single packet can't leave the two sides' screens
+  permanently out of sync.
+
+### Enchant levels can't hide
+
+An item's enchant level (`+7 Iron Sword`) is written **directly into its
+name inside the trade window**, and listed again on the confirmation
+screen. A `+0` and a `+7` look identical in icon and model — if the enchant
+number only showed up in a tooltip, someone rushing to close a deal would
+rarely check it. That's the cleanest scam path there is, so the number is
+put in front of the player instead of relying on them to go looking for it.
+
+### Placing items and gold
+
+- **Partial stacks** are supported, through the same click-and-quantity
+  input used elsewhere — not drag-and-drop.
+- A stack's unit is item **plus enchant level**, so differently-enchanted
+  copies of the same item never get merged into one line.
+- Gold uses the same free-form input as tipping a busker's hat — `1g20s30c`,
+  `2s`, or a bare number read as copper (see
+  [Music & the bard](../music/)).
+
+### Closing the window
+
+- **Before locking**, Esc closes the trade window normally.
+- **After locking**, Esc does nothing — a trade that far along needs an
+  explicit cancel button, so a reflexive keypress can't blow up a
+  negotiation that's already serious.
+
+## What cancels a trade
+
+- Moving out of range, **logging out or disconnecting**, and **dying** all
+  cancel the session immediately.
+- **Combat does not cancel a trade** — otherwise landing one hit on the
+  other party would be enough to force a session closed, which is far too
+  easy to grief with.
+- If both sides just go quiet, the window stays open until someone
+  confirms or an **idle timeout** (on the order of minutes, refreshed by
+  any activity) closes it.
+
+## Items on the table stay in your bag (soft reservation)
+
+Placing an item in the offer doesn't move it out of your bag — it just gets
+flagged as **softly reserved**:
+
+- Selling, dropping, using, or equipping a reserved item is refused by the
+  server for as long as the trade is open.
+- Bulk, definition-keyed actions like "sell all" or "drop all" are refused
+  **entirely** while a trade is open, rather than trying to work around the
+  reserved units — the error tells you to finish the trade first.
+- A laid-out **busker's hat** counts as reserved too; pick it back up before
+  trading it away.
+- A completed trade moves everything **all at once, or not at all**: if
+  either side goes over their carry weight or their state changed after
+  confirming, the whole trade aborts and both sides are told why. A
+  successful trade is **written to the database immediately** — not on the
+  usual periodic save — and only reported as a success once that write
+  finishes. Both sides also get a private line in their chat log recording
+  what changed hands.
+
+## What can never be traded
+
+- **Equipped items can't be placed on the table** — unequip first.
+- The three starting weapons — the **Worn Iron Sword**, **Worn Torch**, and
+  **Worn Mandolin** — are explicitly marked untradeable, so free starting
+  gear can't be funneled between characters for gold.
+- There's **no minimum level restriction** — trading is fully open, the
+  same as trading with a merchant.
+- **NPCs never take part in a player trade** — the server refuses any trade
+  request aimed at one outright, which also closes off leaking an NPC's
+  issued gear (like guard Karl's spear) through the trade window.

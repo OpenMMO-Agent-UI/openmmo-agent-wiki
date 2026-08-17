@@ -19,10 +19,45 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v29 — client not yet released (current)
+## Protocol v30 — client not yet released (current)
 
-**Protocol bumped to v29** — the client is still waiting on a repackage, and
+**Protocol bumped to v30** — the client is still waiting on a repackage, and
 older clients will be refused once the live server switches over.
+
+**New systems**
+
+- **Player trading** (2026-08-16) — type `/trade <name>` in chat to send a
+  trade request to a nearby player, using the same consent flow as `/party`
+  (30 second TTL, up to 5 pending requests at once, anyone on `/block` is
+  refused automatically); moving out of range during a trade cancels it
+  outright. Each side has to **lock**, then **confirm** before anything
+  moves, and changing the offer resets both sides' confirmations; an
+  item's enchant level (like +7) is written directly into its name in the
+  trade window so it can't be swapped unnoticed. Items placed on the table
+  stay in your bag as soft-reserved — selling, dropping, using, or equipping
+  them is refused until the trade ends or is cancelled — and a completed
+  trade moves everything at once, written to the database immediately
+  before either side is told it succeeded. Losing range, logging out, or
+  dying cancels a trade; combat doesn't. Equipped items can't be placed on
+  the table, the three starting weapons (Worn Iron Sword, Worn Torch, Worn
+  Mandolin) can't be traded, and NPCs never take part. Full rules in
+  [Player trading](../guides/trade/).
+- **Merchant stalls became a trade entry point** (2026-08-16) — clicking
+  someone else's laid-out stall opens a trade window with them directly, no
+  invite needed; an NPC-owned stall still falls back to the normal shop
+  flow. See [Shops & economy](../database/economy/#merchant-stalls-lay_stall).
+
+**Fixes**
+
+- Fixed the sealed-cell escape teleporting a player straight through solid
+  rock in some dungeons — the check now reads the dungeon's actual wall
+  layout instead of the passability cache; on Orc Warrens depth 9, 15 of
+  its 26 sealed prop cells were being misread as open (2026-08-17).
+- Fixed the sealed-cell rescue teleport sometimes getting undone a moment
+  later by the next position correction, making the player look like they
+  were never freed (2026-08-17).
+
+## Protocol v29 — client not yet released
 
 **New systems**
 

@@ -31,6 +31,7 @@ export default defineConfig({
             { label: '音樂與吟遊詩人', translations: { ko: '음악과 바드' , en: 'Music & the bard' }, link: '/guides/music/' },
             { label: '好友系統', translations: { ko: '친구 시스템' , en: 'Friends' }, link: '/guides/friends/' },
             { label: '組隊系統', translations: { ko: '파티 시스템' , en: 'Party' }, link: '/guides/party/' },
+            { label: '玩家交易', translations: { ko: '플레이어 거래' , en: 'Player trading' }, link: '/guides/trade/' },
           ],
         },
         {
