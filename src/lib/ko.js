@@ -142,6 +142,8 @@ export const monsterNames = {
   gnoll: '놀',
   bugbear: '버그베어',
   ogre: '오우거',
+  troll: '트롤',
+  ogre_boss: '오우거 워로드',
 };
 
 export const debuffNames = {
@@ -152,6 +154,7 @@ export const debuffNames = {
 export const dungeonNames = {
   old_crypt: '오래된 납골당',
   orc_warrens: '오크 소굴',
+  ogre_stronghold: '오우거 요새',
 };
 
 export const categoryNames = {

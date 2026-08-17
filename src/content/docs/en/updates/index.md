@@ -49,6 +49,23 @@ older clients will be refused once the live server switches over.
   sets down a busker's hat before she opens a set; coins dropped in it go
   straight to her wallet, and her schedule transitions pack up the stall
   and hat together automatically. Full rules in [Music](../guides/music/).
+- **New monster: Troll** (2026-08-16) — level 9, Guard 16, claws (2d10
+  damage) with a 35% chance to trigger Bleeding on hit, flesh, spawns on
+  dungeon depths 10–20.
+- **New dungeon: Ogre Stronghold** (2026-08-17) — 15 floors, its entrance
+  in the plains northwest of Aldermark, farther out than Orc Warrens and
+  clear of the road. The boss, the Ogre Warlord, is a guaranteed Greatclub
+  drop; the chest guarantees Chain Mail, with Iron Gauntlets, Plate
+  Greaves and Plate Boots each at 37% and a Gold Ring at 10%.
+
+**Balance**
+
+- **Deep monster pool caps** (2026-08-17) — the Stalker, Orc, Female Orc
+  and Hobgoblin used to keep spawning all the way to dungeon depth 20. Each
+  is now capped — at depths 11, 13, 12 and 15 respectively — so the deep
+  monster pool tapers from eight species to four instead of dropping all at
+  once. Orc Warrens' own spawn table (10 floors) is unaffected; the change
+  only shows up on deeper floors such as Ogre Stronghold.
 
 **New items & assets**
 
@@ -61,6 +78,13 @@ older clients will be refused once the live server switches over.
 - Fixed the death animation index drifting out of sync with the animation
   name list — death played the attack clip instead of the dying clip, and
   the respawn dialog never opened (2026-08-16).
+- Fixed a player getting permanently stuck if a dungeon restart sealed them
+  inside a cell surrounded on all four sides by broken props or open doors
+  — a dungeon's broken-prop and door state only lives at runtime, so a
+  restart makes it solid again around whoever logged out standing there. A
+  blocked move now checks whether the cell is sealed on all sides and, if
+  so, relocates the player to an open neighbour before the correction is
+  applied (2026-08-17).
 
 **Client**
 

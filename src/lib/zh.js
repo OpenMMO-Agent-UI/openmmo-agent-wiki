@@ -142,6 +142,8 @@ export const monsterNames = {
   gnoll: '豺狼人',
   bugbear: '大鬼怪',
   ogre: '食人魔',
+  troll: '巨魔',
+  ogre_boss: '食人魔督軍',
 };
 
 export const debuffNames = {
@@ -152,6 +154,7 @@ export const debuffNames = {
 export const dungeonNames = {
   old_crypt: '古墓',
   orc_warrens: '獸人巢穴',
+  ogre_stronghold: '食人魔要塞',
 };
 
 export const categoryNames = {
