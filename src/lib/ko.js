@@ -11,6 +11,7 @@ export const itemNames = {
   spear: '창',
   morningstar: '모닝스타',
   greatclub: '그레이트클럽',
+  steel_longsword: '강철 장검',
   torch: '횃불',
   worn_torch: '타다 남은 횃불',
   wooden_shield: '나무 방패',
@@ -20,6 +21,7 @@ export const itemNames = {
   plate_helmet: '판금 투구',
   leather_armor: '가죽 갑옷',
   chain_mail: '체인 메일',
+  wool_cape: '양모 망토',
   breastplate: '흉갑',
   leather_pants: '가죽 바지',
   plate_greaves: '판금 그리브',
@@ -75,6 +77,7 @@ export const itemDescriptions = {
   spear: '나무 자루에 철촉을 단 창.',
   morningstar: '가죽으로 감싼 자루에 쇠못을 박은 철퇴. 무겁고 조잡하지만 날을 벼릴 필요가 없다.',
   greatclub: '쇠가시를 박은 참나무 몽둥이. 오우거만한 덩치가 아니면 제대로 휘두르기 힘들 만큼 무겁다.',
+  steel_longsword: '고리형 손잡이와 바퀴 모양 폼멜이 달린 긴 강철 검. 담금질된 강철은 무쇠로는 유지할 수 없는 날카로움을 지닌다.',
   torch: '흔들리는 나무 횃불.',
   worn_torch: '절반쯤 타버린 짧은 횃불. 상인은 사주지 않는다.',
   wooden_shield: '둥근 나무 방패.',
@@ -84,6 +87,7 @@ export const itemDescriptions = {
   plate_helmet: '얼굴 가리개가 달린, 머리 전체를 감싸는 강철 투구.',
   leather_armor: '가죽끈과 버클로 여민 부드러운 가죽 흉갑.',
   chain_mail: '금속 고리를 엮어 만든 갑옷.',
+  wool_cape: '어깨에 걸쳐 걸을 때마다 끌리는 묵직한 양모 망토.',
   breastplate: '광을 낸 강철 흉갑. 어지간한 공격은 튕겨낸다.',
   leather_pants: '튼튼한 가죽 각반.',
   plate_greaves: '다리를 보호하는 관절식 강철 그리브.',
@@ -190,6 +194,7 @@ export const slotNames = {
   neck: '목',
   ring: '반지',
   ear: '귀',
+  back: '등',
 };
 
 export const materialNames = {
@@ -197,6 +202,7 @@ export const materialNames = {
   wood: '나무',
   leather: '가죽',
   flesh: '살점',
+  cloth: '천',
 };
 
 export const behaviorNames = {

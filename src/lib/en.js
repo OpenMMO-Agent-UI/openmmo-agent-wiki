@@ -43,6 +43,7 @@ export const slotNames = {
   neck: 'Neck',
   ring: 'Ring',
   ear: 'Ear',
+  back: 'Back',
 };
 
 export const materialNames = {
@@ -50,6 +51,7 @@ export const materialNames = {
   wood: 'Wood',
   leather: 'Leather',
   flesh: 'Flesh',
+  cloth: 'Cloth',
 };
 
 export const behaviorNames = {

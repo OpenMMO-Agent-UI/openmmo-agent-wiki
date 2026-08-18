@@ -11,6 +11,7 @@ export const itemNames = {
   spear: '長槍',
   morningstar: '晨星錘',
   greatclub: '巨棍',
+  steel_longsword: '精鋼長劍',
   torch: '火把',
   worn_torch: '燒剩的火把',
   wooden_shield: '木盾',
@@ -20,6 +21,7 @@ export const itemNames = {
   plate_helmet: '板甲頭盔',
   leather_armor: '皮甲',
   chain_mail: '鎖子甲',
+  wool_cape: '羊毛斗篷',
   breastplate: '胸甲',
   leather_pants: '皮革長褲',
   plate_greaves: '板甲脛甲',
@@ -75,6 +77,7 @@ export const itemDescriptions = {
   spear: '木柄鐵尖的長槍。',
   morningstar: '皮革纏柄的釘刺鐵頭錘。笨重粗糙,但沒有刃口需要保養。',
   greatclub: '釘滿鐵刺的橡木棍棒。太重了,只有食人魔這種體型才揮得順手。',
+  steel_longsword: '以回火鋼鍛造的長劍,握柄纏有環紋,劍柄配有輪形配重。鋼製鋒刃比鐵劍更耐用持久。',
   torch: '搖曳的木製火把。',
   worn_torch: '燒到一半的短火把。商人不會收購。',
   wooden_shield: '圓形木盾。',
@@ -84,6 +87,7 @@ export const itemDescriptions = {
   plate_helmet: '附面罩、包覆整個頭部的鋼製密閉盔。',
   leather_armor: '以皮帶與扣環交叉固定的柔韌皮製胸甲。',
   chain_mail: '互扣金屬環構成的護甲。',
+  wool_cape: '厚重的羊毛斗篷,披在肩頭,行走時會隨風擺盪拖曳。',
   breastplate: '拋光鋼製胸甲,除了最精準的一擊之外都能擋下。',
   leather_pants: '耐用的皮革護腿。',
   plate_greaves: '護住雙腿的分節鋼製脛甲。',
@@ -190,6 +194,7 @@ export const slotNames = {
   neck: '頸部',
   ring: '戒指',
   ear: '耳環',
+  back: '背部',
 };
 
 export const materialNames = {
@@ -197,6 +202,7 @@ export const materialNames = {
   wood: '木製',
   leather: '皮革',
   flesh: '血肉',
+  cloth: '布料',
 };
 
 export const behaviorNames = {

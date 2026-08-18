@@ -122,6 +122,7 @@ export const items = parseCsv('items').map((r) => {
     material: r.material || null,
     basePrice: num(r.basePrice),
     guard: num(r.guard),
+    capeColor: r.capeColor || null,
     effects,
     chaBonus: chaBonus || null,
     hasSustenance: effects.includes('sustenance'),

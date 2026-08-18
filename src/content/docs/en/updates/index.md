@@ -19,10 +19,42 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v30 — client not yet released (current)
+## Protocol v31–v32 — client v0.29.0 (current)
 
-**Protocol bumped to v30** — the client is still waiting on a repackage, and
-older clients will be refused once the live server switches over.
+**The live server now requires v32.** Older clients are refused.
+
+**New systems**
+
+- **Character select shows your geared character** (v32, 2026-08-18) — the
+  select screen no longer shows a bare character; it now renders whatever
+  you were wearing when you logged out — weapon, off-hand, cape, and a lit,
+  glowing torch. Drag a character to spin it; drag the floor to spin
+  whichever one is currently selected.
+- **Capes are visible to everyone now** (v31, 2026-08-18) — wearing the Wool
+  Cape lets nearby players see it sway as you walk, turn, and catch the wind
+  — a live verlet-cloth simulation, no extra art needed. `/cape` and
+  `/cape_depth` stay around for test-fitting a cape with nothing equipped.
+
+**New items & assets**
+
+- **Wool Cape** (2026-08-18) — a new back-slot item, 4,000c, +1 Guard, cloth
+  material. Drops from Ogre Stronghold (T3) chests at a 37% roll.
+- **Steel Longsword enters the drop pool** (2026-08-17) — steel_longsword
+  (1d10, 16,000c) existed in the item data with no way to obtain it; it's
+  now the Ogre Warlord's confirmed drop. The regular Ogre still carries a
+  Greatclub.
+
+**Balance**
+
+- **Ambient monster density rework** (2026-08-18) — the per-player monster
+  cap dropped from 30 to **4**, and the server now offers one monster type
+  per tick instead of every eligible type at once, so the field fills in
+  over roughly half a minute. What used to read as a dozen monsters
+  standing around now settles at two or three. Dungeon spawn rules are
+  unaffected — this only thins out the open field now that dungeons carry
+  the dense fights.
+
+## Protocol v30 — client not yet released
 
 **New systems**
 
