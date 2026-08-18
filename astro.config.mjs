@@ -32,6 +32,7 @@ export default defineConfig({
             { label: '好友系統', translations: { ko: '친구 시스템' , en: 'Friends' }, link: '/guides/friends/' },
             { label: '組隊系統', translations: { ko: '파티 시스템' , en: 'Party' }, link: '/guides/party/' },
             { label: '玩家交易', translations: { ko: '플레이어 거래' , en: 'Player trading' }, link: '/guides/trade/' },
+            { label: '斗篷染色與印花', translations: { ko: '망토 염색과 프린트' , en: 'Cape dyeing & printing' }, link: '/guides/cape/' },
           ],
         },
         {

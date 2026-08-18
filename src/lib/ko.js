@@ -22,6 +22,8 @@ export const itemNames = {
   leather_armor: '가죽 갑옷',
   chain_mail: '체인 메일',
   wool_cape: '양모 망토',
+  cape_dye: '망토 염료',
+  cape_transfer_kit: '망토 전사 키트',
   breastplate: '흉갑',
   leather_pants: '가죽 바지',
   plate_greaves: '판금 그리브',
@@ -88,6 +90,8 @@ export const itemDescriptions = {
   leather_armor: '가죽끈과 버클로 여민 부드러운 가죽 흉갑.',
   chain_mail: '금속 고리를 엮어 만든 갑옷.',
   wool_cape: '어깨에 걸쳐 걸을 때마다 끌리는 묵직한 양모 망토.',
+  cape_dye: '마개로 막힌 안료 병. 망토를 착용한 상태에서 사용하면 원하는 색으로 천을 물들인다.',
+  cape_transfer_kit: '왁스를 먹인 천과 정착액 한 통. 망토를 착용한 상태에서 사용하면 원하는 그림을 천에 인쇄한다.',
   breastplate: '광을 낸 강철 흉갑. 어지간한 공격은 튕겨낸다.',
   leather_pants: '튼튼한 가죽 각반.',
   plate_greaves: '다리를 보호하는 관절식 강철 그리브.',
@@ -180,6 +184,8 @@ export const categoryNames = {
   fishing_rod: '낚시 도구',
   campfire_kit: '모닥불',
   tip_hat: '버스킹 모자',
+  cape_dye: '망토 염료',
+  cape_texture: '망토 프린트',
 };
 
 export const slotNames = {

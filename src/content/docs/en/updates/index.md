@@ -19,6 +19,40 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
+## Protocol v33–v34 — client not yet released
+
+**New systems**
+
+- **Cape dyeing** (v33, 2026-08-18) — using a Cape Dye bottle dyes your
+  equipped cape any colour you pick, with a live preview and nothing spent
+  until you confirm; you can re-dye as many times as you like. The result
+  rides the cape's item instance, and nearby players and the character
+  select screen see the same colour you do. Full rules in
+  [Cape Dyeing & Printing](../guides/cape/).
+- **Cape printing** (v34, 2026-08-18) — using a Cape Transfer Kit uploads a
+  picture that the server re-encodes and content-hashes for dedup, then
+  prints onto your cape over the dyed colour, showing through wherever the
+  print is transparent. Right-click a player to report their print; an admin
+  blocking a hash reverts every cape using it back to its dye colour
+  immediately. Full rules in [Cape Dyeing & Printing](../guides/cape/).
+
+**New items & assets**
+
+- **Cape Dye** (2026-08-18) — 800c, sold by Rica, a consumable.
+- **Cape Transfer Kit** (2026-08-18) — 5,000c, sold by Rica, a consumable.
+
+**Client**
+
+- **Character select preview re-equips on refresh** (2026-08-18) — the
+  select screen now re-equips gear when the character list refreshes, so
+  items dropped mid-session no longer linger on the preview.
+- **Per-class cape collar tuning** (2026-08-18) — the collar bias and fade
+  were retuned per model for the barbarians, knight, rogues, and valkyrie so
+  the collar hugs the shoulders more closely.
+- **Minimap and always-run now default on** (2026-08-18) — both settings
+  used to default off; they now default on, and can still be turned off in
+  settings, remembered per browser.
+
 ## Protocol v31–v32 — client v0.29.0 (current)
 
 **The live server now requires v32.** Older clients are refused.

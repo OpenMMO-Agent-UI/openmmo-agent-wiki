@@ -22,6 +22,8 @@ export const itemNames = {
   leather_armor: '皮甲',
   chain_mail: '鎖子甲',
   wool_cape: '羊毛斗篷',
+  cape_dye: '斗篷染料',
+  cape_transfer_kit: '斗篷轉印組',
   breastplate: '胸甲',
   leather_pants: '皮革長褲',
   plate_greaves: '板甲脛甲',
@@ -88,6 +90,8 @@ export const itemDescriptions = {
   leather_armor: '以皮帶與扣環交叉固定的柔韌皮製胸甲。',
   chain_mail: '互扣金屬環構成的護甲。',
   wool_cape: '厚重的羊毛斗篷,披在肩頭,行走時會隨風擺盪拖曳。',
+  cape_dye: '一瓶塞著瓶塞的顏料。裝備斗篷時使用,可以把布料染成你選的顏色。',
+  cape_transfer_kit: '一張蠟紙與一罐定色劑。裝備斗篷時使用,可以把自己的圖片印上布料。',
   breastplate: '拋光鋼製胸甲,除了最精準的一擊之外都能擋下。',
   leather_pants: '耐用的皮革護腿。',
   plate_greaves: '護住雙腿的分節鋼製脛甲。',
@@ -180,6 +184,8 @@ export const categoryNames = {
   fishing_rod: '釣具',
   campfire_kit: '營火',
   tip_hat: '賣藝帽',
+  cape_dye: '斗篷染料',
+  cape_texture: '斗篷印花',
 };
 
 export const slotNames = {

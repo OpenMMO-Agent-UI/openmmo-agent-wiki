@@ -1,0 +1,81 @@
+---
+title: Cape Dyeing & Printing
+description: How the Cape Dye bottle and Cape Transfer Kit work, how the result rides the item instance, and the image moderation flow.
+---
+
+Dyeing (protocol v33) and printing (protocol v34) build on the
+[Wool Cape](../../database/items/#armor). Both are **consumables** sold by
+Rica, and both require you to already have **a cape equipped**.
+
+| Item | Category | Shop price | Effect |
+|---|---|---:|---|
+| Cape Dye | `cape_dye` | 800c | Dyes your equipped cape any colour |
+| Cape Transfer Kit | `cape_texture` | 5,000c | Prints an image you upload onto your equipped cape |
+
+Both results **ride the cape's item instance** — same as an enchant level —
+so a drop, a trade, or a sell-then-buyback (see [Shops & economy](../../database/economy/))
+never loses it, and nearby players and the character select screen see the
+same result you do.
+
+## Dyeing
+
+Using a dye bottle from your bag first opens a **colour picker**; nothing is
+consumed yet:
+
+- While the picker is open your own cape **previews the colour live**, but
+  only on your own screen.
+- Confirming actually sends the change and spends one dye bottle. Closing the
+  picker instead does nothing, and the cape reverts to its previous colour.
+- The colour is a **free pick**, not a fixed palette — a few preset swatches
+  sit alongside it for convenience.
+- You can **re-dye as many times as you like**; each dye overwrites the
+  previous colour and costs one bottle.
+
+The following are rejected outright, without consuming the item:
+
+- **Incapacitated** (downed) — you cannot use it.
+- **No cape equipped** — the target is only the item with dye properties in
+  the back slot; a cape sitting in your bag doesn't count.
+
+## Printing
+
+The transfer kit also requires a cape to be equipped. Its flow adds an
+upload step on top of dyeing:
+
+1. Using the kit opens an **image picker**.
+2. The chosen picture is first cropped to a square locally — centred on
+   height, with any edge over 512px scaled down to 512 (small pictures are
+   not scaled up) — then uploaded.
+3. The server **re-decodes and re-encodes** it as PNG, which also strips
+   anything disguised as an image, so the final result isn't guaranteed to
+   be byte-identical to your original file. Upload size is capped at **2 MB**.
+4. The server names the file by the picture's **content hash**, so the same
+   picture uploaded by many players is stored once. Once the hash is
+   confirmed valid, the kit is consumed and the print is applied to the cape.
+
+The print sits over the dye: **transparent areas show the dyed colour
+through**, and only the opaque parts cover it — so you can drop an emblem on
+a cape while the base colour still comes from the dye. The lining (the side
+facing your body) always shows the dye colour only; it never mirrors the print.
+
+Uploads are rate-limited to **10 per 10 minutes** per account.
+
+### Image moderation
+
+An uploaded picture is visible to everyone nearby, so reporting and blocking
+are built in from the start:
+
+- **Right-click a player** to "Report cape" and flag whatever print they're
+  currently wearing.
+- An admin can **block** a hash — once blocked, the server stops serving that
+  picture immediately, and every cape currently using that hash **reverts to
+  its dye colour at once**, with no need to relog.
+- Because the filename is the content hash, a blocked picture **cannot be
+  re-uploaded to dodge the block** — the hash never changes.
+- Blocking a cape does not refund the transfer kit that was spent on it.
+
+## Capes on the ground
+
+Dye and print only change how the procedural cloth renders while **worn**; a
+dropped cape uses a fixed model instead. The colour data still lives on the
+item instance, so re-equipping a picked-up cape restores it.

@@ -157,7 +157,7 @@ export const byId = (a, b) => a.id.localeCompare(b.id);
     { key: 'source', label: '取得方式' },
   ]}
   rows={items
-    .filter((i) => ['healing_potion', 'return_scroll', 'enchant_scroll', 'party_summon_scroll', 'fishing_rod', 'campfire_kit', 'tip_hat', 'furniture', 'currency'].includes(i.category))
+    .filter((i) => ['healing_potion', 'return_scroll', 'enchant_scroll', 'party_summon_scroll', 'fishing_rod', 'campfire_kit', 'tip_hat', 'furniture', 'currency', 'cape_dye', 'cape_texture'].includes(i.category))
     .sort(byId)
     .map((i) => ({
       name: zh(i),

@@ -29,6 +29,8 @@ export const categoryNames = {
   fishing_rod: 'Fishing gear',
   campfire_kit: 'Campfire',
   tip_hat: 'Tip hat',
+  cape_dye: 'Cape dye',
+  cape_texture: 'Cape print',
 };
 
 export const slotNames = {
