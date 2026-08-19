@@ -35,6 +35,20 @@ whether you need a new client.
   print is transparent. Right-click a player to report their print; an admin
   blocking a hash reverts every cape using it back to its dye colour
   immediately. Full rules in [Cape Dyeing & Printing](../guides/cape/).
+- **Opening a chest sends you back to town** (2026-08-19) — actually opening
+  a treasure chest (re-clicking an emptied one doesn't count) starts a
+  60-second timer; if you're still in the dungeon when it fires you're
+  teleported to the spawn point with a warning message first. Logging out
+  during that window banks the return immediately. The point is to stop
+  parking a character on the deepest floor and only logging in each refill
+  to loot it.
+
+**Balance**
+
+- **Ambient monster cap raised back up** (2026-08-19) — the per-player
+  monster cap went from **4** back to **6**; on screen that reads as about
+  four alive at once. The one-type-per-tick pacing and the dungeons' spawn
+  rules are unchanged.
 
 **New items & assets**
 
