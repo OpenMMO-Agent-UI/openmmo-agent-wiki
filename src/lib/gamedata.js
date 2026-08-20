@@ -138,6 +138,7 @@ export const items = parseCsv('items').map((r) => {
     grillsInto: r.grillsInto || null,
     useDebuff: r.useDebuff || null,
     untradeable: bool(r.untradeable),
+    reviveHpPercent: num(r.reviveHpPercent),
   };
 });
 

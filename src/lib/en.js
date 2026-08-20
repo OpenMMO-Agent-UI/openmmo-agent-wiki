@@ -31,6 +31,7 @@ export const categoryNames = {
   tip_hat: 'Tip hat',
   cape_dye: 'Cape dye',
   cape_texture: 'Cape print',
+  phoenix_talisman: 'Phoenix talisman',
 };
 
 export const slotNames = {

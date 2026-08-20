@@ -43,6 +43,7 @@ export const itemNames = {
   scroll_of_enchant_weapon: '武器強化捲軸',
   scroll_of_enchant_armor: '防具強化捲軸',
   scroll_of_party_summon: '隊伍召集捲軸',
+  phoenix_talisman: '鳳凰護符',
   table: '桌子',
   mandolin: '曼陀林',
   worn_mandolin: '磨損的曼陀林',
@@ -111,6 +112,7 @@ export const itemDescriptions = {
   scroll_of_enchant_weapon: '能磨利手中武器的符文 —— 但貪心地反覆誦讀可能會毀掉它。',
   scroll_of_enchant_armor: '能強化身上一件防具的符文 —— 但貪心地反覆誦讀可能會毀掉它。',
   scroll_of_party_summon: '誦讀符文可召集整支隊伍到身邊 —— 每個人都可以選擇響應或無視。',
+  phoenix_talisman: '刻著烈焰鳳凰的石板。隨身攜帶,倒下時鳳凰便會甦醒 —— 你將在原地重新站起,護符隨即化為塵埃。',
   table: '堅固的木桌。',
   mandolin: '圓背鑲金琴格的曼陀林。用 /play_music 即可彈奏一曲。',
   worn_mandolin: '旅途中磨損、音色依舊純正的曼陀林。用 /play_music 即可彈奏一曲。商人不會收購。',
@@ -186,6 +188,7 @@ export const categoryNames = {
   tip_hat: '賣藝帽',
   cape_dye: '斗篷染料',
   cape_texture: '斗篷印花',
+  phoenix_talisman: '鳳凰護符',
 };
 
 export const slotNames = {

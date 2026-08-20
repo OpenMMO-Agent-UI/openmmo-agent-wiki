@@ -54,6 +54,29 @@ whether you need a new client.
 
 - **Cape Dye** (2026-08-18) — 800c, sold by Rica, a consumable.
 - **Cape Transfer Kit** (2026-08-18) — 5,000c, sold by Rica, a consumable.
+- **Phoenix Talisman** (2026-08-20) — 5,000c, sold by Rica, and also a 0.2%
+  world drop. The death dialog gains a use option that revives you in place,
+  on the same floor, restoring 70% of max HP and spending one talisman; the
+  death XP penalty already applied is unaffected, and there's no
+  invulnerability window afterward. Full rules in
+  [Combat](../guides/combat/).
+
+**Fixes**
+
+- Dungeon corridors no longer generate hugging a room wall, which used to
+  tear the wall open into absurdly wide doors (up to 17 cells); a floor that
+  fails the check gets redrawn within the existing 30-attempt retry loop,
+  same as other generation rules (2026-08-20).
+- Dungeon floors now change only via a stairwell shaft, validated against
+  your actual movement path server-side; previously reporting a height
+  within tolerance could make the server judge you against the wrong
+  floor's grid — usually uncarved rock — letting you walk through a boss
+  door and every wall on the floor you actually stood on (2026-08-19).
+- House storeys are now determined by the server from your stairwell path
+  instead of trusting the height your client reports; previously reporting
+  a height matching the storey above let the server check that storey's
+  (usually wall-free) rooms, letting you walk through every wall of the
+  storey you were actually standing on (2026-08-19).
 
 **Client**
 
@@ -63,6 +86,16 @@ whether you need a new client.
 - **Per-class cape collar tuning** (2026-08-18) — the collar bias and fade
   were retuned per model for the barbarians, knight, rogues, and valkyrie so
   the collar hugs the shoulders more closely.
+- **Level badge on the HUD** (2026-08-19) — a 50px level badge sits by the
+  hunger indicator in the top-left, its border a ring gauging progress to
+  the next level, with a brief glow on XP gain and a reset-refill sweep on
+  level-up. Click it to toggle the character panel; hover for exact XP.
+- **Chest-open sound** (2026-08-19) — opening a dungeon chest now plays a
+  lid-swing sound and a coin-spill sound.
+- **Crate-break sound** (2026-08-19) — smashing a dungeon barrel or crate
+  now plays a shatter sound.
+- **Dropped shields lie face-up** (2026-08-19) — instead of standing
+  half-buried in the ground.
 - **Minimap and always-run now default on** (2026-08-18) — both settings
   used to default off; they now default on, and can still be turned off in
   settings, remembered per browser.

@@ -43,6 +43,7 @@ export const itemNames = {
   scroll_of_enchant_weapon: '무기 강화 주문서',
   scroll_of_enchant_armor: '방어구 강화 주문서',
   scroll_of_party_summon: '파티 소환 주문서',
+  phoenix_talisman: '불사조 부적',
   table: '탁자',
   mandolin: '만돌린',
   worn_mandolin: '낡은 만돌린',
@@ -111,6 +112,7 @@ export const itemDescriptions = {
   scroll_of_enchant_weapon: '손에 든 무기의 날을 벼리는 룬 — 욕심내어 거듭 읽으면 부서질 수 있다.',
   scroll_of_enchant_armor: '착용한 방어구 한 점을 단단하게 만드는 룬 — 욕심내어 거듭 읽으면 부서질 수 있다.',
   scroll_of_party_summon: '룬을 읽으면 파티 전원을 곁으로 부른다 — 각자 응하거나 무시할 수 있다.',
+  phoenix_talisman: '태양빛 불사조가 새겨진 석판. 지니고 있으면 쓰러졌을 때 새가 깨어난다 — 쓰러진 자리에서 다시 일어나고, 부적은 이내 먼지로 부서진다.',
   table: '튼튼한 나무 탁자.',
   mandolin: '금박 프렛이 박힌 둥근 몸통의 만돌린. /play_music으로 한 곡 연주할 수 있다.',
   worn_mandolin: '길에서 낡았지만 소리는 여전히 참된 만돌린. /play_music으로 한 곡 연주할 수 있다. 상인은 사주지 않는다.',
@@ -186,6 +188,7 @@ export const categoryNames = {
   tip_hat: '버스킹 모자',
   cape_dye: '망토 염료',
   cape_texture: '망토 프린트',
+  phoenix_talisman: '불사조 부적',
 };
 
 export const slotNames = {
