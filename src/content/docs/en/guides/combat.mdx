@@ -28,8 +28,28 @@ Note it's **strictly greater**. Rolling exactly the target's Guard is a
 - Player = `floor(level / 2)` + your **STR modifier** + weapon enchant `+N`
 - Monster = **level** (not halved) — steeper than the player curve, because
   player Guard climbs from gear rather than level. A CSV `attackBonus` in
-  `monsters.csv` overrides the default, and dungeon depth scaling stacks on
-  top of whichever value applies.
+  `monsters.csv` overrides the default, and the **place attack bonus** below
+  stacks on top of whichever value applies.
+
+### Place attack bonus
+
+Player Guard has no ceiling — gear and enchants can push it arbitrarily
+high — but monster attack bonus is capped at level 20, and a 28-point gap
+can't fit inside a single d20's window. So difficulty isn't scaled through
+the monster itself, it's scaled through **where you fight**:
+
+```
+Dungeons: bonus = max(0, depth − 5) × 3
+Surface:  bonus = max(0, distance from town − 300m) / 20m
+```
+
+- Monster level, HP, damage, and XP are all untouched — only the attack
+  bonus changes.
+- **Safe zones keep their existing difficulty**: Old Crypt's first 5 floors
+  and the 300m ring around town both sit at bonus 0.
+- Deep dungeon floors and remote wilderness get noticeably harder as a
+  result — enchant scrolls (see [Enchanting](../enchant/)) go from a nice
+  extra to the price of admission out there.
 
 ### Exploding d20
 

@@ -211,6 +211,8 @@ export const npcs = parseCsv('npcs').map((r) => ({
 export const worldDrops = parseCsv('world_drop').map((r) => ({
   id: r.id,
   chance: num(r.chance),
+  lowLevelChance: num(r.lowLevelChance),
+  lowLevelMaxLevel: num(r.lowLevelMaxLevel),
 }));
 
 export const mapLabels = parseCsv('map_labels').map((r) => ({

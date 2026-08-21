@@ -5,6 +5,7 @@
 export const itemNames = {
   iron_sword: '鐵劍',
   worn_iron_sword: '磨損的鐵劍',
+  notched_iron_sword: '缺口鐵劍',
   dagger: '匕首',
   goblin_sword: '哥布林短劍',
   small_sword: '小劍',
@@ -42,6 +43,7 @@ export const itemNames = {
   scroll_of_return: '回城捲軸',
   scroll_of_enchant_weapon: '武器強化捲軸',
   scroll_of_enchant_armor: '防具強化捲軸',
+  whetstone_oil: '磨刀油',
   scroll_of_party_summon: '隊伍召集捲軸',
   phoenix_talisman: '鳳凰護符',
   table: '桌子',
@@ -74,6 +76,7 @@ export const itemNames = {
 export const itemDescriptions = {
   iron_sword: '堅固的鐵製長劍。',
   worn_iron_sword: '用了很久的鐵製長劍。商人不會收購。',
+  notched_iron_sword: '半獸人配發的制式武器 —— 刃口有缺角,也沒有鑄造印記。砍起來一樣,但賣價低很多。',
   dagger: '小巧但鋒利的匕首。',
   goblin_sword: '哥布林與獸人愛用的粗製短刃。',
   small_sword: '為小型戰士打造的緊湊粗刃。',
@@ -111,6 +114,7 @@ export const itemDescriptions = {
   scroll_of_return: '誦讀神祕符文,在一道光芒中回到城鎮。',
   scroll_of_enchant_weapon: '能磨利手中武器的符文 —— 但貪心地反覆誦讀可能會毀掉它。',
   scroll_of_enchant_armor: '能強化身上一件防具的符文 —— 但貪心地反覆誦讀可能會毀掉它。',
+  whetstone_oil: '一瓶用來養磨刀石的濃稠琥珀色油 —— 強化符文只吃得進上過油的裝備,誦讀一次就會耗掉一瓶。',
   scroll_of_party_summon: '誦讀符文可召集整支隊伍到身邊 —— 每個人都可以選擇響應或無視。',
   phoenix_talisman: '刻著烈焰鳳凰的石板。隨身攜帶,倒下時鳳凰便會甦醒 —— 你將在原地重新站起,護符隨即化為塵埃。',
   table: '堅固的木桌。',
@@ -189,6 +193,7 @@ export const categoryNames = {
   cape_dye: '斗篷染料',
   cape_texture: '斗篷印花',
   phoenix_talisman: '鳳凰護符',
+  reagent: '藥劑材料',
 };
 
 export const slotNames = {

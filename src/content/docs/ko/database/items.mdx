@@ -158,7 +158,7 @@ export const byId = (a, b) => a.id.localeCompare(b.id);
     { key: 'source', label: '획득처' },
   ]}
   rows={items
-    .filter((i) => ['healing_potion', 'return_scroll', 'enchant_scroll', 'party_summon_scroll', 'fishing_rod', 'campfire_kit', 'tip_hat', 'furniture', 'currency', 'cape_dye', 'cape_texture', 'phoenix_talisman'].includes(i.category))
+    .filter((i) => ['healing_potion', 'return_scroll', 'enchant_scroll', 'party_summon_scroll', 'fishing_rod', 'campfire_kit', 'tip_hat', 'furniture', 'currency', 'cape_dye', 'cape_texture', 'phoenix_talisman', 'reagent'].includes(i.category))
     .sort(byId)
     .map((i) => ({
       name: ko(i), en: i.name,

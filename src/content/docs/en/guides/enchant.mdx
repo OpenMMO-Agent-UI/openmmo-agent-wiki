@@ -11,11 +11,28 @@ There are two scrolls:
 
 | Scroll | Target | +N effect | Category | Price | World drop rate |
 |---|---|---|---|---:|---:|
-| Scroll of Enchant Weapon | Your equipped **main-hand weapon** | +N to hit and damage rolls | `enchant_scroll` | 1,200c | 1% |
-| Scroll of Enchant Armor | A **random** piece of worn armor | +N to Guard | `enchant_armor_scroll` | 1,200c | 1% |
+| Scroll of Enchant Weapon | Your equipped **main-hand weapon** | +N to hit and damage rolls | `enchant_scroll` | 1,200c | 1% (0.5% on kills at effective level 8 or below) |
+| Scroll of Enchant Armor | A **random** piece of worn armor | +N to Guard | `enchant_armor_scroll` | 1,200c | 1% (0.5% on kills at effective level 8 or below) |
 
 Merchants **don't sell** either scroll — the only source is a world drop, and
-you can sell one back if you find one you don't want.
+you can sell one back if you find one you don't want. Effective level is the
+monster's level after dungeon-depth scaling, so a low-level monster on a deep
+floor doesn't count as low-level; chests and barrels/crates have no level and
+drop at the full rate.
+
+## Whetstone Oil
+
+Reading either scroll now also spends **one bottle of Whetstone Oil** —
+without one the read is refused outright and the scroll isn't consumed.
+
+| Item | Detail |
+|---|---|
+| Item | `whetstone_oil` (category `reagent`, stackable, weight 0.2) |
+| Buy | Sold by Rica for 1g (10,000c); sells back at 40% = 4,000c |
+| Spent | 1 bottle per read — whether it succeeds or destroys the item |
+
+The oil has no use on its own — its only purpose is enchanting. It's purely
+an extra gold sink on the system and doesn't touch any of the odds above.
 
 ## Reading rules
 
@@ -24,8 +41,14 @@ Common to both:
 - You can't read while **incapacitated** (downed) — the scroll isn't consumed.
 - No valid target (no weapon equipped / no armor worn) also gets rejected
   without consuming the scroll.
-- If there's a target, **the scroll is consumed whether the roll succeeds or
-  destroys the item.**
+- **No Whetstone Oil** also gets rejected, consuming neither the scroll nor
+  the oil — this check comes after the target check, right before anything
+  is spent.
+- You can't read while a trade window is open: the oil is drawn by item
+  definition, not by instance, so it can't be reconciled against quantities
+  reserved in the trade.
+- If there's a target and oil to spend, **the scroll and the oil are both
+  consumed whether the roll succeeds or destroys the item.**
 - The odds roll happens server-side outside the lock; the result comes back
   with an updated inventory snapshot and Guard together.
 

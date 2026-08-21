@@ -42,6 +42,17 @@ whether you need a new client.
   during that window banks the return immediately. The point is to stop
   parking a character on the deepest floor and only logging in each refill
   to loot it.
+- **Enchanting now needs Whetstone Oil** (2026-08-20) — reading an enchant
+  scroll now also spends one bottle of Whetstone Oil; without one the read
+  is refused and the scroll isn't consumed. The oil has no other use — it's
+  purely a gold sink on enchanting. Full rules in
+  [Enchanting](../guides/enchant/).
+- **A merchant's deal is now said out loud, and merchants may offer one
+  unasked** (2026-08-21) — once a haggled price is granted, the merchant
+  now announces it in a chat message too (the discount or markup, what it's
+  for, how long it lasts) instead of showing only inside the trade window;
+  merchants will also occasionally lead with a discount of their own,
+  without you haggling first.
 
 **Balance**
 
@@ -49,6 +60,27 @@ whether you need a new client.
   monster cap went from **4** back to **6**; on screen that reads as about
   four alive at once. The one-type-per-tick pacing and the dungeons' spawn
   rules are unchanged.
+- **Hit chance now follows where you fight, not just what you fight**
+  (2026-08-20) — monsters gain an extra to-hit bonus based on dungeon depth
+  or distance from town (dungeons: +3 per floor past depth 5; the surface:
+  +1 per 20m past 300m from town), so deep floors and remote wilderness get
+  meaningfully more dangerous while the 300m ring around town and Old
+  Crypt's first 5 floors keep their current difficulty. Monster level, HP,
+  damage, and XP are all unchanged. Full rules in
+  [Combat](../guides/combat/).
+- **Ambient monster variety now follows distance from town, not player
+  level** (2026-08-20) — each level's monster type now needs another 70m
+  from town to appear (Goblin 70m, Orc 210m, Hobgoblin 280m, Gnoll 350m,
+  Bugbear 420m, Ogre 490m, Troll 560m), instead of unlocking everywhere the
+  moment you reach the level. The area right around town now stays low-level
+  monsters with correspondingly low XP and drops.
+- **Hobgoblins now carry a Notched Iron Sword** (2026-08-20) — their old
+  drop, the Iron Sword, is replaced by the new Notched Iron Sword: same 1d8
+  damage, but its sell price drops from 10,000c to 2,500c.
+- **Enchant scroll world drops halved on low-level kills** (2026-08-20) —
+  for kills at effective level (depth-adjusted) 8 or below, both enchant
+  scrolls' world drop chance drops from 1% to 0.5%; chests and barrels/crates
+  have no level and are unaffected.
 
 **New items & assets**
 
@@ -60,6 +92,11 @@ whether you need a new client.
   death XP penalty already applied is unaffected, and there's no
   invulnerability window afterward. Full rules in
   [Combat](../guides/combat/).
+- **Whetstone Oil** (2026-08-20) — 1g, sold by Rica, a consumable. Reading an
+  enchant scroll spends one bottle alongside the scroll; see "Enchanting now
+  needs Whetstone Oil" above.
+- **Notched Iron Sword** (2026-08-20) — the sword Hobgoblins carry, 1d8,
+  sells for 2,500c, not sold by merchants.
 
 **Fixes**
 
@@ -77,6 +114,18 @@ whether you need a new client.
   a height matching the storey above let the server check that storey's
   (usually wall-free) rooms, letting you walk through every wall of the
   storey you were actually standing on (2026-08-19).
+- Fixed dungeon monsters sometimes walking partway, vanishing, and
+  restarting from where they began — caused by two players entering the
+  same floor and both adopting the same idle monster, where ownership
+  didn't hand off cleanly; the losing client kept simulating the monster
+  locally while the server kept snapping it back to its real position
+  (2026-08-21).
+- A build whose dungeon-layout generator no longer matches the server's is
+  now refused at connect, the same way a protocol mismatch is — this
+  usually means a stale client build. A connection stuck correcting against
+  the same wall more than 10 times in a row is now disconnected by the
+  server, and the web client reloads itself once to pick up a new build
+  (2026-08-20).
 
 **Client**
 
@@ -99,6 +148,9 @@ whether you need a new client.
 - **Minimap and always-run now default on** (2026-08-18) — both settings
   used to default off; they now default on, and can still be turned off in
   settings, remembered per browser.
+- **Hovering a dropped item shows its name** (2026-08-21) — styled like the
+  player nametag, a notch smaller, with the enchant level folded into the
+  name so +0 and +7 don't look alike at a glance.
 
 ## Protocol v31–v32 — client v0.29.0 (current)
 

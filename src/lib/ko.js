@@ -5,6 +5,7 @@
 export const itemNames = {
   iron_sword: '철검',
   worn_iron_sword: '낡은 철검',
+  notched_iron_sword: '이가 나간 철검',
   dagger: '단검',
   goblin_sword: '고블린 검',
   small_sword: '작은 검',
@@ -42,6 +43,7 @@ export const itemNames = {
   scroll_of_return: '귀환 주문서',
   scroll_of_enchant_weapon: '무기 강화 주문서',
   scroll_of_enchant_armor: '방어구 강화 주문서',
+  whetstone_oil: '숫돌 기름',
   scroll_of_party_summon: '파티 소환 주문서',
   phoenix_talisman: '불사조 부적',
   table: '탁자',
@@ -74,6 +76,7 @@ export const itemNames = {
 export const itemDescriptions = {
   iron_sword: '튼튼한 철제 장검.',
   worn_iron_sword: '오래 쓴 철제 장검. 상인은 사주지 않는다.',
+  notched_iron_sword: '홉고블린이 지급받는 제식 무기 — 날에 이가 나가 있고 제작자 표식도 없다. 베는 맛은 같지만 값은 훨씬 낮다.',
   dagger: '작지만 날카로운 단검.',
   goblin_sword: '고블린과 오크가 즐겨 쓰는 조잡한 단검.',
   small_sword: '작은 체구의 전사를 위한 짧은 조잡한 검.',
@@ -111,6 +114,7 @@ export const itemDescriptions = {
   scroll_of_return: '룬을 읽으면 빛과 함께 마을로 돌아간다.',
   scroll_of_enchant_weapon: '손에 든 무기의 날을 벼리는 룬 — 욕심내어 거듭 읽으면 부서질 수 있다.',
   scroll_of_enchant_armor: '착용한 방어구 한 점을 단단하게 만드는 룬 — 욕심내어 거듭 읽으면 부서질 수 있다.',
+  whetstone_oil: '숫돌에 바르는 진한 호박색 기름 — 강화 룬은 기름칠한 장비에만 스며들며, 한 번 읽을 때마다 한 병이 소모된다.',
   scroll_of_party_summon: '룬을 읽으면 파티 전원을 곁으로 부른다 — 각자 응하거나 무시할 수 있다.',
   phoenix_talisman: '태양빛 불사조가 새겨진 석판. 지니고 있으면 쓰러졌을 때 새가 깨어난다 — 쓰러진 자리에서 다시 일어나고, 부적은 이내 먼지로 부서진다.',
   table: '튼튼한 나무 탁자.',
@@ -189,6 +193,7 @@ export const categoryNames = {
   cape_dye: '망토 염료',
   cape_texture: '망토 프린트',
   phoenix_talisman: '불사조 부적',
+  reagent: '연금 재료',
 };
 
 export const slotNames = {

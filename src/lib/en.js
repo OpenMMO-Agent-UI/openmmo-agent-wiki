@@ -32,6 +32,7 @@ export const categoryNames = {
   cape_dye: 'Cape dye',
   cape_texture: 'Cape print',
   phoenix_talisman: 'Phoenix talisman',
+  reagent: 'Reagent',
 };
 
 export const slotNames = {
