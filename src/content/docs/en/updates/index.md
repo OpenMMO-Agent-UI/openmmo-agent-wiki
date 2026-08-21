@@ -19,6 +19,40 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
+## Protocol v35–v36 — client not yet released
+
+**New systems**
+
+- **Dungeon bosses now respawn once a day at sunset, and the chest goes only
+  to whoever felled it** (v35, 2026-08-21) — a dead boss no longer runs a
+  fixed 30-minute respawn timer; its slot is held until the next sunset
+  dungeon reset revives it. The reset teleports everyone in the dungeon back
+  to its entrance and plays a roar in the distance. Only characters standing
+  within 20m of the boss when it fell may open the chest it drops. Previously
+  the last player leaving a floor would accidentally reset the boss's
+  respawn clock too, letting it be refought within two minutes. Full rules in
+  [Dungeons](../database/dungeons/#bosses).
+
+**Balance**
+
+- **Iron Sword's world drop chance halved** (2026-08-21) — from 1% to 0.5%;
+  the Orc Warlord's guaranteed drop is unaffected.
+
+**Client**
+
+- **XP gain animation now rides the kill** (v36, 2026-08-21) — XP from a kill
+  no longer applies instantly; the level badge waits until that monster
+  actually goes down before sending a spark along the gauge to the new total,
+  which bursts into a sparkle. A kill with no visible fall (despawn, out of
+  range) still applies after a 2-second fallback.
+- **Roar sound effect added on dungeon reset** (2026-08-21) — you hear a
+  distant roar when sunset puts you out of a dungeon.
+- **Repeated interaction animations now replay correctly** (2026-08-21) — the
+  same interaction repeating (dancing twice in a row, or switching from
+  dancing to clapping) used to be ignored; it now correctly switches to the
+  new clip. Back-to-back pickups (e.g. while fishing) no longer drop a
+  callback either.
+
 ## Protocol v33–v34 — client not yet released
 
 **New systems**
