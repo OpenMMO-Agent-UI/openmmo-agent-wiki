@@ -71,6 +71,7 @@ export const itemNames = {
   grilled_sturgeon: '烤鱘魚',
   campfire_kit: '營火組',
   tip_hat: '賣藝帽',
+  greater_healing_potion: '高級治療藥水',
 };
 
 export const itemDescriptions = {
@@ -142,6 +143,7 @@ export const itemDescriptions = {
   grilled_sturgeon: '在餘燼上烘烤的鱘魚上等部位。',
   campfire_kit: '打包好的柴薪與火種,可燃燒十分鐘。',
   tip_hat: '一頂風霜的羽飾帽。表演前放下,聽眾就會把錢幣丟進去。再用一次可以收起來。',
+  greater_healing_potion: '雙重釀製的深紅藥劑 —— 比一般治療藥水更濃稠、更厚重,藥效也強上一倍。',
 };
 
 export const monsterNames = {
@@ -158,6 +160,7 @@ export const monsterNames = {
   ogre: '食人魔',
   troll: '巨魔',
   ogre_boss: '食人魔督軍',
+  stone_golem: '石魔像',
 };
 
 export const debuffNames = {
@@ -217,6 +220,7 @@ export const materialNames = {
   leather: '皮革',
   flesh: '血肉',
   cloth: '布料',
+  stone: '石製',
 };
 
 export const behaviorNames = {

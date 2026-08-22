@@ -32,11 +32,47 @@ whether you need a new client.
   the last player leaving a floor would accidentally reset the boss's
   respawn clock too, letting it be refought within two minutes. Full rules in
   [Dungeons](../database/dungeons/#bosses).
+- **New monster: Stone Golem** (2026-08-21) — level 10, Guard 17, unarmed
+  attack (2d10), stone material, spawns on dungeon floors 11–20; also
+  appears in the world past 630m from town, following the existing
+  "distance = (level − 1) × 70m" rule.
+- **Monsters now attack anyone who gets close, not just provoked targets**
+  (2026-08-22) — both "attacks on sight" and "fights back only" monsters now
+  attack the instant a player is within 5m, no provocation needed;
+  previously a "fights back only" monster had to be hit first, and an
+  "attacks on sight" one still needed a target acquired at range.
+- **An emote panel and social menu make emotes discoverable outside chat**
+  (2026-08-22) — emotes used to be reachable only via `/emote` commands;
+  press G to open a panel of every emote, click to perform one, with looping
+  dances marked and stoppable by clicking again. The social button now opens
+  a flyout with Friends (F) and Emotes (G). `/emote` and its plain-text
+  emote list still work as before.
 
 **Balance**
 
 - **Iron Sword's world drop chance halved** (2026-08-21) — from 1% to 0.5%;
   the Orc Warlord's guaranteed drop is unaffected.
+- **Ambient monster cap raised again, and the field refills faster**
+  (2026-08-22) — the per-player cap went from 6 to 8, and corpses no longer
+  count against it (only live monsters do). When the field is under the cap,
+  the server now offers up to three spawns per player per tick instead of
+  one, so an emptied area fills back in noticeably faster.
+- **Combat chase now runs at sprint speed** (2026-08-22) — moving while in
+  combat automatically uses sprint speed, at the same satiation cost as a
+  normal sprint, so a fleeing monster can no longer outrun you.
+
+**New items & assets**
+
+- **Greater Healing Potion** (2026-08-22) — 1g 500s, sold by Rica,
+  consumable, heals 12d4 — twice the regular Healing Potion's 6d4.
+
+**Fix**
+
+- Monsters at dungeon and world-floor boundaries could occasionally get
+  stuck twitching in place, or snap back to where they started — caused by
+  the client reporting a height the server treated as stale whenever the
+  terrain data for that tile hadn't streamed in yet, rejecting the move
+  (2026-08-22).
 
 **Client**
 
@@ -52,6 +88,20 @@ whether you need a new client.
   dancing to clapping) used to be ignored; it now correctly switches to the
   new clip. Back-to-back pickups (e.g. while fishing) no longer drop a
   callback either.
+- **Monsters get a death cry, players cry out in pain, and hits now make you
+  flinch** (2026-08-22) — the death sound plays on the killing blow's impact
+  frame rather than when the corpse lands; players cry out by gender when a
+  hit actually lands, one at a time so it doesn't stutter; getting hit also
+  plays a flinch reaction.
+- **Dungeon floor and HP added to the HUD** (2026-08-22) — the sky widget
+  shows your current floor while underground, and the level badge's tooltip
+  gained an HP line.
+- **Signs, stalls, and dungeon chests get hover names too** (2026-08-22) —
+  same name label and gold target ring monsters and ground items already
+  get; beds, barrels, and crates stay unlabeled on purpose.
+- **Buying from a merchant now defaults to 10 units** (2026-08-22) — the
+  quantity popup used to default to as much as your purse could afford; now
+  it defaults to 10 (still capped by your gold or the merchant's stock).
 
 ## Protocol v33–v34 — client not yet released
 

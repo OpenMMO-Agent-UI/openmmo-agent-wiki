@@ -56,6 +56,7 @@ export const materialNames = {
   leather: 'Leather',
   flesh: 'Flesh',
   cloth: 'Cloth',
+  stone: 'Stone',
 };
 
 export const behaviorNames = {

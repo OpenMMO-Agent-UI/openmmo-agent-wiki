@@ -71,6 +71,7 @@ export const itemNames = {
   grilled_sturgeon: '구운 철갑상어',
   campfire_kit: '모닥불 키트',
   tip_hat: '버스킹 모자',
+  greater_healing_potion: '상급 치유 물약',
 };
 
 export const itemDescriptions = {
@@ -142,6 +143,7 @@ export const itemDescriptions = {
   grilled_sturgeon: '잉걸불에 구운 철갑상어의 최상급 부위.',
   campfire_kit: '길에서 쓰도록 묶은 장작과 부싯깃. 10분간 탄다.',
   tip_hat: '풍상에 시달린 깃털 장식 모자. 공연 전에 내려놓으면 관객이 동전을 던져 넣는다. 다시 사용하면 다시 집어 든다.',
+  greater_healing_potion: '두 번 우려낸 진홍색 물약 — 일반 치유 물약보다 걸쭉하고 무거우며, 효과는 두 배다.',
 };
 
 export const monsterNames = {
@@ -158,6 +160,7 @@ export const monsterNames = {
   ogre: '오우거',
   troll: '트롤',
   ogre_boss: '오우거 워로드',
+  stone_golem: '스톤 골렘',
 };
 
 export const debuffNames = {
@@ -217,6 +220,7 @@ export const materialNames = {
   leather: '가죽',
   flesh: '살점',
   cloth: '천',
+  stone: '돌',
 };
 
 export const behaviorNames = {

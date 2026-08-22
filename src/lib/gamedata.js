@@ -175,6 +175,9 @@ export const monsters = parseCsv('monsters').map((r) => {
     boss: bool(r.boss),
     sharedAnims: bool(r.sharedAnims),
     hitDebuff: r.hitDebuff || null,
+    hoverRadius: num(r.hoverRadius),
+    corpseAutoGround: bool(r.corpseAutoGround),
+    deathSound: r.deathSound || null,
   };
 });
 
