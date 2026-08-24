@@ -19,6 +19,76 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
+## Protocol v37 — client v0.34.1 (current)
+
+**The live server now requires v37.** Older clients are refused.
+
+**New systems**
+
+- **Ambient monsters now spawn from movement instead of a standing clock**
+  (2026-08-23) — the old system unconditionally handed every player 3 spawn
+  allowances every 10 seconds (a theoretical cap of 1,080/hour), making
+  standing still the most efficient way to hunt — logs showed one player
+  racking up 20,817 kills in 23 hours from a single spot. The new rule drops
+  allowances entirely: the server now rolls a chance on every movement tick
+  based on distance travelled (8% per metre moved, ~81% cumulative over
+  20m), placing the spawn in a ±30° cone around the direction you're facing,
+  20m outside the screen edge, so the monster walks in from off-screen. A
+  candidate only spawns if it lands on walkable ground (grass, no steep
+  slopes or water) and can actually walk the line back to you. The live cap
+  stays at 8 (corpses don't count). The server now fully owns spawn timing
+  and placement — `SpawnMonsterRequest`, which let the client request a
+  spawn, and `NoSpawnZones`, which only that request used, are both gone
+  from the protocol, so third-party clients no longer have to reimplement
+  spawn placement themselves. Older clients are refused and need a fresh
+  download.
+
+**Balance**
+
+- **Spawn cone and chance retuned — encounters up sharply** (2026-08-24) —
+  spawn candidates used to be drawn uniformly across the whole screen edge;
+  measurements showed nearly 70% of monsters placed more than 30° off your
+  heading despawned again before you noticed them. Narrowing candidates to a
+  ±30° cone around your heading raised the encounter rate from 31% to 67%
+  over the same distance, and the roll itself went from an initial 4% up to
+  8%.
+- **Corpses now linger twice as long** (2026-08-24) — 30 seconds up to 60
+  before they're cleared.
+
+**Fix**
+
+- **Dungeon stairs occasionally refused a floor change and snapped you back
+  to the old floor (including boss-room doors that wouldn't open) — fixed**
+  (2026-08-23) — a stair shaft's ramp is shared geometry between the two
+  floors it connects, so both floors compute the identical Y there, and
+  climbing the ramp necessarily strays from either floor's flat-ground
+  height. Requiring the reported Y to match the target floor meant the
+  transition could fail partway up. The floor is now derived straight from
+  which stairway you walked, with Y no longer used as a rejection check.
+- **Monsters at the edge of loaded terrain occasionally twitched in place or
+  snapped back to their starting point — fixed** (2026-08-23) — a monster
+  walking just past the edge of streamed terrain had its move report held by
+  its owning client; once terrain caught up, the resulting jump could exceed
+  the server's per-move distance budget and get rejected — 232 rejections in
+  four hours, affecting 206 monsters. The server now warms an extra ring of
+  heightmap data ahead of time to absorb that gap.
+
+**Performance**
+
+- **Area of interest (AOI) narrowed from 43m to 32m** (2026-08-23) —
+  recalculated from what the isometric camera actually shows on screen, this
+  cuts the monsters and objects a single player needs synced by roughly 45%.
+
+**Client**
+
+- **Every miss now whooshes, not just your own** (2026-08-24) — other
+  players' and monsters' missed swings now play a whoosh keyed to the
+  attacker's weapon material, same as your own misses already did.
+- **Small ground items are easier to click** (2026-08-24) — the pickup
+  hotspot now has a 0.25m minimum radius so slim models like the Healing
+  Potion catch nearby clicks; the Healing Potion's ground model is also 1.5×
+  larger and easier to notice.
+
 ## Protocol v35–v36 — client not yet released
 
 **New systems**
@@ -236,9 +306,7 @@ whether you need a new client.
   player nametag, a notch smaller, with the enchant level folded into the
   name so +0 and +7 don't look alike at a glance.
 
-## Protocol v31–v32 — client v0.29.0 (current)
-
-**The live server now requires v32.** Older clients are refused.
+## Protocol v31–v32 — client v0.29.0
 
 **New systems**
 
