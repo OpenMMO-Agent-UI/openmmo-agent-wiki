@@ -133,6 +133,28 @@ are guaranteed.
 The Orc Warlord is currently the only guaranteed source of the **Iron Sword**
 (1d8) — it isn't sold in shops, so killing that boss is the direct route to it.
 
+### Bonus drops
+
+Some monsters also roll for a food item on kill, **independently** of the
+weapon drop — low odds, but it doesn't compete with the weapon roll.
+
+<FilterTable
+  placeholder="Search monsters or drops…"
+  columns={[
+    { key: 'name', label: 'Monster' },
+    { key: 'drop', label: 'Bonus drop' },
+    { key: 'chance', label: 'Chance', align: 'right' },
+  ]}
+  rows={monsters
+    .filter((m) => m.drops.length > 0)
+    .sort(byLevel)
+    .flatMap((m) => m.drops.map((d) => ({
+      name: m.name,
+      drop: itemName(d.itemId),
+      chance: `${(d.chance * 100).toFixed(0)}%`,
+    })))}
+/>
+
 ## Level defaults
 
 Blank fields use this table.

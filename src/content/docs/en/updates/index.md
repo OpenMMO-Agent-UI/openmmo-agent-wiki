@@ -42,6 +42,17 @@ whether you need a new client.
   from the protocol, so third-party clients no longer have to reimplement
   spawn placement themselves. Older clients are refused and need a fresh
   download.
+- **New monsters: Cyclop and Lizardfolk** (2026-08-25) — the Cyclop is level
+  15, Guard 20, wields a greatclub for 3d8 damage, and spawns on dungeon
+  floors 14–20; the Lizardfolk is level 13, Guard 15, wields a Steel
+  Longsword, and spawns on floors 12–20. Both are aggressive.
+- **Monster AI now runs entirely on the server** (2026-08-25) — monster
+  movement and attack decisions used to run on whichever player's client
+  owned that monster; now they run uniformly on the server, so other players
+  no longer see a monster's position drift out of sync with someone else's
+  network latency. This also fixed monsters getting stuck dragging in place
+  at doors and walls, and added queueing so multiple monsters in a dungeon
+  corridor no longer pile up on top of each other.
 
 **Balance**
 
@@ -54,6 +65,17 @@ whether you need a new client.
   8%.
 - **Corpses now linger twice as long** (2026-08-24) — 30 seconds up to 60
   before they're cleared.
+- **Some monsters now have a chance to drop bonus food on a kill**
+  (2026-08-24) — rolled independently of the weapon drop, at low odds (mostly
+  1%, 5% for the Goblin Chief). Kobolds, Goblins, Orcs and Female Orcs,
+  Hobgoblins, and the Goblin Chief currently carry a bonus drop — see
+  [Monsters](../../database/monsters/#bonus-drops).
+- **Bread and Lembas Wafer got pricier, and eating at full satiation is now
+  refused** (2026-08-24) — Bread went from 20 to 60 coins, Lembas Wafer from
+  60 to 120. Eating while already at the 1000 satiation cap is now refused
+  outright and doesn't consume the item; the HP a meal heals now scales with
+  the satiation it actually added rather than the food's full nutrition
+  value, so topping off a nearly-full stomach heals proportionally less.
 
 **Fix**
 
@@ -72,6 +94,21 @@ whether you need a new client.
   the server's per-move distance budget and get rejected — 232 rejections in
   four hours, affecting 206 monsters. The server now warms an extra ring of
   heightmap data ahead of time to absorb that gap.
+- **Rapid emote clicks could misfire as a stop — fixed** (2026-08-23) — the
+  play/stop toggle used to judge clicks against the server-confirmed active
+  animation, which lags a round trip behind, so clicking fast could turn a
+  play into a stop for the dance you'd just commanded. Clicks are now judged
+  against your own last-commanded intent instead, falling back to the
+  server's echo once it confirms or a timeout assumes the command was
+  rejected.
+- **Monsters killed before a floor re-entry no longer stand back up — fixed**
+  (2026-08-25) — a monster that was already dead now spawns straight into its
+  corpse state when you re-enter the floor.
+- **Clicking the wall beside a down staircase occasionally failed to walk you
+  down — fixed** (2026-08-25) — the side wall that hides a descending shaft
+  from the isometric camera now correctly registers as "go down the stairs"
+  when the click lands just outside the shaft's footprint and below the
+  current floor's walking surface.
 
 **Performance**
 
@@ -88,6 +125,14 @@ whether you need a new client.
   hotspot now has a 0.25m minimum radius so slim models like the Healing
   Potion catch nearby clicks; the Healing Potion's ground model is also 1.5×
   larger and easier to notice.
+- **Emote panel gained a hover preview, and it now opens beside the social
+  button that summons it** (2026-08-23 – 2026-08-26) — hovering an emote row
+  shows a small preview of your character actually performing it beside the
+  panel; the preview is off by default on low graphics presets and mobile to
+  save performance.
+- **Default SFX volume lowered to 50%** (2026-08-25).
+- **The death cry now plays at the killing blow** (2026-08-25) — instead of
+  waiting for the monster's attack-animation impact delay.
 
 ## Protocol v35–v36 — client not yet released
 

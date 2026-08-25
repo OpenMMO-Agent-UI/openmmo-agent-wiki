@@ -140,6 +140,27 @@ export const byLevel = (a, b) => a.level - b.level;
 獸人督軍是目前唯一確定掉落**鐵劍**(1d8)的來源 —— 鐵劍不在商店販售,
 所以打倒它是拿到這把武器最直接的方法。
 
+### 額外掉落
+
+部分怪物擊殺後,除了武器還會**額外獨立判定**掉落一份食物,機率不高但和武器掉落互不影響。
+
+<FilterTable
+  placeholder="搜尋怪物或掉落物…"
+  columns={[
+    { key: 'name', label: '怪物' },
+    { key: 'drop', label: '額外掉落' },
+    { key: 'chance', label: '機率', align: 'right' },
+  ]}
+  rows={monsters
+    .filter((m) => m.drops.length > 0)
+    .sort(byLevel)
+    .flatMap((m) => m.drops.map((d) => ({
+      name: monsterName(m.id),
+      drop: itemName(d.itemId),
+      chance: `${(d.chance * 100).toFixed(0)}%`,
+    })))}
+/>
+
 ## 等級對應的預設值
 
 留空欄位就是用這張表的值。

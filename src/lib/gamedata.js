@@ -146,6 +146,13 @@ export const itemsById = new Map(items.map((i) => [i.id, i]));
 
 export const monsters = parseCsv('monsters').map((r) => {
   const level = num(r.level) ?? 1;
+  const drops = (r.drops || '')
+    .split('|')
+    .filter(Boolean)
+    .map((entry) => {
+      const [itemId, chance] = entry.split(':');
+      return { itemId, chance: Number(chance) };
+    });
   return {
     id: r.id,
     name: r.name,
@@ -178,6 +185,10 @@ export const monsters = parseCsv('monsters').map((r) => {
     hoverRadius: num(r.hoverRadius),
     corpseAutoGround: bool(r.corpseAutoGround),
     deathSound: r.deathSound || null,
+    weaponOffsetX: num(r.weaponOffsetX),
+    weaponOffsetZ: num(r.weaponOffsetZ),
+    weaponRotation: r.weaponRotation || null,
+    drops,
   };
 });
 

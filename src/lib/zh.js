@@ -161,6 +161,8 @@ export const monsterNames = {
   troll: '巨魔',
   ogre_boss: '食人魔督軍',
   stone_golem: '石魔像',
+  cyclop: '獨眼巨人',
+  lizardfolk: '蜥蜴人',
 };
 
 export const debuffNames = {

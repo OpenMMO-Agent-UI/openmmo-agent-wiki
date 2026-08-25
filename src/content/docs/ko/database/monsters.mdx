@@ -131,6 +131,28 @@ export const byLevel = (a, b) => a.level - b.level;
 오크 워로드는 현재 **철검**(1d8)을 확정으로 주는 유일한 출처입니다 —
 철검은 상점에서 팔지 않으므로 이 보스를 잡는 것이 가장 직접적인 경로입니다.
 
+### 추가 드랍
+
+일부 몬스터는 무기 드랍과 **별개로** 처치 시 식료품을 추가로 드랍할지 판정합니다 —
+확률은 낮지만 무기 드랍 판정과 서로 영향을 주지 않습니다.
+
+<FilterTable
+  placeholder="몬스터나 드랍품 검색…"
+  columns={[
+    { key: 'name', label: '몬스터' },
+    { key: 'drop', label: '추가 드랍' },
+    { key: 'chance', label: '확률', align: 'right' },
+  ]}
+  rows={monsters
+    .filter((m) => m.drops.length > 0)
+    .sort(byLevel)
+    .flatMap((m) => m.drops.map((d) => ({
+      name: monsterName(m.id),
+      drop: itemName(d.itemId),
+      chance: `${(d.chance * 100).toFixed(0)}%`,
+    })))}
+/>
+
 ## 레벨별 기본값
 
 비어 있는 항목은 이 표의 값을 씁니다.
