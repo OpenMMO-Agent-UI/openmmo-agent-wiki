@@ -19,9 +19,27 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v37 — client v0.34.1 (current)
+## Protocol v38 — client not yet released (current)
 
-**The live server now requires v37.** Older clients are refused.
+**The live server now requires v38.** Older clients are refused.
+
+**New systems**
+
+- **A banned-name list, so an already-created character that later lands
+  on it is forced to rename at login** (2026-08-26) — new characters and
+  renames already went through a format check and a case-insensitive
+  duplicate check; they now also have to clear a `banned_names.txt` list
+  loaded when the server starts (exact match only, trimmed and
+  case-folded, no substring matching). A character that existed before its
+  name was added to the list gets refused at its next entry attempt with
+  `CharacterRenameRequired` (it does not enter the game), the
+  character-select screen opens a rename prompt, and once the new name
+  clears the same check the server replies `CharacterRenamed` and the
+  client retries entry automatically. Friend block lists carry the new
+  name across in the same transaction. Server-run NPC accounts (the
+  `npc_` prefix) are exempt.
+
+## Protocol v37 — client v0.34.1
 
 **New systems**
 
