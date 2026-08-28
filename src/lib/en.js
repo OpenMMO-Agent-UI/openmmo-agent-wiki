@@ -33,6 +33,7 @@ export const categoryNames = {
   cape_texture: 'Cape print',
   phoenix_talisman: 'Phoenix talisman',
   reagent: 'Reagent',
+  timekeeper: 'Timekeeper',
 };
 
 export const slotNames = {

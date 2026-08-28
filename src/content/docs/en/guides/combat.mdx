@@ -243,12 +243,19 @@ health you have to chew through. The Orc Warlord gives the most XP but takes
 
 ### XP to level
 
+Levels 2–50 now follow a table paced by **in-game play time** (see the
+[updates log](../../updates/), protocol v39) instead of a pure exponential;
+**doubling only resumes past level 50**:
+
 ```
-XP(n) = 20 × 2^(n-2)      (n ≥ 2)
+XP(n) = XP(50) × 2^(n-50)      (n > 50)
 ```
 
-**Every level costs exactly twice the last** — a pure exponential with no
-easing.
+The table is tuned around a standard player putting in 4 hours a day: 5 to
+22 minutes per level from 2–10 (2 hours cumulative), 22 minutes to 5.5 hours
+per level from 10–30 (roughly once a day), 5.5 to 8 hours per level from
+30–50 (about once every two days late), for a total of roughly 199.5 hours
+(50 days) to reach level 50.
 
 <FilterTable
   placeholder="Enter a level…"
@@ -258,7 +265,7 @@ easing.
     { key: 'band', label: 'This level costs', align: 'right' },
     { key: 'orcs', label: 'Orcs, roughly', align: 'right' },
   ]}
-  rows={Array.from({ length: 20 }, (_, n) => n + 1).map((level) => {
+  rows={Array.from({ length: 50 }, (_, n) => n + 1).map((level) => {
     const orcXp = monsterXp(4, 11);
     const band = level === 1 ? 0 : xpForLevel(level) - xpForLevel(level - 1);
     return {
@@ -271,9 +278,10 @@ easing.
 />
 
 The last column converts to Orcs (level 4, Guard 11,
-{monsterXp(4, 11)} XP each). Past the first ten levels, grinding on the current
-monster roster gets very slow — the game's content today lines up with roughly
-the first ten levels.
+{monsterXp(4, 11)} XP each). The outdoor roster currently tops out at the
+level-15 Cyclops, and dungeon depth scaling stalls at depth 20, so real
+pacing tracks the table only up to roughly levels 15–20 — past that there's
+nothing tougher to fight, so it runs well behind the table.
 
 ## The death penalty
 
@@ -397,6 +405,7 @@ can be active at once, and their multipliers multiply together.
     { key: 'move', label: 'Move speed', align: 'right' },
     { key: 'atkspd', label: 'Attack speed', align: 'right' },
     { key: 'carry', label: 'Max carry', align: 'right' },
+    { key: 'armor', label: 'Armor weight (wet)', align: 'right' },
     { key: 'drain', label: 'Satiation drain', align: 'right' },
     { key: 'regen', label: 'HP regen', align: 'center' },
   ]}
@@ -408,6 +417,7 @@ can be active at once, and their multipliers multiply together.
     move: d.moveMult !== 1 ? `×${d.moveMult}` : '—',
     atkspd: d.attackMult !== 1 ? `×${d.attackMult}` : '—',
     carry: d.carryMult !== 1 ? `×${d.carryMult}` : '—',
+    armor: d.armorWeightMult !== 1 ? `×${d.armorWeightMult}` : '—',
     drain: d.drainMult !== 1 ? `×${d.drainMult}` : '—',
     regen: d.blocksRegen ? 'Stops' : '—',
   }))}
@@ -420,3 +430,13 @@ credited killer.
 
 **Food Poisoning** — the risk of eating raw fish; see
 [Food and satiation](../../database/food/).
+
+**Wet** — triggers when you wade into a river or the sea, lasting 450
+seconds (one in-game hour). Move speed drops to ×0.83 (running falls from
+4.5 to 3.75, between walking's 3.0 and running's 4.5), and **armor worn or
+carried in your bag** gets heavier from soaking up water (armor weight
+×1.5) — the more armor you're carrying, the bigger the bite out of your
+usable carry capacity. Walking through water keeps refreshing the timer;
+the countdown only starts once you step out. Standing near a lit campfire
+(within 3m) dries you faster — 45 seconds to go from soaked to dry.
+Crossing a bridge doesn't count as wading.

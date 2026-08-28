@@ -249,11 +249,16 @@ Guard 超過 10 的部分會給獎勵 —— **難打的怪物給得多**。
 
 ### 升級需要多少
 
+2–50 級改成依**遊戲內遊玩時間**校準的分段表(見[更新日誌](../../updates/)
+協議 v39 章節),不再是單純的指數曲線;**50 級以後才恢復「每級兩倍」**:
+
 ```
-XP(n) = 20 × 2^(n-2)      (n ≥ 2)
+XP(n) = XP(50) × 2^(n-50)      (n > 50)
 ```
 
-**每一級都是前一級的兩倍**,是純指數曲線,沒有任何緩和。
+分段表抓的是標準玩家(每天遊玩 4 小時)的節奏:2–10 級每級 5 分鐘到 22 分鐘
+(累積 2 小時),10–30 級每級 22 分鐘到 5.5 小時(平均每天升一級),
+30–50 級每級 5.5 到 8 小時(後期約兩天一級),50 級總計約 199.5 小時(50 天)。
 
 <FilterTable
   placeholder="輸入等級…"
@@ -263,7 +268,7 @@ XP(n) = 20 × 2^(n-2)      (n ≥ 2)
     { key: 'band', label: '本級需要', align: 'right' },
     { key: 'orcs', label: '約等於幾隻獸人', align: 'right' },
   ]}
-  rows={Array.from({ length: 20 }, (_, n) => n + 1).map((level) => {
+  rows={Array.from({ length: 50 }, (_, n) => n + 1).map((level) => {
     const orcXp = monsterXp(4, 11);
     const band = level === 1 ? 0 : xpForLevel(level) - xpForLevel(level - 1);
     return {
@@ -275,9 +280,10 @@ XP(n) = 20 × 2^(n-2)      (n ≥ 2)
   })}
 />
 
-最右欄以獸人(等級 4、Guard 11,每隻 {monsterXp(4, 11)} XP)換算。
-可以看到到了兩位數等級之後,靠現有怪物練等會非常慢 ——
-目前遊戲的內容量大致對應前 10 級左右。
+最右欄以獸人(等級 4、Guard 11,每隻 {monsterXp(4, 11)} XP)換算。野外羅斯特
+目前在 15 級的獨眼巨人封頂、地城深度加成也在 20 層打住,所以實際練等節奏
+大致對得上表格只到 15–20 級左右,再往上因為打不到更高級的怪物,會比表格
+慢上許多。
 
 ## 死亡懲罰
 
@@ -394,6 +400,7 @@ XP(n) = 20 × 2^(n-2)      (n ≥ 2)
     { key: 'move', label: '移動速度', align: 'right' },
     { key: 'atkspd', label: '攻擊速度', align: 'right' },
     { key: 'carry', label: '最大負重', align: 'right' },
+    { key: 'armor', label: '甲重(濕)', align: 'right' },
     { key: 'drain', label: '飽食消耗', align: 'right' },
     { key: 'regen', label: '生命自然回復', align: 'center' },
   ]}
@@ -405,6 +412,7 @@ XP(n) = 20 × 2^(n-2)      (n ≥ 2)
     move: d.moveMult !== 1 ? `×${d.moveMult}` : '—',
     atkspd: d.attackMult !== 1 ? `×${d.attackMult}` : '—',
     carry: d.carryMult !== 1 ? `×${d.carryMult}` : '—',
+    armor: d.armorWeightMult !== 1 ? `×${d.armorWeightMult}` : '—',
     drain: d.drainMult !== 1 ? `×${d.drainMult}` : '—',
     regen: d.blocksRegen ? '停止' : '—',
   }))}
@@ -415,3 +423,9 @@ XP(n) = 20 × 2^(n-2)      (n ≥ 2)
 一般攻擊致死相同,不會歸功於任何擊殺者。
 
 **食物中毒** —— 吃生魚的風險,細節見[食物與飽食度](../../database/food/)。
+
+**濕透** —— 涉水進入河流或海域就會觸發,持續 450 秒(遊戲內 1 小時)。移動速度降到
+×0.83(用跑的從 4.5 掉到 3.75,介於平時走路 3.0 與跑步 4.5 之間),而且**穿在身上與
+放在背包裡的防具**都會因為吸水變重(甲重 ×1.5),裝備越重的人損失的可用負重比例
+越高。持續走在水裡會不斷刷新持續時間;離水後才開始倒數。靠近點燃的營火(3 公尺內)
+可以加速烘乾,一次要價 45 秒就能從全濕烘到全乾。走在橋面上不算涉水。

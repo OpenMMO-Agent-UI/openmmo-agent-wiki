@@ -19,9 +19,7 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v38 — client not yet released (current)
-
-**The live server now requires v38.** Older clients are refused.
+## Protocol v38 — client not yet released
 
 **New systems**
 
@@ -38,6 +36,260 @@ whether you need a new client.
   client retries entry automatically. Friend block lists carry the new
   name across in the same transaction. Server-run NPC accounts (the
   `npc_` prefix) are exempt.
+
+**Fixes**
+
+- **Clicking a door, a stall, an NPC counter, or a ground item now always
+  walks into range first and then acts** (2026-08-26) — the rules used to
+  differ: clicking a door only walked you to it without opening it; stalls
+  and NPC counters only worked if you were already in range when you
+  clicked, walking closer didn't retrigger them; a ground item was only
+  picked up on arrival, so a path stopped short by a wall often meant no
+  pickup at all. One rule now covers everything — act on the spot if
+  already in reach, otherwise walk into reach and act there. Only the
+  dungeon interactables got this right before.
+- **Clicking an object behind a wall no longer walks you into it, and
+  monsters on other players' screens no longer cut through walls while
+  wandering, returning home, or fleeing** (2026-08-26) — the walk-up target
+  used to be worked out with straight-line trigonometry, stepping back from
+  the target along the line to it; with a wall corner in the way, that point
+  could land inside the wall and the pathfinder simply couldn't reach it, so
+  nothing moved. It now asks the pathfinder (A*) first and falls back to the
+  target itself as the goal when the ideal spot doesn't route, stopping
+  beside the obstacle instead. Monster wander, return, and flee animations
+  used to aim straight at the final destination, cutting through any wall
+  along the way; they now aim at the nearest bend on the path, and a bend
+  always syncs, so a wandering monster no longer visibly clips through
+  walls.
+- **Occasionally being dropped a floor at the edge of a stairwell is
+  fixed** (2026-08-26) — figuring out which floor you're standing on used to
+  ask every floor a stairwell connects, passing if any one of them allowed
+  it; that let the floor below's legitimately open landing at the shaft's
+  edge also open the edge the floor above was supposed to seal. It now asks
+  only the floor you're actually standing on, and the same fix applies to
+  stairwells inside multi-storey houses.
+- **Picking up a ground item on the spot now turns your character to face
+  it before crouching** (2026-08-26) — whether you were already in range or
+  stopped short by an obstacle on the way, the crouch animation no longer
+  plays facing whatever direction you happened to be looking.
+- **Attacking a charging monster occasionally missing or shoving you
+  backward is fixed** (2026-08-26) — the server's record of a monster's
+  position only updated at each sync, and a mid-chase repath reported the
+  pose from just before the repath, so an attack thrown between two syncs
+  often didn't line up with where the monster actually stood. Attacks now
+  catch the monster's position up first, and a chase syncs before turning a
+  corner. Admin move commands no longer bypass the movement queue and
+  teleport directly, which used to let a monster swing at an admin who
+  hadn't actually arrived yet.
+
+**Client**
+
+- **Both the player-trade and merchant-trade windows can now be dragged
+  around like the other HUD panels** (2026-08-26) — no longer pinned to the
+  center of the screen.
+
+## Protocol v39–v40 — client v0.36.0
+
+**New systems**
+
+- **XP needed to level up now follows a table paced by play time instead of
+  a flat doubling curve** (v39, 2026-08-27) — the old formula was
+  XP(n) = 20 × 2^(n-2), doubling every level: absurdly fast early on, then
+  nearly unreachable past level 20. The new curve tables levels 2–50 from
+  measured pacing: for a standard player putting in 4 hours a day, roughly
+  5 to 22 minutes per level from 2–10 (about 2 hours cumulative), 22 minutes
+  to 5.5 hours per level from 10–30 (about once a day), and 5.5 to 8 hours
+  per level from 30–50 (about once every two days late), for a total of
+  roughly 199.5 hours (50 days) to reach level 50; doubling resumes past
+  level 50. Existing characters' XP was migrated by keeping their progress
+  percentage through the current level unchanged, so nobody jumped up or
+  down a level from the switch. The wire format didn't change, but an old
+  client would still draw the XP gauge against the old table, so the
+  protocol bump forces a reload anyway. See
+  [Combat](../guides/combat/#xp-to-level) for details.
+- **A new "Wet" debuff: wading into water slows you down and soaks your
+  armor** (v40, 2026-08-27) — triggers when you wade into a river or the sea
+  and the water at your feet is deeper than 0.4m, lasting 450 seconds (one
+  in-game hour). Move speed drops to ×0.83 (running falls from 4.5 to 3.75,
+  between walking's 3.0 and running's 4.5). **Armor** worn or carried in
+  your bag — 17 item types spanning helmets, body armor, pants, gloves,
+  boots, shields, and wool capes — gets heavier from soaking up water
+  (armor weight ×1.5); the more you're wearing, the bigger the bite out of
+  your usable carry capacity. Weapons, torches, fishing rods, instruments,
+  and jewelry are unaffected. Walking through water keeps refreshing the
+  timer; the countdown to dry only starts once you step out. Standing near
+  a lit campfire (within 3m) dries you faster — 45 seconds from soaked to
+  fully dry, no need to sit. While wet you leave fading wet footprints
+  behind you (other players' footprints only render at the High graphics
+  setting; your own always do). Crossing a bridge doesn't count as wading.
+  See [Combat](../guides/combat/#debuffs) for details.
+
+**Balance**
+
+- **The world drop rate for Healing Potions doubled to 2%** (2026-08-27) —
+  up from 1%.
+- **The banned-name list now also blocks "administrator"** (2026-08-27) —
+  it previously only blocked "admin," which didn't catch the full string
+  "administrator."
+
+**Performance**
+
+- **Terrain textures and static assets now cache correctly in the browser,
+  cutting repeat-load traffic sharply** (2026-08-27) — terrain textures used
+  to require a full re-download every time; they now support cache
+  validation (ETag, 304), so an unchanged asset isn't re-sent on refresh.
+  A bug that made every deploy look like it had changed every texture,
+  forcing a re-download, is also fixed. In practice, reloading or
+  re-entering the game now loads maps and textures noticeably faster.
+
+**Client**
+
+- **The level badge tooltip now shows gold and carry weight, and a carry
+  weight gauge was added under the inventory grid** (2026-08-27) — the
+  tooltip used to show only level and health; it now has two more lines for
+  gold and current carry weight. A health-bar-style gauge under the
+  inventory grid shows how much more you can carry without opening the
+  character sheet.
+- **The chat panel can now be dragged around like the other HUD
+  panels** (2026-08-27).
+- **The minimap's player marker is now the same shared arrow used on the
+  world map** (2026-08-26 – 2026-08-27) — you look the same on both maps
+  now.
+- **The night merchant Wick got a trade portrait, and all three merchant
+  portraits were re-encoded smaller** (2026-08-27) — Wick's trade window
+  used to show no portrait at all; it now has one. All three portraits used
+  to be PNGs over 1100px on a side (4.8MB combined); they're now 512²
+  WebP with alpha (194KB), same appearance, faster to load.
+
+## Protocol v41–v42 — client not yet released
+
+**New systems**
+
+- **Merchant prices now drift slowly with the server's total gold supply,
+  and consumable buy prices are scaled by a price index** (v41,
+  2026-08-27) — the server records an hourly server-wide gold snapshot and
+  computes gold per active character (active over the last 30 days), then
+  adjusts a price index between 90% and 200% based on how that measure
+  moves. The index only multiplies merchant **consumable** buy prices
+  (potions, whetstone oil, food, scrolls, and the like); durable goods like
+  equipment and dyes, and every sell-back price, are unaffected.
+- **Price adjustments now play out as a merchant meeting scene, with Rica
+  and Wick discussing prices in dialogue** (v42, 2026-08-27) — adjustments
+  don't run on a fixed clock; they land after sunset on the day the small
+  moon Serin is fully dark (a 20-game-day cycle), roughly every 2.5 real
+  days. When it's time, Rica and Wick meet at Rica's shop for a short
+  meeting scene, and their dialogue hints at which way prices are moving
+  and why — eavesdrop for a jump on the next swing. Each meeting moves the
+  index by at most ±10 percentage points. See
+  [Shops and economy](../database/economy/#price-index-the-evening-market-meeting)
+  for details.
+
+**New items & assets**
+
+- **Celestial Timekeeper** (2026-08-27) — 8,000 copper, sold by Rica. A
+  brass astrolabe-watch that tracks the sun and moons; carry it and the
+  current hour and date show beside the sky widget.
+
+**Fixes**
+
+- **Walking across a bridge no longer gets misjudged as wading and soaks
+  you** (2026-08-27) — the Wet check used to sample water depth from just
+  the player's reported XZ position, with no awareness of whether you were
+  standing on a bridge deck, so crossing a river bridge got you wet anyway.
+  The server now indexes bridge decks per region from the object catalog
+  and actual placements, and exempts steps taken on a deck without trusting
+  the client's Y.
+- **Ground height is now determined by the server, closing off a fly/sink
+  positioning exploit** (2026-08-27) — a character's Y on open terrain used
+  to be taken from the client's own report, which allowed visually flying
+  or sinking into the ground, floating dropped items, or letting the client
+  pick its own collision grid inside a dungeon footprint. It's now always
+  computed server-side from the heightmap or a bridge deck curve, re-applied
+  on floor changes and login, and the Wet debuff's depth check uses the same
+  logic — wading under a bridge span still gets you wet.
+
+**Client**
+
+- **The item tooltip now compares hovered gear against what you have
+  equipped** (2026-08-27) — hovering an item shows weight, average damage,
+  and Guard deltas as ▲▼ rows, sky blue for an improvement and red for a
+  downgrade; the item being compared against follows the server's
+  alternate-slot rule, so a ring compares against nothing if you still have
+  a free ring slot.
+- **Guard and CHA on the character sheet are now live, gear-adjusted
+  values** (2026-08-27) — no longer the base numbers rolled at creation;
+  they update the moment you change equipment, and the CHA shown is the one
+  actually used for haggling.
+
+## Protocol v43 — client not yet released
+
+**New systems**
+
+- **The friend panel can now send a request by typing a name directly, and
+  shows a class icon next to each friend** (2026-08-28) — a new "+ Add"
+  input in the panel sends the same request as typing `/friend add <name>`,
+  without switching to chat; each friend's name now shows a class icon,
+  reusing the same icon set and letter-badge fallback as the party panel.
+  See [Friends](../guides/friends/) for details.
+
+**Fixes**
+
+- **Evicting a terrain tile could make the tile under your own feet vanish
+  from the click list, breaking the house-placement preview and clicks on
+  that spot** (2026-08-28) — terrain tile meshes used to be bound into an
+  index-keyed array; when streaming evicted a tile, the surviving tiles'
+  indices shifted but the bindings didn't follow, so the tile you were
+  standing on could end up bound to nothing. Meshes are now keyed by tile
+  id instead.
+- **A torch no longer lights the ground when carried to a house's upper
+  floor** (2026-08-28) — the torch's light used to resample terrain height,
+  which resolved to the ground floor's height on an upper storey; it now
+  uses the bearer's already floor-resolved Y.
+- **Gable-end windows no longer get cut where two rooms on the same floor
+  share a wall** (2026-08-28) — they used to be treated as an interior wall
+  and removed; they aren't anymore.
+
+## Protocol v44 — client not yet released (current)
+
+**The live server now requires v44.** Older clients are refused.
+
+**New systems**
+
+- **Two-segment double doors, including pairs spanning two adjacent
+  rooms** (2026-08-28) — a new wall variant, "double-door," renders two
+  consecutive wall segments as one 2m opening with mirrored double leaves.
+  If only one room places a half-door right at a wall's end, the adjacent
+  room's touching segment pairs with it automatically, and each room draws
+  its own leaf across the shared boundary (the corner pillar is omitted
+  there). Toggling opens both halves together, and passability follows.
+  The map editor's wall-variant cycle includes the new option and handles
+  pairing and unpairing automatically; even-width room templates now place
+  a centered double door.
+- **Adjacent gabled roofs on the same floor now merge into a single
+  roof** (2026-08-28) — rooms with parallel ridges merge along the ridge
+  when their widths match, and across the ridge when their lengths match,
+  raising the ridge height accordingly. A chain that would merge across
+  more rooms than the cap splits into roughly even segments meeting at
+  V-shaped valleys (no eave on the valley side), and room collision
+  bounds are recalculated from the merged ridge height.
+
+**New items & assets**
+
+- **Stone Hearth** (2026-08-28) — furniture, valued at 1 gold 2000 copper.
+  An ancient stone fireplace with a carved shield crest, reaching the
+  ceiling, with flame particles and a light source; the map editor
+  supports duplicating it directly.
+
+**Performance**
+
+- **A stutter entering and leaving houses is fixed** (2026-08-28) —
+  entering a house used to tear down every outdoor object clone and build
+  every interior clone plus its fire particle system in the same frame;
+  the garbage burst plus GPU bind-group rebuild measured 43–105ms of
+  stutter. Object clones and fire systems are now kept in a persistent
+  cache and just detached from the scene graph when filtered out, so
+  entry and exit become a plain re-attach — repeated testing now stays
+  under 25ms per frame.
 
 ## Protocol v37 — client v0.34.1
 

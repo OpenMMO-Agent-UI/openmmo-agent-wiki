@@ -246,6 +246,7 @@ export const debuffs = parseCsv('debuffs').map((r) => ({
   moveMult: num(r.moveMult) ?? 1,
   attackMult: num(r.attackMult) ?? 1,
   carryMult: num(r.carryMult) ?? 1,
+  armorWeightMult: num(r.armorWeightMult) ?? 1,
   drainMult: num(r.drainMult) ?? 1,
   blocksRegen: bool(r.blocksRegen),
 }));

@@ -47,6 +47,7 @@ export const itemNames = {
   scroll_of_party_summon: '隊伍召集捲軸',
   phoenix_talisman: '鳳凰護符',
   table: '桌子',
+  stone_hearth: '石造壁爐',
   mandolin: '曼陀林',
   worn_mandolin: '磨損的曼陀林',
   fishing_rod: '釣竿',
@@ -72,6 +73,7 @@ export const itemNames = {
   campfire_kit: '營火組',
   tip_hat: '賣藝帽',
   greater_healing_potion: '高級治療藥水',
+  celestial_timekeeper: '天文懷錶',
 };
 
 export const itemDescriptions = {
@@ -119,6 +121,7 @@ export const itemDescriptions = {
   scroll_of_party_summon: '誦讀符文可召集整支隊伍到身邊 —— 每個人都可以選擇響應或無視。',
   phoenix_talisman: '刻著烈焰鳳凰的石板。隨身攜帶,倒下時鳳凰便會甦醒 —— 你將在原地重新站起,護符隨即化為塵埃。',
   table: '堅固的木桌。',
+  stone_hearth: '一座刻有盾徽的古老石造壁爐,直通天花板。',
   mandolin: '圓背鑲金琴格的曼陀林。用 /play_music 即可彈奏一曲。',
   worn_mandolin: '旅途中磨損、音色依舊純正的曼陀林。用 /play_music 即可彈奏一曲。商人不會收購。',
   fishing_rod: '馬鬃線的柔韌木釣竿。對著水面拋竿即可釣魚。',
@@ -144,6 +147,7 @@ export const itemDescriptions = {
   campfire_kit: '打包好的柴薪與火種,可燃燒十分鐘。',
   tip_hat: '一頂風霜的羽飾帽。表演前放下,聽眾就會把錢幣丟進去。再用一次可以收起來。',
   greater_healing_potion: '雙重釀製的深紅藥劑 —— 比一般治療藥水更濃稠、更厚重,藥效也強上一倍。',
+  celestial_timekeeper: '一只黃銅打造的星盤懷錶,錶面追蹤日月運行。隨身攜帶,天色小工具旁便會顯示時辰與日期。',
 };
 
 export const monsterNames = {
@@ -168,6 +172,7 @@ export const monsterNames = {
 export const debuffNames = {
   bleed: '流血',
   food_poisoning: '食物中毒',
+  wet: '濕透',
 };
 
 export const dungeonNames = {
@@ -199,6 +204,7 @@ export const categoryNames = {
   cape_texture: '斗篷印花',
   phoenix_talisman: '鳳凰護符',
   reagent: '藥劑材料',
+  timekeeper: '計時器',
 };
 
 export const slotNames = {

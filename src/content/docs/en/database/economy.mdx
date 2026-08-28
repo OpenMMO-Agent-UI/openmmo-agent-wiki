@@ -145,6 +145,26 @@ A trade or deal window an NPC pushes at you now has a "Not now" button, and
 letting the toast time out unanswered counts as a decline too. Once declined,
 **that NPC won't push another offer at you for 10 minutes.**
 
+## Price index (the evening market meeting)
+
+The buy price merchants charge for **consumables** (potions, whetstone oil,
+food, scrolls, and the like) drifts slowly with the server's **per-capita
+active gold supply**, scaled by a price index between 90% and 200%.
+Durable goods like equipment and cape dyes are completely unaffected, and
+**sell-back prices don't move either** — only the buy side, otherwise
+buying and selling would scale together and cancel the adjustment out.
+
+- Adjustments don't run on a fixed clock — they land after **sunset on the
+  day the small moon Serin is fully dark** (a 20-game-day cycle), roughly
+  every 2.5 real days, and can fall at any time of day.
+- When it's time, Rica and Wick meet up at Rica's shop for a short "merchant
+  meeting" scene, and their dialogue hints at which way prices are moving
+  and why — eavesdrop to get a jump on the next swing.
+- Each meeting moves the index by **at most ±10 percentage points**, and
+  the index itself is clamped to 90%–200%.
+- The haggling band is calculated **on top of** the price index — the index
+  applies first, then your CHA-based bargaining range.
+
 ## Non-merchant NPCs
 
 Merchants aren't the only ones who trade. The guard **Karl** has a wishlist and

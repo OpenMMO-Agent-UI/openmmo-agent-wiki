@@ -29,12 +29,17 @@ Type in chat:
 
 ## The friend panel
 
-Press **F**, or click the friend icon on the HUD. Next to each friend you can:
+Press **F**, or click the friend icon on the HUD. Each friend's name shows
+their **class icon** (the same set the party panel uses, falling back to a
+letter badge if there's no matching icon), and next to it you can:
 
 - **Whisper them directly** — this prefills `/w <name> ` in the chat input
   (it does not send automatically, so you can edit it first).
 - **Invite them to your party** — routes through the normal party-invite
   flow, so failures are reported by the server the same way.
+
+The panel also has a **+ Add** button — click it, type a name, and it sends
+the same request as typing `/friend add <name>`, without switching to chat.
 
 ## How online status is determined
 

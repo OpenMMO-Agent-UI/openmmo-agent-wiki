@@ -47,6 +47,7 @@ export const itemNames = {
   scroll_of_party_summon: '파티 소환 주문서',
   phoenix_talisman: '불사조 부적',
   table: '탁자',
+  stone_hearth: '돌 벽난로',
   mandolin: '만돌린',
   worn_mandolin: '낡은 만돌린',
   fishing_rod: '낚싯대',
@@ -72,6 +73,7 @@ export const itemNames = {
   campfire_kit: '모닥불 키트',
   tip_hat: '버스킹 모자',
   greater_healing_potion: '상급 치유 물약',
+  celestial_timekeeper: '천문 회중시계',
 };
 
 export const itemDescriptions = {
@@ -119,6 +121,7 @@ export const itemDescriptions = {
   scroll_of_party_summon: '룬을 읽으면 파티 전원을 곁으로 부른다 — 각자 응하거나 무시할 수 있다.',
   phoenix_talisman: '태양빛 불사조가 새겨진 석판. 지니고 있으면 쓰러졌을 때 새가 깨어난다 — 쓰러진 자리에서 다시 일어나고, 부적은 이내 먼지로 부서진다.',
   table: '튼튼한 나무 탁자.',
+  stone_hearth: '방패 문장이 새겨진 오래된 돌 벽난로. 천장까지 닿는다.',
   mandolin: '금박 프렛이 박힌 둥근 몸통의 만돌린. /play_music으로 한 곡 연주할 수 있다.',
   worn_mandolin: '길에서 낡았지만 소리는 여전히 참된 만돌린. /play_music으로 한 곡 연주할 수 있다. 상인은 사주지 않는다.',
   fishing_rod: '말총 줄을 단 낭창한 나무 낚싯대. 물을 향해 던져 낚시한다.',
@@ -144,6 +147,7 @@ export const itemDescriptions = {
   campfire_kit: '길에서 쓰도록 묶은 장작과 부싯깃. 10분간 탄다.',
   tip_hat: '풍상에 시달린 깃털 장식 모자. 공연 전에 내려놓으면 관객이 동전을 던져 넣는다. 다시 사용하면 다시 집어 든다.',
   greater_healing_potion: '두 번 우려낸 진홍색 물약 — 일반 치유 물약보다 걸쭉하고 무거우며, 효과는 두 배다.',
+  celestial_timekeeper: '해와 달의 움직임을 눈금판으로 추적하는 황동 회중시계. 지니고 있으면 하늘 위젯 옆에 시각과 날짜가 표시된다.',
 };
 
 export const monsterNames = {
@@ -168,6 +172,7 @@ export const monsterNames = {
 export const debuffNames = {
   bleed: '출혈',
   food_poisoning: '식중독',
+  wet: '젖음',
 };
 
 export const dungeonNames = {
@@ -199,6 +204,7 @@ export const categoryNames = {
   cape_texture: '망토 프린트',
   phoenix_talisman: '불사조 부적',
   reagent: '연금 재료',
+  timekeeper: '시계',
 };
 
 export const slotNames = {

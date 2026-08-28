@@ -59,8 +59,22 @@ export const guardFromDex = (dex) => Math.min(20, Math.max(1, 10 + abilityModifi
 
 export const level1Hp = (hitDie, con, raceBonus) => hitDie + abilityModifier(con) + raceBonus;
 
-/** doc/COMBAT.md: XP(n) = 20 x 2^(n-2), n >= 2 */
-export const xpForLevel = (level) => (level <= 1 ? 0 : 20 * 2 ** (level - 2));
+/** doc/LEVEL_CURVE.md: cumulative XP for levels 2..=50, table-driven and paced by play time. */
+const LEVEL_XP = [
+  17, 76, 226, 586, 1256, 2356, 4056, 6556, 9956, 17156, 29156, 48156, 74156, 110156, 158156,
+  219156, 296156, 391156, 511156, 651156, 811156, 1001156, 1231156, 1491156, 1791156, 2131156,
+  2521156, 2961156, 3451156, 3991156, 4581156, 5221156, 5911156, 6661156, 7471156, 8341156,
+  9271156, 10271156, 11371156, 12571156, 13771156, 15071156, 16471156, 17971156, 19571156,
+  21271156, 23071156, 24971156, 26971156,
+];
+
+/** Past level 50 every level doubles the level-50 total. */
+export const xpForLevel = (level) => {
+  if (level <= 1) return 0;
+  const top = LEVEL_XP.length + 1;
+  if (level <= top) return LEVEL_XP[level - 2];
+  return LEVEL_XP[LEVEL_XP.length - 1] * 2 ** (level - top);
+};
 
 /** doc/COMBAT.md: xp = 1 + level^2 + max(guard - 10, 0) x 2 */
 export const monsterXp = (level, guard) => 1 + level ** 2 + Math.max(guard - 10, 0) * 2;
