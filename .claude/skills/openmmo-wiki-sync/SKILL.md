@@ -82,10 +82,31 @@ diffs, `doc/*.md` changes). For each change to `PROTOCOL_VERSION` in
 `shared/src/lib.rs`, add a section to `src/content/docs/updates/index.md`
 **and** its `en/` and `ko/` counterparts, following the existing format
 exactly (category labels 新系統 / 平衡調整 / 新道具與素材 / 修正 / 效能 /
-客戶端 and their en/ko equivalents). Move the current-version marker —
-(目前版本) / (current) / (현재 버전) — to the newest protocol section and
-drop the "this is what the server requires" sentence from the section that
-loses it.
+客戶端 and their en/ko equivalents).
+
+**Newest first.** The page reads top-down from the newest protocol, so a new
+section is *prepended*, not appended after the one that used to be newest. A
+run that added v39 through v44 in ascending order under v38 left the page
+opening on v38 with the newest five buried below it.
+
+**The current-version marker is about the server, not about master.** Ask:
+
+```
+node scripts/server-protocol.mjs
+```
+
+It prints the protocol the live server actually requires. Put (目前版本) /
+(current) / (현재 버전) on the section covering *that* protocol, and the
+"the live server currently requires vN" sentence with it — exactly one of
+each per locale, so drop them from whichever section held them before.
+
+The deployed build is not upstream's tip and has been on both sides of it.
+It ran v40 while master was on v38 (that sync correctly refused to invent
+v39/v40), and it was still on v40 when master reached v44 — where assuming
+the newest section was current published "the live server now requires v44"
+over a client that worked fine, telling everyone to expect a refusal that
+was not coming. Sections newer than the server's protocol say so in a line
+of their own rather than carrying the marker.
 
 Player-visible changes that did not bump the protocol (balance numbers, new
 NPCs, new commands) go into the newest section with their dates, the way
