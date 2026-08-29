@@ -19,11 +19,11 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v44 — client not yet released
+## Protocol v44 — client not yet released (current)
 
-**In upstream, not deployed yet.** Everything from v41 down to here is
-written but not running — the live server still requires v40.
-
+**The live server currently requires v44.** The matching v0.37.0 client
+hasn't been released yet, so no client version can currently connect —
+watch for the official release announcement.
 
 **New systems**
 
@@ -62,6 +62,36 @@ written but not running — the live server still requires v40.
   cache and just detached from the scene graph when filtered out, so
   entry and exit become a plain re-attach — repeated testing now stays
   under 25ms per frame.
+
+**Client**
+
+- **Manual movement and combat chase now share one walk
+  implementation** (2026-08-26) — each used to keep its own near-identical
+  pathfinding, movement packets, and step pacing, and reacted differently to
+  the same position correction, so behavior slowly drifted apart. Both now
+  share one walk implementation, so a chase also replans on a position
+  correction and can open a door on the surface the way a move always
+  could.
+- **A character freezing in place when no route exists to a fixed
+  destination is fixed** (2026-08-26) — moving to a fixed spot used to
+  report Blocked without sending any movement packet when pathfinding found
+  no route, so the server never learned the character was stuck and both
+  sides waited on each other forever. On the surface it now takes one
+  direct step before reporting Blocked (unchanged in dungeons, where a
+  missing route really is a wall).
+- **The equip panel's background art no longer mismatches the character's
+  gender and class** (2026-08-27) — outside three female classes and the
+  female knight (who has dedicated art), the panel used to fall back to the
+  female priest's art for everyone; it now picks art by trying the
+  character's own gender first, then the opposite gender, then the old
+  default, so new concept art takes effect without a code change. Female
+  ranger and male bard are currently the only two combos still borrowing
+  the opposite gender's art for their class.
+- **Equip panel character concept art is now cut-out WebP, cutting file
+  size sharply** (2026-08-29) — all 13 concept-art images were cut to
+  transparent backgrounds and re-encoded as WebP, shrinking the folder from
+  21.6MB to 1.7MB; the barbarian's art is additionally darkened to avoid
+  overexposure.
 
 ## Protocol v43 — client not yet released
 
@@ -151,9 +181,7 @@ written but not running — the live server still requires v40.
   they update the moment you change equipment, and the CHA shown is the one
   actually used for haggling.
 
-## Protocol v39–v40 — client v0.36.0 (current)
-
-**The live server currently requires v40.** Older clients are refused.
+## Protocol v39–v40 — client v0.36.0
 
 **New systems**
 
