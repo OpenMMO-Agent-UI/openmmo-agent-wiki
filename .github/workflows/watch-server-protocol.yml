@@ -1,0 +1,73 @@
+name: Watch the server's protocol
+
+# Fires a sync in the client repo when the live server stops speaking the
+# protocol our released client ships.
+#
+# This lives here, not there, because of how GitHub actually runs schedules.
+# The client repo's own gate asked every 5 minutes and fired roughly every ten
+# hours — high-frequency crons get dropped — while both of this repo's daily
+# crons land within minutes of their slot every day. The server moved to v40
+# and then to v44 with nobody noticing until a player could not log in, twice.
+#
+# So: an hourly cron here, offset half an hour from the client repo's own
+# hourly one, so the two interleave and a dropped run on either side still
+# leaves the other. And the question asked is the one that matters — not "has
+# upstream tagged a release" but "can the build our users are running still
+# get in".
+
+on:
+  schedule:
+    - cron: '49 * * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: watch-server-protocol
+  cancel-in-progress: false
+
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          # scripts/server-protocol.mjs uses the global WebSocket Node has
+          # shipped since 22.
+          node-version: 22
+      - name: Compare the live server against what we ship
+        id: compare
+        run: |
+          server="$(node scripts/server-protocol.mjs)"
+          shipped="$(node -e 'process.stdout.write(String(require("./src/data/release.json").protocol))')"
+          echo "server=$server shipped=$shipped"
+          echo "server=$server" >> "$GITHUB_OUTPUT"
+          echo "shipped=$shipped" >> "$GITHUB_OUTPUT"
+          [[ "$server" == "$shipped" ]] && echo "match=true" >> "$GITHUB_OUTPUT" \
+                                        || echo "match=false" >> "$GITHUB_OUTPUT"
+
+      - name: Ask the client repo to sync
+        if: steps.compare.outputs.match == 'false'
+        env:
+          # Fine-grained PAT, Contents: write on openmmo-agent-ui — the
+          # permission `POST /dispatches` is gated on. A fine-grained token
+          # expires without a word, and this job is the thing meant to notice
+          # before a player does, so a refused dispatch fails the run loudly
+          # rather than being swallowed.
+          GH_TOKEN: ${{ secrets.SYNC_DISPATCH_TOKEN }}
+          SERVER: ${{ steps.compare.outputs.server }}
+          SHIPPED: ${{ steps.compare.outputs.shipped }}
+        run: |
+          [[ -n "$GH_TOKEN" ]] || {
+            echo "::error::SYNC_DISPATCH_TOKEN is not set — nothing can be told about this" >&2
+            exit 1
+          }
+          echo "::warning::live server wants protocol v$SERVER, we ship v$SHIPPED — dispatching a sync"
+          # Repeated dispatches while a sync is already running are fine: that
+          # workflow's concurrency group serialises them, and its own gate
+          # answers "nothing to do" in seconds once the release has shipped.
+          gh api repos/OpenMMO-Agent-UI/openmmo-agent-ui/dispatches \
+            -f event_type=server-protocol-changed
