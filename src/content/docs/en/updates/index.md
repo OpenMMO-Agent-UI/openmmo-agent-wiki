@@ -19,6 +19,87 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
+## Protocol v45 — client not yet released
+
+**The live server still requires v44 and hasn't moved to v45 yet** — watch
+for the official announcement.
+
+**New systems**
+
+- **New players get up to 30 seconds of entry immunity until their client
+  reports the scene finished loading** (2026-08-28) — for up to 30s after
+  entering the game, a character can't be hit by monsters and can't attack,
+  closing a window where a player entering a dungeon next to an already-
+  aggroed monster could die before the scene had even rendered. The desktop
+  client reports "WorldReady" once scene compilation finishes (agent-client
+  does so right after JoinSuccess), ending the grace early; a 30s deadline
+  on the server clears it either way. The gate covers every damage path —
+  monster attacks, player attack validation, and status-effect damage over
+  time — not just auto-attack.
+
+**Fixes**
+
+- **Quickslots treated different enchant levels of the same item as one
+  slot, so the shown count didn't add up and pressing the key could equip
+  the wrong copy — fixed** (2026-08-28) — a quickslot binding used to store
+  only the item's def id, so a +3 shield and a plain shield shared one slot.
+  A binding now also records the enchant level: the count and the +N badge
+  track only that level, pressing the key always equips that exact copy,
+  and the worn copy highlights correctly. Bindings saved before this change
+  still load, as an "any level" binding.
+- **Clicking on a deep dungeon floor could resolve to floor 0 when a
+  hidden surface or bridge sat 20m up the ray — fixed** (2026-08-29) —
+  three.js raycasts hit invisible meshes too, so a click underground could
+  land on a hidden surface bed or bridge far above and resolve to floor 0,
+  routing the player up every staircase. Underground floors no longer
+  include hidden surface objects or house doors in the click lists.
+- **A monster the server had already removed could keep the client
+  retrying attacks against it for hours — fixed** (2026-08-29) — an
+  `invalid_target` attack rejection used to only cancel the auto-attack
+  loop, leaving a ghost copy of the monster on the client that a re-click
+  or local AI could attack again. The local copy is now deleted outright.
+- **A door an owner saved open could desync after reload, so someone
+  else's click closed it instead and later arrivals walked into it as
+  blocked — fixed** (2026-08-29) — a door saved open only lived in the
+  passability cache, not the runtime open-door set, so the first click
+  "opened" it again and the second closed it. Installing a house now seeds
+  the runtime set from the saved open/closed flags, and served house data
+  always carries the live state.
+- **Teleporting or logging back in could strand a character on the wrong
+  storey (e.g. stacked rooms resolving to floor 1) until they refreshed —
+  fixed** (2026-08-29) — the visual floor didn't reset across character
+  select, so a fresh housing layer could resolve stacked rooms to the
+  wrong storey. Every server floor sync (join, teleport, correction,
+  respawn) now writes this state too, and it resets on logout.
+- **Added "김정주", "송재경", "Jake", and "JakeSong" to the banned
+  character-name list** (2026-08-29).
+
+**Performance**
+
+- **Stuttering near bridges — fixed** (2026-08-29) — the main bridge model
+  is 53k triangles across 8 materials, and every deck-height query used to
+  raycast the whole mesh, once per step per entity per frame. Each bridge's
+  deck is now rasterised once into a 0.25m height grid and sampled instead.
+  Placing a bridge also used to clone all 8 materials, and the walk-under
+  ghost fade flipped their blend state live, forcing a WebGPU pipeline
+  recompile per material on approach; there's now one shared ghost twin per
+  material per model. Bridge collision is now evicted by region like
+  furniture, and the invisible collision plane no longer leaks into the
+  shadow pass.
+- **Damage numbers and text labels (chat bubbles, nametags) piled up new
+  GPU textures over a long session and eventually slowed the game down —
+  fixed** (2026-08-29) — every hit used to allocate a fresh canvas and
+  texture that was never released, so fighting several monsters at once
+  could tank the frame rate. Damage numbers now redraw slots in a fixed
+  pool of 48, and text labels share a canvas pool bucketed by size instead
+  of allocating per label.
+- **Textures, models, and music now ship under content-hashed filenames
+  with a long-lived immutable cache** (2026-08-29) — the build now also
+  produces a content-hashed copy of each asset, so the filename only
+  changes when the bytes do; the server marks hashed filenames cacheable
+  for a year, so an unchanged asset isn't re-downloaded after a refresh or
+  release.
+
 ## Protocol v44 — client not yet released (current)
 
 **The live server currently requires v44.** The matching v0.37.0 client
