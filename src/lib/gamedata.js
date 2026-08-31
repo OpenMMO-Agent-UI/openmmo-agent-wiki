@@ -200,8 +200,13 @@ export const dungeons = parseCsv('dungeons').map((r) => ({
   floors: num(r.floors),
   boss: r.boss || null,
   chestTier: num(r.chestTier),
-  chestDrops: r.chestDrops || null,
+  chestDrops: r.chestDrops ? r.chestDrops.split(';') : [],
+  keyPrefix: r.keyPrefix || null,
 }));
+
+/** Every 5th floor gets a locked stair room, keyed `{keyPrefix}_{floor}` (doc/DUNGEON_REWARD.md). */
+export const lockedFloors = (dungeon) =>
+  Array.from({ length: Math.floor(dungeon.floors / 5) }, (_, i) => (i + 1) * 5);
 
 export const merchants = parseCsv('merchants').map((r) => ({
   id: r.id,

@@ -19,10 +19,47 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v45 — client not yet released
+## Protocol v46 — client v0.38.0 (current)
 
-**The live server still requires v44 and hasn't moved to v45 yet** — watch
-for the official announcement.
+**The live server currently requires v46.**
+
+**New systems**
+
+- **Dungeons now lock a stair room every 5th floor behind a key you have to
+  find** (2026-08-29) — Old Crypt floor 5, Orc Warrens floors 5 and 10, and
+  Ogre Stronghold floors 5, 10 and 15 all have a locked door at their stair
+  room's exit. The key drops in the section right before that door: killing
+  a monster there has a 5% chance to drop it, breaking a barrel, crate or
+  clutter chest there is 1%, and the roll is skipped once you already hold
+  that key or have opened that dungeon's chest tonight. The door doesn't
+  consume the key and the key never expires; an opened door stays open for
+  30 seconds before auto-closing. The key for the dungeon's deepest locked
+  door is the ticket to the treasure chest — **opening the chest no longer
+  requires killing the boss**, just carrying that key to the bottom floor,
+  and opening it spends one of every key type you're holding for that
+  dungeon. The old "60-second countdown back to spawn after opening the
+  chest" mechanic is gone too. This also fixed dungeon monsters seeing
+  through walls to chase players and packs from the next room piling on the
+  moment you reached a new floor; locked stair rooms no longer spawn
+  monsters. See [Dungeons](../../database/dungeons/#keys-and-locked-floors)
+  for details.
+- **Boss-kill titles** (2026-08-30) — dealing 50%+ of a boss's total damage
+  earns "Slayer of the ⟪Boss⟫"; 90%+ earns "Who Slew the ⟪Boss⟫ Alone". Both
+  stick to the character, and you can pick which one shows from the
+  character panel's Titles tab or the `/title` command. Titles show above
+  the head, at character select, and in the character panel; chat doesn't
+  show them. See [Titles](../../guides/titles/).
+
+**Balance**
+
+- **The three dungeon bosses' weapons are now a guaranteed chest drop
+  instead of a boss drop** (2026-08-30) — the Goblin Sword, Iron Sword and
+  Steel Longsword used to drop 100% of the time from their boss; the boss
+  drop chance is now 0% and the weapon comes from the dungeon chest instead,
+  personalized like the rest of the chest loot instead of going to whoever
+  landed the kill first each night.
+
+## Protocol v45 — client not yet released
 
 **New systems**
 
@@ -100,11 +137,7 @@ for the official announcement.
   for a year, so an unchanged asset isn't re-downloaded after a refresh or
   release.
 
-## Protocol v44 — client not yet released (current)
-
-**The live server currently requires v44.** The matching v0.37.0 client
-hasn't been released yet, so no client version can currently connect —
-watch for the official release announcement.
+## Protocol v44 — client not yet released
 
 **New systems**
 

@@ -1,0 +1,77 @@
+---
+title: Titles
+description: How boss-kill titles are earned, how to pick which one shows, and where they appear.
+---
+
+Titles shipped in protocol v46. They're a boss-kill mark **only the server can
+grant** — you can't buy, sell or trade one, and it stays with the character
+across relogs. See the boss section of [Dungeons](../../database/dungeons/).
+
+## Earning one
+
+Every boss keeps its own **damage log** (character → damage dealt, counting
+only actual HP taken, not overkill). The moment the boss dies, the log is
+checked by share of total damage:
+
+| Threshold | Title |
+|---|---|
+| **50%+ of total damage** dealt to the boss | "Slayer of the ⟪Boss⟫" |
+| **90%+ of total damage** dealt to the boss | "Who Slew the ⟪Boss⟫ Alone" |
+
+Earning the solo title also grants the shared one — you get both. The check
+only looks at **damage dealt**; it doesn't matter who landed the final hit,
+and the party XP-share rule (being nearby counts) does **not** apply here —
+standing around while your party fights earns nothing.
+
+There are 3 bosses today, each with its own pair (6 titles total):
+
+| Boss | Shared title | Solo title |
+|---|---|---|
+| Goblin Chief | Slayer of the Goblin Chief | Who Slew the Goblin Chief Alone |
+| Orc Warlord | Slayer of the Orc Warlord | Who Slew the Orc Warlord Alone |
+| Ogre Warlord | Slayer of the Ogre Warlord | Who Slew the Ogre Warlord Alone |
+
+Being offline doesn't matter — if you're in the damage log when the boss
+dies, you get the title, and it shows up in your list next time you log in
+(it just won't become your active title automatically).
+
+## Picking which one shows
+
+Titles pile up, but only **one shows at a time**:
+
+- The character panel's Titles tab lists every title you've earned; pick one
+  or pick "None".
+- The chat command `/title` (no argument) lists them with numbers, `/title 2`
+  picks the second one, and `/title off` clears the active title.
+
+Auto-switching only happens in two cases: earning **any** title for the first
+time, and earning a title that **supersedes** the one currently shown (for
+example, already showing the shared title for a boss and then earning the
+solo version for the same boss auto-upgrades you to it). Otherwise, earning a
+new title never touches whichever one you already picked — the server won't
+override your choice on its own.
+
+## Where it shows
+
+A title is a full sentence, never abbreviated, so it always gets **its own
+line above the name**:
+
+| Location | How it shows |
+|---|---|
+| Overhead nametag | A small line above the name, the full title |
+| Chat | Name only — no title shown |
+| Character select | A line below the name |
+| Character panel (yourself) | The Titles tab |
+
+Language follows the settings panel's **Title Language** (Auto / 한국어 /
+English); Auto follows the browser locale. This applies even to other
+players' titles — it's about you, not them. `/title`'s list and what
+agent-client (bots) see is always the English name. There's no tier color or
+icon system — the sentence itself carries the distinction (whether "Alone" is
+in it).
+
+## agent-client (bot players)
+
+The status line lists the bot's own titles and its active one; picking works
+through the same `/title` chat command. Nearby players are listed with
+whichever title they currently have active.

@@ -74,6 +74,12 @@ export const itemNames = {
   tip_hat: '賣藝帽',
   greater_healing_potion: '高級治療藥水',
   celestial_timekeeper: '天文懷錶',
+  crypt_key_5: '古墓鑰匙(5 層)',
+  orc_key_5: '獸人巢穴鑰匙(5 層)',
+  orc_key_10: '獸人巢穴鑰匙(10 層)',
+  ogre_key_5: '食人魔要塞鑰匙(5 層)',
+  ogre_key_10: '食人魔要塞鑰匙(10 層)',
+  ogre_key_15: '食人魔要塞鑰匙(15 層)',
 };
 
 export const itemDescriptions = {
@@ -148,6 +154,12 @@ export const itemDescriptions = {
   tip_hat: '一頂風霜的羽飾帽。表演前放下,聽眾就會把錢幣丟進去。再用一次可以收起來。',
   greater_healing_potion: '雙重釀製的深紅藥劑 —— 比一般治療藥水更濃稠、更厚重,藥效也強上一倍。',
   celestial_timekeeper: '一只黃銅打造的星盤懷錶,錶面追蹤日月運行。隨身攜帶,天色小工具旁便會顯示時辰與日期。',
+  crypt_key_5: '一把鏽蝕的鐵鑰匙。可以打開古墓第 5 層的封鎖樓梯間,以及該地城的寶箱。',
+  orc_key_5: '獸人手工打造的粗糙青銅鑰匙。可以打開獸人巢穴第 5 層的封鎖樓梯間。',
+  orc_key_10: '刻著缺口的粗糙青銅鑰匙。可以打開獸人巢穴第 10 層的封鎖樓梯間,以及該地城的寶箱。',
+  ogre_key_5: '沉重的黑鐵鑰匙。可以打開食人魔要塞第 5 層的封鎖樓梯間。',
+  ogre_key_10: '鑰匙柄鑄有環形紋飾的沉重黑鐵鑰匙。可以打開食人魔要塞第 10 層的封鎖樓梯間。',
+  ogre_key_15: '鑰匙柄鑄有王冠紋飾的沉重黑鐵鑰匙。可以打開食人魔要塞第 15 層的封鎖樓梯間,以及該地城的寶箱。',
 };
 
 export const monsterNames = {
@@ -205,6 +217,7 @@ export const categoryNames = {
   phoenix_talisman: '鳳凰護符',
   reagent: '藥劑材料',
   timekeeper: '計時器',
+  dungeon_key: '地城鑰匙',
 };
 
 export const slotNames = {

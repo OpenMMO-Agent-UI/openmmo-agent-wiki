@@ -74,6 +74,12 @@ export const itemNames = {
   tip_hat: '버스킹 모자',
   greater_healing_potion: '상급 치유 물약',
   celestial_timekeeper: '천문 회중시계',
+  crypt_key_5: '납골당 열쇠 (5층)',
+  orc_key_5: '오크 소굴 열쇠 (5층)',
+  orc_key_10: '오크 소굴 열쇠 (10층)',
+  ogre_key_5: '오우거 요새 열쇠 (5층)',
+  ogre_key_10: '오우거 요새 열쇠 (10층)',
+  ogre_key_15: '오우거 요새 열쇠 (15층)',
 };
 
 export const itemDescriptions = {
@@ -148,6 +154,12 @@ export const itemDescriptions = {
   tip_hat: '풍상에 시달린 깃털 장식 모자. 공연 전에 내려놓으면 관객이 동전을 던져 넣는다. 다시 사용하면 다시 집어 든다.',
   greater_healing_potion: '두 번 우려낸 진홍색 물약 — 일반 치유 물약보다 걸쭉하고 무거우며, 효과는 두 배다.',
   celestial_timekeeper: '해와 달의 움직임을 눈금판으로 추적하는 황동 회중시계. 지니고 있으면 하늘 위젯 옆에 시각과 날짜가 표시된다.',
+  crypt_key_5: '녹슨 철제 열쇠다. 오래된 납골당 5층의 봉인된 계단방과 그 던전의 보물 상자를 연다.',
+  orc_key_5: '오크가 손수 깎은 조잡한 청동 열쇠다. 오크 소굴 5층의 봉인된 계단방을 연다.',
+  orc_key_10: '손잡이에 홈이 파인 조잡한 청동 열쇠다. 오크 소굴 10층의 봉인된 계단방과 그 던전의 보물 상자를 연다.',
+  ogre_key_5: '묵직한 흑철 열쇠다. 오우거 요새 5층의 봉인된 계단방을 연다.',
+  ogre_key_10: '손잡이에 고리 장식이 달린 묵직한 흑철 열쇠다. 오우거 요새 10층의 봉인된 계단방을 연다.',
+  ogre_key_15: '손잡이에 왕관 장식이 달린 묵직한 흑철 열쇠다. 오우거 요새 15층의 봉인된 계단방과 그 던전의 보물 상자를 연다.',
 };
 
 export const monsterNames = {
@@ -205,6 +217,7 @@ export const categoryNames = {
   phoenix_talisman: '불사조 부적',
   reagent: '연금 재료',
   timekeeper: '시계',
+  dungeon_key: '던전 열쇠',
 };
 
 export const slotNames = {

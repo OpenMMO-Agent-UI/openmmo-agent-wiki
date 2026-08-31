@@ -15,7 +15,7 @@ export const sources = (id) => {
   const out = [];
   if (rica.catalog.includes(id)) out.push('Shop');
   if (dropChance.has(id)) out.push(`World drop ${(dropChance.get(id) * 100).toFixed(1)}%`);
-  for (const m of monsterWeapons.filter((m) => m.weapon === id)) {
+  for (const m of monsterWeapons.filter((m) => m.weapon === id && m.weaponDropChance > 0)) {
     out.push(`${monsterName(m.id)} ${Math.round(m.weaponDropChance * 100)}%`);
   }
   const it = items.find((i) => i.id === id);

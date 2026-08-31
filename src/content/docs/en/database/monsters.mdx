@@ -111,8 +111,10 @@ regions. A higher weight means it turns up more often within its depth range.
 ## Drops
 
 The weapon a monster carries is the weapon it drops — a deliberate design, so
-**what you can see is what you can get.** Ordinary monsters drop at 10%; bosses
-are guaranteed.
+**what you can see is what you can get.** Ordinary monsters drop at 10%. The
+three dungeon bosses (Goblin Chief, Orc Warlord, Ogre Warlord) no longer drop
+their weapon themselves — it's now a guaranteed drop from that dungeon's
+chest instead; see [Dungeons](../dungeons/).
 
 <FilterTable
   placeholder="Search monsters or drops…"
@@ -122,7 +124,7 @@ are guaranteed.
     { key: 'chance', label: 'Drop rate', align: 'right' },
     { key: 'dice', label: 'Weapon damage', align: 'center' },
   ]}
-  rows={monsters.filter((m) => m.weapon).sort(byLevel).map((m) => ({
+  rows={monsters.filter((m) => m.weapon && m.weaponDropChance > 0).sort(byLevel).map((m) => ({
     name: m.name,
     drop: itemName(m.weapon),
     chance: `${Math.round(m.weaponDropChance * 100)}%`,
@@ -130,8 +132,8 @@ are guaranteed.
   }))}
 />
 
-The Orc Warlord is currently the only guaranteed source of the **Iron Sword**
-(1d8) — it isn't sold in shops, so killing that boss is the direct route to it.
+The **Iron Sword** isn't sold in shops — the only way to get it now is the Orc
+Warrens dungeon chest (see [Dungeons](../dungeons/)).
 
 ### Bonus drops
 

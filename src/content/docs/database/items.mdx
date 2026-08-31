@@ -15,7 +15,7 @@ export const sources = (id) => {
   const out = [];
   if (rica.catalog.includes(id)) out.push('商店');
   if (dropChance.has(id)) out.push(`世界掉落 ${(dropChance.get(id) * 100).toFixed(1)}%`);
-  const carriers = monsterWeapons.filter((m) => m.weapon === id);
+  const carriers = monsterWeapons.filter((m) => m.weapon === id && m.weaponDropChance > 0);
   for (const m of carriers) {
     out.push(`${monsterName(m.id)} ${Math.round(m.weaponDropChance * 100)}%`);
   }

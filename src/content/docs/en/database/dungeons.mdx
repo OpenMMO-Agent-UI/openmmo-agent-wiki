@@ -4,8 +4,10 @@ description: Dungeon locations, floor counts, bosses and the chest drop rules.
 ---
 
 import FilterTable from '../../../../components/FilterTable.astro';
-import { dungeons, monsters, items } from '../../../../lib/gamedata.js';
+import { dungeons, monsters, items, lockedFloors } from '../../../../lib/gamedata.js';
 import { itemName } from '../../../../lib/en.js';
+
+export const signature = (d) => (d.chestDrops.length ? d.chestDrops.map(itemName).join(', ') : '—');
 
 **{dungeons.length} dungeons** are open. Dungeons are **seed-determined**: the
 same entrance always has the same layout and is never regenerated.
@@ -27,7 +29,7 @@ same entrance always has the same layout and is never regenerated.
     tier: `T${d.chestTier}`,
     floors: `${d.floors}`,
     boss: d.boss ? monsters.find((m) => m.id === d.boss)?.name ?? d.boss : '—',
-    signature: d.chestDrops ? itemName(d.chestDrops) : '—',
+    signature: signature(d),
     coords: `${d.x}, ${d.z}`,
   }))}
 />
@@ -47,7 +49,6 @@ to walk to one the first time.
     { key: 'guard', label: 'Guard', align: 'right' },
     { key: 'atk', label: 'To-hit', align: 'right' },
     { key: 'dmg', label: 'Damage', align: 'center' },
-    { key: 'drop', label: 'Guaranteed weapon' },
   ]}
   rows={dungeons.filter((d) => d.boss).map((d) => {
     const m = monsters.find((x) => x.id === d.boss);
@@ -55,7 +56,6 @@ to walk to one the first time.
       name: m.name, dungeon: d.name,
       level: m.level, hp: m.healthEffective, guard: m.guard,
       atk: `+${m.attackBonusEffective}`, dmg: m.damageRollEffective,
-      drop: m.weapon ? itemName(m.weapon) : '—',
     };
   })}
 />
@@ -68,15 +68,63 @@ down.
 A slain boss doesn't respawn on a timer — its floor holds it dead until the
 next **sunset dungeon reset** (once per game day), which also teleports
 everyone still in that dungeon back to its entrance with a distant roar.
-Only characters within **20m of the boss when it fell** may open the chest it
-drops; standing at the entrance while your party fights won't qualify you.
+Opening the chest no longer requires killing the boss or standing next to it
+— see "Keys and locked floors" below. The weapon each boss used to drop
+itself (Goblin Sword, Iron Sword, Steel Longsword) is now a guaranteed chest
+drop instead; see the table below.
+
+## Keys and locked floors
+
+Every **5th floor**'s stair-room exit has a locked door that always exists,
+blocking the way on completely:
+
+<FilterTable
+  placeholder="Search dungeons…"
+  columns={[
+    { key: 'name', label: 'Dungeon' },
+    { key: 'floors', label: 'Locked floors' },
+    { key: 'chest', label: 'Key for the chest' },
+  ]}
+  rows={dungeons
+    .filter((d) => d.keyPrefix)
+    .map((d) => {
+      const locked = lockedFloors(d);
+      return {
+        name: d.name,
+        floors: locked.map((f) => `Floor ${f}`).join(', '),
+        chest: itemName(`${d.keyPrefix}_${locked[locked.length - 1]}`),
+      };
+    })}
+/>
+
+- **Keys drop in the section just before their locked door** (for example,
+  Orc Warrens floors 1–4 drop the floor-5 key, floors 6–9 drop the floor-10
+  key). Monsters killed in that section have a **5%** chance to drop the
+  matching key; breaking a barrel, crate or clutter chest there is **1%**. The
+  roll is skipped once a character already holds that key, or has already
+  opened that dungeon's chest tonight.
+- Keys drop on the ground for anyone to pick up; **a floor-5 key won't open a
+  floor-10 door.**
+- Holding the key and clicking the locked door opens it. **The door doesn't
+  consume the key** — dying or leaving and coming back still works, and keys
+  never expire. An opened door **stays open for 30 seconds** before
+  auto-closing, so someone without a key can slip in behind you during that
+  window, but once it closes they're stuck on whichever side they ended up
+  on.
+- **The key for the dungeon's deepest locked door** (Old Crypt floor 5, Orc
+  Warrens floor 10, Ogre Stronghold floor 15) is the ticket to the chest —
+  carry it to the bottom floor and open the chest without ever killing the
+  boss. Opening it spends one of **every key type you're carrying** for that
+  dungeon. The boss still guards the chest room, so opening it safely
+  usually still means dealing with it.
 
 ## Chest drop rules
 
 Each dungeon's chest drops come in three parts:
 
-1. **Signature drop** — one guaranteed item per dungeon, the "Guaranteed drop"
-   column above.
+1. **Signature drop(s)** — one or two guaranteed items per dungeon, the
+   "Guaranteed drop" column above; the three boss weapons now count among
+   them.
 2. **Independent rolls** — every other piece in that tier's pool rolls
    separately at its own chance.
 3. **Lower-tier carry-over** — equipment from tiers below the dungeon each get
@@ -86,12 +134,6 @@ Gold is `depth × 500` to `depth × 1500`.
 
 The target is roughly **five runs on average** to collect everything a tier
 introduces.
-
-Actually opening a chest (re-clicking an emptied one doesn't count) starts a
-60-second timer — still in the dungeon when it fires and you're teleported
-to the spawn point. Logging out during that window banks the return
-immediately. This stops parking a character on the deepest floor and only
-logging in each refill to loot it.
 
 <FilterTable
   placeholder="Search equipment…"
@@ -116,9 +158,12 @@ logging in each refill to loot it.
     }))}
 />
 
-:::note[Weapons never come from chests]
-Weapons are obtained exclusively from "the monster carrying it drops it", so
-what you can see is what you can get. Chests hold armor and accessories only.
+:::note[The only weapons in chests are the three boss weapons]
+Weapons are normally obtained from "the monster carrying it drops it" — the
+exception is the Goblin Sword, Iron Sword and Steel Longsword, which are now
+guaranteed chest drops instead of boss drops. Every other weapon still works
+the old way: what you see a monster carrying is what it can drop, and chests
+don't carry it.
 :::
 
 ## What you'll meet down there

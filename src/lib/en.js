@@ -34,6 +34,7 @@ export const categoryNames = {
   phoenix_talisman: 'Phoenix talisman',
   reagent: 'Reagent',
   timekeeper: 'Timekeeper',
+  dungeon_key: 'Dungeon key',
 };
 
 export const slotNames = {

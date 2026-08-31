@@ -110,7 +110,9 @@ export const byLevel = (a, b) => a.level - b.level;
 ## 드랍
 
 몬스터가 들고 있는 무기가 곧 드랍품입니다 — **보이는 것이 곧 얻을 수 있는 것**이라는
-의도적인 설계입니다. 일반 몬스터는 10%, 보스는 100% 확정입니다.
+의도적인 설계입니다. 일반 몬스터는 10%입니다. 던전 보스 세 마리(고블린 족장, 오크 워로드,
+오우거 워로드)는 더 이상 무기를 직접 드랍하지 않고, 대신 해당 던전 상자의 확정 드랍으로
+옮겨졌습니다 — [던전](../dungeons/) 참고.
 
 <FilterTable
   placeholder="몬스터나 드랍품 검색…"
@@ -120,7 +122,7 @@ export const byLevel = (a, b) => a.level - b.level;
     { key: 'chance', label: '드랍률', align: 'right' },
     { key: 'dice', label: '무기 피해', align: 'center' },
   ]}
-  rows={monsters.filter((m) => m.weapon).sort(byLevel).map((m) => ({
+  rows={monsters.filter((m) => m.weapon && m.weaponDropChance > 0).sort(byLevel).map((m) => ({
     name: monsterName(m.id),
     drop: itemName(m.weapon),
     chance: `${Math.round(m.weaponDropChance * 100)}%`,
@@ -128,8 +130,8 @@ export const byLevel = (a, b) => a.level - b.level;
   }))}
 />
 
-오크 워로드는 현재 **철검**(1d8)을 확정으로 주는 유일한 출처입니다 —
-철검은 상점에서 팔지 않으므로 이 보스를 잡는 것이 가장 직접적인 경로입니다.
+**철검**은 상점에서 팔지 않으며, 이제 유일한 획득 경로는 오크 소굴 던전 상자입니다
+([던전](../dungeons/) 참고).
 
 ### 추가 드랍
 

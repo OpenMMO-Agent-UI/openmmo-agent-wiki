@@ -116,7 +116,8 @@ export const byLevel = (a, b) => a.level - b.level;
 ## 掉落
 
 怪物身上帶的武器就是它會掉的東西 —— 這是刻意的設計,**看得到就打得到**。
-一般怪物掉落率 10%,頭目 100% 確定掉落。
+一般怪物掉落率 10%。三座地城頭目(哥布林酋長、獸人督軍、食人魔督軍)不再親自掉武器,
+牠們的武器改成該地城寶箱的確定掉落,見[地城](../dungeons/)。
 
 <FilterTable
   placeholder="搜尋怪物或掉落物…"
@@ -127,7 +128,7 @@ export const byLevel = (a, b) => a.level - b.level;
     { key: 'dice', label: '武器傷害', align: 'center' },
   ]}
   rows={monsters
-    .filter((m) => m.weapon)
+    .filter((m) => m.weapon && m.weaponDropChance > 0)
     .sort(byLevel)
     .map((m) => ({
       name: monsterName(m.id),
@@ -137,8 +138,7 @@ export const byLevel = (a, b) => a.level - b.level;
     }))}
 />
 
-獸人督軍是目前唯一確定掉落**鐵劍**(1d8)的來源 —— 鐵劍不在商店販售,
-所以打倒它是拿到這把武器最直接的方法。
+**鐵劍**不在商店販售,現在唯一的取得方式是獸人巢穴地城寶箱(見[地城](../dungeons/))。
 
 ### 額外掉落
 
