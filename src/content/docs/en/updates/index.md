@@ -19,9 +19,74 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v46 — client v0.38.0 (current)
+## Protocol v49 — client not yet released
 
-**The live server currently requires v46.**
+**The live server hasn't updated to this version yet.**
+
+**Fixes**
+
+- **Position corrections while being hit now blend smoothly instead of
+  snapping** (2026-09-01) — you no longer see a monster teleport on your
+  first landed swing; a monster that's chasing you now steers straight
+  toward your current live position instead of a stale grid cell, braking at
+  the server-computed engage range.
+- **Fishing titles could be lost by disconnecting mid-catch — fixed**
+  (2026-09-02).
+- **A hunger-state bug right at the sprint speed threshold — fixed**
+  (2026-09-02).
+
+## Protocol v48 — client v0.39.0 (current)
+
+**The live server currently requires v48.**
+
+**New systems**
+
+- **A maid now walks over to a seated guest and takes their order**
+  (2026-09-01) — sitting on a chair near a maid queues a visit; she walks
+  over (some chairs have a curated stand spot in the data, others get a
+  computed one) and greets you for your order.
+- **A second maid, Cocoly, joins the inn alongside Miriel, sharing one visit
+  claim board** (2026-09-01) — both maids can now respond to a bedside
+  respawn or a seated guest; the new claim board makes sure only the first
+  maid to claim a given call answers it, so you never get double-greeted.
+
+**Fixes**
+
+- **Clicking the same chair again mid-walk no longer instantly pops you back
+  up** (2026-09-01).
+- **Shop NPCs (including the maids) no longer open a trade window on their
+  own — you have to click them first** (2026-09-01).
+- **Open window shutters now keep blocking movement correctly in the
+  passability cache** (2026-09-01).
+- **Grazing a stairwell edge or falling through a shaft could flip which
+  floor the client thought you were on — fixed** (2026-09-01).
+- **The reconnect backoff timer now only resets after the connection has
+  actually been healthy for a while** (2026-09-01) — avoids a longer wait to
+  reconnect after a brief network blip.
+
+## Protocol v47 — client not yet released
+
+**New systems**
+
+- **A maid now walks to your bedside to greet you on respawn** (2026-08-31)
+  — the occupied bed id was being skipped during serialization, so the
+  server always received an empty value and the greeting visit could never
+  be queued; this fix wires the field through (bumping the protocol), and
+  Miriel now actually recognizes a freshly respawned player and walks over.
+- **Landing a Golden Sturgeon earns a title** (2026-08-31) — titles gained a
+  new "fishing" source alongside boss kills, and landing a Golden Sturgeon
+  grants "Who Landed the Golden Sturgeon", picked the same way as boss
+  titles. See [Titles](../../guides/titles/).
+
+**Client**
+
+- **5 new social clips: maid idles and player pose/yawn emotes**
+  (2026-08-31).
+- **Combat idle now breathes between swings, and the old hidden `/emote`
+  debug clip command was replaced with a client-local admin `/anim`
+  command** (2026-08-31).
+
+## Protocol v46 — client v0.38.0
 
 **New systems**
 
@@ -49,6 +114,14 @@ whether you need a new client.
   character panel's Titles tab or the `/title` command. Titles show above
   the head, at character select, and in the character panel; chat doesn't
   show them. See [Titles](../../guides/titles/).
+- **Death now respawns you in an inn bed instead of at the town spawn**
+  (2026-08-30) — the character lies down in a free bed in the inn's sick
+  room (4 beds total), pose decided by the server; if all 4 are taken, the
+  character stands beside the beds instead. Bed positions follow the
+  furniture placed in the map editor.
+- **The inn maid Miriel joins the game** (2026-08-31) — a new Maid class,
+  NPC-only and not player-selectable, with Miriel stationed on the inn's
+  ground floor.
 
 **Balance**
 
@@ -58,6 +131,21 @@ whether you need a new client.
   drop chance is now 0% and the weapon comes from the dungeon chest instead,
   personalized like the rest of the chest loot instead of going to whoever
   landed the kill first each night.
+
+**New items & assets**
+
+- **Rustic Bed** (2026-08-30) — furniture, 4,000 copper, a simple wooden
+  single bed with a woollen blanket.
+
+**Fixes**
+
+- **Furniture is sittable now** (2026-08-30) — clicking a chair plays a
+  sit-down animation, and chatting while seated switches to a matching
+  seated chat pose; standing up plays a stand-up clip first, then steps to
+  the free cell beside the chair (the cell right in front is usually a
+  table, so it steps aside instead).
+- **Clicks on upper floors were sometimes caught by a jetty overhang from
+  the floor above and misrouted to the wrong storey — fixed** (2026-08-30).
 
 ## Protocol v45 — client not yet released
 

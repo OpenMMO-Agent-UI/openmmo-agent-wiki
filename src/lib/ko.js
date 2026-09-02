@@ -48,6 +48,7 @@ export const itemNames = {
   phoenix_talisman: '불사조 부적',
   table: '탁자',
   stone_hearth: '돌 벽난로',
+  rustic_bed: '소박한 나무 침대',
   mandolin: '만돌린',
   worn_mandolin: '낡은 만돌린',
   fishing_rod: '낚싯대',
@@ -128,6 +129,7 @@ export const itemDescriptions = {
   phoenix_talisman: '태양빛 불사조가 새겨진 석판. 지니고 있으면 쓰러졌을 때 새가 깨어난다 — 쓰러진 자리에서 다시 일어나고, 부적은 이내 먼지로 부서진다.',
   table: '튼튼한 나무 탁자.',
   stone_hearth: '방패 문장이 새겨진 오래된 돌 벽난로. 천장까지 닿는다.',
+  rustic_bed: '양털 담요를 덮은 소박한 나무 1인용 침대.',
   mandolin: '금박 프렛이 박힌 둥근 몸통의 만돌린. /play_music으로 한 곡 연주할 수 있다.',
   worn_mandolin: '길에서 낡았지만 소리는 여전히 참된 만돌린. /play_music으로 한 곡 연주할 수 있다. 상인은 사주지 않는다.',
   fishing_rod: '말총 줄을 단 낭창한 나무 낚싯대. 물을 향해 던져 낚시한다.',
@@ -279,6 +281,7 @@ export const classNames = {
   bard: '바드',
   merchant: '상인',
   guard: '경비병',
+  maid: '메이드',
 };
 
 export const raceNames = {

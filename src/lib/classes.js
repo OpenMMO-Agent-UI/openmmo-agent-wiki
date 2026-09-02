@@ -8,7 +8,7 @@ const HIT_DIE = {
   ranger: 8, samurai: 8, monk: 8, priest: 8,
   archaeologist: 6, healer: 6, rogue: 6, wizard: 6, bard: 6,
   tourist: 4,
-  merchant: 4, guard: 10,
+  merchant: 4, guard: 10, maid: 4,
 };
 
 /** doc/COMBAT.md. Some classes adjust differently by gender. */
@@ -33,6 +33,7 @@ export const classes = [
 export const hiddenClasses = [
   { id: 'merchant', en: 'Merchant', zh: '商人', adjust: [-2, 0, -1, 1, -1, 3], hitDie: HIT_DIE.merchant, who: 'Rica' },
   { id: 'guard', en: 'Guard', zh: '衛兵', adjust: [2, 0, 2, -2, -1, -1], hitDie: HIT_DIE.guard, who: 'Karl' },
+  { id: 'maid', en: 'Maid', zh: '女僕', adjust: [-2, 1, -1, -1, 1, 2], hitDie: HIT_DIE.maid, who: 'Miriel, Cocoly' },
 ];
 
 export const races = [
