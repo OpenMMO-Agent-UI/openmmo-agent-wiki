@@ -19,9 +19,9 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v49 — client not yet released
+## Protocol v49 — client v0.40.0 (current)
 
-**The live server hasn't updated to this version yet.**
+**The live server currently requires v49.**
 
 **Fixes**
 
@@ -35,9 +35,7 @@ whether you need a new client.
 - **A hunger-state bug right at the sprint speed threshold — fixed**
   (2026-09-02).
 
-## Protocol v48 — client v0.39.0 (current)
-
-**The live server currently requires v48.**
+## Protocol v48 — client v0.39.0
 
 **New systems**
 
