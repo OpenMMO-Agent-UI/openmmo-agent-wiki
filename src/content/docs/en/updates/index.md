@@ -19,9 +19,128 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v49 — client v0.40.0 (current)
+## Protocol v52 — client not yet released
 
-**The live server currently requires v49.**
+**The live server is still running v51 and has not upgraded to this version.**
+
+**New systems**
+
+- **Playable instruments — the mandolin can actually be strummed now**
+  (2026-09-03) — type `/play_instrument` or open the panel from **Social →
+  Play Instrument**. The server only accepts it for a living, world-ready
+  player carrying an item in the `instrument` category. The keyboard has
+  three registers (`Q W E R T Y U I` / `A S D F G H J` / `Z X C V B N M`)
+  spanning C5–C6, C4–B4, and C3–B3; mouse and touch share the same latch. A
+  key sounds once per press and rearms on release. Up to four voices sound
+  at once — a fifth replaces the oldest, and retriggering your own note
+  replaces its previous voice. Audio is synthesized locally with a damped
+  plucked-string model and a procedural room impulse, so no new sound assets
+  were needed. Listeners on the same floor within 30m hear you, except
+  anyone who has blocked you. Moving, attacking, landing a hit, dying,
+  losing the instrument (dropped or sold), opening a trade, pressing Escape,
+  or disconnecting all end the session; starting one discards any queued
+  walk so a click-to-move in progress can't cancel it a tick later. The
+  playlist BGM yields to a live performance the same way it yields to a
+  bard NPC's earshot; battle music and `/play_music` keep priority. This
+  new message bumped the protocol to v52. See [Music & the
+  bard](../guides/music/).
+
+**Fixes**
+
+- **The instrument panel's smallest labels were too small to read — enlarged
+  and darkened** (2026-09-03).
+- **In crowded plazas, a blocked performer's notes are now fully silenced,
+  and the note batch cap dropped from 64 to 16** to stop flooding listeners
+  (2026-09-03).
+- **Opening a trade window now ends an in-progress performance** instead of
+  leaving the keyboard and Escape stuck behind the panel (2026-09-03).
+- **Walking into earshot mid-performance now correctly ducks the background
+  music**, not just players who were already there when it started
+  (2026-09-03).
+- **Changing gear no longer interrupts a performance** — the instrument
+  counts from the bag or the hands either way; Ctrl combos now pass through
+  while the panel is open, and Escape closes through the overlay stack one
+  layer at a time (2026-09-03).
+- **Chat bubbles now render as a DOM layer so they no longer get hidden
+  behind the minimap** (2026-09-03).
+- **Moving or teleporting now clears a character's leftover sit/lie pose**,
+  so late joiners no longer see a frozen double lying in bed (2026-09-03).
+
+**Performance**
+
+- **Every note now shares one dry bus and one reverb bus instead of building
+  a new convolver per note** (2026-09-03).
+
+## Protocol v51 — client v0.41.0 (current)
+
+**The live server currently requires v51.**
+
+**New systems**
+
+- **Table meals at the inn — a maid sets a plate down, the guest eats
+  seated** (2026-09-03) — order from a maid while seated and she makes her
+  usual kitchen round trip, then returns to set the plate on the table;
+  several chairs at one table each get their own spot along the edge
+  instead of stacking. Click the plate to eat — satiation fills to the cap
+  (HP recovers based on the actual gain). The emptied plate stays on the
+  table and can't be eaten again. If you leave or disappear, the maid clears
+  the plate 8 seconds later, and the server removes it automatically after
+  90 seconds regardless; a meal is cleared after 30 minutes even if you're
+  still seated. NPC guests eat automatically 6 seconds after being served.
+  This new message bumped the protocol to v51.
+- **Drinks at the inn — beer and wine, with three stages of tipsiness**
+  (2026-09-03) — every chair has a drink slot beside its dish slot (to the
+  guest's right), so ordering food and a drink together doesn't overlap;
+  one kitchen trip brings both back. A drink only adds its own nutrition,
+  and the cup stays behind once it's finished. Alcohol units drunk within
+  ten minutes (beer counts 1, wine counts 2) set the stage: 1 unit is
+  **tipsy** (move/attack speed ×1.1), 2 is **drunk** (move/attack/carry
+  ×0.85, hit roll −2), 3+ is **wasted** (move/attack/carry ×0.6, hit roll
+  −5, and your click-to-move target drifts 1–2.5m off target). The three
+  stages are exclusive — only the latest one sticks.
+
+**New items & assets**
+
+- **Four inn dishes** (2026-09-03) — chicken rice, chicken curry, fried
+  rice, and vegetable rice, all serve-only items not sold in any shop.
+- **Beer and wine** (2026-09-03) — serve-only inn drinks, 20c and 60c
+  respectively.
+
+**Fixes**
+
+- **The NPC dialogue app-server used to be force-restarted by the system
+  roughly every 4 hours from a memory leak, dropping every NPC offline for
+  the duration — fixed** (2026-09-03).
+
+**Performance**
+
+- **Background music now downloads whole and plays from the browser cache
+  instead of streaming over Range requests**, so a page refresh doesn't
+  re-download the whole track (2026-09-03).
+
+**Client**
+
+- **Added a Ctrl+M mute shortcut that works on the login and character
+  screens too; the map editor's own use of the same shortcut was removed**
+  (2026-09-03).
+
+## Protocol v50 — client not yet released
+
+**New systems**
+
+- **Heroic tales — the bard Signe sings about real events from the server
+  during her inn set at night** (2026-09-02) — each night's inn set picks
+  three true deeds as that night's topics; the next topic isn't sung until
+  at least two ordinary songs have played since the last one (counted from
+  when it was first offered), so the whole night isn't stories and late
+  arrivals still get a chance to hear one. The first pass sends verses with
+  `/recite` and logs them to chat; repeats use bubble-only `/recite_quiet`.
+  Both go through a new `ServerMessage::Recital`. The performance language
+  follows the audience: all-Chinese stays Chinese, all-English stays
+  English, and a mixed or silent room alternates languages by topic. This
+  new message bumped the protocol to v50.
+
+## Protocol v49 — client v0.40.0
 
 **Fixes**
 
@@ -34,6 +153,14 @@ whether you need a new client.
   (2026-09-02).
 - **A hunger-state bug right at the sprint speed threshold — fixed**
   (2026-09-02).
+- **Trade portraits for the inn maids Miriel and Cocoly were showing a 404
+  image — fixed, with dedicated portraits** (2026-09-02).
+
+**Performance**
+
+- **The login-screen flower and world-map background textures now route
+  through the asset manifest**, so they aren't re-downloaded on every page
+  load (2026-09-02).
 
 ## Protocol v48 — client v0.39.0
 

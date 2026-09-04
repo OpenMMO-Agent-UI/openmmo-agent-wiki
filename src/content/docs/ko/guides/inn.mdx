@@ -1,7 +1,10 @@
 ---
 title: 여관과 메이드
-description: 사망 리스폰이 어디로 떨어지는지, 의자에 앉는 법, 그리고 메이드 Miriel과 Cocoly의 서비스가 어떻게 발동하는지.
+description: 사망 리스폰이 어디로 떨어지는지, 의자에 앉는 법, 메이드 Miriel과 Cocoly의 서비스가 어떻게 발동하는지, 그리고 음식과 술을 주문하는 법.
 ---
+
+import { itemsById, formatCoins } from '../../../../lib/gamedata.js';
+import { itemName } from '../../../../lib/ko.js';
 
 여관은 사망 리스폰 지점이자, 현재 유일하게 **앉을 수 있는** 곳입니다. 두 메이드
 Miriel(프로토콜 v46)과 Cocoly(프로토콜 v48)가 여관 1층에 상주하며, 막 리스폰했거나
@@ -46,3 +49,41 @@ Miriel과 Cocoly는 하나의 **방문 인증 게시판(claim board)**을 공유
 
 다른 상점 NPC와 마찬가지로 메이드도 스스로 거래 창을 먼저 열지 않습니다 —
 플레이어가 먼저 클릭해야 거래 UI가 나타납니다(프로토콜 v48).
+
+## 음식과 술 주문하기(프로토콜 v51)
+
+앉아서 메이드에게 주문하면 메이드가 평소 주방 왕복 경로를 따라 돌아온 뒤
+접시를 테이블에 놓습니다. 한 테이블에 의자가 여럿이면 각자 테이블 가장자
+리의 다른 위치를 받아 겹치지 않습니다. 접시를 클릭하면 먹을 수 있고, 포만
+도는 상한까지 채워지며 HP는 실제로 오른 만큼 회복됩니다. 빈 접시는 테이블
+에 남고 다시 먹을 수 없습니다. 손님이 자리를 뜨거나 사라지면 메이드가 8초
+뒤 와서 치우고, 서버도 90초 뒤에는 자동으로 제거합니다. 계속 앉아 있어도
+30분이 지나면 치워집니다. NPC 손님은 서빙받고 6초 뒤 자동으로 먹습니다.
+
+모든 요리는 서빙 전용 아이템으로 상점에서는 팔지 않습니다:
+
+| 요리 | 설명 |
+|---|---|
+| {itemName('chicken_rice')} | {formatCoins(itemsById.get('chicken_rice').basePrice)}, 영양치 {itemsById.get('chicken_rice').nutrition} |
+| {itemName('chicken_curry')} | {formatCoins(itemsById.get('chicken_curry').basePrice)}, 영양치 {itemsById.get('chicken_curry').nutrition} |
+| {itemName('fried_rice')} | {formatCoins(itemsById.get('fried_rice').basePrice)}, 영양치 {itemsById.get('fried_rice').nutrition} |
+| {itemName('vegetable_rice')} | {formatCoins(itemsById.get('vegetable_rice').basePrice)}, 영양치 {itemsById.get('vegetable_rice').nutrition} |
+
+모든 의자에는 음식 슬롯 옆에 음료 슬롯(손님 기준 오른쪽)도 있어서, 음식과
+음료를 함께 시켜도 겹치지 않습니다 — 메이드는 한 번의 주방 왕복으로 둘 다
+가져옵니다. 음료는 자기 영양치만큼만 포만도를 채우고, 다 마셔도 잔은 남습
+니다.
+
+- {itemName('beer')}({formatCoins(itemsById.get('beer').basePrice)})— 알코올 1 단위.
+- {itemName('wine')}({formatCoins(itemsById.get('wine').basePrice)})— 알코올 2 단위.
+
+### 취기
+
+10분 안에 마신 알코올 단위의 합으로 단계가 정해집니다. 세 단계는 서로 배
+타적이라 가장 최근 것만 유지됩니다:
+
+| 누적 단위 | 단계 | 효과 |
+|---|---|---|
+| 1 | 알딸딸함 | 이동·공격 속도 ×1.1 |
+| 2 | 취함 | 이동·공격·소지 무게 ×0.85, 명중 굴림 −2 |
+| 3+ | 만취 | 이동·공격·소지 무게 ×0.6, 명중 굴림 −5, 클릭 이동 목표 지점이 1~2.5m 무작위로 빗나감 |

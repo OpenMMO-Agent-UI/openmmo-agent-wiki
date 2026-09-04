@@ -139,6 +139,7 @@ export const items = parseCsv('items').map((r) => {
     useDebuff: r.useDebuff || null,
     untradeable: bool(r.untradeable),
     reviveHpPercent: num(r.reviveHpPercent),
+    alcohol: num(r.alcohol),
   };
 });
 
@@ -254,4 +255,7 @@ export const debuffs = parseCsv('debuffs').map((r) => ({
   armorWeightMult: num(r.armorWeightMult) ?? 1,
   drainMult: num(r.drainMult) ?? 1,
   blocksRegen: bool(r.blocksRegen),
+  group: r.group || null,
+  staggerM: num(r.staggerM),
+  hitMod: num(r.hitMod),
 }));

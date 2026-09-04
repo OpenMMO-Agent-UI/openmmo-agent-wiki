@@ -101,3 +101,50 @@ herself (see above).
   Type a mixed amount like `1g20s30c`, or a bare number for copper. The
   server checks your wallet, that you are within 5m, and blocks tipping your
   own hat.
+
+## Playing live (protocol v52)
+
+`/play_music` queues up a whole BGM track; **live instrument mode** lets you
+play it note by note yourself. Type `/play_instrument` or open the panel
+from **Social → Play Instrument**. The server only accepts it for a living,
+world-ready player carrying an item in the `instrument` category.
+
+The keyboard has three registers:
+
+| Register | Keys | Notes |
+|---|---|---|
+| High | `Q W E R T Y U I` | C5 D5 E5 F5 G5 A5 B5 C6 |
+| Middle | `A S D F G H J` | C4 D4 E4 F4 G4 A4 B4 |
+| Low | `Z X C V B N M` | C3 D3 E3 F3 G3 A3 B3 |
+
+Mouse and touch share the same latch — a key sounds once per press and
+rearms on release. Up to four voices sound at once; a fifth replaces the
+oldest, and retriggering your own note replaces its previous voice. Escape
+closes through the overlay stack one layer at a time, and Ctrl combos pass
+through while the panel is open.
+
+Audio is synthesized locally with a damped plucked-string model and a
+procedural room impulse, so no extra sound assets were needed. Listeners on
+the same floor within 30m hear you, except anyone who has blocked you. The
+playlist BGM yields to a live performance the same way it yields to a bard
+NPC's earshot; battle music and `/play_music` keep priority.
+
+You can't move or fight while playing: moving, attacking, landing a hit,
+dying, losing the instrument (dropped or sold), opening a trade, pressing
+Escape, or disconnecting all end the session. Changing gear doesn't
+interrupt it — the instrument counts from the bag or the hands either way.
+
+## Heroic tales (protocol v50)
+
+When Signe moves her set to the inn after dark, she sings about things that
+actually happened on the server — a boss kill, a rare enchant that landed or
+shattered, a legendary catch. Each night's set picks three true deeds as
+that night's topics, and the next topic isn't sung until at least two
+ordinary songs have played since the last one, so the whole night isn't
+stories and late arrivals still get a chance to hear one.
+
+The first pass logs the verses to chat; repeats show only as a speech
+bubble, without filling the chat log again. The performance language
+follows the audience: all-Chinese stays Chinese, all-English stays English,
+and a mixed or silent room alternates languages by topic. The names in a
+tale are real — the story itself is Signe's own embellished retelling.

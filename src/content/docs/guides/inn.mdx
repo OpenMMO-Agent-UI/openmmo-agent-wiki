@@ -1,7 +1,10 @@
 ---
 title: 客棧與女僕
-description: 死亡重生怎麼落到客棧床鋪、椅子怎麼坐,以及 Miriel、Cocoly 兩位女僕的服務怎麼觸發。
+description: 死亡重生怎麼落到客棧床鋪、椅子怎麼坐、Miriel、Cocoly 兩位女僕的服務怎麼觸發,以及怎麼點餐點酒。
 ---
+
+import { itemsById, formatCoins } from '../../../lib/gamedata.js';
+import { itemName } from '../../../lib/zh.js';
 
 客棧是死亡重生的落點,也是目前僅有的可以**坐下**的地方。兩位女僕 Miriel(協議
 v46 上線)與 Cocoly(協議 v48 上線)常駐客棧一樓,會主動招呼剛重生或剛坐下的
@@ -37,3 +40,38 @@ Miriel 與 Cocoly 兩人共用一份**服務認領表**:不論是床邊重生的
 
 女僕和其他店家型 NPC 一樣,不會自己主動打開交易視窗——一定要玩家先點擊
 她,交易介面才會出現(協議 v48)。
+
+## 點餐與點酒(協議 v51)
+
+坐在椅子上跟女僕點餐後,女僕照平常的跑腿路線繞去廚房,再回到你旁邊把餐點
+放上桌面。同一張桌子的多張椅子會分到桌緣不同的位置,不會疊在一起。點擊桌
+上的餐點就能吃,飽足度直接補到上限,HP 依實際回復量計算。吃完的空盤留在
+桌上,不能再吃一次。離座或人不在了,女僕會在 8 秒後過來收走空盤,伺服器
+90 秒後也會自動清除;就算一直坐著,30 分鐘後餐點也會被收走。NPC 客人在
+餐點上桌 6 秒後會自動吃掉。
+
+目前的餐點都是女僕供餐專屬道具,商店不販售:
+
+| 餐點 | 說明 |
+|---|---|
+| {itemName('chicken_rice')} | {formatCoins(itemsById.get('chicken_rice').basePrice)},{itemsById.get('chicken_rice').nutrition} 營養 |
+| {itemName('chicken_curry')} | {formatCoins(itemsById.get('chicken_curry').basePrice)},{itemsById.get('chicken_curry').nutrition} 營養 |
+| {itemName('fried_rice')} | {formatCoins(itemsById.get('fried_rice').basePrice)},{itemsById.get('fried_rice').nutrition} 營養 |
+| {itemName('vegetable_rice')} | {formatCoins(itemsById.get('vegetable_rice').basePrice)},{itemsById.get('vegetable_rice').nutrition} 營養 |
+
+每張椅子除了餐點格,還有一個酒水格(在顧客右側),同時點餐點和酒不會疊在
+一起,女僕一趟廚房行程就能把兩樣一起帶回來。喝酒只補自己的營養值,喝完杯
+子不會消失。
+
+- {itemName('beer')}({formatCoins(itemsById.get('beer').basePrice)})—— 酒精 1 單位。
+- {itemName('wine')}({formatCoins(itemsById.get('wine').basePrice)})—— 酒精 2 單位。
+
+### 醉意
+
+10 分鐘內累計喝下的酒精單位決定醉意階段,三個階段互斥,只保留最新的一個:
+
+| 累計單位 | 階段 | 效果 |
+|---|---|---|
+| 1 | 微醺 | 移動、攻擊速度 ×1.1 |
+| 2 | 醉了 | 移動、攻擊、負重 ×0.85,命中骰 −2 |
+| 3+ | 爛醉 | 移動、攻擊、負重 ×0.6,命中骰 −5,點擊移動的落點會左右亂飄 1~2.5 公尺 |

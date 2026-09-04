@@ -15,6 +15,7 @@ export const categoryNames = {
   armor: 'Armor',
   accessory: 'Accessory',
   food: 'Food',
+  drink: 'Drink',
   fish: 'Raw fish',
   junk: 'Junk',
   coin_catch: 'Coin catch',

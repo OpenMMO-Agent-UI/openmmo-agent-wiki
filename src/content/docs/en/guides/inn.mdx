@@ -1,7 +1,10 @@
 ---
 title: Inn & maids
-description: Where death respawns you, how sitting works, and how the maids Miriel and Cocoly's service triggers.
+description: Where death respawns you, how sitting works, how the maids Miriel and Cocoly's service triggers, and how to order food and drinks.
 ---
+
+import { itemsById, formatCoins } from '../../../../lib/gamedata.js';
+import { itemName } from '../../../../lib/en.js';
 
 The inn is where death respawns you, and today the only place you can **sit
 down**. Two maids, Miriel (protocol v46) and Cocoly (protocol v48), work the
@@ -48,3 +51,43 @@ entirely.
 
 Like other shop NPCs, the maids never open a trade window on their own — you
 have to click them first before the trade UI appears (protocol v48).
+
+## Ordering food and drinks (protocol v51)
+
+Order from a maid while seated and she makes her usual kitchen round trip,
+then returns to set the plate on the table. Several chairs at one table each
+get their own spot along the edge instead of stacking. Click the plate to
+eat — satiation fills to the cap, and HP recovers based on the actual gain.
+The emptied plate stays on the table and can't be eaten again. If you leave
+or disappear, the maid clears the plate 8 seconds later, and the server
+removes it automatically after 90 seconds regardless; a meal is cleared
+after 30 minutes even if you're still seated. NPC guests eat automatically 6
+seconds after being served.
+
+Every dish is a serve-only item, not sold in any shop:
+
+| Dish | Details |
+|---|---|
+| {itemName('chicken_rice')} | {formatCoins(itemsById.get('chicken_rice').basePrice)}, {itemsById.get('chicken_rice').nutrition} nutrition |
+| {itemName('chicken_curry')} | {formatCoins(itemsById.get('chicken_curry').basePrice)}, {itemsById.get('chicken_curry').nutrition} nutrition |
+| {itemName('fried_rice')} | {formatCoins(itemsById.get('fried_rice').basePrice)}, {itemsById.get('fried_rice').nutrition} nutrition |
+| {itemName('vegetable_rice')} | {formatCoins(itemsById.get('vegetable_rice').basePrice)}, {itemsById.get('vegetable_rice').nutrition} nutrition |
+
+Every chair also has a drink slot beside its dish slot (to the guest's
+right), so ordering food and a drink together doesn't overlap — one kitchen
+trip brings both back. A drink only adds its own nutrition, and the cup
+stays behind once it's finished.
+
+- {itemName('beer')} ({formatCoins(itemsById.get('beer').basePrice)}) — 1 alcohol unit.
+- {itemName('wine')} ({formatCoins(itemsById.get('wine').basePrice)}) — 2 alcohol units.
+
+### Getting tipsy
+
+Alcohol units drunk within ten minutes set your stage; the three stages are
+exclusive, so only the latest one sticks.
+
+| Units | Stage | Effect |
+|---|---|---|
+| 1 | Tipsy | Move/attack speed ×1.1 |
+| 2 | Drunk | Move/attack/carry ×0.85, hit roll −2 |
+| 3+ | Wasted | Move/attack/carry ×0.6, hit roll −5, click-to-move target drifts 1–2.5m off target |
