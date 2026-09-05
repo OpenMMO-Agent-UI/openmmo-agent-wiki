@@ -19,9 +19,9 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v52 — client not yet released
+## Protocol v52 — client not yet released (current)
 
-**The live server is still running v51 and has not upgraded to this version.**
+**The live server currently requires v52.**
 
 **New systems**
 
@@ -65,15 +65,18 @@ whether you need a new client.
   behind the minimap** (2026-09-03).
 - **Moving or teleporting now clears a character's leftover sit/lie pose**,
   so late joiners no longer see a frozen double lying in bed (2026-09-03).
+- **NPCs (maids, guards, and other townsfolk) now only light a torch at
+  night while outdoors**, instead of lighting one indoors or during the day
+  (2026-09-03).
+- **Toggling a held torch while seated or mid-emote no longer snaps the
+  animation back to its start** (2026-09-04).
 
 **Performance**
 
 - **Every note now shares one dry bus and one reverb bus instead of building
   a new convolver per note** (2026-09-03).
 
-## Protocol v51 — client v0.41.0 (current)
-
-**The live server currently requires v51.**
+## Protocol v51 — client v0.41.0
 
 **New systems**
 
