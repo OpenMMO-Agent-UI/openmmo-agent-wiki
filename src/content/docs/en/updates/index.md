@@ -19,9 +19,147 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v52 — client not yet released (current)
+## Protocol v57 — client v0.43.0 (current)
 
-**The live server currently requires v52.**
+**The live server currently requires v57.**
+
+**New systems**
+
+- **Wooden fences — place and recover fence sections along your estate's
+  borders** (2026-09-06) — wooden fences are a stackable furniture item, so
+  even a hundred-plus takes one bag slot; buy any quantity from Aldwin, the
+  same NPC who sells land deeds. Double-clicking one in your bag opens
+  placement mode: the whole estate shows a faint, terrain-following 1m dotted
+  grid. Hovering the ground previews the real fence model on the nearest cell
+  edge — green means you can place it, orange means you can recover it, red
+  means you can't touch it. Click an empty edge to spend one fence and place
+  it; click a placed fence to remove it and refund one to your bag, and the
+  next click is ignored until the server answers. Right-click moves without
+  leaving placement mode; left-click places or recovers. Esc or Done exits,
+  and the mode stays active at zero fences left so you can still recover
+  what's down. Outside the mode, right-clicking a placed fence within 5m
+  re-enters it, even with an empty bag after relogging. Placing requires one
+  of the edge's two neighboring cells to be your own plot with no unpaid tax
+  (edges on the outer boundary are allowed too); water deeper than 0.1m or a
+  height difference over 0.5m blocks it. Recovering only works for the plot's
+  current owner, even while overdue. This batch of new messages bumped the
+  protocol to v57. See [Estates](../guides/estates/#wooden-fences-protocol-v57).
+
+**Client**
+
+- **agent-client updated to v0.43.0**, matching protocol v57 (2026-09-06).
+
+## Protocol v56 — client not yet released
+
+**New systems**
+
+- **Aldwin's screen split into a dedicated Real Estate screen with a land tax
+  account** (2026-09-05) — clicking Aldwin no longer opens a general shop; he
+  won't buy, sell, or haggle over anything else. The left side shows your
+  deed; below it, your tax account balance, next due date (in-game date plus
+  a live countdown), the amount coming due, and whether you're overdue.
+  Clicking your carried gold deposits into the account, clicking the account
+  balance withdraws — amounts accept `1g20s30c`-style input or a plain copper
+  number, and deposits/withdrawals commit in the same database transaction as
+  your character's gold and bag. Tax is auto-collected at midnight on the
+  first of the in-game big month, the first payment is waived, missing your
+  last login for 8 consecutive due dates (roughly 30 real days) counts as
+  unpaid regardless of balance, missed dates add to a running overdue count,
+  and depositing the full arrears plus one month instantly restores good
+  standing and waives the next payment. Existing estates only start accruing
+  tax from the month this feature shipped — nothing is billed retroactively.
+  The decay penalties shown on screen are a design baseline only — building
+  and furniture restrictions, ruin rendering, and actually reclaiming a plot
+  (deleting the house, mailing furniture back) after 6 consecutive misses are
+  not implemented yet. This new message bumped the protocol to v56. See
+  [Estates](../guides/estates/#tax-account-protocol-v56).
+
+## Protocol v55 — client not yet released
+
+**New systems**
+
+- **Homestead claims — Land Registrar Aldwin sets up shop on Aldermark's town
+  square, selling land deeds** (2026-09-05) — a Land Deed costs a flat 50,000
+  copper (5 gold), no haggling; buying and carrying one has no level
+  requirement, but using one requires character level 10+. Double-clicking a
+  deed while standing on the plot you want shows a terrain-following grid for
+  your current 32×32m cell and a "Claim this plot?" confirmation; the server
+  checks claim conditions as soon as the preview opens, showing a red grid
+  with the rejection reason and hiding the claim button if they aren't met,
+  and refreshes the current cell and eligibility about 0.35s after you stop
+  moving. Confirming re-checks every condition and registers the plot while
+  consuming one deed in the same transaction; cancelling or failing never
+  consumes the deed. Each account can own one homestead estate, expanding to
+  up to 16 cells by claiming ones that share an edge with it — a disconnected
+  second plot needs a different account. Crown land (near towns and dungeon
+  entrances, meant for auctions, tournaments, and merit grants) shares the
+  same claim flow but has no acquisition path yet. This new message bumped
+  the protocol to v55. See [Estates](../guides/estates/).
+- **The world map now shows land ownership colors and tooltips** (2026-09-05)
+  — zoomed in, crown land and reserved land (towns, dungeon entrances, the
+  sea) show as filled color blocks while homestead plots show only grid
+  lines; owned plots are filled blocks, with your own in an accent color;
+  plots up for auction get a flag icon with a countdown; unpaid, neglected,
+  and ruined plots fade the ownership color by stage; owner and estate name
+  labels appear at high zoom.
+
+## Protocol v53 — client not yet released
+
+**New systems**
+
+- **Weapons gained a `weaponType` subtype** (2026-09-03) — current values are
+  `sword`, `short_sword`, `dagger`, `spear`, `mace`, `club`, and `torch`, with
+  `axe`, `staff`, `bow`, and `crossbow` reserved for future weapons. The
+  subtype itself doesn't drive range, two-handedness, or attack animations —
+  it's a pure data classification.
+- **Ranged combat arrives — the bow is the first ranged weapon** (2026-09-05)
+  — a weapon can now declare `range` (meters; absent means melee, using the
+  server's fixed 2m reach), `rangedAbility` (which ability replaces STR for
+  hit and damage), and `hands` (how many hands it occupies — `2` seals the
+  off-hand too). The bow: main-hand, two-handed, 10m range, driven by DEX,
+  base die 1d1 (a token that only sets range and ability). Range is gated on
+  `max(melee reach, weapon range)`; walls, closed doors, and furniture block a
+  shot the same way they block a swing, and an attack beyond range but within
+  the 10m provoke distance only wakes the target without dealing damage —
+  chasing stops at the weapon's own range and fires from there. The bow needs
+  arrows: `ammoKind` pairs bow and arrow by sharing a name (`arrow`), and a
+  weapon without `ammoKind` costs nothing to fire. Damage is the bow's die
+  plus the arrow's — an iron arrow (1d6) combined with the bow averages 4.5,
+  close to the iron sword (1d8); a steel arrow (1d8) combined averages 5.5,
+  close to the steel longsword (1d10). Arrows stack in the bag, don't take an
+  equip slot, and can't be enchanted. Equipping a bow with no valid selection
+  auto-picks the strongest stack; a manually chosen cheaper arrow is never
+  overridden by picking up a better one; running the chosen stack dry
+  auto-drops to the next-strongest, and an empty bag rejects the attack
+  (`OutOfAmmo`) and stops auto-attack too. A landed shot shows a visible arrow
+  flying at a fixed 30 m/s, re-aiming every frame to guarantee it reaches the
+  target's current position; a miss keeps its heading and flies 3m past. This
+  batch of new messages bumped the protocol to v53. See
+  [Combat](../guides/combat/#ranged-weapons-protocol-v53).
+
+**Balance**
+
+- **The price index floor dropped from 90% to 50%, and merchant payouts are
+  now capped at the cheapest buy price** (2026-09-05) — server-wide average
+  gold per active character keeps falling as new zero-gold characters join,
+  so the meeting kept voting the index down and hit the old 90% floor after
+  one step; the new 50% floor gives it more room to fall. Sell payouts still
+  ignore the index, but a merchant now never pays above the highest-haggled
+  buy price for the same item, closing a buy-low/sell-high loop the falling
+  index could otherwise open; resident wishlist premiums are unaffected. The
+  index now only applies to consumables some merchant actually shelves, so
+  unsold consumables like raw fish are no longer affected by it. See [Shops &
+  economy](../database/economy/#price-index-the-evening-market-meeting).
+
+**Fixes**
+
+- **Emptying a dungeon floor no longer resets its respawn timers** (2026-09-05)
+  — clearing a floor used to zero every spawn slot's timer, letting a player
+  disconnect and reconnect to a fully respawned floor; now only the alive
+  flag is cleared, so a slain slot keeps counting down its normal 5-minute
+  timer and a slain boss stays locked until the floor resets.
+
+## Protocol v52 — client v0.42.0
 
 **New systems**
 

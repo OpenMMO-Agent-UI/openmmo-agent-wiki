@@ -118,6 +118,7 @@ export const items = parseCsv('items').map((r) => {
     equipSlot: r.equipSlot || null,
     stackable: bool(r.stackable),
     category: r.category,
+    weaponType: r.weaponType || null,
     dice: r.dice || null,
     material: r.material || null,
     basePrice: num(r.basePrice),
@@ -140,6 +141,10 @@ export const items = parseCsv('items').map((r) => {
     untradeable: bool(r.untradeable),
     reviveHpPercent: num(r.reviveHpPercent),
     alcohol: num(r.alcohol),
+    range: num(r.range),
+    rangedAbility: r.rangedAbility || null,
+    hands: num(r.hands),
+    ammoKind: r.ammoKind || null,
   };
 });
 

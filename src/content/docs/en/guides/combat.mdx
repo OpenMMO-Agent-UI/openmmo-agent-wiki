@@ -194,6 +194,59 @@ The STR modifier applies **to every hit**, so it lifts low-damage weapons
 proportionally more: STR 18 (+4) with a Dagger (1d4, average 2.5) actually
 averages 6.5 — 2.6× the base.
 
+## Ranged weapons (protocol v53)
+
+A weapon can declare three extra fields: `range` (meters; absent means melee,
+using the server's fixed 2m reach), `rangedAbility` (which ability replaces
+STR for the hit and damage bonus), and `hands` (how many hands it occupies —
+`2` seals the off-hand too). The **Bow** is the first weapon to use any of
+them: two-handed, 10m range, hit and damage driven by **DEX**.
+
+- Range is gated on `max(melee reach, weapon range)` — walls, closed doors,
+  and furniture block a shot the same way they block a swing. An attack
+  beyond range but within the 10m provoke distance only wakes the target; it
+  deals no damage.
+- Chasing a target stops at the weapon's own range and fires from there —
+  there's no kiting room.
+- A landed shot shows a **visible arrow in flight** (a fixed 30 m/s, re-aiming
+  every frame to guarantee it reaches the target's current position). A miss
+  keeps its original heading and flies 3m past before vanishing.
+
+The bow's own die is a token (`1d1`) — the real damage comes from the arrow,
+and the two dice roll together, the same path a monster takes when it adds
+its own die to a wielded weapon's:
+
+<FilterTable
+  placeholder="Search weapons or arrows…"
+  columns={[
+    { key: 'name', label: 'Item' },
+    { key: 'dice', label: 'Dice', align: 'center' },
+    { key: 'avg', label: 'Average', align: 'right' },
+    { key: 'note', label: 'Note' },
+  ]}
+  rows={[
+    { name: itemName('bow'), dice: '1d1', avg: averageRoll('1d1').toFixed(1), note: 'The bow itself — sets range and ability only' },
+    { name: itemName('iron_arrow'), dice: '1d6', avg: averageRoll('1d6').toFixed(1), note: `Combined average ${(averageRoll('1d1') + averageRoll('1d6')).toFixed(1)}, close to ${itemName('iron_sword')} (1d8)` },
+    { name: itemName('steel_arrow'), dice: '1d8', avg: averageRoll('1d8').toFixed(1), note: `Combined average ${(averageRoll('1d1') + averageRoll('1d8')).toFixed(1)}, close to ${itemName('steel_longsword')} (1d10)` },
+  ]}
+/>
+
+The bow needs arrows to fire: `items.csv`'s `ammoKind` pairs bow and arrow by
+sharing the same name (`arrow`); a weapon without `ammoKind` costs nothing to
+fire, so melee weapons are untouched. Arrows stack in your bag, don't take an
+equip slot, and **can't be enchanted**.
+
+- Equipping a bow with no valid selection yet auto-picks the strongest stack
+  in your bag.
+- Manually picking a cheaper arrow is never overridden just because you pick
+  up a better one.
+- Running the chosen stack dry auto-drops to the next-strongest arrow; an
+  empty bag rejects the attack (`OutOfAmmo`) and stops auto-attack too, so it
+  doesn't spam a rejection every cooldown.
+
+Equipping a `hands: 2` weapon (only the bow, for now) unequips your off-hand
+item to your bag and refuses any off-hand equip while worn.
+
 ## The Guard scale
 
 Guard is NetHack's AC inverted — **higher is better.**

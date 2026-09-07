@@ -1,0 +1,118 @@
+---
+title: Estates
+description: Claim a homestead plot with a land deed, pay land tax from a tax account, and fence your estate's borders.
+---
+
+import { itemsById, formatCoins } from '../../../../lib/gamedata.js';
+import { itemName } from '../../../../lib/en.js';
+
+**Aldwin**, the Land Registrar stationed on Aldermark's town square, is the whole
+entry point to the land system for now — buying a deed, claiming a plot, and
+managing your tax account all go through him (protocol v55, v56).
+
+:::note[Still unfinished]
+Only **homestead** plots can be bought and claimed right now. Crown land (the
+ring near towns and dungeon entrances, meant for auctions, tournaments, and
+merit grants) has no acquisition path yet. Claimed land can't hold a house or
+furniture yet — only fences. Whether unpaid tax actually reclaims land is
+covered under "Tax account" below.
+:::
+
+## Buying a deed and claiming land (protocol v55)
+
+Aldwin sells **{itemName('land_deed')}** for a flat
+{formatCoins(itemsById.get('land_deed').basePrice)}, no haggling. Buying and
+carrying a deed has no level requirement, but **using one requires character
+level 10+**.
+
+Double-click a deed in your bag while standing on the plot you want, and the
+game shows a terrain-following grid for your current 32×32m cell plus a "Claim
+this plot?" confirmation:
+
+- The server checks the claim conditions as soon as the preview opens — if
+  they aren't met, the grid turns red with a rejection reason and the claim
+  button is hidden.
+- Moving while the preview is open refreshes the current cell and its
+  eligibility about 0.35s after you stop; the claim button is disabled while
+  that refresh is in flight.
+- Confirming re-checks every condition server-side; on success it registers
+  the plot and consumes one deed in the same transaction. Cancelling or
+  failing never consumes the deed — a failure shows a red grid with the
+  reason, a success shows green.
+
+Zoom in on the world map to see land grade and ownership as color overlays:
+crown land and reserved land (towns, dungeon entrances, and the sea) are
+filled blocks, homestead plots show only grid lines. Your own plots use an
+accent color, plots up for auction get a flag icon with a countdown, and
+unpaid/neglected/ruined plots fade your ownership color by stage.
+
+## Plot limits and expansion
+
+Each **account** (not each character) can own one homestead estate. Claiming a
+new cell merges it into your existing estate automatically as long as it
+shares an edge with it, up to a cap of **16 cells**. You can't claim a
+disconnected second plot on the same account — that needs a different
+account.
+
+## Tax account (protocol v56)
+
+Clicking Aldwin now opens a dedicated **Real Estate** screen instead of a
+general shop — he won't buy or haggle over anything else. The left side shows
+your deed; below it, your tax account balance, next due date (in-game date
+plus a live countdown), the amount coming due, and whether you're overdue.
+
+- Click your carried gold to **deposit** into the tax account, or the account
+  balance to **withdraw**. Amounts accept `1g20s30c`-style input or a plain
+  copper number. Deposits and withdrawals commit in the same database
+  transaction as your character's gold and bag, so nothing gets lost
+  mid-transfer.
+- Land tax is **20 silver per plot per in-game month** — a full 16-plot estate
+  costs 3.2 gold a month.
+- Tax is collected at **midnight on the first of the in-game big month**,
+  roughly every 3.75 real days. **The first payment is waived.**
+- The account balance has no cap, so you can pre-fund it before a long break.
+
+### What happens if you fall behind
+
+The decay stages shown on screen are currently a **design baseline**, not
+fully enforced yet: missing your last login for 8 consecutive due dates
+(roughly 30 real days) counts as unpaid regardless of balance, and every
+further missed date adds to a running overdue count meant to step through
+"overdue," "neglected," "ruined," and "reclaimed." The actual building and
+furniture restrictions, ruin rendering, and cleanup on reclamation (deleting
+the house, mailing furniture back) are **not implemented yet**. Depositing the
+full arrears plus one extra month instantly restores good standing and waives
+the next payment.
+
+## Wooden fences (protocol v57)
+
+{itemName('wooden_fence')} ({formatCoins(itemsById.get('wooden_fence').basePrice)},
+also bought from Aldwin in whatever quantity you ask for) are one-meter fence
+sections you place and recover along your estate's cell edges. They stack, so
+even a hundred-plus takes one bag slot.
+
+- Double-click a fence in your bag to enter placement mode: your bag closes
+  and any queued move is cancelled. The whole estate shows a faint,
+  terrain-following 1m dotted grid, independent of your mouse or camera —
+  it disappears when you leave the mode.
+- Hover the ground and the nearest 1m cell edge previews the real fence
+  model: **green** means you can place it, **orange** means you can recover
+  it, **red** means you can't touch it.
+- Click an empty edge to spend one fence and place it; click a placed fence to
+  remove it and refund one to your bag. The next click is ignored until the
+  server responds, and your bag count follows the server's answer.
+- Right-click to move without leaving placement mode; left-click places or
+  recovers. Esc or Done exits — the mode stays active even at zero fences left
+  so you can still recover what's already down.
+- Outside the mode, right-clicking a placed fence within 5m re-enters it, even
+  with an empty bag after relogging.
+
+Placing and recovering follow different rules:
+
+- **Placing** requires at least one of the edge's two neighboring cells to be
+  your own plot, with **no unpaid tax**; edges on your estate's outer boundary
+  are allowed too. Terrain-wise, water deeper than 0.1m or a height difference
+  over 0.5m between the endpoints or midpoint blocks placement.
+- **Recovering** only works for the plot's current owner, even while overdue
+  on tax. If your bag is too heavy to take it, the fence stays put instead of
+  being force-fit into your bag.

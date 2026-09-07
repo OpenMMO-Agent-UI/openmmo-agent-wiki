@@ -87,6 +87,11 @@ export const itemNames = {
   ogre_key_5: '오우거 요새 열쇠 (5층)',
   ogre_key_10: '오우거 요새 열쇠 (10층)',
   ogre_key_15: '오우거 요새 열쇠 (15층)',
+  bow: '활',
+  iron_arrow: '철화살',
+  steel_arrow: '강철 화살',
+  land_deed: '땅문서',
+  wooden_fence: '목책',
 };
 
 export const itemDescriptions = {
@@ -174,6 +179,11 @@ export const itemDescriptions = {
   ogre_key_5: '묵직한 흑철 열쇠다. 오우거 요새 5층의 봉인된 계단방을 연다.',
   ogre_key_10: '손잡이에 고리 장식이 달린 묵직한 흑철 열쇠다. 오우거 요새 10층의 봉인된 계단방을 연다.',
   ogre_key_15: '손잡이에 왕관 장식이 달린 묵직한 흑철 열쇠다. 오우거 요새 15층의 봉인된 계단방과 그 던전의 보물 상자를 연다.',
+  bow: '층층이 겹친 주목으로 만든 리커브 활. 힘보다 안정된 손이 중요하다.',
+  iron_arrow: '철촉을 단 화살대. 몇 개 잃어버려도 아깝지 않을 만큼 싸다.',
+  steel_arrow: '강철촉이 철보다 깊게 박히는 만큼 값도 더 나간다.',
+  land_deed: '서 있는 32×32미터 개척지를 청구한다. 10레벨 이상이 필요하다. 등록에 성공했을 때만 소모된다.',
+  wooden_fence: '자기 영지의 셀 변에 1미터 목책을 설치하거나 회수할 때 쓴다.',
 };
 
 export const monsterNames = {
@@ -236,6 +246,8 @@ export const categoryNames = {
   reagent: '연금 재료',
   timekeeper: '시계',
   dungeon_key: '던전 열쇠',
+  ammo: '화살',
+  land_deed: '땅문서',
 };
 
 export const slotNames = {

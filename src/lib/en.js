@@ -36,6 +36,8 @@ export const categoryNames = {
   reagent: 'Reagent',
   timekeeper: 'Timekeeper',
   dungeon_key: 'Dungeon key',
+  ammo: 'Ammunition',
+  land_deed: 'Land deed',
 };
 
 export const slotNames = {

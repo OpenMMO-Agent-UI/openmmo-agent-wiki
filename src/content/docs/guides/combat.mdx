@@ -197,6 +197,49 @@ import { abilityModifier, hitChance, xpForLevel, monsterXp, expectedHitDieGain, 
 STR 調整值是**加在每一次命中上**的,所以高 STR 對低傷害武器的相對提升更大:
 STR 18(+4)拿匕首(1d4,平均 2.5)實際平均是 6.5,等於翻了 2.6 倍。
 
+## 遠程武器(協議 v53)
+
+武器可以額外宣告三個欄位:`range`(公尺;沒填就是近戰,吃伺服器固定 2 公尺距離)、
+`rangedAbility`(命中加值與傷害加值改用哪個屬性取代 STR)、`hands`(佔用幾隻手,`2`
+代表連副手也一起封鎖)。**弓**是第一把用到這些欄位的武器:雙手、射程 10 公尺、命中
+與傷害看 **DEX**。
+
+- 攻擊距離判定用 `max(近戰距離, 武器射程)`——牆壁、關閉的門、家具擋住的格子一樣擋
+  得住箭。超出射程但在 10 公尺挑釁距離內攻擊只會引怪,不會造成傷害。
+- 追擊會停在武器射程邊緣開火,不會邊跑邊拉開距離。
+- 命中會看到箭矢**飛行**(固定 30 m/s,飛行中每幀重新瞄準,確保命中目標當下的位
+  置);沒命中則保持原方向、多飛 3 公尺後消失。
+
+弓本身的骰只是個象徵(`1d1`)——真正的傷害來自箭矢,兩者的骰會加在一起算,跟怪物
+「自己的骰 + 武器骰」是同一套算法:
+
+<FilterTable
+  placeholder="搜尋武器或箭矢…"
+  columns={[
+    { key: 'name', label: '道具' },
+    { key: 'dice', label: '骰', align: 'center' },
+    { key: 'avg', label: '平均', align: 'right' },
+    { key: 'note', label: '備註' },
+  ]}
+  rows={[
+    { name: itemName('bow'), dice: '1d1', avg: averageRoll('1d1').toFixed(1), note: '弓本身,只決定射程與屬性' },
+    { name: itemName('iron_arrow'), dice: '1d6', avg: averageRoll('1d6').toFixed(1), note: `合計均值 ${(averageRoll('1d1') + averageRoll('1d6')).toFixed(1)},接近${itemName('iron_sword')}(1d8)` },
+    { name: itemName('steel_arrow'), dice: '1d8', avg: averageRoll('1d8').toFixed(1), note: `合計均值 ${(averageRoll('1d1') + averageRoll('1d8')).toFixed(1)},接近${itemName('steel_longsword')}(1d10)` },
+  ]}
+/>
+
+弓需要箭矢才能射:`items.csv` 的 `ammoKind` 把弓和箭配成一對(兩者都是 `arrow`),沒
+有 `ammoKind` 的武器不消耗任何東西,近戰完全不受影響。箭矢會疊放在背包裡,不佔裝備
+欄,也**不能被強化捲軸強化**。
+
+- 裝備弓時,如果還沒選過箭,會自動抓背包裡最強的一疊。
+- 手動選了比較便宜的箭矢,撿到更好的箭也不會蓋掉你的選擇。
+- 選中的那疊用完,會自動降級用次強的箭;背包完全沒有箭時攻擊會被拒絕
+  (`OutOfAmmo`),自動攻擊也會跟著停下,不會每次冷卻都跳一次拒絕訊息。
+
+裝備 `hands: 2` 的武器(目前只有弓)時,副手裝備會被卸到背包,而且無法再裝備副手
+道具。
+
 ## Guard 的意義
 
 Guard 是 NetHack 的 AC 反過來 —— **越高越好**。

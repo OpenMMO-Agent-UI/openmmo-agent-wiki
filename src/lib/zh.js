@@ -87,6 +87,11 @@ export const itemNames = {
   ogre_key_5: '食人魔要塞鑰匙(5 層)',
   ogre_key_10: '食人魔要塞鑰匙(10 層)',
   ogre_key_15: '食人魔要塞鑰匙(15 層)',
+  bow: '弓',
+  iron_arrow: '鐵箭',
+  steel_arrow: '鋼箭',
+  land_deed: '地契',
+  wooden_fence: '木柵欄',
 };
 
 export const itemDescriptions = {
@@ -174,6 +179,11 @@ export const itemDescriptions = {
   ogre_key_5: '沉重的黑鐵鑰匙。可以打開食人魔要塞第 5 層的封鎖樓梯間。',
   ogre_key_10: '鑰匙柄鑄有環形紋飾的沉重黑鐵鑰匙。可以打開食人魔要塞第 10 層的封鎖樓梯間。',
   ogre_key_15: '鑰匙柄鑄有王冠紋飾的沉重黑鐵鑰匙。可以打開食人魔要塞第 15 層的封鎖樓梯間,以及該地城的寶箱。',
+  bow: '層層迭起的紫杉反曲弓。靠的是穩定的手,不是蠻力。',
+  iron_arrow: '鐵製箭頭的箭矢。便宜到弄丟幾支也無所謂。',
+  steel_arrow: '鋼製箭頭,比鐵箭咬得更深,價錢也貴一些。',
+  land_deed: '認領你腳下這塊 32×32 公尺的開拓地。需要 10 級以上。只有登記成功才會消耗。',
+  wooden_fence: '用來在自己領地的格線邊緣安裝或回收一公尺柵欄段。',
 };
 
 export const monsterNames = {
@@ -236,6 +246,8 @@ export const categoryNames = {
   reagent: '藥劑材料',
   timekeeper: '計時器',
   dungeon_key: '地城鑰匙',
+  ammo: '箭矢',
+  land_deed: '地契',
 };
 
 export const slotNames = {

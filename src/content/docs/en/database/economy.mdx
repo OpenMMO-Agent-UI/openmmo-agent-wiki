@@ -148,11 +148,12 @@ letting the toast time out unanswered counts as a decline too. Once declined,
 ## Price index (the evening market meeting)
 
 The buy price merchants charge for **consumables** (potions, whetstone oil,
-food, scrolls, and the like) drifts slowly with the server's **per-capita
-active gold supply**, scaled by a price index between 90% and 200%.
-Durable goods like equipment and cape dyes are completely unaffected, and
-**sell-back prices don't move either** — only the buy side, otherwise
-buying and selling would scale together and cancel the adjustment out.
+food, scrolls, and the like — limited to items at least one merchant actually
+shelves) drifts slowly with the server's **per-capita active gold supply**,
+scaled by a price index between 50% and 200%. Durable goods like equipment
+and cape dyes are completely unaffected, and **sell-back prices don't move
+either** — only the buy side, otherwise buying and selling would scale
+together and cancel the adjustment out.
 
 - Adjustments don't run on a fixed clock — they land after **sunset on the
   day the small moon Serin is fully dark** (a 20-game-day cycle), roughly
@@ -161,9 +162,15 @@ buying and selling would scale together and cancel the adjustment out.
   meeting" scene, and their dialogue hints at which way prices are moving
   and why — eavesdrop to get a jump on the next swing.
 - Each meeting moves the index by **at most ±10 percentage points**, and
-  the index itself is clamped to 90%–200%.
+  the index itself is clamped to 50%–200% (90%–200% before protocol v53 —
+  falling server-wide average gold kept pushing the index into the old floor,
+  so the floor moved down).
 - The haggling band is calculated **on top of** the price index — the index
   applies first, then your CHA-based bargaining range.
+- A merchant's buy price **never exceeds the highest-haggled buy price** for
+  the same item (protocol v53) — closing a buy-low/sell-high loop the falling
+  index could otherwise open. Resident wishlist premiums aren't affected by
+  this cap.
 
 ## Non-merchant NPCs
 
