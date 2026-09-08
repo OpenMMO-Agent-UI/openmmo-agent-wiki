@@ -92,6 +92,13 @@ export const itemNames = {
   steel_arrow: '鋼箭',
   land_deed: '地契',
   wooden_fence: '木柵欄',
+  landscaping_toolbox: '造景工具箱',
+  landscaping_palette_sand: '造景範例集:沙質礫地',
+  landscaping_palette_red_soil: '造景範例集:紅土磚石',
+  landscaping_palette_gravel: '造景範例集:碎石路',
+  landscaping_palette_pebbles: '造景範例集:恆河卵石',
+  landscaping_palette_stone_path: '造景範例集:石板小徑',
+  landscaping_palette_paving: '造景範例集:紋樣鋪石',
 };
 
 export const itemDescriptions = {
@@ -184,6 +191,13 @@ export const itemDescriptions = {
   steel_arrow: '鋼製箭頭,比鐵箭咬得更深,價錢也貴一些。',
   land_deed: '認領你腳下這塊 32×32 公尺的開拓地。需要 10 級以上。只有登記成功才會消耗。',
   wooden_fence: '用來在自己領地的格線邊緣安裝或回收一公尺柵欄段。',
+  landscaping_toolbox: '在自己領地內使用,可以塗刷地面與小徑或放置柵欄。可重複使用。內含草地與碎石小徑。',
+  landscaping_palette_sand: '使用後永久解鎖領地可用的沙質礫地。只有學會時才會消耗,塗刷仍需要造景工具箱。',
+  landscaping_palette_red_soil: '使用後永久解鎖領地可用的紅土磚石。只有學會時才會消耗,塗刷仍需要造景工具箱。',
+  landscaping_palette_gravel: '使用後永久解鎖領地可用的碎石路。只有學會時才會消耗,塗刷仍需要造景工具箱。',
+  landscaping_palette_pebbles: '使用後永久解鎖領地可用的恆河卵石。只有學會時才會消耗,塗刷仍需要造景工具箱。',
+  landscaping_palette_stone_path: '使用後永久解鎖領地可用的石板小徑。只有學會時才會消耗,塗刷仍需要造景工具箱。',
+  landscaping_palette_paving: '使用後永久解鎖領地可用的紋樣鋪石。只有學會時才會消耗,塗刷仍需要造景工具箱。',
 };
 
 export const monsterNames = {
@@ -248,6 +262,8 @@ export const categoryNames = {
   dungeon_key: '地城鑰匙',
   ammo: '箭矢',
   land_deed: '地契',
+  tool: '工具',
+  landscaping_palette: '造景範例集',
 };
 
 export const slotNames = {

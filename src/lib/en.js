@@ -38,6 +38,8 @@ export const categoryNames = {
   dungeon_key: 'Dungeon key',
   ammo: 'Ammunition',
   land_deed: 'Land deed',
+  tool: 'Tool',
+  landscaping_palette: 'Landscaping palette',
 };
 
 export const slotNames = {

@@ -6,13 +6,14 @@ description: 用地契認領開拓地、透過稅務帳戶繳土地稅,以及用
 import { itemsById, formatCoins } from '../../../lib/gamedata.js';
 import { itemName } from '../../../lib/zh.js';
 
-在艾德馬克廣場常駐的**土地官(Land Registrar)Aldwin** 是目前領地系統的唯一入口——買
-地契、認領土地、管理稅務帳戶都找他(協議 v55、v56)。
+在艾德馬克廣場常駐的**土地官(Land Registrar)Aldwin** 負責地契買賣、認領土地與稅務
+帳戶(協議 v55、v56);廣場另一頭常駐的**開拓地建築師(Estate Architect)Rowan** 則
+負責木柵欄、造景工具箱與造景範例集(協議 v57、v58)。
 
 :::note[還沒做完的部分]
 目前只有**開拓地(Homestead)**能買賣認領。王領(Crown Land,靠近城鎮與地城周邊,規劃
 用拍賣、競賽、公績頒發)還沒有取得管道。認領到的地也還不能蓋房子、放家具——只能圍
-柵欄。欠稅到底會不會真的收回領地,見下面「稅務帳戶」一節的說明。
+柵欄、塗地板與鋪路。欠稅到底會不會真的收回領地,見下面「稅務帳戶」一節的說明。
 :::
 
 ## 買地契、認領土地(協議 v55)
@@ -64,8 +65,8 @@ Aldwin 賣**{itemName('land_deed')}**,固定 {formatCoins(itemsById.get('land_de
 
 ## 木柵欄(協議 v57)
 
-{itemName('wooden_fence')}({formatCoins(itemsById.get('wooden_fence').basePrice)},跟地契
-一樣找 Aldwin 買,可指定數量)是可以在自己領地邊界上安裝、回收的一公尺柵欄段,而且
+{itemName('wooden_fence')}({formatCoins(itemsById.get('wooden_fence').basePrice)},找
+Rowan 買,可指定數量)是可以在自己領地邊界上安裝、回收的一公尺柵欄段,而且
 可以疊放——就算囤到一百多個,也只佔背包一格。
 
 - 在背包裡雙擊柵欄進入放置模式:背包關閉,還沒走完的移動指令會被取消。模式中,整
@@ -86,3 +87,32 @@ Aldwin 賣**{itemName('land_deed')}**,固定 {formatCoins(itemsById.get('land_de
   尺。
 - **回收**只有該領地目前的擁有者能做,就算欠稅中也可以回收。如果背包已經太重,柵欄
   會留在原地,不會硬塞進背包。
+
+## 領地美化(協議 v58)
+
+找 Rowan 買**{itemName('landscaping_toolbox')}**({formatCoins(itemsById.get('landscaping_toolbox').basePrice)}),
+在背包裡使用一次就會打開「領地美化」面板;工具箱本身不會被消耗,可以重複使用。面
+板整合三個分頁:
+
+- **地板**:沿用既有的 Splat 材質筆刷塗刷地面。
+- **道路**:沿用既有的 Road 工具,在兩點之間鋪路。
+- **柵欄**:跟雙擊木柵欄一樣的放置、回收流程。
+
+(種花草樹木的分頁還沒做。)
+
+工具箱內建 **Meadow Grass** 草地與 **Rocky Trail** 碎石小徑兩種基礎材質,買了工具箱
+就能直接塗。另外還有 6 種造景範例集,各 {formatCoins(itemsById.get('landscaping_palette_sand').basePrice)},
+同樣找 Rowan 買,使用一次就能永久解鎖對應材質、不需要重複購買:
+{itemName('landscaping_palette_sand')}、{itemName('landscaping_palette_red_soil')}、
+{itemName('landscaping_palette_gravel')}、{itemName('landscaping_palette_pebbles')}、
+{itemName('landscaping_palette_stone_path')}、{itemName('landscaping_palette_paving')}。
+解鎖跟角色綁定,學過的範例集不會再消耗。
+
+筆刷、道路寬度以 1 公尺為單位挑選,伺服器換算成 0.5–10 公尺的實際半徑(協議 v59 起
+半徑改支援小數,一格寬的筆刷也能精準對齊格線)。塗刷範圍只認自己的領地——筆刷跨
+到別人或無主的地時,只有落在自己領地內的部分會套用;鋪路也只算路徑上屬於自己領地
+的那一段。管理員角色編輯地板、道路時會跳過歸屬與領地邊界檢查,但工具箱持有、材質
+解鎖與生存等條件仍然檢查。
+
+地形變更會照既有規則清除草木,但重新塗地板**不會**讓已經清除的草木自動長回來——種
+植功能等後續的「種植」分頁做好才會補上。

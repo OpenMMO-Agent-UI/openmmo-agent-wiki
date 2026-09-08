@@ -92,6 +92,13 @@ export const itemNames = {
   steel_arrow: '강철 화살',
   land_deed: '땅문서',
   wooden_fence: '목책',
+  landscaping_toolbox: '조경 도구함',
+  landscaping_palette_sand: '조경 견본집: 모래 자갈밭',
+  landscaping_palette_red_soil: '조경 견본집: 붉은 라테라이트 흙돌',
+  landscaping_palette_gravel: '조경 견본집: 자갈길',
+  landscaping_palette_pebbles: '조경 견본집: 갠지스 강 조약돌',
+  landscaping_palette_stone_path: '조경 견본집: 돌길',
+  landscaping_palette_paving: '조경 견본집: 무늬 포장석',
 };
 
 export const itemDescriptions = {
@@ -184,6 +191,13 @@ export const itemDescriptions = {
   steel_arrow: '강철촉이 철보다 깊게 박히는 만큼 값도 더 나간다.',
   land_deed: '서 있는 32×32미터 개척지를 청구한다. 10레벨 이상이 필요하다. 등록에 성공했을 때만 소모된다.',
   wooden_fence: '자기 영지의 셀 변에 1미터 목책을 설치하거나 회수할 때 쓴다.',
+  landscaping_toolbox: '자기 영지 안에서 사용해 바닥과 길을 칠하거나 목책을 놓는다. 재사용 가능하며 초원 잔디와 자갈길을 기본으로 포함한다.',
+  landscaping_palette_sand: '사용하면 영지에서 모래 자갈밭을 영구히 해금한다. 습득할 때만 소모되며, 칠하려면 조경 도구함이 필요하다.',
+  landscaping_palette_red_soil: '사용하면 영지에서 붉은 라테라이트 흙돌을 영구히 해금한다. 습득할 때만 소모되며, 칠하려면 조경 도구함이 필요하다.',
+  landscaping_palette_gravel: '사용하면 영지에서 자갈길을 영구히 해금한다. 습득할 때만 소모되며, 칠하려면 조경 도구함이 필요하다.',
+  landscaping_palette_pebbles: '사용하면 영지에서 갠지스 강 조약돌을 영구히 해금한다. 습득할 때만 소모되며, 칠하려면 조경 도구함이 필요하다.',
+  landscaping_palette_stone_path: '사용하면 영지에서 돌길을 영구히 해금한다. 습득할 때만 소모되며, 칠하려면 조경 도구함이 필요하다.',
+  landscaping_palette_paving: '사용하면 영지에서 무늬 포장석을 영구히 해금한다. 습득할 때만 소모되며, 칠하려면 조경 도구함이 필요하다.',
 };
 
 export const monsterNames = {
@@ -248,6 +262,8 @@ export const categoryNames = {
   dungeon_key: '던전 열쇠',
   ammo: '화살',
   land_deed: '땅문서',
+  tool: '도구',
+  landscaping_palette: '조경 견본집',
 };
 
 export const slotNames = {

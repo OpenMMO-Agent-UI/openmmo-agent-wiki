@@ -19,9 +19,72 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v57 — client v0.43.0 (current)
+## Protocol v59 — client v0.44.0 (current)
 
-**The live server currently requires v57.**
+**The live server currently requires v59.**
+
+**New systems**
+
+- **Landscaping brush radii now support fractions, so a one-cell-wide ground
+  brush lines up cleanly with the grid** (2026-09-07) — brush and path widths
+  used to convert to a whole-meter radius only, which left the narrowest
+  one-cell brush slightly off the terrain grid; this new message bumped the
+  protocol to v59. See [Estates](../guides/estates/#estate-landscaping-protocol-v58)
+  for details.
+
+**Fixes**
+
+- **A monster's death animation no longer gets cut short by a stale attack
+  rejection** (2026-09-06) — previously, as soon as the server reported a
+  monster gone (`invalid_target`), the client removed its model immediately;
+  now it waits for a death or dying state before removing it, so the kill
+  animation plays out.
+- **NPC sleep poses (e.g. Rowan's) now resolve from the server's furniture
+  placement id instead of nearest distance** (2026-09-07) — picking furniture
+  by proximity could grab the wrong piece and produce the wrong pose or
+  height; sleep animations and offsets now come straight from the assigned
+  placement.
+- **Several house navigation issues were fixed** (2026-09-05 to 2026-09-06) —
+  clicking an interior point from outside a house now stops at the entrance
+  first; a closed door in the way of a route is opened automatically before
+  continuing to the destination or object; window clicks only target the
+  floor you can actually see; stair collision and indoor pathing were cleaned
+  up as well.
+
+**Client**
+
+- **agent-client updated to v0.44.0**, matching protocol v59 (2026-09-07).
+
+## Protocol v58 — client not yet released
+
+**New systems**
+
+- **Estate landscaping is live — buy a landscaping toolbox from Rowan, the
+  Estate Architect** (2026-09-06) — the reusable toolbox opens a landscaping
+  panel from your bag that bundles three tabs: Ground (the existing splat
+  brush), Path (the existing road tool), and Fence (the existing fence
+  placement flow). The toolbox comes with two base materials built in —
+  Meadow Grass and Rocky Trail — and six more landscaping palettes are sold
+  separately; each permanently unlocks its material the first time you use
+  it, so you never buy it twice. Painting only ever affects your own land — a
+  brush or path that overlaps someone else's or unclaimed ground only applies
+  to the part inside your plot. Terrain edits clear grass and trees under the
+  existing rules, but repainting the ground doesn't grow them back. This new
+  message bumped the protocol to v58. See
+  [Estates](../guides/estates/#estate-landscaping-protocol-v58) for details.
+- **Rowan, the Estate Architect, moved into Aldermark's town square**
+  (2026-09-06) — wooden fences, the landscaping toolbox, and landscaping
+  palettes used to be sold by Aldwin; they now belong to Rowan's shop, while
+  Aldwin focuses on deeds and the tax account.
+
+**Balance**
+
+- **World drop rates for both enchant scrolls cut by a tenth** (2026-09-06) —
+  the normal rate went from 1% to 0.9%, and the reduced rate for
+  effective-level-8-and-under prey went from 0.5% to 0.45%, to ease
+  accumulating scroll stockpiles.
+
+## Protocol v57 — client v0.43.0
 
 **New systems**
 

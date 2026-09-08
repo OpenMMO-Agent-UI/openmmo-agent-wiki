@@ -6,16 +6,18 @@ description: Claim a homestead plot with a land deed, pay land tax from a tax ac
 import { itemsById, formatCoins } from '../../../../lib/gamedata.js';
 import { itemName } from '../../../../lib/en.js';
 
-**Aldwin**, the Land Registrar stationed on Aldermark's town square, is the whole
-entry point to the land system for now — buying a deed, claiming a plot, and
-managing your tax account all go through him (protocol v55, v56).
+**Aldwin**, the Land Registrar stationed on Aldermark's town square, handles
+deed sales, claiming a plot, and your tax account (protocol v55, v56).
+**Rowan**, the Estate Architect stationed elsewhere on the square, handles
+wooden fences, the landscaping toolbox, and landscaping palettes (protocol
+v57, v58).
 
 :::note[Still unfinished]
 Only **homestead** plots can be bought and claimed right now. Crown land (the
 ring near towns and dungeon entrances, meant for auctions, tournaments, and
 merit grants) has no acquisition path yet. Claimed land can't hold a house or
-furniture yet — only fences. Whether unpaid tax actually reclaims land is
-covered under "Tax account" below.
+furniture yet — only fences, painted ground, and paths. Whether unpaid tax
+actually reclaims land is covered under "Tax account" below.
 :::
 
 ## Buying a deed and claiming land (protocol v55)
@@ -87,7 +89,7 @@ the next payment.
 ## Wooden fences (protocol v57)
 
 {itemName('wooden_fence')} ({formatCoins(itemsById.get('wooden_fence').basePrice)},
-also bought from Aldwin in whatever quantity you ask for) are one-meter fence
+bought from Rowan in whatever quantity you ask for) are one-meter fence
 sections you place and recover along your estate's cell edges. They stack, so
 even a hundred-plus takes one bag slot.
 
@@ -116,3 +118,41 @@ Placing and recovering follow different rules:
 - **Recovering** only works for the plot's current owner, even while overdue
   on tax. If your bag is too heavy to take it, the fence stays put instead of
   being force-fit into your bag.
+
+## Estate landscaping (protocol v58)
+
+Buy a **{itemName('landscaping_toolbox')}** from Rowan
+({formatCoins(itemsById.get('landscaping_toolbox').basePrice)}) and use it
+once from your bag to open the landscaping panel — the toolbox itself is not
+consumed and can be reused any time. The panel bundles three tabs:
+
+- **Ground**: the existing splat-brush material painter.
+- **Path**: the existing road tool, painting a path between two points.
+- **Fence**: the same placement/recovery flow as double-clicking a fence.
+
+(A planting tab for grass, flowers, and saplings isn't built yet.)
+
+The toolbox comes with two base materials built in — **Meadow Grass** and
+**Rocky Trail** — paintable as soon as you buy it. Six more landscaping
+palettes are sold separately, each
+{formatCoins(itemsById.get('landscaping_palette_sand').basePrice)}, also from
+Rowan; using one permanently unlocks its material so you never buy it again:
+{itemName('landscaping_palette_sand')}, {itemName('landscaping_palette_red_soil')},
+{itemName('landscaping_palette_gravel')}, {itemName('landscaping_palette_pebbles')},
+{itemName('landscaping_palette_stone_path')}, and {itemName('landscaping_palette_paving')}.
+Unlocks are bound to the character; a palette you've already learned is never
+consumed again.
+
+Brush and path widths are chosen in 1-meter steps, which the server converts
+to an actual 0.5–10m radius (as of protocol v59 the radius supports fractions,
+so even the narrowest one-cell brush lines up cleanly with the grid). Painting
+only ever affects your own land — a brush that overlaps someone else's or
+unclaimed ground only applies to the part inside your plot, and a path only
+paints the stretch that runs through your own land. Admin characters skip the
+ownership and boundary checks when editing ground or paths, but still need to
+be carrying the toolbox, have the material unlocked, and be alive like anyone
+else.
+
+Terrain edits clear grass and trees under the existing rules, but repainting
+the ground does **not** grow cleared vegetation back — that's what the future
+planting tab is for.
