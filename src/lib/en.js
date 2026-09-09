@@ -40,6 +40,9 @@ export const categoryNames = {
   land_deed: 'Land deed',
   tool: 'Tool',
   landscaping_palette: 'Landscaping palette',
+  horse_reins: 'Horse reins',
+  estate_return_scroll: 'Estate return scroll',
+  house_scroll: 'House scroll',
 };
 
 export const slotNames = {

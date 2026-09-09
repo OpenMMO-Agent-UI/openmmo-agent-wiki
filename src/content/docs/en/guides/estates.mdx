@@ -48,6 +48,17 @@ filled blocks, homestead plots show only grid lines. Your own plots use an
 accent color, plots up for auction get a flag icon with a countdown, and
 unpaid/neglected/ruined plots fade your ownership color by stage.
 
+Once you own a plot, both Rica and Wick sell a
+**{itemName('scroll_of_estate_return')}**
+({formatCoins(itemsById.get('scroll_of_estate_return').basePrice)}), the same
+price as the regular return scroll. Using one sends your character to safe
+outdoor ground on your own homestead — it works from a dungeon or mid-combat,
+too. The server picks a spot near the center of your earliest-claimed plot
+that avoids buildings, obstacles, and water deeper than 0.1m, falling back to
+your other owned plots if none is found there. It isn't consumed if you have
+no estate, are dead, have a pending trade, or no safe spot can be found, and
+it can't send you to a plot owned by another character on the same account.
+
 ## Plot limits and expansion
 
 Each **account** (not each character) can own one homestead estate. Claiming a
@@ -124,11 +135,17 @@ Placing and recovering follow different rules:
 Buy a **{itemName('landscaping_toolbox')}** from Rowan
 ({formatCoins(itemsById.get('landscaping_toolbox').basePrice)}) and use it
 once from your bag to open the landscaping panel — the toolbox itself is not
-consumed and can be reused any time. The panel bundles three tabs:
+consumed and can be reused any time. The panel now bundles four tabs (as of
+protocol v62, fences and storage chests share one "Objects" tab, and the
+request to enter a tab was unified into a single message the server
+authorizes per-tab):
 
 - **Ground**: the existing splat-brush material painter.
 - **Path**: the existing road tool, painting a path between two points.
-- **Fence**: the same placement/recovery flow as double-clicking a fence.
+- **Objects**: place or recover wooden fences, and place an
+  [estate storage chest](#estate-storage-protocol-v61).
+- **House**: place or demolish a
+  [house built from a house scroll](#house-building-protocol-v60).
 
 (A planting tab for grass, flowers, and saplings isn't built yet.)
 
@@ -156,3 +173,37 @@ else.
 Terrain edits clear grass and trees under the existing rules, but repainting
 the ground does **not** grow cleared vegetation back — that's what the future
 planting tab is for.
+
+## House building (protocol v60)
+
+Rowan sells 5 fixed house scrolls for building on your own estate:
+
+- **{itemName('scroll_of_small_house')}** ({formatCoins(itemsById.get('scroll_of_small_house').basePrice)}) — a small house, previewable at Karl's home.
+- **{itemName('scroll_of_medium_house')}** ({formatCoins(itemsById.get('scroll_of_medium_house').basePrice)}) — a medium house, previewable at Rowan's home.
+- **{itemName('scroll_of_small_two_story_house')}** ({formatCoins(itemsById.get('scroll_of_small_two_story_house').basePrice)}) — a small two-story house, previewable at Aldwin's home.
+- **{itemName('scroll_of_medium_two_story_house')}** ({formatCoins(itemsById.get('scroll_of_medium_two_story_house').basePrice)}) — a medium two-story house, previewable at Rica's shop.
+- **{itemName('scroll_of_large_two_story_house')}** ({formatCoins(itemsById.get('scroll_of_large_two_story_house').basePrice)}) — a large two-story house, previewable at the Aldermark Inn.
+
+Pick a house scroll from your bag on the toolbox's **House** tab to open a
+translucent preview; clicking to confirm has the server re-check that the
+spot is within 30m, on dry ground, has no more than 1m of height difference
+across the footprint, and doesn't overlap an existing house before it
+consumes the scroll and spawns the house. The same tab lets you click your
+own house to demolish it — no materials are refunded.
+
+## Estate storage (protocol v61)
+
+Buy a **{itemName('storage_chest')}** from Aldwin
+({formatCoins(itemsById.get('storage_chest').basePrice)}) and use it straight
+from your bag to open the placement UI. It can only go on an estate you own
+with no back taxes, and inside a building it's placed on whatever floor
+you're currently standing on. There's one capacity tier right now, **50kg**,
+and no cap on how many chests an estate can hold.
+
+The storage screen reuses the trade window's two-column layout — chest on the
+left, your bag on the right — with both sides showing the resulting weight
+live. Bound or untradeable items, and chests themselves, can't go in. An
+empty chest can be picked back up: it returns to your bag if there's room, or
+drops on the ground if not. If the estate lapses, chests are left behind and
+anyone can open them. A house holding a chest can't be demolished until every
+chest on every floor has been emptied and recovered.

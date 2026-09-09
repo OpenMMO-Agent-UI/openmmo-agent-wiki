@@ -19,9 +19,110 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v59 — client v0.44.0 (current)
+## Protocol v64–v65 — client v0.47.0 (current)
 
-**The live server currently requires v59.**
+**The live server currently requires v65.**
+
+**New systems**
+
+- **Mounted turning now starts its arc from the server's current position
+  instead of waiting to catch up to the predicted one** (2026-09-08) —
+  releasing the turn key cancels the remaining arc, and any queued movement
+  is cancelled too, so turning tracks input more closely. This batch of
+  messages bumped the protocol to v64 and v65.
+- **Added the Scroll of Estate Return, sold by both Rica and Wick**
+  (2026-09-08) — priced the same as the regular Scroll of Return, 800 copper
+  (8 silver). Using one consumes it and teleports the character to safe
+  outdoor ground on their own homestead, even from a dungeon or mid-combat;
+  it avoids buildings, obstacles, and water deeper than 0.1m, preferring a
+  spot near the center of the earliest-claimed plot and falling back to
+  other owned plots if none is found. It is not consumed if you have no
+  estate, are dead, have a pending trade, or no safe spot can be found, and
+  it cannot send you to a plot owned by another character on the same
+  account.
+
+**Balance**
+
+- **Horse Reins dropped in price from 5 gold to 1 gold 50 silver**
+  (2026-09-08).
+
+**Client**
+
+- **Mounted turning gained left/right turn animations, and idle and running
+  rider poses got more natural upper-body, hand, and rein motion**
+  (2026-09-08) — a sharp turn now plays a matching turn animation, the
+  rider's upper body tracks the horse's head horizontally but clamps to
+  ±30° so the whole torso doesn't swing around, and the rein curve held in
+  both hands updates live to follow the hands and horse's head.
+
+## Protocol v63 — client not yet released
+
+**New systems**
+
+- **Horse mounts arrived — buy Horse Reins from Rica** (2026-09-08) — reins
+  launched at 5 gold (repriced in the next version, see above). Using the
+  reins from your inventory mounts or dismounts; they aren't consumed and
+  can be reused. Mounted movement outdoors is twice normal speed (base 6
+  m/s becomes 9 m/s, with existing hunger-based slowdowns still applying);
+  dying, entering combat, walking indoors, or entering deep water auto-
+  dismounts on the next movement tick. Turning follows a fixed-radius arc
+  instead of snapping instantly, and mount state is session-only — you
+  start dismounted after reconnecting. This new message bumped the protocol
+  to v63. See [Mounts](../guides/mounts/) for details.
+
+## Protocol v62 — client v0.46.0
+
+**New systems**
+
+- **Estate editor tabs consolidated — fences and storage chests now share
+  one "Objects" tab** (2026-09-08) — storage chests used to open a separate
+  floating placement bar; now they share the same tab in the Landscaper's
+  Toolbox panel as fences, which now reads Ground, Road, Objects, House.
+  The request to enter placement mode was also unified into a single
+  message, with the server authorizing per-tab access. This batch of
+  messages bumped the protocol to v62.
+
+## Protocol v61 — client not yet released
+
+**New systems**
+
+- **Estate storage chests arrived — buy a Wooden Storage Chest from Aldwin**
+  (2026-09-07) — the chest is a furniture item; using one straight from
+  your inventory opens the placement UI. It can only be placed on an estate
+  you own with no back taxes, and inside a building it's placed on whatever
+  floor you're currently standing on. There's currently one capacity tier,
+  50kg, and no limit on how many chests an estate can hold. The storage UI
+  reuses the trade window's two-column layout — chest on the left, your bag
+  on the right — with both sides showing the resulting weight live; bound
+  or untradeable items, and chests themselves, can't go in. An empty chest
+  can be picked back up: it returns to your inventory if there's room, or
+  drops on the ground if not. Chests are left behind, openable by anyone,
+  if the estate lapses. A house holding a chest can't be demolished until
+  every chest on every floor has been emptied and recovered. This batch of
+  messages bumped the protocol to v61. See [Estates](../guides/estates/#estate-storage-protocol-v61)
+  for details.
+
+## Protocol v60 — client not yet released
+
+**New systems**
+
+- **Estate Architect Rowan started selling 5 fixed house scrolls, so you can
+  build a house on your own estate** (2026-09-07) — Medium Two-Story House
+  Scroll (2 gold, preview at Rica's shop), Small House Scroll (1 gold,
+  preview at Karl's home), Small Two-Story House Scroll (1 gold 50 silver,
+  preview at Aldwin's home), Large Two-Story House Scroll (5 gold, preview
+  at the Aldermark Inn), and Medium House Scroll (1 gold 20 silver, preview
+  at Rowan's home). The Landscaper's Toolbox gained a fourth "House" tab:
+  picking a house scroll from your bag opens a translucent preview, and
+  clicking to confirm has the server re-check distance (within 30m), dry
+  ground, slope (no more than 1m of height difference across the
+  footprint), and no overlap with existing houses before consuming the
+  scroll and spawning the house. The same tab lets you click your own house
+  to demolish it — no materials are refunded. This batch of messages bumped
+  the protocol to v60. See [Estates](../guides/estates/#house-building-protocol-v60)
+  for details.
+
+## Protocol v59 — client v0.44.0
 
 **New systems**
 

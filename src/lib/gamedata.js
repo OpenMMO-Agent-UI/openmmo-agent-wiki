@@ -145,6 +145,7 @@ export const items = parseCsv('items').map((r) => {
     rangedAbility: r.rangedAbility || null,
     hands: num(r.hands),
     ammoKind: r.ammoKind || null,
+    useAction: r.useAction || null,
   };
 });
 
@@ -231,6 +232,7 @@ export const npcs = parseCsv('npcs').map((r) => ({
   walletCap: num(r.walletCap),
   keepsakes: r.keepsakes ? r.keepsakes.split(';') : [],
   loadout: r.loadout ? r.loadout.split(';') : [],
+  chatAliases: r.chatAliases ? r.chatAliases.split(';') : [],
 }));
 
 export const worldDrops = parseCsv('world_drop').map((r) => ({

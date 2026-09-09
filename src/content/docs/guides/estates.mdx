@@ -35,6 +35,13 @@ Aldwin 賣**{itemName('land_deed')}**,固定 {formatCoins(itemsById.get('land_de
 是實心色塊,開拓地只有格線;你自己的領地用強調色標出,拍賣中的地塊會有旗幟圖示與倒
 數提示,欠稅、擱置、廢墟則用你的擁有色的不同淡化程度表示。
 
+有了領地之後,Rica、Wick 都會賣**{itemName('scroll_of_estate_return')}**
+({formatCoins(itemsById.get('scroll_of_estate_return').basePrice)}),跟回城捲軸同價。
+使用會把角色送到自己開拓地的安全戶外地面——地城裡或戰鬥中也能用,伺服器會挑一個離
+最早登記的區塊中心近、不會卡進建築物或障礙物、水深也不超過 0.1 公尺的落點;沒有領
+地、角色已死亡、正在交易或完全找不到安全落點時不會消耗捲軸,而且不能送到同帳號其他
+角色名下的領地。
+
 ## 領地上限與擴張
 
 每個**帳號**(不是每個角色)能擁有一塊開拓地領地。認領新區塊時,只要跟你既有的領地
@@ -92,11 +99,13 @@ Rowan 買,可指定數量)是可以在自己領地邊界上安裝、回收的一
 
 找 Rowan 買**{itemName('landscaping_toolbox')}**({formatCoins(itemsById.get('landscaping_toolbox').basePrice)}),
 在背包裡使用一次就會打開「領地美化」面板;工具箱本身不會被消耗,可以重複使用。面
-板整合三個分頁:
+板目前整合四個分頁(協議 v62 起,柵欄與領地儲物箱合併進同一個 Objects 分頁,登入分
+頁的請求也統一成同一種訊息,伺服器依分頁驗證權限):
 
 - **地板**:沿用既有的 Splat 材質筆刷塗刷地面。
 - **道路**:沿用既有的 Road 工具,在兩點之間鋪路。
-- **柵欄**:跟雙擊木柵欄一樣的放置、回收流程。
+- **Objects**:放置或回收木柵欄,以及放置[領地儲物箱](#領地儲物箱協議-v61)。
+- **House**:放置或拆除[房屋捲軸蓋出的房子](#蓋房子協議-v60)。
 
 (種花草樹木的分頁還沒做。)
 
@@ -116,3 +125,31 @@ Rowan 買,可指定數量)是可以在自己領地邊界上安裝、回收的一
 
 地形變更會照既有規則清除草木,但重新塗地板**不會**讓已經清除的草木自動長回來——種
 植功能等後續的「種植」分頁做好才會補上。
+
+## 蓋房子(協議 v60)
+
+找 Rowan 買固定款式的房屋捲軸,在自己的領地上蓋房子:
+
+- **{itemName('scroll_of_small_house')}**({formatCoins(itemsById.get('scroll_of_small_house').basePrice)})—— 小型平房,Karl 家可預覽外觀。
+- **{itemName('scroll_of_medium_house')}**({formatCoins(itemsById.get('scroll_of_medium_house').basePrice)})—— 中型平房,Rowan 家可預覽外觀。
+- **{itemName('scroll_of_small_two_story_house')}**({formatCoins(itemsById.get('scroll_of_small_two_story_house').basePrice)})—— 小型二層樓房屋,Aldwin 家可預覽外觀。
+- **{itemName('scroll_of_medium_two_story_house')}**({formatCoins(itemsById.get('scroll_of_medium_two_story_house').basePrice)})—— 中型二層樓房屋,Rica 商店可預覽外觀。
+- **{itemName('scroll_of_large_two_story_house')}**({formatCoins(itemsById.get('scroll_of_large_two_story_house').basePrice)})—— 大型二層樓房屋,Aldermark 客棧可預覽外觀。
+
+在造景工具箱的 **House** 分頁選擇背包裡的房屋捲軸,會先打開半透明的外觀預覽;點擊
+地面確認後,伺服器會重新檢查一次:落點在 30 公尺距離內、地面乾燥、坡度落差不超過
+1 公尺,而且不能跟其他房屋重疊。通過才會消耗捲軸、蓋出房子。同一個分頁也能用滑鼠
+點選自己領地上的房子執行拆除——拆除不會退還捲軸或任何材料。
+
+## 領地儲物箱(協議 v61)
+
+找 Aldwin 買**{itemName('storage_chest')}**({formatCoins(itemsById.get('storage_chest').basePrice)}),
+在背包裡直接使用就會打開放置介面。只能放在自己名下、沒有欠稅的領地內;放在房子裡
+的話,只會放在角色目前所在的那一層樓。目前只有一種容量規格,最多能存 **50 公斤**,
+同一塊領地能放幾個沒有上限。
+
+存取畫面沿用交易視窗的左右兩欄設計——左邊是儲物箱、右邊是你的背包,雙方都會即時
+顯示存取後的剩餘重量。綁定或不可交易的道具,以及儲物箱本身,都不能放進去。空的儲
+物箱可以收回:背包裝得下就變回道具,裝不下就變成原地的掉落物。領地一旦解除,儲物
+箱會留在原地,任何人都能打開拿走裡面的東西。放了儲物箱的房子沒辦法拆除,得先把每
+一層樓的儲物箱都清空、收回才行。

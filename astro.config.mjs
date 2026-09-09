@@ -36,6 +36,7 @@ export default defineConfig({
             { label: '斗篷染色與印花', translations: { ko: '망토 염색과 프린트' , en: 'Cape dyeing & printing' }, link: '/guides/cape/' },
             { label: '客棧與女僕', translations: { ko: '여관과 메이드' , en: 'Inn & maids' }, link: '/guides/inn/' },
             { label: '領地系統', translations: { ko: '영지 시스템' , en: 'Estates' }, link: '/guides/estates/' },
+            { label: '騎乘系統', translations: { ko: '탑승 시스템' , en: 'Mounts' }, link: '/guides/mounts/' },
           ],
         },
         {

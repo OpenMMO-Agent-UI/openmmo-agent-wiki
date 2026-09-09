@@ -99,6 +99,14 @@ export const itemNames = {
   landscaping_palette_pebbles: '조경 견본집: 갠지스 강 조약돌',
   landscaping_palette_stone_path: '조경 견본집: 돌길',
   landscaping_palette_paving: '조경 견본집: 무늬 포장석',
+  horse_reins: '말고삐',
+  scroll_of_estate_return: '영지 귀환 주문서',
+  storage_chest: '나무 보관함',
+  scroll_of_medium_two_story_house: '중형 2층 주택 주문서',
+  scroll_of_small_house: '소형 주택 주문서',
+  scroll_of_small_two_story_house: '소형 2층 주택 주문서',
+  scroll_of_large_two_story_house: '대형 2층 주택 주문서',
+  scroll_of_medium_house: '중형 주택 주문서',
 };
 
 export const itemDescriptions = {
@@ -198,6 +206,14 @@ export const itemDescriptions = {
   landscaping_palette_pebbles: '사용하면 영지에서 갠지스 강 조약돌을 영구히 해금한다. 습득할 때만 소모되며, 칠하려면 조경 도구함이 필요하다.',
   landscaping_palette_stone_path: '사용하면 영지에서 돌길을 영구히 해금한다. 습득할 때만 소모되며, 칠하려면 조경 도구함이 필요하다.',
   landscaping_palette_paving: '사용하면 영지에서 무늬 포장석을 영구히 해금한다. 습득할 때만 소모되며, 칠하려면 조경 도구함이 필요하다.',
+  horse_reins: '사용하면 탑승하거나 하차한다. 야외에서 이동 속도가 도보의 2배가 된다. 재사용 가능하며, 전투 중이거나 실내에 들어가면 자동으로 하차한다.',
+  scroll_of_estate_return: '룬을 읽으면 자신의 영지 안 안전한 야외 지면으로 돌아간다. 영지가 있어야 한다.',
+  storage_chest: '자기 영지에 최대 50kg까지 보관할 수 있는 튼튼한 나무 상자.',
+  scroll_of_medium_two_story_house: '자기 영지에서 사용해 중형 2층 주택을 짓는다. Rica의 상점에서 미리 볼 수 있다.',
+  scroll_of_small_house: '자기 영지에서 사용해 소형 단층 주택을 짓는다. Karl의 집에서 미리 볼 수 있다.',
+  scroll_of_small_two_story_house: '자기 영지에서 사용해 소형 2층 주택을 짓는다. Aldwin의 집에서 미리 볼 수 있다.',
+  scroll_of_large_two_story_house: '자기 영지에서 사용해 대형 2층 주택을 짓는다. Aldermark 여관에서 미리 볼 수 있다.',
+  scroll_of_medium_house: '자기 영지에서 사용해 중형 단층 주택을 짓는다. Rowan의 집에서 미리 볼 수 있다.',
 };
 
 export const monsterNames = {
@@ -264,6 +280,9 @@ export const categoryNames = {
   land_deed: '땅문서',
   tool: '도구',
   landscaping_palette: '조경 견본집',
+  horse_reins: '말고삐',
+  estate_return_scroll: '영지 귀환 주문서',
+  house_scroll: '주택 주문서',
 };
 
 export const slotNames = {

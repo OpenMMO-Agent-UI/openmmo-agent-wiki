@@ -1,0 +1,48 @@
+---
+title: Mounts
+description: Buy Horse Reins to ride, doubling your outdoor movement speed, and the rules for mounting and dismounting.
+---
+
+import { itemsById, formatCoins } from '../../../../lib/gamedata.js';
+import { itemName } from '../../../../lib/en.js';
+
+Buy **{itemName('horse_reins')}** from Rica
+({formatCoins(itemsById.get('horse_reins').basePrice)}) and use them from your
+bag to mount or dismount. The reins aren't consumed and can be reused
+(protocol v63).
+
+## Mounting and dismounting
+
+- You can only mount while **alive, not in combat, and standing outdoors on
+  the ground**. You can't mount indoors, in a dungeon, or in deep water.
+- You **auto-dismount on the next movement tick** — checked even if you're
+  standing still — when you enter combat, die, interact with something, walk
+  indoors or into a dungeon, enter deep water, or lose the reins (sold,
+  traded away, or taken). "Deep water" here means deeper than 0.6m.
+- Mounted movement uses the same pathfinding and collision as on foot, so you
+  can't ride a horse straight through a fence or wall.
+- Reins listed for trade follow the same item-use restrictions as anything
+  else.
+- Mount state only lasts for the current session — reconnecting always
+  starts you dismounted.
+
+## Speed and turning
+
+Mounted movement outdoors is **twice** your walking speed: base speed goes
+from 3 m/s to 6 m/s, and sprinting from 4.5 m/s to 9 m/s, with any existing
+hunger-based slowdown still applied on top of those numbers.
+
+Turning isn't instant — the horse rotates the shortest way around at a fixed
+rate: about 0.6s for a 90° turn and 1s for a full 180° with steady input. If
+the target direction is far from your current heading, the horse follows a
+0.65m-radius arc to get there, smoothly recovering forward speed over the
+last 30°; for a nearby destination, the arc radius shrinks to at most a
+quarter of the remaining distance so you don't circle around your target.
+Even while hunger is slowing you down, the turning speed cap never exceeds
+whatever speed is currently allowed.
+
+You can feed in a new direction mid-turn from either click-to-move or
+keyboard movement; releasing the key stops you facing your current
+direction, and the same rule applies at corners along a path. Since turning
+is actual movement along the arc, it drains hunger just like moving in a
+straight line does.

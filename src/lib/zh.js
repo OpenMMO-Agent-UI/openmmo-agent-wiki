@@ -99,6 +99,14 @@ export const itemNames = {
   landscaping_palette_pebbles: '造景範例集:恆河卵石',
   landscaping_palette_stone_path: '造景範例集:石板小徑',
   landscaping_palette_paving: '造景範例集:紋樣鋪石',
+  horse_reins: '馬韁繩',
+  scroll_of_estate_return: '領地歸還捲軸',
+  storage_chest: '木製儲物箱',
+  scroll_of_medium_two_story_house: '中型二層房屋捲軸',
+  scroll_of_small_house: '小型房屋捲軸',
+  scroll_of_small_two_story_house: '小型二層房屋捲軸',
+  scroll_of_large_two_story_house: '大型二層房屋捲軸',
+  scroll_of_medium_house: '中型房屋捲軸',
 };
 
 export const itemDescriptions = {
@@ -198,6 +206,14 @@ export const itemDescriptions = {
   landscaping_palette_pebbles: '使用後永久解鎖領地可用的恆河卵石。只有學會時才會消耗,塗刷仍需要造景工具箱。',
   landscaping_palette_stone_path: '使用後永久解鎖領地可用的石板小徑。只有學會時才會消耗,塗刷仍需要造景工具箱。',
   landscaping_palette_paving: '使用後永久解鎖領地可用的紋樣鋪石。只有學會時才會消耗,塗刷仍需要造景工具箱。',
+  horse_reins: '使用可以騎乘或下馬。在戶外騎乘的移動速度是步行的兩倍。可重複使用,進入戰鬥或室內會自動下馬。',
+  scroll_of_estate_return: '誦讀符文回到自己領地內安全的戶外地面。需要擁有領地。',
+  storage_chest: '堅固的木製箱子,可以在自己的領地上儲存最多 50 公斤的物品。',
+  scroll_of_medium_two_story_house: '在自己的領地使用建造一棟中型二層樓房屋。可以在 Rica 的商店預覽外觀。',
+  scroll_of_small_house: '在自己的領地使用建造一棟小型平房。可以在 Karl 的家預覽外觀。',
+  scroll_of_small_two_story_house: '在自己的領地使用建造一棟小型二層樓房屋。可以在 Aldwin 的家預覽外觀。',
+  scroll_of_large_two_story_house: '在自己的領地使用建造一棟大型二層樓房屋。可以在 Aldermark 客棧預覽外觀。',
+  scroll_of_medium_house: '在自己的領地使用建造一棟中型平房。可以在 Rowan 的家預覽外觀。',
 };
 
 export const monsterNames = {
@@ -264,6 +280,9 @@ export const categoryNames = {
   land_deed: '地契',
   tool: '工具',
   landscaping_palette: '造景範例集',
+  horse_reins: '馬韁繩',
+  estate_return_scroll: '領地歸還捲軸',
+  house_scroll: '房屋捲軸',
 };
 
 export const slotNames = {

@@ -41,6 +41,15 @@ Aldwin은 **{itemName('land_deed')}** 를 정가
 강조색으로, 경매 중인 구획은 깃발 아이콘과 남은 시간으로, 미납·방치·폐허 상태는
 소유색을 단계별로 흐리게 표시한다.
 
+영지가 생기면 Rica와 Wick 둘 다 **{itemName('scroll_of_estate_return')}**
+({formatCoins(itemsById.get('scroll_of_estate_return').basePrice)})을 판다 —
+귀환 주문서와 같은 가격이다. 사용하면 자기 개척지의 안전한 야외 지면으로
+이동한다. 던전이나 전투 중에도 쓸 수 있으며, 서버는 건물·장애물·수심 0.1미터
+초과 지점을 피해 가장 먼저 등록한 구획의 중심에 가까운 곳을 찾고, 없으면 다른
+소유 구획을 탐색한다. 영지가 없거나 사망했거나 거래 중이거나 안전한 도착
+지점을 못 찾으면 소모되지 않으며, 같은 계정의 다른 캐릭터가 소유한 영지로는
+보내주지 않는다.
+
 ## 구획 상한과 확장
 
 **계정**(캐릭터가 아니라) 하나당 개척지 영지를 하나 가질 수 있다. 새 구획을
@@ -108,11 +117,14 @@ Rowan에게서 원하는 수량만큼 구매)은 영지 경계의 셀 변에 설
 Rowan에게서 **{itemName('landscaping_toolbox')}**
 ({formatCoins(itemsById.get('landscaping_toolbox').basePrice)})을 사서 가방에서
 한 번 사용하면 "영지 꾸미기" 화면이 열린다. 도구함 자체는 소모되지 않으며 몇 번이든
-다시 쓸 수 있다. 화면은 세 개의 탭으로 통합돼 있다:
+다시 쓸 수 있다. 화면은 이제 네 개의 탭으로 통합돼 있다(프로토콜 v62부터 목책과
+영지 보관함이 같은 Objects 탭을 공유하며, 탭 진입 요청도 하나의 메시지로
+통합되어 서버가 탭별 권한을 검사한다):
 
 - **바닥**: 기존 Splat 재질 브러시로 바닥을 칠한다.
 - **길**: 기존 Road 도구로 두 지점 사이에 길을 칠한다.
-- **울타리**: 목책을 더블클릭했을 때와 같은 설치·회수 흐름이다.
+- **Objects**: 목책을 설치·회수하거나 [영지 보관함](#영지-보관함-프로토콜-v61)을 놓는다.
+- **House**: [주택 주문서로 지은 집](#주택-건축-프로토콜-v60)을 놓거나 철거한다.
 
 (풀·꽃·묘목을 심는 식재 탭은 아직 없다.)
 
@@ -134,3 +146,33 @@ Rowan에게서 살 수 있으며, 한 번 사용하면 해당 재질을 영구�
 
 지형 변경은 기존 규칙대로 풀·나무를 제거하지만, 바닥을 다시 칠한다고 해서 이미
 제거한 풀·나무가 **자동으로 되살아나지는 않는다** — 그건 앞으로 나올 식재 탭의 몫이다.
+
+## 주택 건축 (프로토콜 v60)
+
+Rowan은 자기 영지에 지을 수 있는 고정 주택 주문서 5종을 판다:
+
+- **{itemName('scroll_of_small_house')}**({formatCoins(itemsById.get('scroll_of_small_house').basePrice)}) — 소형 단층 주택, Karl의 집에서 미리 볼 수 있다.
+- **{itemName('scroll_of_medium_house')}**({formatCoins(itemsById.get('scroll_of_medium_house').basePrice)}) — 중형 단층 주택, Rowan의 집에서 미리 볼 수 있다.
+- **{itemName('scroll_of_small_two_story_house')}**({formatCoins(itemsById.get('scroll_of_small_two_story_house').basePrice)}) — 소형 2층 주택, Aldwin의 집에서 미리 볼 수 있다.
+- **{itemName('scroll_of_medium_two_story_house')}**({formatCoins(itemsById.get('scroll_of_medium_two_story_house').basePrice)}) — 중형 2층 주택, Rica의 상점에서 미리 볼 수 있다.
+- **{itemName('scroll_of_large_two_story_house')}**({formatCoins(itemsById.get('scroll_of_large_two_story_house').basePrice)}) — 대형 2층 주택, 앨더마크 여관에서 미리 볼 수 있다.
+
+도구함의 **House** 탭에서 가방의 주택 주문서를 고르면 반투명 미리보기가 열린다.
+클릭해 확정하면 서버가 거리(30미터 이내), 마른 땅, 경사(발자국 안 높이 차
+1미터 이내), 다른 집과의 겹침을 다시 검사한 뒤 통과해야 주문서를 소모하고
+집을 짓는다. 같은 탭에서 자기 집을 클릭해 철거할 수도 있으며, 재료는
+돌려주지 않는다.
+
+## 영지 보관함 (프로토콜 v61)
+
+Aldwin에게서 **{itemName('storage_chest')}**({formatCoins(itemsById.get('storage_chest').basePrice)})을
+사서 가방에서 바로 사용하면 배치 UI가 열린다. 세금 미납이 없는 자기 영지에만
+놓을 수 있고, 건물 안에서는 현재 서 있는 층에만 배치된다. 지금은 **50kg** 한
+등급뿐이며 영지당 설치 개수 제한은 없다.
+
+보관 화면은 거래창과 같은 좌우 2단 레이아웃을 재사용해 왼쪽은 보관함, 오른쪽은
+가방을 보여주며 양쪽 다 남은 무게를 실시간으로 표시한다. 귀속·거래 불가
+아이템과 보관함 자체는 넣을 수 없다. 빈 보관함은 회수할 수 있어 가방에 공간이
+있으면 아이템으로 돌아오고, 없으면 그 자리에 떨어진다. 영지가 해제되면
+보관함은 그 자리에 남아 누구나 열어볼 수 있다. 보관함이 있는 집은 모든 층의
+보관함을 비우고 회수해야만 철거할 수 있다.
