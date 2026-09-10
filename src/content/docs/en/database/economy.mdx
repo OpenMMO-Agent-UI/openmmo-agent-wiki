@@ -104,11 +104,15 @@ being out after dark, not a better deal than waiting for morning.
 
 Merchants can type `/lay_stall` to spread a table out as a visible sign
 they're open for business, and `/pack_stall` to fold it back up (logging out
-packs it up too — one stall per merchant, outdoors only).
+packs it up too — one stall per merchant, outdoors only). The merchant class
+is operator-only, so in practice this command is NPC-only.
 
-A stall is no longer just a prop — **clicking someone else's laid-out stall
-opens a trade window with them directly**, no invite or accept step needed.
-Full rules in [Player trading](../../guides/trade/).
+Players reach the same table a different way: buy a
+**{itemName('peddler_stall')}**
+({formatCoins(itemsById.get('peddler_stall').basePrice)}) and use it to
+spread the table as a **consignment stall** — price bag items onto it and
+customers pay the marked price straight off the table. Full rules in
+[Player trading](../../guides/trade/#consignment-stalls).
 
 ## Haggling
 

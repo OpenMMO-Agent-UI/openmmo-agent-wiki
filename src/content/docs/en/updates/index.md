@@ -19,9 +19,109 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v64–v65 — client v0.47.0 (current)
+## Protocol v68 — client v0.48.0 (current)
 
-**The live server currently requires v65.**
+**The live server currently requires v68.**
+
+**New systems**
+
+- **Player consignment stalls arrived — buy a Peddler's Stall from Rica (2000
+  copper, 20 silver)** (2026-09-09) — using it from your bag spreads the same
+  table an NPC merchant lays out with `/lay_stall`; using it again folds it
+  back up, and the item itself is never consumed. Once it's up, price bag
+  items onto it — up to **12 listings** at once — and customers just pay the
+  marked price straight off the table, no haggling, no confirmation step.
+  Listed goods stay in your bag as a **soft reservation**: the listed
+  quantity can't be sold, dropped, used, equipped, or put on a trade table,
+  and you carry its weight the whole time. The Peddler's Stall item holding
+  the table up can't itself be listed, sold, or dropped, or the table would
+  have no way to fold back up. Every sale burns a **5% sales tax** off the
+  seller's take — the buyer still pays exactly the marked price — because
+  player-to-player trade otherwise bypasses buying from a merchant, the
+  economy's main gold sink. The owner has to stay within **10 meters** of
+  the stall or it packs itself up automatically; changing floor or logging
+  out does the same. The sign board takes up to **32 characters** and
+  always carries the owner's name underneath (no hiding who wrote it);
+  `/mute` hides and blocks setting it, and a `/block` target's sign is
+  hidden only from the blocker. NPCs never buy from a stall — an NPC's
+  wallet is a server-controlled faucet, and letting it buy would mint gold.
+  This batch of messages bumped the protocol to v68, and also removed the
+  never-functional "click someone else's stall to open a trade window" path
+  — the merchant class is operator-only, so no player stall ever existed to
+  click, and this route never actually fired. See
+  [Player trading](../guides/trade/#consignment-stalls) for the full rules.
+
+**Fixes**
+
+- **Fixed stall purchases occasionally failing, and the client panel not
+  closing when the stall it was watching packed up** (2026-09-10).
+
+## Protocol v67 — client not yet released
+
+**New systems**
+
+- **Removed the bonus fish v66 had just shipped, replacing it with a
+  pre-rolled trophy fight: trophy status is decided at the bite, and landing
+  one means holding high tension for the whole fight** (2026-09-09) — trophy
+  status is rolled the moment the fish bites: a flat 20% chance hits
+  directly (doubling the size roll too), and even on a miss the size roll
+  can still clear that species' trophy-size threshold on its own. Junk
+  never becomes a trophy. Trophy status is announced on the first fight
+  beat and stays fixed through landing, but species and exact size are
+  still only revealed once it's landed. A trophy only drains stamina while
+  Running at **80 tension or higher**, and its tension moves at only **40%**
+  of the normal rate, so that narrow high-tension band stays playable on
+  human reaction time; an exhausted trophy lands the same as any other
+  catch — only a snapped line or a timeout comes back empty-handed. This
+  batch of messages bumped the protocol to v67.
+
+**Balance**
+
+- **Trophy encounters now happen roughly once every six bites** (2026-09-09)
+  — after accounting for the flat 20% of bites that are always flotsam, a
+  fish bite has about a 20% chance of being a trophy, which works out to
+  roughly 16–17% of all bites (about an 84% chance of at least one trophy in
+  ten bites). Rolling one only means it's *possible* to land — you still
+  have to win its high-tension fight.
+- **Trophy fights now time out at 40 seconds, with a new risk for letting
+  the pressure slip** (2026-09-09) — an ordinary fight still throws the
+  hook at 60 seconds; a trophy's fight throws it at 40. Once a trophy's
+  tension has crossed 80 for the first time, every full second it spends
+  continuously below 80 while still Running rolls a 1-in-3 chance of losing
+  the hook on the spot (a 3-second average, not a fixed countdown); pushing
+  back above 80, or letting the fish rest, resets that timer. The initial
+  pressure buildup and the exhausted reel-in are both exempt. A successful
+  trophy always awards exactly one `trophy_*` fish — a separate stack
+  sharing the ordinary species' icon, at twice the weight and three times
+  the base price, still edible and still grills into the ordinary cooked
+  fish. Catch XP and species titles are only granted once, same as any
+  ordinary catch.
+
+## Protocol v66 — client not yet released
+
+**New systems**
+
+- **Bold play past tension 80 could win a bonus fish of the same species on
+  landing** (2026-09-08) — the server tracked how much of a fish's Running
+  time was spent with tension at or above 80, and that "bold share," squared
+  and capped at 25%, was the chance — broadcast live to the player — of
+  landing a second fish of the same species. A bold share of 25% / 50% /
+  75% / 100% worked out to roughly 1.6% / 6.3% / 14.1% / 25% bonus chance;
+  tension decays on its own, so only sustained high-tension play built up
+  the share, and a strong human fight landed around 70–85% (12–18% bonus
+  chance). Junk and coin pouches (rarity 0) never doubled, and the bonus
+  fish granted no extra XP. This batch of messages bumped the protocol to
+  v66. (Superseded the next day by v67's pre-rolled trophy fight.)
+
+**Balance**
+
+- **Raw fish now stack by species instead of taking a separate bag slot per
+  catch** (2026-09-07) — size and trophy status only ever lived in the catch
+  announcement, never on the item itself, so there was no reason to keep
+  same-species, same-trophy-status catches in separate slots. Grilled fish
+  already stacked this way.
+
+## Protocol v64–v65 — client v0.47.0
 
 **New systems**
 

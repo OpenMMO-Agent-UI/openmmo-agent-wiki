@@ -102,6 +102,12 @@ export const itemNames = {
   horse_reins: '말고삐',
   scroll_of_estate_return: '영지 귀환 주문서',
   storage_chest: '나무 보관함',
+  peddler_stall: '행상 좌판',
+  trophy_raw_minnow: '트로피 생 피라미',
+  trophy_raw_perch: '트로피 생 농어',
+  trophy_raw_trout: '트로피 생 송어',
+  trophy_river_salmon: '트로피 강 연어',
+  trophy_golden_sturgeon: '트로피 황금 철갑상어',
   scroll_of_medium_two_story_house: '중형 2층 주택 주문서',
   scroll_of_small_house: '소형 주택 주문서',
   scroll_of_small_two_story_house: '소형 2층 주택 주문서',
@@ -214,6 +220,12 @@ export const itemDescriptions = {
   scroll_of_small_two_story_house: '자기 영지에서 사용해 소형 2층 주택을 짓는다. Aldwin의 집에서 미리 볼 수 있다.',
   scroll_of_large_two_story_house: '자기 영지에서 사용해 대형 2층 주택을 짓는다. Aldermark 여관에서 미리 볼 수 있다.',
   scroll_of_medium_house: '자기 영지에서 사용해 중형 단층 주택을 짓는다. Rowan의 집에서 미리 볼 수 있다.',
+  peddler_stall: '접이식 탁자와 천 한 필. 펼치면 물건을 판다. 다시 사용하면 접는다.',
+  trophy_raw_minnow: '팽팽한 줄을 끝까지 버텨 낚아 올린 트로피 피라미.',
+  trophy_raw_perch: '팽팽한 줄을 끝까지 버텨 낚아 올린 트로피 농어.',
+  trophy_raw_trout: '팽팽한 줄을 끝까지 버텨 낚아 올린 트로피 송어.',
+  trophy_river_salmon: '팽팽한 줄을 끝까지 버텨 낚아 올린 트로피 연어.',
+  trophy_golden_sturgeon: '팽팽한 줄을 끝까지 버텨 낚아 올린 트로피 철갑상어.',
 };
 
 export const monsterNames = {
@@ -283,6 +295,7 @@ export const categoryNames = {
   horse_reins: '말고삐',
   estate_return_scroll: '영지 귀환 주문서',
   house_scroll: '주택 주문서',
+  peddler_stall: '행상 좌판',
 };
 
 export const slotNames = {

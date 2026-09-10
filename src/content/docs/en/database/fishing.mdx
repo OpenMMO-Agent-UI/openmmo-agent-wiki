@@ -59,11 +59,24 @@ often.
 
 ## Size and trophies
 
-Length is the `size dice` roll plus a d20 quality roll. **A natural 20 doubles
-the size**, and for fish it's always a trophy.
+Length is the `size dice` roll. Every bite also rolls a separate trophy
+check: a flat **20% chance** hits directly, doubling the size roll too; even
+on a miss, the size roll can still clear that species' trophy-size
+threshold on its own. Junk never becomes a trophy. Once you subtract the
+flat 20% of bites that are always flotsam, trophies work out to roughly one
+in **six bites** (16–17% of all bites).
 
-Trophies are a fish concept — a nat-20 Old Boot is just a very large boot, no
-celebration.
+Trophy status is decided the instant the fish bites and announced on the
+first fight beat, but species and exact size are only revealed once it's
+landed. A trophy fight is tougher than an ordinary one: it only drains
+stamina at **80 tension or higher**, its tension moves at **40%** of the
+normal rate, and its timeout is shortened from 60 seconds to **40**. Once
+tension has crossed 80, letting it slip back below 80 for a full second
+rolls a 1-in-3 chance of losing the hook on the spot. Landing one always
+awards a separate `trophy_*` fish sharing the ordinary species' icon, at
+twice the weight and three times the price. See
+[Fishing gameplay](../../guides/fishing/#trophy-fights) for the full fight
+mechanics.
 
 Size is **not stored on the item**; it exists only in the catch announcement.
 
@@ -123,5 +136,5 @@ Eating raw is an emergency measure. The answer is **a campfire**. Grilled fish
 carry no risk and far more nutrition.
 :::
 
-Every catch takes its own bag slot (they don't stack), so your bag reads as a
-catch log.
+Fish stack by **species**, and trophy catches stack separately from
+ordinary ones (`trophy_*` is a distinct item id).

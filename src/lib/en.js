@@ -43,6 +43,7 @@ export const categoryNames = {
   horse_reins: 'Horse reins',
   estate_return_scroll: 'Estate return scroll',
   house_scroll: 'House scroll',
+  peddler_stall: "Peddler's stall",
 };
 
 export const slotNames = {

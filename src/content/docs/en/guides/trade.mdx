@@ -25,23 +25,35 @@ In chat:
   pointless.
 - Each player can only have **one trade session** open at a time.
 
-## Trading through a stall
+## Consignment stalls
 
-A merchant's [stall](../../database/economy/#merchant-stalls-lay_stall) isn't just
-set dressing anymore — **clicking someone else's laid-out stall opens a
-trade window with them directly**, no invite or accept step needed.
+Clicking someone else's laid-out stall does **not** open the player-trade
+window this page describes — that path never actually worked (the merchant
+class is operator-only, so no player stall ever existed to click). Protocol
+v68 removed it and replaced it with a **consignment stall** that actually
+does something: buy a
+[Peddler's Stall](../../database/economy/#merchant-stalls-lay_stall), use it
+to spread the same table an NPC lays with `/lay_stall`, and price bag items
+onto it. Customers just pay the marked price — no haggling, and none of the
+lock-then-confirm steps `/trade` uses.
 
-- Distance is measured from the customer **to the stall**, not to the
-  owner — the owner just needs to be online, not standing behind the table.
-- If the stall's owner is an NPC, clicking it falls back to the normal
-  **priced shop** flow instead of a player trade.
-- If a customer leaves a stall trade unfinished, that same customer has to
-  wait **10 seconds** before reopening it at the same stall (stops a
-  cancel-and-reopen spam loop).
-- `/block` still applies at a stall — a blocked customer just sees "busy,"
-  without it revealing that they've been blocked.
-- Packing up the stall with `/pack_stall` ends any trade currently open
-  through it.
+- **The item is never consumed.** Use it once to set up, use it again to
+  pack up, the same toggle a tip hat uses.
+- **Listed items stay in your bag** as a soft reservation — selling,
+  dropping, using, equipping, or trading them is blocked until they're
+  unlisted or sold, and you carry their weight the whole time. Up to **12
+  listings** at once.
+- **The Peddler's Stall item holding the table up can't itself be listed,
+  sold, or dropped** — selling it would leave a table with no way to fold
+  back up.
+- Every sale burns a **5% sales tax** off the seller's take; the buyer
+  still pays exactly the marked price.
+- The owner has to stay within **10 meters** of the stall, or it packs
+  itself up automatically — changing floor or logging out does too.
+- The owner can write a sign of up to **32 characters**, always with their
+  name underneath; `/mute` hides and blocks setting it, and a `/block`
+  target's sign is hidden only from the blocker.
+- **NPCs never buy from a stall.**
 
 ## Lock, then confirm (the anti-scam core)
 

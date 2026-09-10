@@ -107,6 +107,12 @@ export const itemNames = {
   scroll_of_small_two_story_house: '小型二層房屋捲軸',
   scroll_of_large_two_story_house: '大型二層房屋捲軸',
   scroll_of_medium_house: '中型房屋捲軸',
+  peddler_stall: '行商小攤',
+  trophy_raw_minnow: '獎盃生鰷魚',
+  trophy_raw_perch: '獎盃生鱸魚',
+  trophy_raw_trout: '獎盃生鱒魚',
+  trophy_river_salmon: '獎盃河鮭',
+  trophy_golden_sturgeon: '獎盃黃金鱘',
 };
 
 export const itemDescriptions = {
@@ -214,6 +220,12 @@ export const itemDescriptions = {
   scroll_of_small_two_story_house: '在自己的領地使用建造一棟小型二層樓房屋。可以在 Aldwin 的家預覽外觀。',
   scroll_of_large_two_story_house: '在自己的領地使用建造一棟大型二層樓房屋。可以在 Aldermark 客棧預覽外觀。',
   scroll_of_medium_house: '在自己的領地使用建造一棟中型平房。可以在 Rowan 的家預覽外觀。',
+  peddler_stall: '一張折疊桌與一卷布。攤開來就能擺攤販售,再用一次可以收起來。',
+  trophy_raw_minnow: '穩穩壓住線才拉上岸的獎盃鰷魚。',
+  trophy_raw_perch: '穩穩壓住線才拉上岸的獎盃鱸魚。',
+  trophy_raw_trout: '穩穩壓住線才拉上岸的獎盃鱒魚。',
+  trophy_river_salmon: '穩穩壓住線才拉上岸的獎盃河鮭。',
+  trophy_golden_sturgeon: '穩穩壓住線才拉上岸的獎盃黃金鱘。',
 };
 
 export const monsterNames = {
@@ -283,6 +295,7 @@ export const categoryNames = {
   horse_reins: '馬韁繩',
   estate_return_scroll: '領地歸還捲軸',
   house_scroll: '房屋捲軸',
+  peddler_stall: '行商小攤',
 };
 
 export const slotNames = {

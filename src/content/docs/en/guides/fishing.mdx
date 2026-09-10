@@ -150,8 +150,8 @@ winding in and bleeding off pressure.
 
 ### Stamina — what you're actually depleting
 
-**Stamina isn't on the gauge**, but you can read it from the splash — smaller
-splash means a tired fish.
+**Stamina shows on the gauge and in the splash** — smaller splash means a
+tired fish.
 
 Stamina pool: `38 + 12 × rarity`
 
@@ -228,6 +228,33 @@ floor and it lands.
 A fish with stamina left, dragged within 1 metre of the floor, **panics into a
 fresh run.** Empty the stamina first.
 :::
+
+## Trophy fights
+
+At the bite, the server has already rolled whether this fish is a trophy
+(a flat 20% chance, or the size roll clearing that species' threshold on
+its own) — but **you only learn it on the first fight beat**, and species
+and exact size still wait until it's landed.
+
+A trophy fights differently:
+
+- **Only drains stamina while Running at 80 tension or higher.** Below 80 it
+  never tires, whether Running or Resting, and it still recovers while
+  Resting.
+- **Tension moves at 40% of the normal rate** — that narrow high-tension
+  band stays playable on human reaction time.
+- **The fight times out at 40 seconds** (60 for an ordinary fish).
+- Once tension has crossed 80, every full second it slips back below 80
+  while still Running rolls a **1-in-3** chance of losing the hook right
+  there (a 3-second average, not a fixed countdown); pushing back above 80
+  or letting the fish rest resets that timer.
+
+An exhausted trophy lands the same as any ordinary catch — only a snapped
+line or a timeout comes back empty-handed. Landing one always awards a
+separate `trophy_*` item: it shares the ordinary species' icon, at **twice
+the weight and three times the price**, still edible and still grills into
+the ordinary cooked fish. Catch XP and species titles are only granted
+once, same as any ordinary catch.
 
 ## What breaks a session
 
