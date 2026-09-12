@@ -1,0 +1,54 @@
+---
+title: Item locks
+description: Lock items to stop yourself from dropping or selling them by accident — locking also blocks trading, stalls, enchanting and batch actions; unlocking needs a typed confirmation.
+---
+
+The bag panel has a **Lock** button next to **Select** (protocol v69). Turning it on shows a
+padlock on every slot in your bag and equipment, and clicking one locks that item. Turning
+**Lock** off again, switching to **Select**, or closing the bag leaves only the padlocks on
+already-locked items visible. **The yellow padlock on a locked item is always clickable to
+start unlocking it, whether or not Lock mode is on.** Lock state also shows up in the item
+tooltip.
+
+If you're holding more than one of the same item, the padlock only affects the slot or stack
+you click, not the whole quantity. Turning Lock mode on cancels any batch-drop selection you
+had going.
+
+## Unlocking needs a typed confirmation
+
+Clicking the padlock on a locked item opens a dialog listing the item's name, enchant level and
+quantity, and asks you to type **UNLOCK** in capitals before you can press **Unlock**. Cancel or
+Esc keeps the item locked, and you'll need to type the confirmation again next time. If the item
+in that slot changes while the dialog is open, the dialog closes on its own.
+
+## What locking blocks
+
+- **Single and batch drops, selling to a shop, putting the item into a player trade, and
+  listing it on a stall** are all refused by the server. For batch actions, one locked item in
+  the batch refuses the whole request. See [Player trading](../trade/#what-can-never-be-traded).
+- **A locked weapon can't be picked by an enchant scroll, and locked armor is excluded from the
+  random enchant-armor target.** If nothing enchantable is left, neither the scroll nor the
+  whetstone oil is consumed. See [Enchanting](../enchant/).
+- An item already on the trade table or listed on a stall has to be pulled back before you can
+  change its lock, and both trades and stall sales re-check locks again at the moment they
+  finalize.
+
+## What locking doesn't block
+
+- **Equipping, unequipping, and normal use** all work as usual.
+- Using a locked **scroll or whetstone oil itself** isn't blocked — the lock only protects the
+  item a scroll or oil would act on, not the consumable being used.
+
+## Locks travel with the item
+
+- Locks are preserved when you deposit into or withdraw from a storage chest.
+- Two stacks with different lock states **won't merge**.
+- Locks survive reconnecting. Items that existed before protocol v69 shipped start **unlocked**.
+
+## Ground transfer audit log
+
+The server logs successful single and batch drops and pickups of ordinary items to an
+`item_audit` record (failed requests leave no record; coin pouches keep their existing pickup
+log). Each entry records the character, item type and enchant, the actual quantity moved, the
+drop/pickup location and floor, and who dropped it. This log is for operators auditing the
+game — there's no in-game UI for it.

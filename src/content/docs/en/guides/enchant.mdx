@@ -39,8 +39,10 @@ an extra gold sink on the system and doesn't touch any of the odds above.
 Common to both:
 
 - You can't read while **incapacitated** (downed) — the scroll isn't consumed.
-- No valid target (no weapon equipped / no armor worn) also gets rejected
-  without consuming the scroll.
+- **Locked equipment is excluded from the enchant target** (protocol v69) —
+  no weapon equipped, no armor worn, or every candidate locked, all get
+  rejected the same way, without consuming the scroll. See
+  [Item locks](../item-locks/).
 - **No Whetstone Oil** also gets rejected, consuming neither the scroll nor
   the oil — this check comes after the target check, right before anything
   is spent.
@@ -54,15 +56,16 @@ Common to both:
 
 Armor-only rules:
 
-- The target is picked **uniformly at random** among currently worn
-  `category=armor` items — helmet, body armor, shield, gloves, pants, and
-  boots all count.
+- The target is picked **uniformly at random** among currently worn and
+  **unlocked** `category=armor` items — helmet, body armor, shield, gloves,
+  pants, and boots all count.
 - Weapons and accessories (rings, necklaces, belts) are never targeted.
   `ring_of_protection` grants Guard but is an `accessory`, so it can't be
   enchanted.
-- Only pieces worn **at the moment you read** are candidates — taking a piece
-  off removes it from the pool, which effectively lets you choose your target
-  (see "What the random target actually means" below).
+- Only pieces worn **and unlocked at the moment you read** are candidates —
+  taking a piece off or locking it removes it from the pool, which
+  effectively lets you choose your target (see "What the random target
+  actually means" below).
 
 ## The success ladder
 
@@ -144,17 +147,18 @@ low-level monster, for example.
 
 ## What the random target actually means
 
-The target pool is only **whatever's worn at the moment you read**, so
-taking off everything except the piece you want enchanted effectively lets
-you choose your target. The cost to bring all 6 slots to +3 differs sharply
-by playstyle (20,000-run simulation):
+The target pool is only **whatever's worn and unlocked at the moment you
+read**, so taking off or locking everything except the piece you want
+enchanted effectively lets you choose your target. The cost to bring all 6
+slots to +3 differs sharply by playstyle (20,000-run simulation):
 
 | Playstyle | Expected scrolls | Expected destroyed | All 6 slots survive |
 |---|---:|---:|---:|
-| Wear one slot at a time and read | 18 | 0 | 100% |
-| Read while wearing all 6 | 25.7 | 3.1 | 2.8% |
+| Leave one slot as the only candidate (rest off or locked) and read | 18 | 0 | 100% |
+| Read with all 6 worn and unlocked | 25.7 | 3.1 | 2.8% |
 
 The random target only bites once you're past the guaranteed band — once a
 piece is already +3, getting picked means eating a 25% destroy chance, so
-reading while fully dressed loses an average of 3 pieces. Reading undressed
-keeps the guaranteed band fully guaranteed.
+reading with all 6 as candidates loses an average of 3 pieces. Taking a
+finished piece off or locking it removes it from the pool and keeps its
+guaranteed band fully guaranteed.

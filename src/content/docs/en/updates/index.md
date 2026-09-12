@@ -19,9 +19,64 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v68 — client v0.48.0 (current)
+## Protocol v69 — client v0.49.0 (current)
 
-**The live server currently requires v68.**
+**The live server currently requires v69.**
+
+**New systems**
+
+- **Item locks arrived, to stop yourself dropping or selling something by
+  accident** (2026-09-10) — the bag panel has a new **Lock** button next to
+  **Select**; turning it on shows a padlock on every slot in your bag and
+  equipment, and clicking one locks that item. A locked item's yellow
+  padlock is always clickable to start unlocking, whether or not Lock mode
+  is on, and unlocking requires typing **UNLOCK** in capitals to confirm. A
+  locked item can't be single- or batch-dropped, sold to a shop, put into a
+  player trade, or listed on a stall — batch actions refuse the whole
+  request if even one item in them is locked. A locked weapon can't be
+  picked by an enchant scroll, and locked armor is excluded from the random
+  enchant-armor target; if every candidate is locked, neither the scroll nor
+  the whetstone oil is consumed. Equipping, unequipping, and normal use are
+  unaffected. Locks are preserved through storage-chest deposits/withdrawals
+  and reconnecting; items that existed before this shipped start unlocked.
+  This message bumps the protocol to v69. See [Item locks](../guides/item-locks/).
+- **Ground drops and pickups of ordinary items now get an audit log**
+  (2026-09-10) — successful single and batch drops/pickups are written to a
+  server-side `item_audit` record with the character, item type and
+  enchant, the actual quantity moved, the drop/pickup location and floor,
+  and who dropped it; failed requests leave no record, and coin pouches
+  keep their existing pickup log. This is for operators auditing the game —
+  there's no in-game UI for it.
+- **The `/give` admin command now takes a quantity** (admin only) — the
+  syntax is now `/give <item_id> [count]`, defaulting to 1 with a cap of
+  10,000 per use.
+- **Arrows now fly straight over fences** (2026-09-10) — range checks for
+  ranged weapons no longer treat a fence as a wall; walls, closed doors, and
+  furniture still block a shot the same as before, and fences still block
+  movement and melee attacks. See [Combat](../guides/combat/#ranged-weapons-protocol-v53).
+
+**Balance**
+
+- **Dungeon monster respawns now speed up with how many players are alive
+  in the same 5-floor band** (2026-09-09) — floors 1–5, 6–10, and 11–15 are
+  tracked separately: 1 survivor in the band keeps the original 5-minute
+  timer, 2 gives 4 minutes, 3 gives 3 minutes, 4 gives 2:30, and 5 or more
+  gives 2 minutes. Bosses are unaffected by this speed-up.
+
+**Fixes**
+
+- **Fixed smoothed paths occasionally cutting straight across a fence edge
+  when routing around a fence tip** (2026-09-10).
+- **Fixed character names and titles getting clipped when their text label
+  canvas was reused** (2026-09-10).
+
+**Client**
+
+- **agent-client updated to v0.49.0**, matching protocol v69 (2026-09-11).
+- **Fixed the agent-client's fallback movement getting stuck in front of
+  known obstacles** (2026-09-10).
+
+## Protocol v68 — client v0.48.0
 
 **New systems**
 

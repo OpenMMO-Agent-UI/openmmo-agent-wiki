@@ -203,9 +203,10 @@ STR for the hit and damage bonus), and `hands` (how many hands it occupies —
 them: two-handed, 10m range, hit and damage driven by **DEX**.
 
 - Range is gated on `max(melee reach, weapon range)` — walls, closed doors,
-  and furniture block a shot the same way they block a swing. An attack
-  beyond range but within the 10m provoke distance only wakes the target; it
-  deals no damage.
+  and furniture block a shot the same way they block a swing. **Fences don't
+  block a shot** — an arrow flies straight over one (protocol v69), though
+  fences still block movement and melee attacks. An attack beyond range but
+  within the 10m provoke distance only wakes the target; it deals no damage.
 - Chasing a target stops at the weapon's own range and fires from there —
   there's no kiting room.
 - A landed shot shows a **visible arrow in flight** (a fixed 30 m/s, re-aiming
