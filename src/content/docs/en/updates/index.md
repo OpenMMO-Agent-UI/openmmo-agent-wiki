@@ -19,9 +19,48 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v69 — client v0.49.0 (current)
+## Protocol v70 — client v0.50.1 (current)
 
-**The live server currently requires v69.**
+**The live server currently requires v70.**
+
+**New systems**
+
+- **Regional weather — it only rains under a cloud cell, and cells sit
+  still** (2026-09-12) — the world is baked into four climates (wet coast,
+  rain shadow, alpine, temperate), each cut into sectors that independently
+  roll when it rains, for how long, and how wide. The ground under a rain
+  cell dims, gets rain and sound; everything outside is untouched, and
+  cells never drift — they just fade in and out over time. This bumped the
+  protocol to v70. See [Weather](../guides/weather/).
+
+**Fixes**
+
+- **Getting your path blocked while mounted no longer snaps you straight
+  back to where you started** (2026-09-12) — the server now backs the
+  horse up a few steps first (playing a reverse walking animation) to find
+  clear room, then replans a route to your original destination, streaming
+  authoritative position and rotation the whole time. Only triggers while
+  mounted, outdoors on the ground, and out of combat. This also bumped the
+  protocol to v70. See
+  [Mounts](../guides/mounts/#recovery-when-the-path-is-blocked-protocol-v70).
+
+**New items & assets**
+
+- **A successful enchant now plays about 5 seconds of light effects visible
+  to everyone on your floor** (2026-09-13) — a weapon enchant traces golden
+  filaments and a halo along the blade with the character holding it
+  raised; armor radiates golden rays from the chest. Moving, fighting,
+  interacting, or mounting/dismounting cuts it short. Purely visual — it
+  doesn't affect the enchant's odds or outcome. See
+  [Enchanting](../guides/enchant/#success-effect).
+
+**Client**
+
+- **agent-client updated to v0.50.1, matching protocol v70**, and now
+  treats the weather sync message as noise it ignores outright, so it
+  never wakes the LLM (2026-09-12).
+
+## Protocol v69 — client v0.49.0
 
 **New systems**
 

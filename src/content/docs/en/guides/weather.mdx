@@ -1,0 +1,70 @@
+---
+title: Weather
+description: How regional rain forms, how often it happens, and how the screen, lighting and sound change while it's raining.
+---
+
+Weather shipped in protocol v70. Rain is **regional** — the world is baked
+into a handful of climates, each climate is cut into a few "sectors," and
+each sector independently decides when it rains and for how long. Only the
+ground under a rain cell gets dimmed, wet and loud — the whole map doesn't
+change at once, and there's no drifting cloud animation; a cell sits still
+and just fades in and out over time.
+
+## How climates are assigned
+
+Every plot gets a fixed climate baked from the world's terrain data at
+generation time — it's not random and it never changes mid-game:
+
+| Climate | Rough rule |
+|---|---|
+| Wet coast | within 1 km of the sea and below 900 m elevation |
+| Rain shadow | a ridge at least 1,200 m tall spanning 1+ km north–south sits within 14 km upwind (west), with no sea in between, and the plot itself is below 700 m |
+| Alpine | 1,500 m elevation or higher (worldgen paints permanent snow from 1,800 m up) |
+| Temperate | everywhere else on land |
+
+The sea never gets rain.
+
+## How often, and for how long
+
+Each climate's sectors roll independently for when it rains, for how long,
+and how wide. Roughly what it feels like:
+
+| Climate | Average frequency | Rain duration | Cell radius |
+|---|---|---|---|
+| Wet coast | about every 1.2h | 21–30 min | 1.6–2.6 km |
+| Temperate | about every 4h | 15–30 min | 3.5–5.4 km |
+| Rain shadow | about every 14h | 15–22 min | 3.0–4.6 km |
+| Alpine | about every 2.3h | 22–30 min | 3.3–5.2 km |
+
+Cell edges are sharp — rain is at full strength out to 70% of the radius and
+fades to zero over the outer 30%, rather than bleeding out gradually the way
+real rain does, so the circle you'd see on a map is exactly where it's
+raining. The rain shadow rains least on average, but with cells reaching
+3–5 km it still gets soaked by spillover from neighboring climates, so it's
+never bone dry.
+
+The world map doesn't show cells or a forecast yet — that layer has been
+prototyped and works, but it's held back until there's a real gameplay
+reason for players to check the weather ahead of time.
+
+## What rain does on screen
+
+The ground under a cell reflects three things in real time, and reverts
+immediately once you leave it:
+
+- **Dimmer lighting** — directional light drops up to 50%, ambient and
+  environment light up to 25%, at full cloud cover. Full overcast reads as
+  "cloudy afternoon," never night.
+- **Rain and sound** — ground-level rain particles and splash rings appear,
+  along with rain ambience and occasional distant thunder, following your
+  SFX volume/mute settings and muffled indoors. It never rains indoors or in
+  dungeons, and flower petal particles stop spawning while it's raining.
+- **Quieter inn music** — bard performances duck through the same
+  quiet-zone system rain uses, so the music fades smoothly instead of
+  cutting in and out at a cell's edge.
+
+## Not in yet
+
+Snow, lightning visuals, a wetness debuff, weather-affected fishing, and
+seasons are all still missing — rain is purely atmospheric for now and
+doesn't change any stats or drop rates.

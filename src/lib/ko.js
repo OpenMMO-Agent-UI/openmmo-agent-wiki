@@ -113,6 +113,7 @@ export const itemNames = {
   scroll_of_small_two_story_house: '소형 2층 주택 주문서',
   scroll_of_large_two_story_house: '대형 2층 주택 주문서',
   scroll_of_medium_house: '중형 주택 주문서',
+  great_sword: '양손대검',
 };
 
 export const itemDescriptions = {
@@ -226,6 +227,7 @@ export const itemDescriptions = {
   trophy_raw_trout: '팽팽한 줄을 끝까지 버텨 낚아 올린 트로피 송어.',
   trophy_river_salmon: '팽팽한 줄을 끝까지 버텨 낚아 올린 트로피 연어.',
   trophy_golden_sturgeon: '팽팽한 줄을 끝까지 버텨 낚아 올린 트로피 철갑상어.',
+  great_sword: '양손으로 휘두르는 묵직한 강철 대검. 두 손을 모두 차지해 방패나 횃불을 들 수 없다.',
 };
 
 export const monsterNames = {
@@ -245,6 +247,9 @@ export const monsterNames = {
   stone_golem: '스톤 골렘',
   cyclop: '키클롭스',
   lizardfolk: '리저드포크',
+  skeleton: '스켈레톤',
+  skeleton_warrior: '스켈레톤 전사',
+  skeleton_knight: '스켈레톤 기사',
 };
 
 export const debuffNames = {

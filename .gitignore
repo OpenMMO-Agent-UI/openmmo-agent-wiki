@@ -7,3 +7,4 @@ dist/
 .env.production
 .tmp-sync/
 .upstream-tmp/
+.tmp-upstream/

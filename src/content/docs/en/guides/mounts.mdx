@@ -46,3 +46,15 @@ keyboard movement; releasing the key stops you facing your current
 direction, and the same rule applies at corners along a path. Since turning
 is actual movement along the arc, it drains hunger just like moving in a
 straight line does.
+
+## Recovery when the path is blocked (protocol v70)
+
+If the server rejects your mount's next step (usually a pathing edge case
+the terrain doesn't line up with), it no longer snaps you straight back to
+where you started. Instead the horse backs up a few steps along the way it
+came (playing a reverse walking animation) until it finds clear room, then
+replans a new route to your original destination. The server streams
+authoritative position and rotation for the whole maneuver; if there's
+nowhere clear to back into, recovery can still fail, and you fall back to
+the old instant correction. This only triggers while **mounted, standing
+outdoors on the ground, and out of combat**.

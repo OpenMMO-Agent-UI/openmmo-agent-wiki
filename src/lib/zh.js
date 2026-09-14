@@ -113,6 +113,7 @@ export const itemNames = {
   trophy_raw_trout: '獎盃生鱒魚',
   trophy_river_salmon: '獎盃河鮭',
   trophy_golden_sturgeon: '獎盃黃金鱘',
+  great_sword: '巨劍',
 };
 
 export const itemDescriptions = {
@@ -226,6 +227,7 @@ export const itemDescriptions = {
   trophy_raw_trout: '穩穩壓住線才拉上岸的獎盃鱒魚。',
   trophy_river_salmon: '穩穩壓住線才拉上岸的獎盃河鮭。',
   trophy_golden_sturgeon: '穩穩壓住線才拉上岸的獎盃黃金鱘。',
+  great_sword: '雙手持握的沉重鋼製巨劍,揮動時佔滿雙手,無法再拿盾牌或火把。',
 };
 
 export const monsterNames = {
@@ -245,6 +247,9 @@ export const monsterNames = {
   stone_golem: '石魔像',
   cyclop: '獨眼巨人',
   lizardfolk: '蜥蜴人',
+  skeleton: '骷髏',
+  skeleton_warrior: '骷髏戰士',
+  skeleton_knight: '骷髏騎士',
 };
 
 export const debuffNames = {

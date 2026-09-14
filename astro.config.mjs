@@ -38,6 +38,7 @@ export default defineConfig({
             { label: '領地系統', translations: { ko: '영지 시스템' , en: 'Estates' }, link: '/guides/estates/' },
             { label: '騎乘系統', translations: { ko: '탑승 시스템' , en: 'Mounts' }, link: '/guides/mounts/' },
             { label: '道具鎖定', translations: { ko: '아이템 잠금' , en: 'Item locks' }, link: '/guides/item-locks/' },
+            { label: '天氣系統', translations: { ko: '날씨 시스템' , en: 'Weather' }, link: '/guides/weather/' },
           ],
         },
         {
