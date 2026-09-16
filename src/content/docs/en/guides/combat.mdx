@@ -493,4 +493,42 @@ carried in your bag** gets heavier from soaking up water (armor weight
 usable carry capacity. Walking through water keeps refreshing the timer;
 the countdown only starts once you step out. Standing near a lit campfire
 (within 3m) dries you faster — 45 seconds to go from soaked to dry.
-Crossing a bridge doesn't count as wading.
+Crossing a bridge doesn't count as wading. **As of protocol v78, standing
+in the rain long enough triggers the same Wet debuff** — see
+[Weather](../weather/#getting-soaked-in-the-rain-protocol-v78) for the
+details.
+
+## Skills and mana (protocol v71–v79)
+
+A blue **MP** bar now sits under the HP bar over your character's head, for
+every class — even if you don't have any ability that spends MP yet. Max MP
+is calculated from your class, WIS, and level, and regenerates naturally
+every 16 real seconds; it won't start regenerating until 10 real seconds
+after your last spend. Existing characters were topped up to their max MP
+the first time they logged in after this shipped, and the max recalculates
+on level-up.
+
+The character panel's **ABILITIES** tab lists your available skills as
+icons — drag one onto the existing 1–0 quickslots to use it, sharing the
+same drag-and-tooltip code as your inventory.
+
+| Ability | Granted to | Requires | Effect | Cooldown |
+|---|---|---|---|---|
+| Double Slash | Rogue, by default | Dagger in main hand | Your next basic attack becomes two independent hits, each at 100% damage | 10s |
+| Guardian Ward | Knight, by default | Sword or Mace in main hand + Shield off-hand | +10% Guard for yourself and party members within 20m on the same floor, for 60s | 45s, costs 2 MP |
+
+Guardian Ward used to cost satiation; as of protocol v79 it costs 2 MP
+instead. You can't cast it below 2 MP, and a failed cast doesn't spend MP
+or start the cooldown. Recasting just refreshes the duration back to 60s —
+it doesn't stack.
+
+The server's ability list also defines **Radiance** (a self-only toggled
+light) and **True Aim** (a bow skill that guarantees a hit on the marked
+target), fully implemented and protocol-supported — but they're
+deliberately hidden from the skill list and quickslots for now, so players
+can't use them yet.
+
+Shields now have their own `armorType: shield` classification (currently
+just the Wooden Shield and Raven Shield) — an off-hand torch doesn't count
+as one. The Goblin Sword and Small Sword were folded into the Sword weapon
+type; Dagger and Great Sword remain their own types.

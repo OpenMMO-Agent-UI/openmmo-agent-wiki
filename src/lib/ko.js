@@ -87,6 +87,10 @@ export const itemNames = {
   ogre_key_5: '오우거 요새 열쇠 (5층)',
   ogre_key_10: '오우거 요새 열쇠 (10층)',
   ogre_key_15: '오우거 요새 열쇠 (15층)',
+  skeleton_key_5: '스켈레톤 납골당 열쇠 (5층)',
+  skeleton_key_10: '스켈레톤 납골당 열쇠 (10층)',
+  skeleton_key_15: '스켈레톤 납골당 열쇠 (15층)',
+  skeleton_key_20: '스켈레톤 납골당 열쇠 (20층)',
   bow: '활',
   iron_arrow: '철화살',
   steel_arrow: '강철 화살',
@@ -201,6 +205,10 @@ export const itemDescriptions = {
   ogre_key_5: '묵직한 흑철 열쇠다. 오우거 요새 5층의 봉인된 계단방을 연다.',
   ogre_key_10: '손잡이에 고리 장식이 달린 묵직한 흑철 열쇠다. 오우거 요새 10층의 봉인된 계단방을 연다.',
   ogre_key_15: '손잡이에 왕관 장식이 달린 묵직한 흑철 열쇠다. 오우거 요새 15층의 봉인된 계단방과 그 던전의 보물 상자를 연다.',
+  skeleton_key_5: '창백한 강철 열쇠다. 스켈레톤 납골당 5층의 봉인된 계단방을 연다.',
+  skeleton_key_10: '창백한 강철 열쇠다. 스켈레톤 납골당 10층의 봉인된 계단방을 연다.',
+  skeleton_key_15: '창백한 강철 열쇠다. 스켈레톤 납골당 15층의 봉인된 계단방을 연다.',
+  skeleton_key_20: '창백한 강철 열쇠다. 스켈레톤 납골당 20층의 봉인된 계단방과 그 던전의 보물 상자를 연다.',
   bow: '층층이 겹친 주목으로 만든 리커브 활. 힘보다 안정된 손이 중요하다.',
   iron_arrow: '철촉을 단 화살대. 몇 개 잃어버려도 아깝지 않을 만큼 싸다.',
   steel_arrow: '강철촉이 철보다 깊게 박히는 만큼 값도 더 나간다.',
@@ -247,6 +255,7 @@ export const monsterNames = {
   stone_golem: '스톤 골렘',
   cyclop: '키클롭스',
   lizardfolk: '리저드포크',
+  skeleton_weak: '잊힌 망자',
   skeleton: '스켈레톤',
   skeleton_warrior: '스켈레톤 전사',
   skeleton_knight: '스켈레톤 기사',
@@ -265,6 +274,7 @@ export const dungeonNames = {
   old_crypt: '오래된 납골당',
   orc_warrens: '오크 소굴',
   ogre_stronghold: '오우거 요새',
+  skeleton_crypt: '스켈레톤 납골당',
 };
 
 export const categoryNames = {

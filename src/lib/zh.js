@@ -87,6 +87,10 @@ export const itemNames = {
   ogre_key_5: '食人魔要塞鑰匙(5 層)',
   ogre_key_10: '食人魔要塞鑰匙(10 層)',
   ogre_key_15: '食人魔要塞鑰匙(15 層)',
+  skeleton_key_5: '骷髏墓穴鑰匙(5 層)',
+  skeleton_key_10: '骷髏墓穴鑰匙(10 層)',
+  skeleton_key_15: '骷髏墓穴鑰匙(15 層)',
+  skeleton_key_20: '骷髏墓穴鑰匙(20 層)',
   bow: '弓',
   iron_arrow: '鐵箭',
   steel_arrow: '鋼箭',
@@ -201,6 +205,10 @@ export const itemDescriptions = {
   ogre_key_5: '沉重的黑鐵鑰匙。可以打開食人魔要塞第 5 層的封鎖樓梯間。',
   ogre_key_10: '鑰匙柄鑄有環形紋飾的沉重黑鐵鑰匙。可以打開食人魔要塞第 10 層的封鎖樓梯間。',
   ogre_key_15: '鑰匙柄鑄有王冠紋飾的沉重黑鐵鑰匙。可以打開食人魔要塞第 15 層的封鎖樓梯間,以及該地城的寶箱。',
+  skeleton_key_5: '一把泛白的鋼鑰匙。可以打開骷髏墓穴第 5 層的封鎖樓梯間。',
+  skeleton_key_10: '一把泛白的鋼鑰匙。可以打開骷髏墓穴第 10 層的封鎖樓梯間。',
+  skeleton_key_15: '一把泛白的鋼鑰匙。可以打開骷髏墓穴第 15 層的封鎖樓梯間。',
+  skeleton_key_20: '一把泛白的鋼鑰匙。可以打開骷髏墓穴第 20 層的封鎖樓梯間,以及該地城的寶箱。',
   bow: '層層迭起的紫杉反曲弓。靠的是穩定的手,不是蠻力。',
   iron_arrow: '鐵製箭頭的箭矢。便宜到弄丟幾支也無所謂。',
   steel_arrow: '鋼製箭頭,比鐵箭咬得更深,價錢也貴一些。',
@@ -247,6 +255,7 @@ export const monsterNames = {
   stone_golem: '石魔像',
   cyclop: '獨眼巨人',
   lizardfolk: '蜥蜴人',
+  skeleton_weak: '遺忘亡者',
   skeleton: '骷髏',
   skeleton_warrior: '骷髏戰士',
   skeleton_knight: '骷髏騎士',
@@ -265,6 +274,7 @@ export const dungeonNames = {
   old_crypt: '古墓',
   orc_warrens: '獸人巢穴',
   ogre_stronghold: '食人魔要塞',
+  skeleton_crypt: '骷髏墓穴',
 };
 
 export const categoryNames = {

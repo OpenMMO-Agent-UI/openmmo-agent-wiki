@@ -19,9 +19,161 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v70 — client v0.50.1 (current)
+## Protocol v80 — client v0.52.0 (current)
 
-**The live server currently requires v70.**
+**The live server currently requires v80.**
+
+**Performance**
+
+- **World event delivery was rebuilt around shared interest sets, and
+  redundant work was trimmed out** (2026-09-15) — the server's "who can see
+  whom" logic was rewritten, and reconnecting or changing floors now sends
+  a full terrain snapshot to resync instead of patching incrementally.
+  Nothing should feel different in normal play; it's a server-side
+  efficiency change. This bumped the protocol to v80.
+
+**Fixes**
+
+- **Respawning in a bed no longer briefly shows the wrong floor**
+  (2026-09-15) — fixed the order respawn sync cleared dungeon depth and
+  applied the new floor, which could flash the pre-respawn floor for a
+  moment.
+- **Your health bar no longer flickers back up after getting hit**
+  (2026-09-15) — fixed a stale, out-of-order damage message occasionally
+  overwriting a more recent, lower health value.
+- **Monsters that can't path back to their spawn point no longer get stuck
+  juddering in place** (2026-09-15) — a blocked return path now retries on
+  an interval and only falls back to idle once it genuinely can't find a
+  route, instead of stalling on the same blocked path.
+
+**Balance**
+
+- **The four Skeleton Crypt floor keys dropped from 0.1 kg to 0.001 kg**
+  (2026-09-15).
+- **Ogre and female orc death sounds turned down by 10 dB** (2026-09-15).
+
+**New items & assets**
+
+- **Skeleton-type monsters got dedicated hit sounds** instead of sharing a
+  generic impact sound (2026-09-15).
+
+**Client**
+
+- **agent-client updated to v0.52.0, matching protocol v80** (2026-09-16).
+
+## Protocol v79 — client v0.51.0
+
+**New systems**
+
+- **Characters now have a mana (MP) bar, and Guardian Ward costs MP instead
+  of satiation** (2026-09-14) — a blue MP bar sits under the HP bar for
+  every class, even without any MP-spending ability yet. Max MP is
+  calculated from class, WIS, and level, and regenerates naturally every 16
+  real seconds, starting 10 real seconds after your last spend; existing
+  characters were topped up to full MP the first time they logged in. MP
+  syncs only to its owner. Guardian Ward used to cost satiation — it now
+  costs 2 MP, and can't be cast below that. This bumped the protocol to
+  v79. See
+  [Combat](../guides/combat/#skills-and-mana-protocol-v71v79).
+
+**Fixes**
+
+- **Clicking to move onto a blocked spot no longer gets you stuck**
+  (2026-09-15) — clicking somewhere unreachable used to leave movement
+  half-started, waiting on the server's position correction; it now cancels
+  cleanly and snaps straight to your actual server position.
+
+**Client**
+
+- **agent-client updated to v0.51.0, matching protocol v79** (2026-09-14).
+
+## Protocol v78 — client not yet released
+
+**New systems**
+
+- **Standing in the rain long enough now gets you wet, and it sends NPCs
+  indoors** (2026-09-13 – 2026-09-14) — full-intensity rain takes 10
+  in-game minutes (75 real seconds) of continuous exposure to trigger the
+  Wet debuff, half intensity takes twice as long; going indoors, into a
+  dungeon, or dying resets the accumulated exposure, and the effect is
+  identical to wading. Wick and Signe both pack up and head into the inn
+  once it starts raining on their outdoor spot.
+- **Rain now leaves puddles, reflects nearby light, and can strike
+  lightning** (2026-09-13 – 2026-09-14) — the ground gradually puddles as
+  rain accumulates and dries out after it stops; raindrops and splashes
+  pick up nearby torchlight and firelight; and above a rain-intensity
+  threshold the sky occasionally flashes with thunder following, toggleable
+  in Settings.
+- **Western Valdran now has seasons — wet winters, dry summers**
+  (2026-09-14) — only rain chance around the village of Aldermark varies by
+  season; the yearly average wet-time there dropped more than 40%.
+- **Admins got a `/weather` command to force or clear server-wide rain**
+  (2026-09-13).
+
+This bumped the protocol to v78. See [Weather](../guides/weather/).
+
+## Protocol v77 — client not yet released
+
+**New systems**
+
+- **The Skeleton Crypt dungeon opened — 20 floors, boss is the Skeleton
+  Knight** (2026-09-13) — the tier-4 gear dungeon; its final chest
+  guarantees a Breastplate and Great Sword, with a Plate Helmet and Plate
+  Gauntlets each at 30%. Floors 5/10/15/20 each need their own Skeleton
+  Crypt key to open the sealed stair room. Killing the Skeleton Knight
+  awards a new title, with a separate one for a solo kill.
+- **Reconnecting now restores Double Slash's remaining cooldown**
+  (2026-09-13). This bumped the protocol to v77.
+
+**Fixes**
+
+- **Equipping a torch while wielding a two-handed weapon now stows the
+  weapon automatically instead of getting rejected outright** (2026-09-13)
+  — off-hand equip requests used to always fail while a two-hander was
+  equipped; a torch is now the one exception, and it puts the two-hander
+  back in your bag first. Other off-hand items like shields still can't be
+  equipped that way.
+- **Your own nameplate, title, and health bar no longer disappear behind
+  walls or terrain** (2026-09-13).
+
+## Protocol v76 — client not yet released
+
+**New systems**
+
+- **Ability targeting now prioritizes the monster under your cursor, and
+  out-of-range attempts get their own rejection message** (2026-09-13) —
+  currently only affects True Aim, which is still hidden and unavailable
+  (see v74–v75 below). This bumped the protocol to v76.
+
+## Protocol v74–v75 — client not yet released
+
+**New systems**
+
+- **Radiance and True Aim abilities were added, but stay hidden for now**
+  (2026-09-13) — Radiance is a self-only light toggle usable with any
+  weapon, lasting 120 seconds once lit; True Aim is a bow skill that
+  guarantees a hit on the marked target for 5 seconds, on a 10-second
+  cooldown. Both are fully supported server-side and on the wire, but
+  they're deliberately hidden from the skill list and quickslots, so
+  players can't use them yet. This bumped the protocol to v74, v75.
+
+## Protocol v71–v73 — client not yet released
+
+**New systems**
+
+- **Guardian Ward and Double Slash shipped as default class abilities**
+  (2026-09-13) — Guardian Ward is a Knight's default defensive skill
+  (Sword or Mace + Shield required), giving +10% Guard to yourself and
+  party members within 20m on the same floor for 60 seconds, on a
+  45-second cooldown. Double Slash is a Rogue's default dagger skill,
+  splitting your next basic attack into two independent 100%-damage hits,
+  on a 10-second cooldown. Both drag onto the existing 1–0 quickslots.
+  Shields also got their own `armorType: shield` classification, and the
+  Goblin Sword and Small Sword were folded into the Sword weapon type.
+  This bumped the protocol to v71, v72, v73. See
+  [Combat](../guides/combat/#skills-and-mana-protocol-v71v79).
+
+## Protocol v70 — client v0.50.1
 
 **New systems**
 

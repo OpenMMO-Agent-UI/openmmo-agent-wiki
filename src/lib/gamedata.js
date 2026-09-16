@@ -119,6 +119,7 @@ export const items = parseCsv('items').map((r) => {
     stackable: bool(r.stackable),
     category: r.category,
     weaponType: r.weaponType || null,
+    armorType: r.armorType || null,
     dice: r.dice || null,
     material: r.material || null,
     basePrice: num(r.basePrice),
@@ -185,6 +186,7 @@ export const monsters = parseCsv('monsters').map((r) => {
     dungeonMinDepth: num(r.dungeonMinDepth),
     dungeonMaxDepth: num(r.dungeonMaxDepth),
     dungeonWeight: num(r.dungeonWeight),
+    dungeonGroup: r.dungeonGroup || null,
     scale: num(r.scale),
     boss: bool(r.boss),
     sharedAnims: bool(r.sharedAnims),
@@ -209,6 +211,7 @@ export const dungeons = parseCsv('dungeons').map((r) => ({
   chestTier: num(r.chestTier),
   chestDrops: r.chestDrops ? r.chestDrops.split(';') : [],
   keyPrefix: r.keyPrefix || null,
+  spawnGroup: r.spawnGroup || null,
 }));
 
 /** Every 5th floor gets a locked stair room, keyed `{keyPrefix}_{floor}` (doc/DUNGEON_REWARD.md). */

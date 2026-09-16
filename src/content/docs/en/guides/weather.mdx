@@ -63,8 +63,78 @@ immediately once you leave it:
   quiet-zone system rain uses, so the music fades smoothly instead of
   cutting in and out at a cell's edge.
 
+## Getting soaked in the rain (protocol v78)
+
+It's not just wading anymore — **standing in the rain long enough now gets
+you wet too**. At full intensity (1.0) it takes 10 in-game minutes (75 real
+seconds) of continuous rain to trigger; half intensity takes twice as long.
+Intensity at or below 0.02 doesn't accumulate at all. The server checks your
+exact position's weather once per second — you don't need to be moving, and
+your graphics settings don't matter. An admin-forced rain counts too.
+
+Going indoors (a ground-floor room's actual footprint, not the gaps between
+rooms), into a dungeon, upstairs, dying, or loading resets your accumulated
+exposure. If you're already wet and keep getting rained on, your remaining
+time refreshes back to 450 seconds once it drops below 300 — the same goes
+for wading first and then getting rained on. Taking shelter doesn't dry you
+off instantly; an active Wet debuff just runs down at its normal rate, or
+faster next to a lit campfire.
+
+Rain-triggered Wet has the exact same effect as wading (×0.83 move speed,
+×1.5 armor weight) — see [Combat's debuffs](../combat/#debuffs).
+
+## What rain does to the ground (protocol v78)
+
+- **Puddles** — flat ground gradually grows irregular puddles as rain
+  accumulates; at 45% accumulation the ground darkens by 38%. Puddles shrink
+  from their edges once rain stops, fully drying within 240 seconds, and
+  refill if it starts raining again. Slopes and terrain below sea level
+  never puddle, and dungeon floors stay dry.
+- **Lit-up rain** — raindrops and ground splashes now pick up the color and
+  distance falloff of nearby light sources (torches, campfires); above 0.45
+  rain intensity, the sparse light-rain ambience crossfades into the full
+  heavy-rain recording.
+- **Lightning** (toggleable) — above 0.35 intensity, the sky occasionally
+  flashes — the scene lights up for 50ms then fades back to the normal
+  day/night lighting, with thunder following 2–5 seconds later, roughly
+  every 50–140 seconds. It reads weaker indoors. **Settings → Lightning
+  Flashes** is on by default and can be turned off independently of rain
+  and thunder audio.
+
+## Seasons, but only in western Valdran (protocol v78)
+
+Rain chance now varies by season, but only within 6 km of the village of
+Aldermark (6–8 km is a blend zone back to the normal schedule); everywhere
+else keeps its original, season-independent schedule:
+
+| Season | Rough dates | Rain-chance multiplier | Village wet-time share |
+|---|---|---|---|
+| Winter | Dec 30 – Mar 29 | ×1.0 | about 37% |
+| Spring | Mar 30 – Jun 29 | smoothly ×1.0 → ×0.11 | about 21% (average) |
+| Summer | Jun 30 – Sep 29 | ×0.11 | about 5% |
+| Autumn | Sep 30 – Dec 29 | smoothly ×0.11 → ×1.0 | about 21% (average) |
+
+The yearly average wet-time share is about 21%, down more than 40% from the
+36.7% it was before seasons existed. Rain elsewhere in the world isn't
+affected.
+
+## NPCs duck out of the rain
+
+Wick (the night-market vendor) and Signe (the town-square performer) both
+pack up and head into the inn once rain intensity passes 0.02 at their
+usual outdoor spot (Wick sits in chair 42, Signe in chair 39), and resume
+their normal schedule once it clears. Sleeping, meals, and other indoor
+routines aren't affected.
+
+## Admins can force the weather
+
+Server admins have chat commands — `/weather rain [intensity]`,
+`/weather clear`, and `/weather auto` — to force server-wide rain or clear
+skies, or resume automatic weather, for debugging or events. Regular
+players don't see these commands, but weather forced this way behaves
+exactly like natural rain for lighting, sound, and the Wet debuff.
+
 ## Not in yet
 
-Snow, lightning visuals, a wetness debuff, weather-affected fishing, and
-seasons are all still missing — rain is purely atmospheric for now and
-doesn't change any stats or drop rates.
+Snow, weather-affected fishing, and a forecast layer on the world map are
+still missing.
