@@ -19,9 +19,58 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v80 — client v0.52.0 (current)
+## Protocol v83 — client v0.53.0 (current)
 
-**The live server currently requires v80.**
+**The live server currently requires v83.**
+
+**Performance**
+
+- **Terrain files are now served straight from hash-verified source files
+  instead of pre-baked transfer bundles** (2026-09-17) — nginx now serves the
+  game's actual terrain source files directly at `/api/terrain/files/{path}`;
+  since those paths can change content, responses rely on content-hash
+  verification instead of HTTP cache headers, and a new
+  `/api/terrain/manifest/{x}/{z}` endpoint hands clients the file list and
+  hashes on a cold load. This retires the pre-baked snapshot files and
+  generator introduced in v81. This bumped the protocol to v83.
+
+**Fixes**
+
+- **Mounts no longer snap to the exact target position when arriving at a
+  waypoint** (2026-09-16) — horse arrival now follows the same arc-based
+  approach used mid-path instead of teleporting the last stretch, so
+  movement looks smoother.
+
+**Client**
+
+- **agent-client updated to v0.53.0, matching protocol v83** (2026-09-17).
+
+## Protocol v82 — client not yet released
+
+**Performance**
+
+- **Grass data is now stored as per-cell counts instead of individual blade
+  positions** (2026-09-16) — the server now stores only a count of short
+  grass, tall grass, and flowers (0-255 each) per 1×1 m cell instead of each
+  blade's position, rotation, and scale; the client regenerates the
+  same-looking blades from a seed derived from the cell's coordinates and
+  kind, so placement stays stable across reloads and neighboring-cell edits.
+  Existing terrain files need an offline migration; the format moved from
+  GR03 to GR04. This bumped the protocol to v82.
+
+## Protocol v81 — client not yet released
+
+**Performance**
+
+- **Terrain data now downloads individually over HTTP instead of riding
+  inside the WebSocket payload** (2026-09-16) — the WebSocket message now
+  only carries a tile's coordinates and content-hash versions; the actual
+  height, ground material, tree, grass, and landscaping data is fetched over
+  versioned HTTP URLs with long-lived immutable caching. The same change let
+  nginx serve up to 1 GiB of shared cache and merge concurrent requests for
+  the same URL. This bumped the protocol to v81.
+
+## Protocol v80 — client v0.52.0
 
 **Performance**
 
