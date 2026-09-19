@@ -1,6 +1,6 @@
 ---
 title: Mounts
-description: Buy Horse Reins to ride, doubling your outdoor movement speed, and the rules for mounting and dismounting.
+description: Buy Horse Reins to ride, doubling your outdoor movement speed, or a Rowboat to row, and the rules for mounting and dismounting.
 ---
 
 import { itemsById, formatCoins } from '../../../../lib/gamedata.js';
@@ -58,3 +58,32 @@ authoritative position and rotation for the whole maneuver; if there's
 nowhere clear to back into, recovery can still fail, and you fall back to
 the old instant correction. This only triggers while **mounted, standing
 outdoors on the ground, and out of combat**.
+
+## Rowing (protocol v84)
+
+Buy a **{itemName('rowboat')}** from Rica
+({formatCoins(itemsById.get('rowboat').basePrice)}) — cheaper than horse
+reins (1g 50s) since it only works on water. Use it from your bag while
+standing in water to board, and again to leave; the boat isn't consumed.
+
+- **Where you can board is the same rule as where you can fish** — any water
+  deeper than 0.1m (the same threshold fishing uses) floats it, sea or
+  river alike. Boarding and leaving share that one condition, so there's no
+  way to get stuck mid-row unable to leave in open water. Row into water
+  shallower than that and the hull grounds itself on the next check,
+  automatically putting you ashore — the opposite of a horse getting
+  unseated in deep water.
+- **Combat doesn't throw you off.** A horse dumps its rider the moment it's
+  attacked, but a boat has nowhere to put you, so you keep rowing (and can
+  flee) while in combat. **Skills and abilities are still blocked**,
+  though — that's the existing mounted-state restriction; it goes unnoticed
+  on a horse because combat always dismounts it first, but a boat keeps you
+  mounted through the fight.
+- Movement speed is **1.25x** walking speed — faster than walking soaked
+  (0.83x) but slower than sprinting (1.5x). Turning radius is 1.2m, wider
+  than a horse's 0.65m, so the boat turns more sluggishly.
+- The boat floats on the surface, so **you don't pick up the wet debuff**
+  while aboard.
+- Clicking the water with a rod out still casts a line; only a click beyond
+  the 8m cast range is read as a move order, so rowing a boat while fishing
+  works best with the keyboard for oars and the mouse reserved for casts.

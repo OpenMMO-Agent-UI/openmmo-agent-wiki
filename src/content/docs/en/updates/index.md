@@ -19,9 +19,55 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v83 — client v0.53.0 (current)
+## Protocol v84 — client v0.54.0 (current)
 
-**The live server currently requires v83.**
+**The live server currently requires v84.**
+
+**New systems**
+
+- **A rowable boat, sold by Rica** (2026-09-16) — use a **Rowboat** from your
+  bag while standing in water to board, and again to leave; the boat isn't
+  consumed. It costs 1g, cheaper than horse reins (1g 50s) since it only
+  works on water. Where you can row follows the same rule as where you can
+  fish: any water deeper than 0.1m floats it, sea or river alike; row into
+  water shallower than that and the hull grounds itself on the next check,
+  putting you ashore automatically. Rowing moves at 1.25x walking speed with
+  a 1.2m turning radius (wider than a horse's). The boat floats on the
+  surface, so you don't pick up the wet debuff, and **combat doesn't throw
+  you off** — unlike a horse — though the existing mounted-state restriction
+  on casting skills still applies. `Player.mounted` used to mean only "on
+  the horse"; it now distinguishes horse and rowboat as two mount kinds.
+  This bumped the protocol to v84. See
+  [Mounts](../guides/mounts/#rowing-protocol-v84).
+
+**New items & assets**
+
+- **Dungeon corridors now use cave and masonry theme sets, with new floor
+  puddles and drip sound effects** (2026-09-18) — corridor walls and floors
+  pick a fixed limestone, mossy rock, or brick-and-tile material set based on
+  the dungeon id and floor depth, with new weathering decals on walls and
+  worn rubble/crack textures on floors; brick floors locally show broken
+  edges down to the dirt underneath. Puddles that appear on the floor now
+  come with a matching drip sound, inaudible past 10m. Also fixes flickering
+  on masonry floors at certain angles and underground fires that were
+  invisible in some corridors. A visual and audio update only — gameplay is
+  unchanged.
+
+**Performance**
+
+- **Bridge textures recompressed and static assets now pre-gzipped**
+  (2026-09-17) — the main wooden bridge model's textures were re-encoded as
+  JPEG, cutting the file size by 44% (about 72% less transferred once
+  gzip'd); the build now also generates `.gz` versions of GLB, JS, CSS, and
+  WASM files ahead of time so nginx can serve them directly instead of
+  compressing on every request. In practice, assets load faster when
+  entering the game or changing scenes.
+
+**Client**
+
+- **agent-client updated to v0.54.0, matching protocol v84** (2026-09-19).
+
+## Protocol v83 — client v0.53.0
 
 **Performance**
 

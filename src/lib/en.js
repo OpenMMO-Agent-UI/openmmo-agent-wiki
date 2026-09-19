@@ -41,6 +41,7 @@ export const categoryNames = {
   tool: 'Tool',
   landscaping_palette: 'Landscaping palette',
   horse_reins: 'Horse reins',
+  rowboat: 'Rowboat',
   estate_return_scroll: 'Estate return scroll',
   house_scroll: 'House scroll',
   peddler_stall: "Peddler's stall",
