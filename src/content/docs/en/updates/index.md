@@ -19,9 +19,179 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v84 — client v0.54.0 (current)
+## Protocol v89 — client v0.55.0 (current)
 
-**The live server currently requires v84.**
+**The live server currently requires v89.**
+
+**New systems**
+
+- **ORKEA checkout is now folded into Grida's standard trade window, and
+  picking a showroom item notifies her live** (2026-09-20) — checkout no
+  longer requires walking to the shop's west entrance; clicking clerk Grida
+  opens the familiar trade window instead. The left-hand sell list shows all
+  23 items and clicking one adds it to the cart directly; the middle cart
+  sums whatever you picked from displays and the list, merging duplicates,
+  and clicking a cart line removes one at a time. Selections persist even if
+  you close the window. `Confirm` checks your distance to Grida, both your
+  sleep states, your gold, and your carry weight, then commits the whole
+  order at once; a failed checkout keeps the cart intact, and a changed
+  balance, price, or a removed display gets the order rejected — furniture
+  prices themselves are fixed. Grida also buys back priced, unlocked items
+  at **40%** of base price, same as Rica; selling and buying furniture share
+  one cart, selling is processed first, and a failed furniture purchase
+  doesn't undo a completed sale. The client now sends a new
+  `SelectFurnitureDisplay` message when you pick an item from a display or
+  the sell list, which the server relays to Grida alone as
+  `FurnitureSelectionNotice` so she can react in conversation. This bumped
+  the protocol to v89. See
+  [Estates](../guides/estates/#orkea-furniture-shop-protocol-v87v89).
+
+- **Beds now grant a rest bonus: sleep 16 seconds straight and HP/MP natural
+  regen each double** (2026-09-20) — resting on a valid bed for 16
+  consecutive seconds doubles the natural regen amount for both HP and MP on
+  the next tick; standing up, moving, attacking, casting, using an item,
+  getting hit, dying, having the bed recovered, or disconnecting all end the
+  rest immediately and drop regen back to normal. Existing regen gates
+  (hunger, no regen in combat, etc.) are unchanged, and the bonus doesn't
+  touch direct healing from food or potions; the 10-second cooldown after
+  spending MP doesn't count toward the streak either. See
+  [Combat](../guides/combat/#skills-and-mana-protocol-v71v79).
+
+**Balance**
+
+- **Estate storage chests moved to Grida's ORKEA shop; Aldwin no longer
+  sells them** (2026-09-20) — the price stays 1200 copper (12 silver);
+  click showroom item #94 or pick it from Grida's sell list. Chests
+  (`furniture_chest`) bought earlier as ornaments are unaffected and still
+  have no storage function. See
+  [Estates](../guides/estates/#estate-storage-protocol-v61).
+
+**Client**
+
+- **agent-client updated to v0.55.0, matching protocol v89** (2026-09-20).
+
+## Protocol v88 — client not yet released
+
+**New systems**
+
+- **Placed estate furniture can now be moved and re-labeled directly,
+  without recovering it to your bag first** (2026-09-19) — at launch,
+  furniture was moved by right-clicking it for `Move`/`Recover`: `Move`
+  previewed the new position live within your own estate on the current
+  floor, left-click confirmed it, and the server verified position,
+  ownership, collision, and revision before saving; `Esc` kept the original
+  spot. The next day this switched to `Select` under
+  `Estate Editor → Objects`, dropping the 3m range limit entirely: the last
+  saved position shows translucent while the cursor-following preview
+  renders normally, left-click or `Enter` saves the new position, rotation,
+  and height at any time while staying in edit mode, and `Done` or `Esc`
+  exits keeping the last save. Rotation still uses the rotate buttons and
+  `R`/`Shift + R` — beds, chairs, tables, wall torches, and shop signs snap
+  to 90°; arrow keys now nudge 5cm north/south or east/west. Small ornaments
+  can sit on tabletops, with the mouse wheel or a height slider adjusting
+  height off the floor up to 3m, and `Ctrl + wheel` for camera zoom. Selected
+  furniture shows a blue selection box at its current placement (not on the
+  cursor-following preview). `Recover` still returns furniture to your bag,
+  dropping it on the ground if there's no room; a selected sign can be
+  edited in a `Sign text` field next to the rotation controls and saved with
+  `Save text` (120 chars max) — recovering a sign doesn't keep its text.
+  Moving furniture still checks the same floor-bounds, wall-clearance,
+  floor-level, and collision rules as placing it fresh. These messages
+  (`StartEstateFurnitureMove`, `MoveEstateFurniture`) bumped the protocol to
+  v88.
+
+- **Orc clerk Grida moves into the ORKEA showroom** (2026-09-20) — the
+  female orc NPC **Grida** greets customers next to the shop's west checkout
+  area at `world(-1452.0, 1.0, 4777.0)` from 06:30–18:00 and 18:30–midnight,
+  sleeps in bed #85 inside the shop from 00:00–06:00, and eats breakfast and
+  dinner at chair #46 on the inn's ground floor at 06:00–06:30 and
+  18:00–18:30. At this stage she only explains how to pick items and check
+  out in conversation — payment still runs through the original
+  display/cart/checkout-window flow (unified into her trade window the next
+  version). Selecting a showroom storage chest or bed sends an extra usage
+  tip as long as Grida is awake and in the shop; the same tip only repeats
+  once per 5 minutes per customer, and both bed types count as the same
+  kind.
+
+## Protocol v87 — client not yet released
+
+**New systems**
+
+- **ORKEA furniture shop opens, adding 23 decorative estate items** (2026-09-19)
+  — a showroom opened near town at `world(-1450.5, 1.0, 4775.5)` with 25
+  physical displays — beds, chairs, tables, chests, barrels, crates, a
+  hearth, a wall torch, and signs — mapping to 23 purchasable items: potion,
+  scroll, and sword ornaments at 200 copper each, a wall torch at 300, a
+  crate at 500, a barrel at 600, chairs and signs at 800 each, a chest at
+  900, a table at 3000, a bed or rustic bed at 4000, and a stone hearth at
+  12000. Clicking a display within 3m adds it to a checkout cart, up to 64
+  items at once; the cart still shows with your bag open and doesn't
+  duplicate what's already in it. Pressing `Pay and take furniture` at the
+  shop's west entrance re-checks your gold and carry weight and commits the
+  whole order at once; a changed balance, price, or a removed display gets
+  the whole order rejected. Bought furniture is used directly from your bag,
+  or placed on your active estate on your current floor after selecting it
+  under `Estate Editor → Objects`. Decorative items have no real function —
+  ornamental potions and scrolls don't consume, ornamental weapons can't be
+  equipped, and an ornamental chest has no storage. This bumped the protocol
+  to v87. See
+  [Estates](../guides/estates/#orkea-furniture-shop-protocol-v87v89).
+
+## Protocol v86 — client not yet released
+
+**New systems**
+
+- **Keyboard walking and mounted turning are now relative to the character's
+  current facing, with a real turn-in-place and true backward walking**
+  (2026-09-19) — arrow keys/WASD used to compute a virtual world-space
+  target and walk toward it, the same logic as clicking the ground with the
+  mouse; now a key press is resolved **against the direction the character
+  faces at the moment you press it**: Up/W moves forward relative to that
+  facing, Left/A and Right/D walk toward 90° left or right of it, diagonal
+  input keeps the same speed, and sprint works in all four directions;
+  releasing a key or changing direction recomputes the target from your new
+  facing, while holding the same key keeps walking the original direction.
+  Down/S no longer turns you around — it walks straight backward at
+  1.5 m/s (existing hunger modifiers apply, but not sprint or mount speed
+  multipliers), on foot or mounted. While mounted, pressing left or right
+  alone **turns in place** (150°/s); holding forward or backward at the same
+  time turns while moving, following the existing arc-turn rules. These
+  actions now travel over a new `PlayerKeyboardMove` message, and the server
+  replaces the old target outright instead of queuing movement behind it;
+  mouse-click movement still uses `PlayerMove` with path waypoints,
+  unaffected. This bumped the protocol to v86.
+
+**Balance**
+
+- **Mount speed raised from double walking speed to triple** (2026-09-19) —
+  base speed goes from 6m/s to 9m/s and sprint from 9m/s to 13.5m/s, with the
+  existing hunger slowdown still applying on top of the new baseline. See
+  [Mounts](../guides/mounts/#speed-and-turning).
+
+## Protocol v85 — client not yet released
+
+**New systems**
+
+- **Monster AI now runs entirely on the server, no longer split across
+  players' clients** (2026-09-19) — monsters used to run their behavior
+  tree attached to whichever client (web or agent-client) owned them, so
+  monster AI near the same group of players could be spread across several
+  people's devices with no coordination between them; now every monster's
+  movement, targeting, attacks, and hit reactions run in the server's
+  monster AI module. The web client only interpolates positions the server
+  sends and plays combat effects, while agent-client purely observes
+  monster state to decide its own character's actions. The protocol drops
+  the `MonsterMove`, `MonsterAttack`, `MonsterAssigned`,
+  `MonsterControlReleased`, and `MonsterProvoked` control messages; a hit at
+  range now updates the monster's target directly via `brain_hit` on the
+  server, with no separate notice to an owner needed. Regular monster
+  respawn caps now key off how many are alive within 32m on the same floor
+  (`maxNearbyMonsters`, default 8; corpses don't count), with dungeon
+  monsters on a separate cap; monsters despawn once every nearby player has
+  left, checked immediately on movement or disconnect and rescanned
+  periodically. This bumped the protocol to v85.
+
+## Protocol v84 — client v0.54.0
 
 **New systems**
 

@@ -15,9 +15,8 @@ v57, v58).
 :::note[Still unfinished]
 Only **homestead** plots can be bought and claimed right now. Crown land (the
 ring near towns and dungeon entrances, meant for auctions, tournaments, and
-merit grants) has no acquisition path yet. Claimed land can't hold a house or
-furniture yet — only fences, painted ground, and paths. Whether unpaid tax
-actually reclaims land is covered under "Tax account" below.
+merit grants) has no acquisition path yet. Whether unpaid tax actually
+reclaims land is covered under "Tax account" below.
 :::
 
 ## Buying a deed and claiming land (protocol v55)
@@ -193,12 +192,13 @@ own house to demolish it — no materials are refunded.
 
 ## Estate storage (protocol v61)
 
-Buy a **{itemName('storage_chest')}** from Aldwin
-({formatCoins(itemsById.get('storage_chest').basePrice)}) and use it straight
-from your bag to open the placement UI. It can only go on an estate you own
-with no back taxes, and inside a building it's placed on whatever floor
-you're currently standing on. There's one capacity tier right now, **50kg**,
-and no cap on how many chests an estate can hold.
+**{itemName('storage_chest')}** ({formatCoins(itemsById.get('storage_chest').basePrice)})
+opens the placement UI straight from your bag when used. It can only go on an
+estate you own with no back taxes, and inside a building it's placed on
+whatever floor you're currently standing on. There's one capacity tier right
+now, **50kg**, and no cap on how many chests an estate can hold. As of
+protocol v89 it's sold from Grida's [ORKEA furniture shop](#orkea-furniture-shop-protocol-v87v89)
+instead of by Aldwin.
 
 The storage screen reuses the trade window's two-column layout — chest on the
 left, your bag on the right — with both sides showing the resulting weight
@@ -207,3 +207,44 @@ empty chest can be picked back up: it returns to your bag if there's room, or
 drops on the ground if not. If the estate lapses, chests are left behind and
 anyone can open them. A house holding a chest can't be demolished until every
 chest on every floor has been emptied and recovered.
+
+## ORKEA furniture shop (protocol v87–v89)
+
+A showroom near town at `world(-1450.5, 1.0, 4775.5)` sells 23 decorative
+estate items: a bed, rustic bed, chair, table, chest, barrel, crate, stone
+hearth, wall torch, signpost, four shop-sign variants, and potion, scroll,
+and sword ornaments. Potions, scrolls, and sword ornaments cost 200 copper
+each, the wall torch 300, the crate 500, the barrel 600, chairs and signs 800
+each, the chest 900, the table 3000, the bed and rustic bed 4000 each, and
+the stone hearth 12000. Decorative items have no real function — ornamental
+potions and scrolls don't consume, ornamental weapons can't be equipped, and
+the ornamental chest has no storage (buy the
+{itemName('storage_chest')} above for that).
+
+The shop's clerk, a female orc named **Grida**, greets customers at the
+west end of the shop from 06:30–18:00 and 18:30–midnight. Click her to open
+a trade window: the left-hand sell list shows every item for direct
+purchase, or click a display within 3m to add it to the cart — either way
+the quantities add up and matching items merge. `Confirm` checks your
+distance, gold, and carry weight, then commits the whole order at once.
+Grida also buys back priced, unlocked items at **40%** of base price like
+Rica does; selling and buying furniture share one cart, with selling
+processed first so a failed furniture purchase never undoes a completed
+sale.
+
+Use bought furniture directly, or place it on your active estate on your
+current floor after selecting it under `Estate Editor → Objects` in
+`Select` mode. Left-click or `Enter` places it; the rotate buttons or
+`R`/`Shift + R` turn it — beds, chairs, tables, wall torches, and shop signs
+snap to 90°, and arrow keys nudge 5cm north/south or east/west. Small
+ornaments can sit on tabletops, with the mouse wheel or a height slider
+raising them up to 3m off the floor. Already-placed furniture uses the same
+`Select` mode to reposition, reorient, or re-height it at any distance,
+showing a blue selection box while selected; `Recover` returns it to your
+bag, dropping it on the ground if there's no room. A selected sign can be
+edited in a `Sign text` field and saved with `Save text`, up to 120
+characters — recovering a sign doesn't keep its text.
+
+Sleeping on a placed **bed** or **rustic bed** for 16 consecutive seconds
+doubles HP and MP natural regen — see
+[Combat](../combat/#skills-and-mana-protocol-v71v79).

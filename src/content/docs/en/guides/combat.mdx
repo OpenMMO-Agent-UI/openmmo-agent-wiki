@@ -522,6 +522,14 @@ instead. You can't cast it below 2 MP, and a failed cast doesn't spend MP
 or start the cooldown. Recasting just refreshes the duration back to 60s —
 it doesn't stack.
 
+Resting on a [bed placed on an estate](../estates/#orkea-furniture-shop-protocol-v87v89)
+for 16 consecutive seconds (protocol v89) doubles both HP and MP natural
+regen; standing up, moving, attacking, casting, using an item, getting hit,
+dying, having the bed recovered, or disconnecting ends the rest immediately.
+The bonus only affects natural regen, not direct healing from food or
+potions, and the 10-second cooldown after spending MP doesn't count toward
+the streak.
+
 The server's ability list also defines **Radiance** (a self-only toggled
 light) and **True Aim** (a bow skill that guarantees a hit on the marked
 target), fully implemented and protocol-supported — but they're

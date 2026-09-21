@@ -1,6 +1,6 @@
 ---
 title: Mounts
-description: Buy Horse Reins to ride, doubling your outdoor movement speed, or a Rowboat to row, and the rules for mounting and dismounting.
+description: Buy Horse Reins to ride, tripling your outdoor movement speed, or a Rowboat to row, and the rules for mounting and dismounting.
 ---
 
 import { itemsById, formatCoins } from '../../../../lib/gamedata.js';
@@ -28,9 +28,10 @@ bag to mount or dismount. The reins aren't consumed and can be reused
 
 ## Speed and turning
 
-Mounted movement outdoors is **twice** your walking speed: base speed goes
-from 3 m/s to 6 m/s, and sprinting from 4.5 m/s to 9 m/s, with any existing
-hunger-based slowdown still applied on top of those numbers.
+Mounted movement outdoors is **triple** your walking speed (double before
+protocol v86): base speed goes from 3 m/s to 9 m/s, and sprinting from
+4.5 m/s to 13.5 m/s, with any existing hunger-based slowdown still applied
+on top of those numbers.
 
 Turning isn't instant — the horse rotates the shortest way around at a fixed
 rate: about 0.6s for a 90° turn and 1s for a full 180° with steady input. If
@@ -39,13 +40,22 @@ the target direction is far from your current heading, the horse follows a
 last 30°; for a nearby destination, the arc radius shrinks to at most a
 quarter of the remaining distance so you don't circle around your target.
 Even while hunger is slowing you down, the turning speed cap never exceeds
-whatever speed is currently allowed.
+whatever speed is currently allowed. Turning along an arc drains hunger like
+any other movement; turning in place doesn't.
 
-You can feed in a new direction mid-turn from either click-to-move or
-keyboard movement; releasing the key stops you facing your current
-direction, and the same rule applies at corners along a path. Since turning
-is actual movement along the arc, it drains hunger just like moving in a
-straight line does.
+You can feed in a new direction mid-turn with click-to-move; the same rule
+applies at corners along a path.
+
+## Keyboard controls (protocol v86)
+
+Arrow keys/WASD move **relative to the direction your character is facing
+the moment you press them** — not world-space — on foot or mounted. While
+mounted, pressing left or right alone **turns in place** (150°/s, no hunger
+cost); holding forward or backward at the same time turns while moving,
+following the arc-turn rules above, and releasing the key stops you facing
+your current direction. Pressing Down/S no longer turns the horse around —
+it walks straight backward at 1.5 m/s instead; existing hunger modifiers
+apply, but not sprint or mount speed multipliers.
 
 ## Recovery when the path is blocked (protocol v70)
 
