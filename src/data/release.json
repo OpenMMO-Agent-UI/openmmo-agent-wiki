@@ -1,9 +1,9 @@
 {
-  "version": "0.55.0",
-  "protocol": 89,
+  "version": "0.56.0",
+  "protocol": 93,
   "files": {
-    "mac": "openmmo-agent-v0.55.0-p89-macos-arm64.dmg",
-    "win": "openmmo-agent-v0.55.0-p89-windows-x64.exe",
-    "linux": "openmmo-agent-v0.55.0-p89-linux-x64.AppImage"
+    "mac": "openmmo-agent-v0.56.0-p93-macos-arm64.dmg",
+    "win": "openmmo-agent-v0.56.0-p93-windows-x64.exe",
+    "linux": "openmmo-agent-v0.56.0-p93-linux-x64.AppImage"
   }
 }
