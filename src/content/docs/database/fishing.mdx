@@ -1,6 +1,6 @@
 ---
 title: 釣魚
-description: 魚種、稀有度、體型骰、獎盃門檻與釣魚等級解鎖條件。
+description: 魚種、稀有度、體型骰、獎盃門檻,以及怎麼跟托賓學會釣魚。
 ---
 
 import FilterTable from '../../../components/FilterTable.astro';
@@ -11,12 +11,15 @@ export const rica = merchants.find((m) => m.id === 'rica');
 export const catchables = items.filter((i) => i.catchWeight !== null);
 export const fish = catchables.filter((i) => i.category === 'fish');
 
-裝備**釣竿**後對著水面拋竿即可。目前有 **{catchables.length} 種**釣獲物,
-其中 **{fish.length} 種**是魚,其餘是雜物與釣到的錢財。
+裝備**釣竿**後對著水面拋竿即可,前提是先跟河邊的托賓(Tobin)學會 Fishing——
+沒有釣魚等級,學會了就能挑戰全部魚種,細節見[釣魚玩法](../../guides/fishing/)。
+目前有 **{catchables.length} 種**釣獲物,其中 **{fish.length} 種**是魚,其餘是
+雜物與釣到的錢財。
 
 ## 漁獲表
 
-`catchWeight` 是在釣魚等級 0 時的相對權重 —— 數字越大越常釣到。
+`catchWeight` 是相對權重 —— 數字越大越常釣到,學會 Fishing 之後人人適用同一套
+權重,不會再因為練得久而改變。
 
 <FilterTable
   placeholder="搜尋釣獲物…"
@@ -25,7 +28,6 @@ export const fish = catchables.filter((i) => i.category === 'fish');
     { key: 'en', label: '遊戲內名稱' },
     { key: 'tier', label: '稀有度', align: 'center' },
     { key: 'weight', label: '權重', align: 'right' },
-    { key: 'minLevel', label: '需要等級', align: 'right' },
     { key: 'size', label: '體型骰', align: 'center' },
     { key: 'avgSize', label: '平均長度', align: 'right' },
     { key: 'trophy', label: '獎盃門檻', align: 'right' },
@@ -38,7 +40,6 @@ export const fish = catchables.filter((i) => i.category === 'fish');
       en: i.name,
       tier: i.rarityTier === 0 ? '雜物' : `★${i.rarityTier}`,
       weight: i.catchWeight,
-      minLevel: i.minFishingLevel ?? 0,
       size: i.sizeDice ?? '—',
       avgSize: averageRoll(i.sizeDice) ? `${averageRoll(i.sizeDice).toFixed(0)} cm` : '—',
       trophy: i.trophyCm ? `${i.trophyCm} cm` : '—',
@@ -48,11 +49,11 @@ export const fish = catchables.filter((i) => i.category === 'fish');
 
 ## 機率怎麼算
 
-- **兩個獨立的池**:雜物固定佔抽選的 **20%**,不管你等級多高都不會變少。
-  所以再怎麼練也還是會釣到破靴子。
-- **技能加成是乘法**:魚的權重每升一級、每一點稀有度增加 **3%**。
-  這代表練等會拉近稀有魚的機率,但**永遠不會顛倒順序** —— 黃金鱘不會比鰷魚常見。
-- **等級門檻**:河鮭需要釣魚等級 **10**,黃金鱘需要 **20**。沒到等級就完全不會出現。
+- **兩個獨立的池**:雜物固定佔抽選的 **20%**,學會 Fishing 也不會變少。
+  所以再怎麼釣也還是會釣到破靴子。
+- **權重固定**:現行的 `catchWeight` 本來就是舊制「等級 10」時的平衡值,
+  河鮭、黃金鱘等原本需要練等才會出現的魚種,現在學會就直接開放。
+  黃金鱘依然是抽選機率最低的魚種,不會比鰷魚常見。
 
 ## 體型與獎盃
 
@@ -75,18 +76,16 @@ export const fish = catchables.filter((i) => i.category === 'fish');
 
 ## 這樣賺錢划算嗎
 
-每次釣獲的期望**賣出**價值,等級 0 約 **8 銅**,練到等級 30 上限約 **24 銅**。
-對照一下:
+每次釣獲的期望**賣出**價值大約 **20 銅**上下,不會再因為練等而變動。對照一下:
 
 - 錢幣堆:1–10 銅
 - NPC 經濟的日薪:50 銀
 
 所以認真釣一小時大約是衛兵半天的薪水。**穩定的零用錢,不是印鈔機** ——
-這是刻意設計的,有契約測試把每次釣獲的期望值鎖在 5–25 銅之間,
-而且保證練等永遠不會讓你變窮、上限也不會超過等級 0 的 4 倍。
+這是刻意設計的,有契約測試把每次釣獲的期望值鎖在 **5–25 銅**之間。
 
 黃金鱘是那個大獎:賣 {formatCoins(items.find((i) => i.id === 'golden_sturgeon').basePrice)},
-相當於一把哥布林短劍,但即使練到等級 30 上限也只佔約 1.7% 的抽選機率。
+相當於一把哥布林短劍,但在所有咬鉤裡只佔約 **1.3%**。
 
 ## 魚可以吃,但別吃生的
 

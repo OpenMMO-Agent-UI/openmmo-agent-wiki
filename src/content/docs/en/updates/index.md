@@ -19,9 +19,153 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v89 — client v0.55.0 (current)
+## Protocol v93 — client v0.56.0 (current)
 
-**The live server currently requires v89.**
+**The live server currently requires v93.**
+
+**New systems**
+
+- **Fishing is now a learned skill — watch Tobin land one catch by the river
+  and it's permanently yours** (2026-09-21) — new characters can't fish yet.
+  Stay within **6 metres** of Tobin, on the same floor, within **3 metres** of
+  his height, and alive, for his **entire cast-to-catch**, and you
+  **permanently learn Fishing** — no rod, no payment, no conversation
+  required. Arriving late or stepping out of range means waiting for his next
+  cast; a cancelled or escaped attempt teaches you nothing. Characters with an
+  existing Fishing record are already considered to have learned it. The
+  moment you learn it, a system message fires and **Fishing** appears in the
+  character panel's **Skills** tab, draggable into a 1–0 quickslot.
+  Double-click the skill row, click its quickslot, or press the slot's number
+  key to switch into water-targeting mode (a crosshair cursor); left-click
+  water within 8 m to cast. With a rod equipped you can also just click water
+  directly. No MP cost. This bumped the protocol to v93. See
+  [Fishing gameplay](../guides/fishing/#learning-fishing).
+- **Tobin's shop is open, and Rica no longer sells rods** (2026-09-21) — Tobin
+  stocks the Fishing Rod at a flat 3 silver; his own working rod and the
+  shop's stock are tracked separately.
+  - **Tobin now has campfire meals and a sleep schedule** (2026-09-21) — he
+  fishes **08:30–19:00** and **19:30–02:00**, cooks and eats his cheapest fish
+  at a riverside campfire at **08:00–08:30** and **19:00–19:30**, and sleeps
+  in a nearby bed **02:00–08:00**.
+
+**Balance**
+
+- **Removed fishing XP, fishing levels, and the level gates on River Salmon
+  and Golden Sturgeon** (2026-09-21) — everyone who's learned Fishing can now
+  challenge all 5 species and their trophy variants; the old "River Salmon
+  needs level 10, Golden Sturgeon needs level 20" gates are gone. Wait times,
+  tension, and reel speed now all use the former "level 10" baseline for
+  everyone: the wait shrinks from 4–12 s to **3.2–9.6 s**, pull is
+  **(18 + 1.8 × rarity)/s**, and reel speed becomes **1.76 / 0.66 / 2.75 m/s**
+  (resting/running/exhausted) — identical whether you're new or experienced.
+  On startup the server also drops the legacy skill XP/level database
+  columns, keeping only character ID and skill ID; character-level XP and
+  level are untouched. See
+  [Fishing gameplay](../guides/fishing/#no-such-thing-as-levels).
+
+**Client**
+
+- **New keyboard movement mode setting** (2026-09-21) — the Settings panel
+  has a new "Keyboard Movement" option: **Fixed** (default; arrow
+  keys/WASD map to fixed world directions) or **Relative** (movement follows
+  your character's facing).
+- **Click-and-drag movement on the game canvas** (2026-09-21) — holding the
+  left mouse button and dragging more than ~4 pixels now continuously updates
+  your movement destination (throttled to once every 100 ms), instead of
+  requiring repeated clicks.
+- **agent-client updated to v0.56.0, matching protocol v93** (2026-09-21).
+
+**Fixes**
+
+- **Fixed the resting pose of dropped fishing rods** (2026-09-21).
+
+## Protocol v92 — client not yet released
+
+**New systems**
+
+- **Fishing fight stances are now visible to everyone** (2026-09-21) — local
+  input animates immediately: the left hand supports the rod while the right
+  hand cranks the reel; nearby players and NPCs now see the same stance
+  synced to the server's fight beats. This bumped the protocol to v92.
+- **A successful catch plays a 3.6-second presentation** (2026-09-21) — raise
+  the rod, draw the fish from the water, then switch hands and lift it for
+  display; the fish's appearance and size follow the actual catch. Nearby
+  players see the same presentation; moving, fighting, recasting, leaving, or
+  disconnecting cancels it.
+- **Tobin went from decorative to actually fishing** (2026-09-21) — he now
+  really casts, gets bites, fights, and lands fish into his own inventory;
+  passers-by can watch the whole loop, and it's a chance to learn Fishing
+  from him.
+
+## Protocol v91 — client not yet released
+
+**New systems**
+
+- **New ability for everyone: Auscultation** (2026-09-21) — equip a
+  Stethoscope in the neck slot to left-click a living target within 2 m on
+  your floor, unobstructed, and see its name, level, HP, Guard, and equipment
+  enchants; the result is visible only to you, costs no MP, and has a **0.8
+  second** cooldown on success. Skill failure reasons, alongside the existing
+  chat message, now also pop a red toast just below screen centre for **2.5
+  seconds** — a component every skill will share going forward. This bumped
+  the protocol to v91. See
+  [Combat](../guides/combat/#skills-and-mana-protocol-v71v79).
+- **The character panel's Skills tab is now a descriptive row list**
+  (2026-09-21) — each row shows a name and description instead of just an
+  icon; double-click to equip into the first open quickslot, or drag as
+  before.
+
+**New items & assets**
+
+- **Goblins, Hobgoblins, and the Forgotten Dead (skeleton) can now drop a
+  Stethoscope** (2026-09-21) — a **0.04%** chance per kill, a purely optional
+  novelty drawn independently of existing loot.
+
+**Client**
+
+- **A new NPC, Tobin, appears by the river** (2026-09-21) — he casts and
+  waits all day at a fixed spot; for now it's pure animation, no real catches
+  yet. He's set up as the future teacher of Basic Fishing in the planned
+  Basic/Advanced two-tier design.
+
+## Protocol v90 — client not yet released
+
+**New systems**
+
+- **The server now proactively resyncs clients when the movement queue gets
+  close to full** (2026-09-20) — when a regular player's queue reaches 24
+  waypoints and a new one arrives, the server logs diagnostics, clears the
+  queue, and sends the current position, facing, and floor via a new
+  `MovementResync` message before hitting the 32-waypoint cap; the client
+  discards stale movement, turn, mount-recovery, floor-change, and position
+  samples until a matching `MovementResyncAck` arrives. This fixes the
+  position drift and jerky snapping that could build up over long moves. The
+  correction window is at least 2 seconds, during which the queue refilling
+  to 24 doesn't trigger another resync. This bumped the protocol to v90.
+- **Other players' land plots on the world map now get distinct colors per
+  owner** (2026-09-20) — a graph-coloring algorithm picks one of four colors
+  so adjacent owners are never the same color, making boundaries easier to
+  read; your own land still uses the existing accent color. See
+  [Estates](../guides/estates/#buying-a-deed-and-claiming-land-protocol-v55).
+
+**Fixes**
+
+- **Fixed reconnect authentication getting stuck without a selected
+  character** (2026-09-20) — the old logic only waited for auth results once
+  a character had been selected; reconnecting before that point could leave
+  the auth success/error callbacks unhandled. It now waits for
+  authentication regardless, re-enters the game on success, and prompts a
+  fresh sign-in if the cached token has expired.
+
+**Performance**
+
+- **The wooden bridge model now uses meshopt mesh compression**
+  (2026-09-20) — on top of the existing JPEG texture compression, vertex
+  quantization and dedup cut the actual transferred size (after gzip) by
+  about **29%** further, loading faster; walkable area and collision are
+  unaffected, with height differences under 1 mm.
+
+## Protocol v89 — client v0.55.0
 
 **New systems**
 

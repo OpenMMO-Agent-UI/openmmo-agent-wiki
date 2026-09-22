@@ -33,7 +33,9 @@ Aldwin 賣**{itemName('land_deed')}**,固定 {formatCoins(itemsById.get('land_de
 
 世界地圖放大後會用色塊標出土地等級與擁有狀態:王領、禁區(城鎮、地城入口周邊與海域)
 是實心色塊,開拓地只有格線;你自己的領地用強調色標出,拍賣中的地塊會有旗幟圖示與倒
-數提示,欠稅、擱置、廢墟則用你的擁有色的不同淡化程度表示。
+數提示,欠稅、擱置、廢墟則用你的擁有色的不同淡化程度表示。**其他玩家的領地會依地
+主分別套用四色之一**(2026-09-20),用圖著色演算法保證相鄰的不同地主一定顏色不同,
+在地圖上比較容易分辨地界。
 
 有了領地之後,Rica、Wick 都會賣**{itemName('scroll_of_estate_return')}**
 ({formatCoins(itemsById.get('scroll_of_estate_return').basePrice)}),跟回城捲軸同價。

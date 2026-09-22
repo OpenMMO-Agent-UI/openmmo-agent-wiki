@@ -508,19 +508,43 @@ after your last spend. Existing characters were topped up to their max MP
 the first time they logged in after this shipped, and the max recalculates
 on level-up.
 
-The character panel's **ABILITIES** tab lists your available skills as
-icons — drag one onto the existing 1–0 quickslots to use it, sharing the
-same drag-and-tooltip code as your inventory.
+The character panel's **Skills** tab lists your available skills as a
+**descriptive row list** (protocol v91) — each row shows its name and a
+description, not just an icon. Double-click a row to equip it into the first
+open 1–0 quickslot, or drag it there as before; it shares the same
+drag-and-tooltip code as your inventory.
 
 | Ability | Granted to | Requires | Effect | Cooldown |
 |---|---|---|---|---|
 | Double Slash | Rogue, by default | Dagger in main hand | Your next basic attack becomes two independent hits, each at 100% damage | 10s |
 | Guardian Ward | Knight, by default | Sword or Mace in main hand + Shield off-hand | +10% Guard for yourself and party members within 20m on the same floor, for 60s | 45s, costs 2 MP |
+| Auscultation | **Every class** | {itemName('stethoscope')} in the neck slot | Left-click a living target within 2m on your floor, unobstructed, to see its name, level, HP/Guard and equipment enchants | 0.8s (success only) |
 
 Guardian Ward used to cost satiation; as of protocol v79 it costs 2 MP
 instead. You can't cast it below 2 MP, and a failed cast doesn't spend MP
 or start the cooldown. Recasting just refreshes the duration back to 60s —
 it doesn't stack.
+
+**Auscultation (protocol v91)** is the only ability every class gets, but
+it's **useless without the item** — the {itemName('stethoscope')} only drops
+from Goblins, Hobgoblins, and the Forgotten Dead (`skeleton_weak`), at a
+**0.04%** chance per kill; it's a purely optional novelty. Equip it in the
+neck slot, drag its icon to a quickslot, then click the quickslot or press
+its number key to enter targeting mode and left-click a player or monster.
+The result window shows name, level, current/max HP, Guard, and equipment
+with enchant levels; dungeon monsters show their adjusted effective level and
+current HP. The target can be playing an instrument, sitting, or lying down
+without interruption; being unequipped, too far, blocked by an obstacle, dead,
+or still loading the world all produce a clear failure reason. Results are
+visible only to you, are a snapshot at the moment of use, and don't
+auto-refresh. It costs no MP or items; a successful use has a 0.8s cooldown,
+and failures or cancelled targeting don't trigger it.
+
+Failure reasons, in addition to the existing chat message, now also pop a
+red toast just below screen centre for 2.5 seconds (protocol v91); repeated
+failures just replace it with the latest reason, and it never blocks mouse
+clicks. This toast is a **shared component** used by every skill, not
+something specific to Auscultation.
 
 Resting on a [bed placed on an estate](../estates/#orkea-furniture-shop-protocol-v87v89)
 for 16 consecutive seconds (protocol v89) doubles both HP and MP natural

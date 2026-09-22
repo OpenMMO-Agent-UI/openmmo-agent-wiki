@@ -11,9 +11,15 @@ export const rica = merchants.find((m) => m.id === 'rica');
 export const dropChance = new Map(worldDrops.map((d) => [d.id, d.chance]));
 export const monsterWeapons = monsters.filter((m) => m.weapon);
 
+export const otherMerchants = merchants.filter((m) => m.id !== 'rica');
+
 export const sources = (id) => {
   const out = [];
   if (rica.catalog.includes(id)) out.push('Shop');
+  else {
+    const seller = otherMerchants.find((m) => m.catalog.includes(id));
+    if (seller) out.push(`Shop (${seller.npcName})`);
+  }
   if (dropChance.has(id)) out.push(`World drop ${(dropChance.get(id) * 100).toFixed(1)}%`);
   for (const m of monsterWeapons.filter((m) => m.weapon === id && m.weaponDropChance > 0)) {
     out.push(`${monsterName(m.id)} ${Math.round(m.weaponDropChance * 100)}%`);

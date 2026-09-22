@@ -1,6 +1,6 @@
 ---
 title: Fishing
-description: Species, rarity, size dice, trophy thresholds and level gates.
+description: Species, rarity, size dice, trophy thresholds, and how to learn Fishing from Tobin.
 ---
 
 import FilterTable from '../../../../components/FilterTable.astro';
@@ -9,17 +9,17 @@ import { items, formatCoins, averageRoll } from '../../../../lib/gamedata.js';
 export const catchables = items.filter((i) => i.catchWeight !== null);
 export const fish = catchables.filter((i) => i.category === 'fish');
 
-Equip a **Fishing Rod** and cast at water. There are **{catchables.length}
-catchable things**, **{fish.length}** of them fish; the rest is flotsam and
-coin catches.
-
-How to actually fish — hooking, playing the fight — is in
-[Fishing gameplay](../../guides/fishing/).
+Equip a **Fishing Rod** and cast at water — after learning Fishing from
+Tobin by the river. There's no fishing level; once you've learned it, every
+species is open. See [Fishing gameplay](../../guides/fishing/) for how. There
+are **{catchables.length} catchable things**, **{fish.length}** of them fish;
+the rest is flotsam and coin catches.
 
 ## The catch table
 
-`catchWeight` is the relative weight at fishing level 0 — bigger means more
-often.
+`catchWeight` is the relative weight — bigger means more often. Everyone who's
+learned Fishing draws from the same weights; there's no version of this table
+that improves with practice.
 
 <FilterTable
   placeholder="Search catches…"
@@ -27,7 +27,6 @@ often.
     { key: 'name', label: 'Name' },
     { key: 'tier', label: 'Rarity', align: 'center' },
     { key: 'weight', label: 'Weight', align: 'right' },
-    { key: 'minLevel', label: 'Level required', align: 'right' },
     { key: 'size', label: 'Size dice', align: 'center' },
     { key: 'avgSize', label: 'Avg length', align: 'right' },
     { key: 'trophy', label: 'Trophy at', align: 'right' },
@@ -39,7 +38,6 @@ often.
       name: i.name,
       tier: i.rarityTier === 0 ? 'Flotsam' : `★${i.rarityTier}`,
       weight: i.catchWeight,
-      minLevel: i.minFishingLevel ?? 0,
       size: i.sizeDice ?? '—',
       avgSize: averageRoll(i.sizeDice) ? `${averageRoll(i.sizeDice).toFixed(0)} cm` : '—',
       trophy: i.trophyCm ? `${i.trophyCm} cm` : '—',
@@ -49,13 +47,13 @@ often.
 
 ## How the odds work
 
-- **Two independent pools**: flotsam holds a flat **20%** of the draw at every
-  level. No amount of skill thins out the old boots.
-- **Skill is multiplicative**: a fish's weight grows **3%** per level per point
-  of rarity. That closes the gap on rare fish but **can never invert the
-  order** — a Golden Sturgeon will never be more common than a Minnow.
-- **Level gates**: River Salmon needs fishing level **10**, Golden Sturgeon
-  needs **20**. Below that they don't appear at all.
+- **Two independent pools**: flotsam holds a flat **20%** of the draw. No
+  amount of fishing thins out the old boots.
+- **Fixed weights**: the current `catchWeight` values are the old "level 10"
+  balance point — species that used to need levelling, like River Salmon and
+  Golden Sturgeon, are now open the moment you've learned Fishing. Golden
+  Sturgeon is still the rarest draw; it will never be more common than a
+  Minnow.
 
 ## Size and trophies
 
@@ -82,22 +80,19 @@ Size is **not stored on the item**; it exists only in the catch announcement.
 
 ## Is it worth the time?
 
-The expected **sell** value of one catch runs about **8 copper** at level 0 to
-about **24 copper** at the level-30 cap. For comparison:
+The expected **sell** value of one catch runs around **20 copper**, and it
+doesn't move with practice anymore. For comparison:
 
 - Coin piles: 1–10 copper
 - An NPC's daily wage in this economy: 50 silver
 
 So an hour of active fishing is roughly half a guard's daily salary.
 **Steady pocket money, not a money printer** — that's deliberate, and a
-contract test pins the per-catch expected value between 5 and 25 copper while
-also proving that levelling never makes you poorer and the cap never earns more
-than 4× level 0.
+contract test pins the per-catch expected value between **5 and 25 copper**.
 
 The Golden Sturgeon is the jackpot: it sells for
 {formatCoins(items.find((i) => i.id === 'golden_sturgeon').basePrice)} — a
-goblin sword's worth — but it's only about 1.7% of draws even at the level-30
-cap.
+goblin sword's worth — but it's only about **1.3%** of all bites.
 
 ## Fish are edible, but not raw
 

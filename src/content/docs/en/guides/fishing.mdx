@@ -1,6 +1,6 @@
 ---
 title: Fishing gameplay
-description: Casting, hooking and playing the fight — the tension/stamina trade-off, and what fishing levels actually buy you.
+description: Casting, hooking and playing the fight — the tension/stamina trade-off, and how to learn Fishing from Tobin.
 ---
 
 import FilterTable from '../../../../components/FilterTable.astro';
@@ -8,8 +8,9 @@ import { items, itemsById, formatCoins } from '../../../../lib/gamedata.js';
 import { itemName } from '../../../../lib/en.js';
 
 Fishing is the game's first gathering profession and the first user of the
-**trained skill** system. Every timer, roll and outcome lives **on the server**;
-the client renders and responds.
+**learned skill** system — no XP, no levels, just watch Tobin land one catch
+and it's permanently yours. Every timer, roll and outcome lives **on the
+server**; the client renders and responds.
 
 Species and price tables are in [Fishing data](../../database/fishing/). This
 page is about **how to actually fish.**
@@ -17,7 +18,7 @@ page is about **how to actually fish.**
 ## The loop
 
 ```
-Cast ─► Casting (1 s) ─► Waiting (4–12 s, shortened by skill)
+Cast ─► Casting (1 s) ─► Waiting (3.2–9.6 s)
                               │ the bite rolls species, size and trophy
                               ▼
                          Bite (2.5 s + 0.5 s latency grace)
@@ -30,11 +31,35 @@ Cast ─► Casting (1 s) ─► Waiting (4–12 s, shortened by skill)
                        Caught                  Escaped
 ```
 
+## Learning Fishing
+
+New characters **can't fish yet**. Tobin, the angler by the river, casts
+there all day — stay within **6 metres** of him, on the same floor, within
+**3 metres** of his height, and alive, for his **entire cast-to-catch**, and
+you **permanently learn Fishing**. No rod, no payment, no conversation
+required. Arriving late or stepping out of range means waiting for his next
+cast; a cancelled or escaped attempt doesn't teach you anything. Characters
+with an existing Fishing record are already considered to have learned it.
+
+The moment you learn it, a system message fires and **Fishing** appears in
+the character panel's **Skills** tab, draggable into a 1–0 quickslot.
+Double-click the skill row, click its quickslot, or press the slot's number
+key to switch into water-targeting mode — the cursor becomes a crosshair;
+left-click water within 8 m to cast. With a rod equipped you can also just
+**click water directly**, same as before. **No MP cost.**
+
+Fishing has no XP and no levels — the character panel only shows whether
+you've learned it. That also means everything below (wait times, tension,
+reel speed) is identical for everyone; there's no getting faster or easier
+with practice. The design docs describe a planned **Advanced Fishing** tier,
+taught by a more experienced angler, unlocking boat fishing and new species
+like tuna — but it **isn't implemented yet**, and the details aren't final.
+
 ## Getting set up
 
 Buy a **{itemName('fishing_rod')}**
-({formatCoins(itemsById.get('fishing_rod').basePrice)}) from Rica and
-**equip it in your main hand**.
+({formatCoins(itemsById.get('fishing_rod').basePrice)}) from Tobin and
+**equip it in your main hand**. Rica no longer stocks rods.
 
 :::note[Rods never come from dungeon chests]
 They are bought tools, not endgame loot. Chests hold armor and accessories only.
@@ -55,8 +80,7 @@ collapses below the terrain, so clicking dry ground just walks you there.
 
 ## Waiting and the bite
 
-The wait is **4–12 seconds** uniform, shortened **2% per fishing level** (never
-below half the minimum).
+The wait is **3.2–9.6 seconds** uniform, the same for everyone.
 
 On a bite the float dips hard. You have **2.5 seconds** to hook, plus **0.5
 seconds** of latency grace — judged against the **server's own clock**, so a
@@ -102,12 +126,14 @@ The gauge on screen. **It snaps at 100 and the fish is gone.**
 | Source | Change |
 |---|---|
 | Starting tension on the hook-set | **30** |
-| A running fish pulls | **(20 + 2 × rarity) / s** |
+| A running fish pulls | **(18 + 1.8 × rarity) / s** |
 | ↳ scaled up to **×1.3** by how much line is out | |
-| ↳ reduced 1% per fishing level, **capped at 30%** | |
 | Reeling | **+14 / s** |
 | Natural decay while the fish rests | **−8 / s** |
 | Giving line | **−44 / s** |
+
+This formula already bakes in the old "level 10" baseline — with levels gone,
+everyone pulls and reels at this same rate, forever.
 
 <FilterTable
   placeholder="Search species…"
@@ -116,19 +142,17 @@ The gauge on screen. **It snaps at 100 and the fish is gone.**
     { key: 'rarity', label: 'Rarity', align: 'center' },
     { key: 'pull', label: 'Running pull', align: 'right' },
     { key: 'pullMax', label: 'Max line out', align: 'right' },
-    { key: 'pullLv30', label: 'At level 30', align: 'right' },
   ]}
   rows={items
     .filter((i) => i.category === 'fish')
     .sort((a, b) => a.rarityTier - b.rarityTier)
     .map((i) => {
-      const pull = 20 + 2 * i.rarityTier;
+      const pull = 18 + 1.8 * i.rarityTier;
       return {
         name: i.name,
         rarity: `★${i.rarityTier}`,
-        pull: `${pull} / s`,
+        pull: `${pull.toFixed(1)} / s`,
         pullMax: `${(pull * 1.3).toFixed(1)} / s`,
-        pullLv30: `${(pull * 0.7).toFixed(1)} / s`,
       };
     })}
 />
@@ -139,8 +163,8 @@ seconds later. You have to react immediately.
 
 :::tip[Giving line always beats the pull]
 Giving line sheds 44/s, **more than the strongest pull** (a Golden Sturgeon with
-maximum line out manages 39/s). So when the gauge is about to blow, giving line
-always brings it down — at the cost of more line out, which raises the
+maximum line out manages 35.1/s). So when the gauge is about to blow, giving
+line always brings it down — at the cost of more line out, which raises the
 multiplier on the next run.
 :::
 
@@ -214,9 +238,9 @@ Distance isn't shown as a number — **the float is the fish.**
 
 | Situation | Reel speed |
 |---|---|
-| Fish resting | 1.6 m/s |
-| Fish running | 0.6 m/s |
-| Fish exhausted | 2.5 m/s |
+| Fish resting | 1.76 m/s |
+| Fish running | 0.66 m/s |
+| Fish exhausted | 2.75 m/s |
 
 Runs take 1.1–1.5 m/s of line, but the fish **never leaves a 6-metre radius**
 around the cast point.
@@ -253,8 +277,7 @@ An exhausted trophy lands the same as any ordinary catch — only a snapped
 line or a timeout comes back empty-handed. Landing one always awards a
 separate `trophy_*` item: it shares the ordinary species' icon, at **twice
 the weight and three times the price**, still edible and still grills into
-the ordinary cooked fish. Catch XP and species titles are only granted
-once, same as any ordinary catch.
+the ordinary cooked fish.
 
 ## What breaks a session
 
@@ -265,48 +288,21 @@ deliberately.
 **Doesn't**: changing a hat, holding an off-hand torch — gear changes that leave
 the rod in hand don't break concentration.
 
-## Fishing levels
+## No such thing as levels
 
-Catches grant **fishing XP**: `10 × rarity²`
+Once you've learned Fishing, you **don't get any better or worse at it** —
+there's no fishing XP, no fishing level, and your character's own combat XP
+and level are completely untouched by it. Escaped fish, junk hauls, every
+catch you make: none of it changes how fishing plays for you afterward.
 
-<FilterTable
-  placeholder="Search catches…"
-  columns={[
-    { key: 'name', label: 'Catch' },
-    { key: 'rarity', label: 'Rarity', align: 'center' },
-    { key: 'xp', label: 'Fishing XP', align: 'right' },
-  ]}
-  rows={items
-    .filter((i) => i.catchWeight !== null)
-    .sort((a, b) => b.rarityTier - a.rarityTier)
-    .map((i) => ({
-      name: i.name,
-      rarity: i.rarityTier === 0 ? 'Flotsam' : `★${i.rarityTier}`,
-      xp: i.rarityTier === 0 ? '0' : 10 * i.rarityTier ** 2,
-    }))}
-/>
-
-- A hooked fish that **escapes** still consoles you with **2** XP. Escapes never
-  reveal what it was — a varying consolation would leak the hidden roll.
-- Flotsam is rarity 0, so it grants **nothing**.
-- **Fishing grants no character XP** — combat balance is untouched.
-
-### What levels buy you
-
-| Effect | Per level | Cap |
-|---|---|---|
-| Shorter waits | −2% | Half the minimum |
-| Rare species weighting | +3% per point of rarity | None (multiplicative, never inverts the order) |
-| Pull you absorb | −1% | **−30%** |
-| Reel speed | +1% | — |
-
-**Level 10** unlocks River Salmon, **level 20** the Golden Sturgeon. Below that
-they don't appear at all.
+All five species, along with their trophy variants, are now open to
+**everyone who's learned Fishing** — the old "River Salmon needs level 10,
+Golden Sturgeon needs level 20" gates are gone.
 
 ## Flotsam
 
-Not everything that bites is a fish. Four flotsam rows hold a flat **20%** of the
-draw at every level:
+Not everything that bites is a fish. Four flotsam rows hold a flat **20%** of
+the draw, whether or not you've learned Fishing:
 
 <FilterTable
   placeholder="Search…"

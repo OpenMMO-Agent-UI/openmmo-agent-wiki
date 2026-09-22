@@ -110,7 +110,8 @@ export const rica = merchants.find((m) => m.id === 'rica');
 
 ## 첫 쇼핑
 
-Rica가 파는 것들입니다. 초반 자금 기준 우선순위는 대략 이렇습니다:
+Rica가 파는 것들입니다(낚싯대는 예외로 토빈이 팝니다). 초반 자금 기준
+우선순위는 대략 이렇습니다:
 
 <FilterTable
   placeholder="상품 검색…"
@@ -127,7 +128,7 @@ Rica가 파는 것들입니다. 초반 자금 기준 우선순위는 대략 이�
     { id: 'scroll_of_return', why: '즉시 귀환. 너무 멀리 갔거나 죽을 것 같을 때의 보험' },
     { id: 'leather_pants', why: 'Guard +1. 납골당에서 30%로만 나오니 사는 편이 빠릅니다' },
     { id: 'spear', why: '1d6. 시작 무기와 같은 급이지만 팔 수 있습니다' },
-    { id: 'fishing_rod', why: '낚시를 하려면 필요. 많지는 않아도 꾸준한 수입' },
+    { id: 'fishing_rod', why: '낚시를 하려면 필요, 먼저 토빈에게 Fishing을 배워야 함. 많지는 않아도 꾸준한 수입' },
     { id: 'campfire_kit', why: '야외에서 불을 피워 생선을 굽습니다. 날생선은 식중독을 일으킵니다' },
   ].map((r) => ({
     name: itemName(r.id),

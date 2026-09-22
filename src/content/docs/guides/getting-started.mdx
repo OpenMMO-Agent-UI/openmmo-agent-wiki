@@ -109,7 +109,7 @@ export const rica = merchants.find((m) => m.id === 'rica');
 
 ## 第一次購物
 
-Rica 賣這些。以你剛開始的財力,優先順序大概是:
+Rica 賣這些(釣竿例外,那是托賓賣的)。以你剛開始的財力,優先順序大概是:
 
 <FilterTable
   placeholder="搜尋商品…"
@@ -126,7 +126,7 @@ Rica 賣這些。以你剛開始的財力,優先順序大概是:
     { id: 'scroll_of_return', why: '瞬間回城。走太遠或快死掉時的保命符' },
     { id: 'leather_pants', why: 'Guard +1。古墓 30% 才掉,買比較快' },
     { id: 'spear', why: '1d6,和起始武器同級但可以賣錢' },
-    { id: 'fishing_rod', why: '想釣魚才需要。穩定但不多的收入' },
+    { id: 'fishing_rod', why: '想釣魚才需要,還要先跟托賓學會 Fishing。穩定但不多的收入' },
     { id: 'campfire_kit', why: '野外生火烤魚。生魚會食物中毒' },
   ].map((r) => ({
     name: itemName(r.id),

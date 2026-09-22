@@ -132,7 +132,6 @@ export const items = parseCsv('items').map((r) => {
     catchWeight: num(r.catchWeight),
     sizeDice: r.sizeDice || null,
     trophyCm: num(r.trophyCm),
-    minFishingLevel: num(r.minFishingLevel),
     chestTier: num(r.chestTier),
     chestChance: num(r.chestChance),
     consumable: bool(r.consumable),
