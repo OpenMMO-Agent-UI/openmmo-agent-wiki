@@ -19,9 +19,98 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v93 — client v0.56.0 (current)
+## Protocol v96 — client v0.57.0 (current)
 
-**The live server currently requires v93.**
+**The live server currently requires v96.**
+
+**New systems**
+
+- **Added Korean, Japanese, and Simplified Chinese UI translations**
+  (2026-09-22) — Settings gained a Language option supporting
+  English/한국어/日本語/简体中文; switching doesn't reload the page or
+  reconnect. The choice is stored in browser local storage, Auto follows the
+  browser's language preferences with English as the final fallback, and
+  Traditional Chinese isn't provided yet — a zh-Hant browser falls through to
+  the next supported language or English. The first pass covers settings,
+  the inventory and its tooltips, revival, the login/loading screens,
+  fishing/combat log helpers, and all 141 current item names and
+  descriptions plus the 9 titles; NPC/monster/skill names, character
+  creation, and the social/housing UI are still English for now. System
+  messages and trade errors gained optional `localization` metadata (a code
+  plus parameters); the browser renders the translated text for that code,
+  falling back to the English `message` when no translation or metadata is
+  present, while the agent client still reads only the English text. This
+  bumped the protocol to v96.
+- **Return, Estate Return, and Party Summon scrolls now play the same
+  departure/arrival light-pillar effect as the random teleport scroll**
+  (2026-09-21) — for party summon, the departure effect plays for **the
+  person who accepts**, not the caster, who stays put.
+
+**Fixes**
+
+- **Fixed offline characters dodging dungeon resets** (2026-09-21) — every
+  in-game sunset, dungeon players who are online get a warning before being
+  moved to that dungeon's ground entrance; offline characters now follow the
+  same rule — if the saved `dungeon_epoch` is behind the current
+  `night_epoch`, the next reconnect starts at the dungeon entrance instead of
+  the saved position. Reconnecting within the same cycle keeps the saved
+  position, and a plain server restart doesn't evict anyone. Legacy
+  underground characters with no epoch on record get moved to the entrance
+  on their first reconnect; HP, inventory, and party-summon rules are
+  unaffected.
+- **Fixed movement route replacement getting stuck against walls, and
+  stalled sliding near dungeon stairs** (2026-09-21) — when a new route
+  arrives mid-move while still partway up a staircase, the server now
+  recomputes the connecting leg to the new route's first waypoint so it
+  doesn't skip the stair landing and walk straight into a wall. While
+  sliding along a wall, if actual displacement on the same waypoint stays
+  under 20% of the attempted distance for a full second, the same resync
+  used when the queue nears its cap now kicks in, clearing the queue and
+  replanning from the server's current position.
+
+## Protocol v95 — client not yet released
+
+**New systems**
+
+- **Random teleport scroll use now waits for the departure effect to finish
+  before sending the request** (2026-09-21) — the client sends
+  `UseTeleportScroll` only after its 0.52 s departure light-pillar effect
+  finishes and the character has been hidden for 0.3 s; the server validates
+  the item, death state, trade lock, and landing spot and then consumes the
+  scroll and moves immediately, with no extra wait for the effect. Movement
+  input and repeat use are blocked from departure through the arrival
+  display; dying, using another teleport, or disconnecting mid-departure
+  cancels any request not yet sent, and a server rejection restores the
+  scroll too. This bumped the protocol to v95.
+
+## Protocol v94 — client not yet released
+
+**New systems**
+
+- **Added the random Scroll of Teleportation, with departure and arrival
+  light-pillar effects** (2026-09-21) — reading `scroll_of_teleportation`
+  teleports you to a random spot 32 m–2 km away horizontally, landing
+  outdoors or on any dungeon floor with a probability proportional to
+  landable area — larger floors are picked more often, and since the
+  outdoors vastly outsizes any single dungeon floor, landing in a dungeon is
+  rare. Walls, water, obstacles, stairs, and steep slopes are excluded from
+  that area; monster presence doesn't affect the odds. The implementation
+  picks the outdoor ring or a dungeon floor's rectangle proportional to
+  area, then draws a uniform point inside it, redrawing from the whole pool
+  on an out-of-range or unlandable result up to 128 times before giving up
+  and preserving the scroll. A charge is only consumed on success, and it
+  can be used in combat; scrolls can't be used while dying or while listed
+  in a trade. Arriving in a dungeon dismounts you, and landing outdoors
+  dismounts a boat too. It's not in any shop's default stock, with a 1%
+  shared world-drop chance from monsters, chests, and destructible props.
+  Nearby players see a blue-white light pillar and particles shoot skyward
+  at the departure point, with the character hidden after 0.3 s; once the
+  server resolves the move, light descends and the character reappears at
+  the landing spot 0.18 s later, with the ground ring and afterglow fading
+  out. Players who already saw their own departure don't see it replayed.
+  This bumped the protocol to v94.
+
+## Protocol v93 — client v0.56.0
 
 **New systems**
 
