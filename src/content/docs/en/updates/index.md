@@ -19,9 +19,99 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v96 — client v0.57.0 (current)
+## Protocol v100 — client v0.58.0 (current)
 
-**The live server currently requires v96.**
+**The live server currently requires v100.**
+
+**New systems**
+
+- **Player stalls gained buy orders, folded into the same trade window, with
+  localized UI** (2026-09-26) — stalls used to only let passersby *buy* from
+  a listing; owners can now post buy orders too: pick an item, its enchant
+  level, how many you still want, and a unit price, then leave it on the
+  stall for someone to *sell* to you. Buyer funds aren't escrowed up front —
+  they're rechecked against the buyer's wallet at settlement. Posting a new
+  order for the same item and enchant level overwrites the old one and issues
+  a new order ID, invalidating any sale already in flight against the
+  superseded order so it can't double-settle. Sell and buy listings share the
+  same 12-slot cap. The trade window gained a dedicated buy-order screen, and
+  English/Japanese/Korean/Simplified Chinese strings were added for it. This
+  batch of messages (`SetStallBuyOrder`, `RemoveStallBuyOrder`,
+  `SellToStall`, and a new `buy_orders` field on `StallState`) bumped the
+  protocol to v100.
+- **Player stalls keep running after the owner logs off — trades and the
+  sign both persist** (2026-09-26) — logging out used to collapse the stall,
+  the same as leaving its 10m leash range or changing floor. Now a plain
+  logout no longer tears it down: the server stashes the owner's inventory
+  and gold as offline-owner data and keeps honoring buy/sell trades against
+  it, checking stock, gold, and carry weight the same way it always did; the
+  stall reattaches to the owner's live character state on their next login.
+  Leaving the leash range or changing floor still collapses it, and a server
+  restart still doesn't preserve the stall itself — the gold and item changes
+  from trades that already settled are unaffected either way.
+
+**Client**
+
+- **Added a weather radar to the debug overlay, showing live and forecast
+  rain cells** (2026-09-25) — the debug panel in the FPS-counter corner
+  gained a `RADAR` toggle alongside the existing dev overlays like ORBITS and
+  GRID; turning it on shows each region's current and forecast rain cells on
+  the minimap, plus rain info for your own position. It's purely a debug tool
+  for tuning the rain schedule — regular players never see it in the normal
+  UI, and it has no effect on gameplay.
+- **agent-client updated to v0.58.0, matching protocol v100** (2026-09-26).
+
+## Protocol v99 — client not yet released
+
+**New systems**
+
+- **Sitting/standing positions for chairs and beds are now decided by the
+  server** (2026-09-25) — continuing the move-to-server-authority work from
+  v97/v98, furniture interactions got the same treatment: the server looks
+  up the furniture's actual placement by ID, checks distance, floor,
+  survival state, mount, occupancy, and nearby obstructions, then computes
+  the real seat/stand position and facing; the client no longer moves there
+  itself before the server approves. `PlayerInteractionChanged` gained
+  position, rotation, and floor fields so the browser and agent-client both
+  apply the same result. This bumped the protocol to v99.
+
+## Protocol v98 — client not yet released
+
+**New systems**
+
+- **Keyboard movement, mounts, and auto-travel all folded into
+  server-authoritative movement; the old client-side simulation and position
+  reporting are gone** (2026-09-25) — v97 moved plain click-movement onto a
+  server-approved path; this version brings keyboard walking, riding horses
+  and boats, stopping at a house entrance, and the rest of movement into the
+  same flow — the client stops reporting its own position entirely, and the
+  server is the sole authority. Removed the client→server messages
+  `PlayerMovementSample`, `MovementResyncAck`, `PlayerMountTurn`,
+  `PlayerMountRecover`, `PlayerKeyboardMove`, `PlayerMove`, and
+  `PlayerFloorChanged`, and the server→client `MountRecovery`,
+  `PositionCorrected`, and `MovementResync` (retiring the auto-resync
+  mechanism v90 introduced along with them); added `PlayerMoveDirection` for
+  keyboard input, `PlayerFace` for turning in place, and `NpcRelocate` for
+  server-driven NPC placement. This bumped the protocol to v98.
+
+## Protocol v97 — client not yet released
+
+**New systems**
+
+- **Click-movement on the ground and in dungeons now sends a goal to the
+  server and waits for an approved path before moving** (2026-09-24) — the
+  client sends a request id and target XZ coordinates (no height or floor);
+  the server works out a legal path against the current floor and terrain,
+  then sends back position, rotation, floor, and speed tied to that request
+  id via new `PlayerMovePath` and `PlayerMoveProgress` messages — the client
+  no longer simulates movement itself, only plays back what the server
+  approved. For now this only covers plain click-movement outdoors and in
+  dungeons; keyboard movement, mounts, furniture interactions, and combat
+  chase still use the old flow until the next version. Added the
+  client→server messages `PlayerMoveGoal` and `PlayerMoveStop`. This bumped
+  the protocol to v97.
+
+## Protocol v96 — client v0.57.0
 
 **New systems**
 

@@ -41,19 +41,36 @@ lock-then-confirm steps `/trade` uses.
   pack up, the same toggle a tip hat uses.
 - **Listed items stay in your bag** as a soft reservation — selling,
   dropping, using, equipping, or trading them is blocked until they're
-  unlisted or sold, and you carry their weight the whole time. Up to **12
-  listings** at once.
+  unlisted or sold, and you carry their weight the whole time. Sell listings
+  and buy orders (below) share the same **12-slot** cap.
 - **The Peddler's Stall item holding the table up can't itself be listed,
   sold, or dropped** — selling it would leave a table with no way to fold
   back up.
 - Every sale burns a **5% sales tax** off the seller's take; the buyer
   still pays exactly the marked price.
 - The owner has to stay within **10 meters** of the stall, or it packs
-  itself up automatically — changing floor or logging out does too.
+  itself up automatically — changing floor does too. **A plain logout no
+  longer does** (protocol v100): the server stashes the owner's inventory
+  and gold and keeps settling trades against it, and the stall reattaches to
+  the owner's live character on their next login. A server restart still
+  doesn't preserve the stall itself.
 - The owner can write a sign of up to **32 characters**, always with their
   name underneath; `/mute` hides and blocks setting it, and a `/block`
   target's sign is hidden only from the blocker.
-- **NPCs never buy from a stall.**
+
+### Buy orders (protocol v100)
+
+Besides listing items to sell, an owner can post **buy orders** to buy items
+from other players instead: pick an item, its enchant level, how many you
+still want, and a unit price, then leave it on the stall for someone to sell
+to you.
+
+- The gold for a buy order **isn't escrowed up front** — it's rechecked
+  against the owner's wallet at settlement.
+- Posting a new order for the same item and enchant level **overwrites the
+  old one** and issues a new order ID, invalidating any sale already in
+  flight against the superseded order so it can't double-settle.
+- **NPCs never buy from a stall, and never sell into a buy order either.**
 
 ## Lock, then confirm (the anti-scam core)
 
