@@ -67,6 +67,21 @@ straight to her wallet, with just a system line in chat; trinkets still land
 what. When her schedule moves her — heading home, changing pitches — she
 packs up the stall and the hat together automatically.
 
+**As of protocol v101**, tipping Signe lets you request a song directly:
+the tip dialog gets a songbook search field, and confirming a tip with a
+song picked adds a line — `Requested "title". Songs are played in request
+order.` These go into an **automatic queue**, played in the order they
+arrive — the server verifies the amount and the title, then forwards the
+request to her; she works through the queue after her current song and the
+following break, and only drops a request once playback has actually
+started. While the queue isn't empty, she won't pick a song on her own or
+cut in with a new [heroic tale](#heroic-tales-protocol-v50) recital;
+requests wait if she's walking, sleeping, or has her hat packed up, and
+resume once she's back performing. The queue only lasts for her current
+session and clears on a restart. Only Signe's hat, as an official NPC bard,
+gets the song-request option — a regular player's tip hat still takes tips
+but never shows the songbook search field.
+
 ### The gilded mandolin
 
 Signe carries two instruments: the {itemName('worn_mandolin')} she plays
@@ -92,7 +107,7 @@ class can use it, and Rica sells one for
 {formatCoins(itemsById.get('tip_hat').basePrice)}. Signe uses the same item
 herself (see above).
 
-- Using the item sets a hat down two cells ahead; using it again picks it
+- Using the item sets a hat down one cell ahead; using it again picks it
   back up. The item itself is never consumed.
 - The hat only exists while its owner stays close — straying past 5m,
   changing floor, or logging out packs it up automatically and returns it to

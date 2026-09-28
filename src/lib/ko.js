@@ -317,6 +317,7 @@ export const debuffNames = {
   bleed: '출혈',
   food_poisoning: '식중독',
   wet: '젖음',
+  cold: '추위',
   tipsy: '알딸딸함',
   drunk: '취함',
   wasted: '만취',

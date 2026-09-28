@@ -19,9 +19,96 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v100 — client v0.58.0 (current)
+## Protocol v101–v103 — client v0.59.0 (current)
 
-**The live server currently requires v100.**
+**The live server currently requires v103.**
+
+**New systems**
+
+- **Tip hats gained song requests, played back in an automatic queue in
+  arrival order** (2026-09-26) — tipping an official NPC bard (currently
+  just Signe) adds a songbook search field to the tip dialog; picking a
+  title and confirming the tip sends the request to the server, which
+  verifies the amount and title and forwards it to her. She works through
+  requests in the order they arrive, after her current song and the
+  following break, and only drops one once playback has actually started;
+  while the queue isn't empty she won't pick her own song or cut in with a
+  heroic tale. Regular players' tip hats don't get this option. Also
+  shrank the hat's placement distance from two cells to one, clear of
+  nearby windows. This batch of messages bumped the protocol to v101. See
+  [Music & the bard](../guides/music/#tips-and-requests).
+- **Rain cells now drift with a slow seasonal wind and dry out in the lee of
+  ridges; the static rain-shadow climate and the Aldermark-only season
+  multiplier are both gone** (2026-09-26) — a cell picks a fixed drift
+  heading at birth (east-northeast in winter, west-northwest in summer,
+  turning through north or south between them) and moves in a straight
+  line for its whole life, slowly enough that the drift is imperceptible.
+  Each sector's bake now records the ridge height in 16 headings within
+  14 km upwind, and a cell checks its own upwind ridge at birth — a fully
+  sheltered spot keeps only 11% of its base chance. Rain chances across all
+  three climates were also halved. This batch of messages bumped the
+  protocol to v102. See
+  [Weather](../guides/weather/#wind-and-lee-protocol-v102).
+- **Added winter snowfall, lying snow cover, and a new Cold debuff**
+  (2026-09-26) — a winter cell now has a chance (by latitude and elevation)
+  to fall as snow instead of rain, decided once at birth; how much snow
+  currently covers a point is a pure function of the cells that recently
+  passed over it, so nothing needs to be saved. Standing in heavy snowfall
+  long enough triggers Cold (×0.9 move and attack speed, ×1.5 hunger
+  drain), tracked separately from Wet and stackable with it, and it dries
+  off next to a campfire just as fast. Admins gained `/weather snow
+  [intensity]` to force snowfall. This batch of messages bumped the
+  protocol to v103. See
+  [Weather](../guides/weather/#snow-and-cold-protocol-v103).
+
+**Fixes**
+
+- **Fixed jittery turn and stop animations during drag-path movement, combat
+  entry, and keyboard/mouse-drag movement** (2026-09-26 – 2026-09-27) — when
+  a new movement command arrives mid-move, the turn and stop animations now
+  continue directly from the server's current position instead of first
+  catching up to a predicted one or snapping poses.
+- **Mounted riders now pivot in place to face a clear direction when their
+  arced path is blocked, instead of getting stuck** (2026-09-26) — most
+  noticeable when a horse faces a fence gate.
+- **Tobin now sells off his catch to Rica before his fishing bag overflows,
+  instead of getting stuck thinking a slipped catch was still in his bag**
+  (2026-09-26).
+
+**Performance**
+
+- **Reduced hitching when characters, monsters, and NPCs first appear
+  on screen, and stopped grass from being drawn twice** (2026-09-26 –
+  2026-09-27) — new monsters, NPCs, and props used to compile their render
+  pipeline synchronously on first draw, freezing the GPU for up to nearly
+  half a second; pipeline compilation is now asynchronous, models precompile
+  in batches ahead of time, and animation grounding is time-sliced.
+  Transparent, double-sided grass used to be drawn twice per pass (shadows
+  included); it now draws once.
+
+**Client**
+
+- **Added a Traditional Chinese interface translation** (2026-09-26) — same
+  coverage as the existing Simplified Chinese (settings, inventory and item
+  tooltips, respawn, login/loading screens, fishing and combat logs, every
+  item's name and description, and titles); the language menu now offers
+  Traditional Chinese instead of falling back to Simplified Chinese or
+  English.
+- **Added a Battle Music setting, on by default** (2026-09-26) — turning it
+  off keeps the current playlist track or a nearby performance playing
+  through combat; your own `/play_music` still stops when combat starts.
+- **Trimmed the battle track "Blood and Bronze" from 8 minutes to a 78-second
+  loop, cutting static-file traffic** (2026-09-26).
+- **Added an autumn-to-winter foliage pass: grass yellows, leaves change
+  color and fall, and bare winter canopies skip their draw** (2026-09-27) —
+  purely visual, following the existing in-game season calendar.
+- **Updated weather visuals to match the new wind system** (2026-09-26 –
+  2026-09-27) — rain now tilts with the wind direction, the weather widget
+  overlays clouds that let the sun and moons glow through while it rains,
+  and the debug weather radar gained a line showing where a cell's centre
+  will be when it dies.
+
+## Protocol v100 — client v0.58.0
 
 **New systems**
 
