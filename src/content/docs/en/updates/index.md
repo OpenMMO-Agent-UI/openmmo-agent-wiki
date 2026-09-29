@@ -19,9 +19,88 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v101–v103 — client v0.59.0 (current)
+## Protocol v110 — client v0.60.0 (current)
 
-**The live server currently requires v103.**
+**The live server currently requires v110.**
+
+**Balance**
+
+- **The merchant buyback list's cap rose from 10 entries to 50, and
+  stackable items sold back to back at the same price now merge into one
+  entry** (2026-09-28) — previously every stackable item you sold got its
+  own buyback slot. Now stackable items (potions, materials, etc.) sold to
+  the same merchant at the same unit price merge into a single entry, which
+  you buy back as a whole rather than picking a few units out of it;
+  non-stackable items (equipment) still get one entry each. The cap also
+  rose from 10 to 50, and an entry still disappears after 24 hours unbought
+  or when the server restarts. This batch of messages bumped the protocol
+  to v110. See
+  [Shops & economy](../database/economy/#sold-something-by-mistake).
+- **Stethoscope drop chance fell to a tenth of its old value, from 0.04% to
+  0.004% per kill** on Goblins, Hobgoblins, and the Forgotten Dead
+  (skeleton) (2026-09-28) — a purely optional novelty item; only the drop
+  rate changed, not how it's obtained or that it rolls independently of
+  other loot. See
+  [Combat](../guides/combat/#skills-and-mana-protocol-v71v79).
+
+## Protocol v109 — client not yet released
+
+**Fixes**
+
+- **Double Slash requests were folded into the general ability-use message**
+  (2026-09-27) — Double Slash used to have its own dedicated request; it
+  now goes through `UseAbility` like every other ability, with no change to
+  behavior, damage, or cooldown — purely a message-format consolidation.
+  This message bumped the protocol to v109.
+
+## Protocol v108 — client not yet released
+
+**Fixes**
+
+- **Teleport scroll use was folded into the general item-use message**
+  (2026-09-27) — the random teleport, return, and estate-return scrolls
+  used to have their own dedicated request; they now go through `UseItem`
+  like every other item, with the same departure glow, delay, and
+  server-side checks for the item, death state, an active trade, and a
+  valid landing spot. This message bumped the protocol to v108.
+
+## Protocol v107 — client not yet released
+
+**Fixes**
+
+- **Dropping items now always goes through the batch path, so dropping even
+  a single item is blocked while trading or while your stall has listings**
+  (2026-09-27) — dropping a single item and dropping a batch used to be two
+  separate paths, and only the batch one refused outright during an active
+  trade or with a stall laid out. Both now go through `DropItems`, so even
+  a single-item drop is held to the same rule — finish the trade or pack up
+  the stall first. This message bumped the protocol to v107.
+
+## Protocol v105–v106 — client not yet released
+
+**Fixes**
+
+- **Removed the unused dungeon-door-state request** (v105, 2026-09-27) —
+  the client used to proactively ask for every door's open/closed state in
+  the current dungeon with `RequestDungeonDoors`, but the server has long
+  since pushed `DungeonDoorsState` on entry and on every toggle, so this
+  request path was never actually exercised and was removed outright. This
+  message bumped the protocol to v105.
+- **Removed the debug torch-toggle request** (v106, 2026-09-27) —
+  `TorchToggle` only existed for debug builds; release clients never sent
+  it, so it was removed. This message bumped the protocol to v106.
+
+## Protocol v104 — client not yet released
+
+**Fixes**
+
+- **Removed the unused NPC-relocate and room-modify requests**
+  (2026-09-27) — `NpcRelocate` only ever served official NPCs teleporting
+  in place, and `ModifyRoom` had been a server-side no-op (a TODO) all
+  along; neither was actually in use, so both were removed along with
+  their server-side handlers. This message bumped the protocol to v104.
+
+## Protocol v101–v103 — client v0.59.0
 
 **New systems**
 

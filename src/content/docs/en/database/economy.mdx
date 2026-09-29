@@ -59,13 +59,15 @@ and the **{itemName('iron_sword')}** are **not in the shop**.
 
 ### Sold something by mistake?
 
-The last **10** items you sold to a merchant can be bought back for exactly what
-you were paid. It's a recovery path for misclicks, and the round trip is
-gold-neutral so it doesn't disturb the spread — something you haggled a high
-price for costs that much to buy back.
+The last **50** entries you sold to a merchant can be bought back for exactly
+what you were paid. Stackable items sold back to back at the same price merge
+into one entry, which you buy back as a whole rather than splitting it. It's a
+recovery path for misclicks, and the round trip is gold-neutral so it doesn't
+disturb the spread — something you haggled a high price for costs that much to
+buy back.
 
-The list is kept per character and per merchant, survives reconnecting, and has
-no time limit — but **it is lost when the server restarts.**
+The list is kept per character and per merchant, survives reconnecting, and
+expires after **24 hours** — or sooner if **the server restarts.**
 
 ## After hours: Wick, the night merchant
 

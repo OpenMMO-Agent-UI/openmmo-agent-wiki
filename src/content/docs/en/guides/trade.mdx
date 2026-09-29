@@ -134,9 +134,11 @@ flagged as **softly reserved**:
 
 - Selling, dropping, using, or equipping a reserved item is refused by the
   server for as long as the trade is open.
-- Bulk, definition-keyed actions like "sell all" or "drop all" are refused
-  **entirely** while a trade is open, rather than trying to work around the
-  reserved units — the error tells you to finish the trade first.
+- Bulk, definition-keyed actions like "sell all" are refused **entirely**
+  while a trade is open, rather than trying to work around the reserved
+  units — the error tells you to finish the trade first. **Dropping** an
+  item, single or in bulk, is refused outright the same way while a trade is
+  open, not just the item on the table.
 - A laid-out **busker's hat** counts as reserved too; pick it back up before
   trading it away.
 - A completed trade moves everything **all at once, or not at all**: if
