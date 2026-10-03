@@ -19,9 +19,24 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v110 — client v0.60.0 (current)
+## Protocol v111 — client v0.61.0 (current)
 
-**The live server currently requires v110.**
+**The live server currently requires v111.**
+
+**New items & assets**
+
+- **New male Knight, Barbarian, and Rogue characters now start already
+  wearing a full set of class-specific worn armor** (2026-10-02) — five
+  plate pieces for Knight (head, chest, pants, boots, hands), five
+  fur-and-leather pieces for Barbarian, and four pieces for Rogue (no
+  helmet), all under the same no-price, unsellable rule as other starting
+  gear. Player snapshots and the character-select preview now also render
+  this armor, instead of showing only the weapon, off-hand, and cape. This
+  batch of messages bumped the protocol to v111. Female characters of these
+  classes don't get this armor yet. See
+  [Getting started](../guides/getting-started/#what-you-start-with).
+
+## Protocol v110 — client v0.60.0
 
 **Balance**
 
