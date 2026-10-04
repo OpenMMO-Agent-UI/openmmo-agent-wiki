@@ -41,6 +41,12 @@ this plot?" confirmation:
   failing never consumes the deed — a failure shows a red grid with the
   reason, a success shows green.
 
+If the cell you're claiming or expanding into fully covers the ground-floor
+footprint of a house left **ownerless by a deleted character**, that house is
+handed to the claiming character — position and structure stay the same,
+only ownership changes. Houses with a living owner, public houses, and
+editor-only houses are unaffected (2026-10-03).
+
 Zoom in on the world map to see land grade and ownership as color overlays:
 crown land and reserved land (towns, dungeon entrances, and the sea) are
 filled blocks, homestead plots show only grid lines. Your own plots use an
@@ -53,21 +59,28 @@ boundaries easier to read at a glance.
 Once you own a plot, both Rica and Wick sell a
 **{itemName('scroll_of_estate_return')}**
 ({formatCoins(itemsById.get('scroll_of_estate_return').basePrice)}), the same
-price as the regular return scroll. Using one sends your character to safe
-outdoor ground on your own homestead — it works from a dungeon or mid-combat,
-too. The server picks a spot near the center of your earliest-claimed plot
-that avoids buildings, obstacles, and water deeper than 0.1m, falling back to
-your other owned plots if none is found there. It isn't consumed if you have
-no estate, are dead, have a pending trade, or no safe spot can be found, and
-it can't send you to a plot owned by another character on the same account.
+price as the regular return scroll. Using one sends your character to your
+own homestead — it works from a dungeon or mid-combat, too. If a
+**{itemName('furniture_hearthbound_rug')}** is installed on the estate
+([sold at the ORKEA furniture shop](#orkea-furniture-shop-protocol-v87v89)),
+it sends you to the **earliest-installed rug's** position, floor, and facing
+instead (2026-10-03); without a rug, or if the rug has been picked up, the
+estate was released, or its spot is blocked, it falls back to the old rule —
+a safe outdoor spot near the center of your earliest-claimed plot that
+avoids buildings, obstacles, and water deeper than 0.1m. It isn't consumed if
+you have no estate, are dead, have a pending trade, or no safe spot can be
+found.
 
 ## Plot limits and expansion
 
-Each **account** (not each character) can own one homestead estate. Claiming a
-new cell merges it into your existing estate automatically as long as it
-shares an edge with it, up to a cap of **16 cells**. You can't claim a
-disconnected second plot on the same account — that needs a different
-account.
+Each **account** (not each character) can own one homestead estate, and
+**every character on the account shares that same estate and tax account**
+(2026-10-02) — it's no longer tied to whichever character registered it
+first, so switching characters still lets you expand, pay tax, or return
+home. Claiming a new cell merges it into your existing estate automatically
+as long as it shares an edge with it, up to a cap of **16 cells**. You can't
+claim a disconnected second plot on the same account — that needs a
+different account.
 
 ## Tax account (protocol v56)
 
@@ -213,16 +226,24 @@ chest on every floor has been emptied and recovered.
 
 ## ORKEA furniture shop (protocol v87–v89)
 
-A showroom near town at `world(-1450.5, 1.0, 4775.5)` sells 23 decorative
+A showroom near town at `world(-1450.5, 1.0, 4775.5)` sells 24 decorative
 estate items: a bed, rustic bed, chair, table, chest, barrel, crate, stone
-hearth, wall torch, signpost, four shop-sign variants, and potion, scroll,
-and sword ornaments. Potions, scrolls, and sword ornaments cost 200 copper
-each, the wall torch 300, the crate 500, the barrel 600, chairs and signs 800
-each, the chest 900, the table 3000, the bed and rustic bed 4000 each, and
-the stone hearth 12000. Decorative items have no real function — ornamental
-potions and scrolls don't consume, ornamental weapons can't be equipped, and
-the ornamental chest has no storage (buy the
-{itemName('storage_chest')} above for that).
+hearth, wall torch, signpost, four shop-sign variants, a
+**{itemName('furniture_hearthbound_rug')}**, and potion, scroll, and sword
+ornaments. Potions, scrolls, and sword ornaments cost 200 copper each, the
+wall torch 300, the crate 500, the barrel 600, chairs and signs 800 each, the
+chest 900, the {itemName('furniture_hearthbound_rug')}
+{formatCoins(itemsById.get('furniture_hearthbound_rug').basePrice)}, the
+table 3000, the bed and rustic bed 4000 each, and the stone hearth 12000.
+Most decorative items have no real function — ornamental potions and
+scrolls don't consume, ornamental weapons can't be equipped, and the
+ornamental chest has no storage (buy the {itemName('storage_chest')} above
+for that). The {itemName('furniture_hearthbound_rug')} is the exception:
+installed on your own homestead, it becomes the
+[priority return spot](#buying-a-deed-and-claiming-land-protocol-v55) for
+estate return (2026-10-03). Indoor furniture like the rug can also have its
+height nudged with the mouse wheel while placing or moving it, in 5cm steps
+up to 20cm off the floor.
 
 The shop's clerk, a female orc named **Grida**, greets customers at the
 west end of the shop from 06:30–18:00 and 18:30–midnight. Click her to open

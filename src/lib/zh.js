@@ -158,6 +158,7 @@ export const itemNames = {
   furniture_goblin_sword: '哥布林短劍裝飾品',
   furniture_small_sword: '小劍裝飾品',
   furniture_shop_sign_weathered: '商店招牌(風化拱形)',
+  furniture_hearthbound_rug: '歸鄉地毯',
 };
 
 export const itemDescriptions = {
@@ -316,6 +317,7 @@ export const itemDescriptions = {
   furniture_goblin_sword: '拆封後可在自己的領地放置哥布林短劍裝飾品。ORKEA 出品的裝飾家具。',
   furniture_small_sword: '拆封後可在自己的領地放置小劍裝飾品。ORKEA 出品的裝飾家具。',
   furniture_shop_sign_weathered: '拆封後可在自己的領地放置商店招牌(風化拱形)。ORKEA 出品的裝飾家具。',
+  furniture_hearthbound_rug: '溫暖手織羊毛地毯,織有爐火與家的圖案。拆封後可放置在自己的領地。',
 };
 
 export const monsterNames = {

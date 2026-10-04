@@ -105,6 +105,10 @@ export function averageRoll(dice) {
 
 // --- loading ----------------------------------------------------------------
 
+// shared/src/land.rs: LAND_CLAIM_MIN_LEVEL — server/src/item_defs.rs resolves
+// the same placeholder into the land_deed description at load time.
+const LAND_CLAIM_MIN_LEVEL = 10;
+
 export const items = parseCsv('items').map((r) => {
   const effects = r.effects ? r.effects.split(';') : [];
   const chaBonus = effects
@@ -113,7 +117,7 @@ export const items = parseCsv('items').map((r) => {
   return {
     id: r.id,
     name: r.name,
-    description: r.description,
+    description: r.description.replace('{{landClaimMinLevel}}', LAND_CLAIM_MIN_LEVEL),
     weight: num(r.weight),
     equipSlot: r.equipSlot || null,
     stackable: bool(r.stackable),

@@ -19,9 +19,89 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v111 — client v0.61.0 (current)
+## Protocol v114 — client v0.62.1 (current)
 
-**The live server currently requires v111.**
+**The live server currently requires v114.**
+
+**New system**
+
+- **Deleting a character now starts a cancellable 24-hour countdown instead
+  of deleting immediately** (2026-10-03) — after you confirm deletion the
+  character enters a pending state; character select shows the remaining
+  hours and minutes and swaps the delete button for a "Cancel deletion"
+  one, and you can't log in with that character while it's pending. The
+  server only deletes it once the 24 hours run out. Once a deletion goes
+  through, any house, estate furniture, and fences the character owned
+  transfer automatically to another character on the **same account**
+  instead of becoming ownerless. This batch of messages bumped the protocol
+  to v114.
+- **Claiming or expanding your homestead over the full ground-floor
+  footprint of a house left ownerless by a deleted character now hands
+  that house to the claiming character** (2026-10-03) — position and
+  structure are unchanged, only ownership updates; houses with a living
+  owner, public houses, and editor-only houses are unaffected.
+- **ORKEA now sells a Hearthbound Rug for 2,000c (20s)** (2026-10-03) —
+  unpack it to place on your estate. Once installed on your account's
+  homestead, using a Scroll of Estate Return or a land deed's return
+  instead sends you to the **earliest-installed rug's** position, floor,
+  and facing; it falls back to the old safe-outdoor-spot rule only if the
+  rug has been picked up, the estate was released, or the rug's spot is
+  blocked. Indoor furniture placement also gained a height nudge — scroll
+  the mouse wheel while placing or moving a piece to adjust height in 5 cm
+  steps, up to 20 cm. See
+  [Estates](../guides/estates/#buying-a-deed-and-claiming-land-protocol-v55).
+
+**Fix**
+
+- **Fixed the admin teleport command landing at an unreasonable height**
+  (2026-10-02).
+- **Fixed invisible walls beside dungeon stair landings** (2026-10-02) —
+  they no longer snag characters.
+- **Maid NPCs on a different floor than a respawning nearby player now get
+  notified too, restoring their respawn greeting** (2026-10-02).
+- **Monsters now leave snow trails while moving through snow, matching
+  players** (2026-10-02).
+
+## Protocol v113 — client not yet published
+
+**New system**
+
+- **Estates, treasury balance, and months of missed tax are now shared per
+  account instead of tied to whichever character first registered them**
+  (2026-10-02) — any character on the account can access the same
+  homestead and the same tax account; the old rule that blocked expanding
+  or returning to a homestead because another character on the account
+  already owned one is gone. This batch of messages bumped the protocol to
+  v113. See
+  [Estates](../guides/estates/#buying-a-deed-and-claiming-land-protocol-v55).
+
+**Fix**
+
+- **Fixed the admin teleport command's height calculation** (2026-10-02).
+
+## Protocol v112 — client not yet published
+
+**New system**
+
+- **Added a "pick up nearby" key (comma `,` by default) that collects
+  every pickable item within 2 m on your floor in one go, closest first**
+  (2026-10-02) — rebindable from the Settings panel; the normal 2.5 m
+  range for clicking a single item is unchanged.
+- **Loot from an opened dungeon chest (coins and items) is now reserved
+  for whoever opened it for 30 seconds** (2026-10-02) — anyone else who
+  tries to pick it up during that window gets a "This loot is reserved for
+  the chest opener for 30 seconds" message; after 30 seconds it's open to
+  anyone. This batch of messages bumped the protocol to v112.
+
+**Fix**
+
+- **Pressing Escape in the chat box now releases focus** (2026-10-02) — it
+  no longer blocks arrow-key movement.
+- **Floating coin and "Miss" text popups are now localized** (2026-10-02).
+- **Newly placed chests no longer overlap a box that just spawned next to
+  them** (2026-10-02).
+
+## Protocol v111 — client v0.61.0
 
 **New items & assets**
 

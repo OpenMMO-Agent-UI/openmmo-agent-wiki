@@ -158,6 +158,7 @@ export const itemNames = {
   furniture_goblin_sword: '고블린 검 장식품',
   furniture_small_sword: '작은 검 장식품',
   furniture_shop_sign_weathered: '상점 간판(풍화된 아치)',
+  furniture_hearthbound_rug: '귀향의 러그',
 };
 
 export const itemDescriptions = {
@@ -316,6 +317,7 @@ export const itemDescriptions = {
   furniture_goblin_sword: '펼쳐서 자기 영지에 고블린 검 장식품을 놓는다. ORKEA에서 만든 장식용 가구다.',
   furniture_small_sword: '펼쳐서 자기 영지에 작은 검 장식품을 놓는다. ORKEA에서 만든 장식용 가구다.',
   furniture_shop_sign_weathered: '펼쳐서 자기 영지에 상점 간판(풍화된 아치)을 놓는다. ORKEA에서 만든 장식용 가구다.',
+  furniture_hearthbound_rug: '따뜻하게 손으로 짠 양모 러그로, 벽난로와 가정을 상징하는 문양이 있다. 펼쳐서 자기 영지에 놓는다.',
 };
 
 export const monsterNames = {
