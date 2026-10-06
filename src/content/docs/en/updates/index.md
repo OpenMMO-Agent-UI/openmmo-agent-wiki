@@ -19,9 +19,69 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v114 — client v0.62.1 (current)
+## Protocol v116 — client v0.63.0 (current)
 
-**The live server currently requires v114.**
+**The live server currently requires v116.**
+
+**New system**
+
+- **Hair and eye color are now customizable, and the appearance picker got
+  thumbnail previews** (2026-10-05) — on top of the existing face and
+  hairstyle choices, there are now 8 preset hair and eye color swatches
+  plus a custom color picker; picking an eye color zooms in on the face for
+  comparison. Colors are stored as lowercase `#rrggbb`; older character
+  appearance records without a color field are backfilled with the default
+  warm-brown hair (`#604332`) and hazel eyes (`#786545`). The face and
+  hairstyle buttons now show real model thumbnails instead of placeholders.
+  This batch of messages bumped the protocol to v116.
+
+**New items & assets**
+
+- **Caveman gets a starter outfit** (2026-10-04) — a shoulder wrap, fur
+  loincloth, fur boots, and bracers (no helmet), unpriced and unsellable
+  just like the Knight, Barbarian, and Rogue starter sets. Male characters
+  only, for now.
+
+**Balance**
+
+- **Closed dungeon doors now block monster chase detection** (2026-10-03) —
+  a monster chasing you that loses line of sight behind a closed door stops
+  moving and searching, and resumes the chase once the door opens again;
+  the existing 5m through-wall detection range is unaffected. Per-tick
+  pathfinding is also capped (20,000 expanded nodes and 2,000 attack-position
+  candidates per search, to leave budget for the direct chase), failed
+  chases retry with a backoff of 0.5s, 1s, 2s, then 4s, and the wait resets
+  on a door state change, meaningful target movement, or a target switch;
+  hitting the node cap isn't treated as permanently unreachable.
+
+**Fix**
+
+- **Knight plate pants no longer clip at the boot openings** (2026-10-04).
+- **Fingers no longer stay open while holding a lit torch, and boots no
+  longer sink into the floor after equipping Barbarian boots** (2026-10-03).
+
+**Performance**
+
+- **Other players' capes and pelt physics now run staggered at 30 Hz, and
+  shadow passes share scene matrices; torch shadow maps only update while
+  the torch is lit** (2026-10-04).
+
+## Protocol v115 — client not yet released
+
+**New system**
+
+- **Male characters of Knight, Barbarian, Rogue, Caveman, Ranger, and
+  Priest can pick a face (Default or Rugged) and hairstyle (Crop, Wavy
+  with bone ornament, or None) at character creation, and it's saved**
+  (2026-10-05) — each face uses a standardized head shape, so both
+  hairstyles work with either face; the choice is saved to the
+  `characters.appearance` JSON, existing characters default to the Default
+  face and Crop hair, and taking off your helmet shows the saved hairstyle
+  again. Character creation, select, your own view, other players, and
+  emote previews all send the same selection. This batch of messages
+  bumped the protocol to v115.
+
+## Protocol v114 — client v0.62.1
 
 **New system**
 
