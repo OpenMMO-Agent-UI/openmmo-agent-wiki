@@ -19,9 +19,37 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v116 — client v0.63.0 (current)
+## Protocol v117 — client v0.64.0 (current)
 
-**The live server currently requires v116.**
+**The live server currently requires v117.**
+
+**New system**
+
+- **Ranger face and Ranger long hair added to character creation**
+  (2026-10-08) — a third face option and a fourth hairstyle option,
+  selectable on top of the existing ones by all six supported male classes
+  (Knight, Barbarian, Rogue, Caveman, Ranger, Priest), not just Ranger
+  characters. Both support the same hair and eye color picker as the other
+  options; the long hair keeps its source texture's shading under the
+  chosen color. This batch of messages bumped the protocol to v117.
+
+**New items & assets**
+
+- **Ranger gets a starter outfit** (2026-10-07) — a worn top, pants, gloves,
+  and boots (no helmet), unpriced and unsellable just like the Knight,
+  Barbarian, Rogue, and Caveman starter sets. Male characters only, for now.
+
+**Fix**
+
+- **Ranger pants no longer clip through plate armor at the waist**
+  (2026-10-07).
+- **A scheduled NPC blocked by a closed door now opens it and continues to
+  its destination instead of giving up on the move** (2026-10-05).
+- **A client message the server can't decode now closes the connection with
+  a desync notice instead of just logging an error**, telling a mismatched
+  build to reload rather than leaving the connection to loop (2026-10-05).
+
+## Protocol v116 — client v0.63.0
 
 **New system**
 
