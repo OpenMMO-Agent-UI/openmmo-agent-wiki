@@ -19,9 +19,56 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v117 — client v0.64.0 (current)
+## Protocol v118 — client v0.65.1 (current)
 
-**The live server currently requires v117.**
+**The live server currently requires v118.**
+
+**New system**
+
+- **Player auto-attack moved to the server; the base attack interval is now
+  1533 ms (was 1380 ms)** (2026-10-08) — the client no longer repeats attack
+  requests on its own; it sends a single `StartPlayerAttack` with a target,
+  and the server schedules each player's next swing, re-validating range,
+  walls, life, and ammo when it fires. Movement or any other action cancels
+  the attack; walking back into range starts it again. Dagger's Double
+  Slash now lands on the next scheduled swing, and the server doesn't catch
+  up on missed swings after a delay. This batch of messages bumped the
+  protocol to v118.
+
+**New items & assets**
+
+- **Priest gets a starter outfit** (2026-10-10) — a worn mitre, robe,
+  chainmail pants, and boots, unpriced and unsellable just like the Knight,
+  Barbarian, Rogue, Caveman, and Ranger starter sets. Male characters only,
+  for now.
+
+**Fix**
+
+- **Fixed a lock-order deadlock that froze the server on 2026-10-10** — NPC
+  trading (gold lock then inventory lock) and estate storage (inventory
+  lock then gold read) could grab locks in opposite order and deadlock;
+  because the lock is a fair queue, the stuck requests dragged down players
+  and character data too. Estate storage, furniture transfers, inventory
+  cleanup, and landscaping now follow one lock order — players →
+  characters → stalls/fences → gold → hunger → inventory → mana — and a
+  static lock-order scanner (`tools/lockscan.py`) now gates CI.
+
+**Performance**
+
+- **Estate storage, fence edits, land tax transfers, and furniture moves no
+  longer hold the inventory (and sometimes gold) lock across the whole
+  database write** (2026-10-10) — previously the entire round trip to the
+  database stalled behind the lock, blocking every other inventory user;
+  affected items are now pulled out of the bag, the lock is released, the
+  database write runs, and the result is settled afterward (refunded on
+  failure), cutting how long other players wait.
+- **All modular outfit textures now use KTX2 GPU compression** (2026-10-10)
+  — texture memory drops by about 75% (vs. same-resolution RGBA8 with
+  mipmaps), but the GLB download itself grows from about 10.4 MiB to
+  20.1 MiB; devices without GPU compression support fall back to
+  uncompressed textures, so the actual memory savings varies by device.
+
+## Protocol v117 — client v0.64.0
 
 **New system**
 
