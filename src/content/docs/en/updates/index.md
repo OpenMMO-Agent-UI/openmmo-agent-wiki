@@ -19,9 +19,50 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v118 — client v0.65.1 (current)
+## Protocol v119 — client v0.66.0 (current)
 
-**The live server currently requires v118.**
+**The live server currently requires v119.**
+
+**New system**
+
+- **Admins can post a `/announce` message that pops up as a 30-second global
+  toast on every online player's screen** (2026-10-10) — up to 500
+  characters, delivered through a new `ServerAnnouncement` broadcast; up to
+  3 toasts show at once at the top of the screen, auto-dismissing after 30
+  seconds or closable with the × button. Regular players can't see the
+  command itself. This batch of messages bumped the protocol to v119.
+
+**New items & assets**
+
+- **Bard gets a starter outfit** (2026-10-11) — a feathered hat, vest,
+  pants, and boots, unpriced and unsellable just like the Knight, Barbarian,
+  Rogue, Caveman, Ranger, and Priest starter sets. Male characters only, for
+  now.
+- **Female knights now wear a full modular plate outfit instead of showing
+  the base bodysuit wherever a piece had no female model yet**
+  (2026-10-11 – 2026-10-14) — a dedicated female skeleton plus helmet,
+  gauntlet, breastplate, greaves, and boot models. Plate is still the only
+  female outfit modeled so far, so any equipped piece renders as plate for
+  now. Existing female knights were granted the missing pieces of the
+  five-piece starter set once, during deployment, via a one-off script;
+  already-equipped or enchanted items were left untouched.
+
+**Fix**
+
+- **Fixed production deployments occasionally missing the priest helmet and
+  some male face model files** (2026-10-10).
+
+**Performance**
+
+- **Monster pathfinding now draws from one shared 20,000-node budget per
+  tick, with a failed-path cache** (2026-10-10) — a monster whose search
+  can't finish within its tick's share is deferred and resumed first next
+  tick; a monster that can't find a path caches the failure for 10 seconds,
+  invalidated when the terrain changes; monsters tick in a fixed id order.
+  This keeps dense monster clusters from starving pathfinding for everyone
+  else that tick.
+
+## Protocol v118 — client v0.65.1
 
 **New system**
 
