@@ -14,8 +14,8 @@
 | 平台 | 下載 |
 |---|---|
 | macOS (Apple Silicon) | [openmmo-agent-v0.39.0-p48-macos-arm64.zip](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest/download/openmmo-agent-v0.39.0-p48-macos-arm64.zip) |
-| Windows (x64) | [openmmo-agent-v0.66.0-p119-windows-x64.exe](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest/download/openmmo-agent-v0.66.0-p119-windows-x64.exe) |
-| Linux (x64) | [openmmo-agent-v0.66.0-p119-linux-x64.AppImage](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest/download/openmmo-agent-v0.66.0-p119-linux-x64.AppImage) |
+| Windows (x64) | [openmmo-agent-v0.67.0-p120-windows-x64.exe](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest/download/openmmo-agent-v0.67.0-p120-windows-x64.exe) |
+| Linux (x64) | [openmmo-agent-v0.67.0-p120-linux-x64.AppImage](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest/download/openmmo-agent-v0.67.0-p120-linux-x64.AppImage) |
 
 版本與遊戲協議相容性見[最新 release](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest),
 完整安裝步驟見[安裝指南](https://openmmo-agent-ui.github.io/openmmo-agent-wiki/client/install/)。
