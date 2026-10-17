@@ -19,9 +19,55 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v119 — client v0.66.0 (current)
+## Protocol v120 — client v0.67.0 (current)
 
-**The live server currently requires v119.**
+**The live server currently requires v120.**
+
+**New system**
+
+- **The server can now send a per-IP "operator notice" that stays on screen
+  until confirmed** (2026-10-14) — the server reads `ip_notices.txt` and
+  sends a new `OperatorNotice` message to matching player (non-NPC)
+  connections on game entry and again every hour while they're online; the
+  client shows it as a modal after loading that only closes when confirmed.
+  Used to tell the operator of a specific client something they need to
+  fix; regular players never see it. This batch of messages bumped the
+  protocol to v120.
+
+**New items & assets**
+
+- **Female Barbarians now get the full starter outfit on the modular female
+  rig** (2026-10-14 – 2026-10-16) — a horned helmet with fitted hair,
+  breastplate, fur skirt bottom, leather sandals, and bracers, on the female
+  skeleton with new skirt physics and sandal-fit correction. Unpriced and
+  unsellable, just like the male Barbarian set. Existing female Barbarians
+  were granted the missing pieces of the five-piece starter set once, during
+  deployment, via a one-off script; already-equipped or enchanted items were
+  left untouched.
+- **Female characters wearing leather-material armor now render with the
+  Barbarian look** (2026-10-16) — previously any equipped piece without a
+  dedicated female model rendered as plate; items with leather material or a
+  Barbarian weapon model now render as Barbarian instead. Other not-yet-
+  modeled female outfits still render as plate.
+
+**Fix**
+
+- **Fixed attacks spamming a new request every 0.2 seconds when the server
+  rejected an attack during a chase** (2026-10-14) — a chase cleared the
+  attack request locally, so the stop message that followed a rejection was
+  dropped, and reaching range re-sent the attack right away. The stop is now
+  paired with the preceding rejection so combat ends correctly.
+- **Fixed the modular Rogue's Double Slash combo 404ing for lack of a
+  per-rig preview model** (2026-10-14) — added dedicated Double Slash
+  animation packs for modular male and female characters.
+
+**Performance**
+
+- **Raised the model cache limit from 500 MB to 1 GB** (2026-10-14) — hashed
+  model and music files for the current build were close to the old limit;
+  raising it avoids the cache being evicted and reloaded often.
+
+## Protocol v119 — client v0.66.0
 
 **New system**
 
