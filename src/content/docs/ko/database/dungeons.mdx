@@ -4,7 +4,7 @@ description: OpenMMO 던전의 위치, 층수, 보스와 상자 드랍 규칙.
 ---
 
 import FilterTable from '../../../../components/FilterTable.astro';
-import { dungeons, monsters, items, lockedFloors } from '../../../../lib/gamedata.js';
+import { dungeons, monsters, items, lockedFloors, dungeonSpawns } from '../../../../lib/gamedata.js';
 import { dungeonNames, monsterName, itemName } from '../../../../lib/ko.js';
 
 export const dName = (d) => dungeonNames[d.id] ?? d.name;
@@ -64,6 +64,13 @@ export const signature = (d) => (d.chestDrops.length ? d.chestDrops.map(itemName
 **오크 워로드**는 격차가 큽니다 — 체력 120은 데이터에 직접 지정된 값이고
 (레벨에서 유도되는 45가 아닙니다), Guard 13, 명중 +6, 피해 2d8입니다.
 오크 소굴은 10층이니 가죽 세트를 갖추고 내려가는 것을 권합니다.
+
+**바르칸**(부서진 요새의 보스)은 전투 시작 6초 후부터, 이후 15초마다 평타
+대신 룬 베기를 시전합니다 — 캐스팅 중에는 방향을 고정하고 그 자리에 멈춰
+스태거를 무시하며, 검을 들어 올리는 동작이 유일한 전조입니다. 2.55초
+시점에 칼날이 휘둘러지고, 정면 90도·4m 부채꼴 안의 모든 플레이어가 명중
+판정 없이 평타의 5배 피해를 받습니다. 휘두르기 전에 부채꼴 밖으로
+옆걸음치면 피할 수 있고, 휘두른 뒤에는 2.8초의 반격 틈이 생깁니다.
 
 보스는 죽어도 타이머로 리스폰하지 않습니다 — 해당 층은 그날의 **일몰 던전
 리셋**(게임 하루에 한 번)이 올 때까지 죽은 채로 유지되며, 리셋되면 그
@@ -169,19 +176,22 @@ export const signature = (d) => (d.chestDrops.length ? d.chestDrops.map(itemName
   placeholder="몬스터 검색…"
   columns={[
     { key: 'name', label: '몬스터' },
+    { key: 'dungeon', label: '던전' },
     { key: 'level', label: '레벨', align: 'right' },
     { key: 'depth', label: '출현 심도' },
     { key: 'weight', label: '가중치', align: 'right' },
     { key: 'hp', label: '체력', align: 'right' },
     { key: 'dmg', label: '피해', align: 'center' },
   ]}
-  rows={monsters
-    .filter((m) => m.dungeonMinDepth !== null)
-    .sort((a, b) => a.dungeonMinDepth - b.dungeonMinDepth || a.level - b.level)
-    .map((m) => ({
-      name: monsterName(m.id), level: m.level,
-      depth: `${m.dungeonMinDepth} – ${m.dungeonMaxDepth}층`,
-      weight: m.dungeonWeight, hp: m.healthEffective, dmg: m.damageRollEffective,
+  rows={dungeonSpawns
+    .map((s) => ({ s, m: monsters.find((x) => x.id === s.monsterId) }))
+    .sort((a, b) => a.s.minDepth - b.s.minDepth || a.m.level - b.m.level)
+    .map(({ s, m }) => ({
+      name: monsterName(m.id),
+      dungeon: dungeons.filter((d) => (d.spawnGroup || null) === s.group).map(dName).join(', '),
+      level: m.level,
+      depth: `${s.minDepth} – ${s.maxDepth}층`,
+      weight: s.weight, hp: m.healthEffective, dmg: m.damageRollEffective,
     }))}
 />
 

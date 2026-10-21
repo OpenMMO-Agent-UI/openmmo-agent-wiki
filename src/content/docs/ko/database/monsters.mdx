@@ -4,8 +4,11 @@ description: OpenMMO 전체 몬스터의 수치 — 체력, Guard, 피해, 행�
 ---
 
 import FilterTable from '../../../../components/FilterTable.astro';
-import { monsters, items, averageRoll, healthForLevel, attackBonusForLevel, damageRollForLevel } from '../../../../lib/gamedata.js';
-import { monsterName, itemName, behaviorNames } from '../../../../lib/ko.js';
+import { monsters, items, dungeons, dungeonSpawns, averageRoll, healthForLevel, attackBonusForLevel, damageRollForLevel } from '../../../../lib/gamedata.js';
+import { monsterName, itemName, behaviorNames, dungeonNames } from '../../../../lib/ko.js';
+
+export const dungeonName = (d) => dungeonNames[d.id] ?? d.name;
+export const spawnDungeons = (group) => dungeons.filter((d) => (d.spawnGroup || null) === group).map(dungeonName).join(', ');
 
 export const mark = (value, derived) => (derived ? `${value} *` : `${value}`);
 export const byLevel = (a, b) => a.level - b.level;
@@ -95,16 +98,25 @@ export const byLevel = (a, b) => a.level - b.level;
   placeholder="몬스터 검색…"
   columns={[
     { key: 'name', label: '이름' },
+    { key: 'dungeon', label: '던전' },
     { key: 'depth', label: '던전 심도' },
     { key: 'weight', label: '생성 가중치', align: 'right' },
     { key: 'note', label: '비고' },
   ]}
-  rows={monsters.slice().sort(byLevel).map((m) => ({
-    name: monsterName(m.id),
-    depth: m.dungeonMinDepth !== null ? `${m.dungeonMinDepth} – ${m.dungeonMaxDepth}층` : '던전에 생성되지 않음',
-    weight: m.dungeonWeight ?? '—',
-    note: m.boss ? '보스, 던전 최하층에 고정 배치' : '',
-  }))}
+  rows={monsters.slice().sort(byLevel).flatMap((m) => {
+    const note = m.boss ? '보스, 던전 최하층에 고정 배치' : '';
+    const entries = dungeonSpawns.filter((s) => s.monsterId === m.id);
+    if (entries.length === 0) {
+      return [{ name: monsterName(m.id), dungeon: '—', depth: '던전에 생성되지 않음', weight: '—', note }];
+    }
+    return entries.map((s) => ({
+      name: monsterName(m.id),
+      dungeon: spawnDungeons(s.group),
+      depth: `${s.minDepth} – ${s.maxDepth}층`,
+      weight: s.weight,
+      note,
+    }));
+  })}
 />
 
 ## 드랍

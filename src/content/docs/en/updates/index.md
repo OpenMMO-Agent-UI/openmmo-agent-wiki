@@ -19,9 +19,156 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v120 — client v0.67.0 (current)
+## Protocol v124 — client v0.68.0 (current)
 
-**The live server currently requires v120.**
+**The live server currently requires v124.**
+
+**New items & assets**
+
+- **Added the Amulet of the Earth, a tier 5 chest drop that adds max HP equal
+  to the wearer's level while worn** (2026-10-19) — rolls at 10% from
+  Sundered Bastion chests. Equipping it never heals, and unequipping clamps
+  current health down to the new max; leveling and saves only touch the
+  base HP, and the character panel shows the bonus separately. This batch
+  of messages bumped the protocol to v124, adding `max_hp_bonus` to
+  `EffectiveStatsUpdated`.
+
+**Fix**
+
+- **Fixed Barkan's plain swing cooldown restarting the moment his rune slash
+  cast began, so it ran out mid-cast and he swung the instant the cast
+  ended with no visible windup** (2026-10-19) — the cooldown now starts
+  after the cast finishes, leaving a 2.8s opening to counter.
+
+## Protocol v123 — client not yet released
+
+**New system**
+
+- **Gave Barkan, the Sundered Bastion boss, a dodgeable rune slash**
+  (2026-10-19) — starting 6s into a fight and every 15s after, Barkan casts
+  a rune slash in place of a plain swing: he locks his facing and holds
+  still through the cast, ignoring staggers, with raising the sword as the
+  only tell. At the 2.55s mark the blade sweeps and every player in the 90°
+  × 4m fan in front takes 5x a plain hit with no guard roll; stepping out of
+  the fan before the sweep avoids it entirely. Admins get a `/god` command
+  for testing — hits land but deal no damage, for that session only; regular
+  players never see it. This batch of messages bumped the protocol to v123,
+  adding `MonsterSkillStarted` so onlookers play the animation; damage still
+  arrives via `MonsterAttackedPlayer`.
+- **Added a priciest-first bag sort, plus sounds for jackpot coin piles and
+  dungeon key drops** (2026-10-17).
+
+**New items & assets**
+
+- **Added the Rune Blade, a 20% chest drop from the Sundered Bastion**
+  (2026-10-18) — two-handed, 2d10 damage, 50,000 gold. It's the same sword
+  Barkan himself wields, and its dice now add to his attack.
+- **Added the Supreme Healing Potion and lightened the Greater Healing
+  Potion from 1.25kg to 0.85kg** (2026-10-18) — the Supreme potion heals
+  24d4 for 4,500 and weighs 1.5kg. Healing per kilogram now climbs with the
+  tier (30 / 35 / 40), so a deep run's potions fit in a smaller bag. Wick
+  now sells the Greater and Supreme potions alongside Rica.
+
+**Fix**
+
+- **Fixed dungeon-spawned monsters always using the level-derived damage
+  table instead of their own csv damage dice, so the skeleton line and
+  Barkan never actually rolled their intended damage** (2026-10-18) — a csv
+  `damageRoll` now holds at any depth; only a blank roll still follows
+  depth, matching how attack bonus already worked.
+- **Reconnecting no longer makes a character who disconnected mid-fight
+  vanish** (2026-10-18) — a character that drops while in combat now stays
+  in the world until the fight ends, it dies, or 60s pass; re-entering
+  picks the body back up with its id, party, buffs and fight intact.
+- **The entry-loading grace now ends on any action, not just movement, and
+  logs it** (2026-10-18) — previously only a move before `WorldReady` ended
+  the grace; now any message except the five the web client sends on its
+  own while loading does, so a client can't interact with monsters before
+  it has actually entered the world.
+- **Dropped Great Swords and Rune Blades now lie flat on the ground instead
+  of standing on edge** (2026-10-18).
+- **Shaking your head now replaces the crouch animation when a ground item
+  is too heavy to pick up** (2026-10-17) — the client predicts the server's
+  weight check and plays an "annoyed head shake" with the too-heavy message
+  instead of the pickup animation; the server check still has the final
+  say.
+- **Fixed a corridor hugging a room corner sometimes leaving a one-cell-wide
+  opening that still got a door, even though a door there couldn't block
+  anything** (2026-10-17) — only openings at least two cells wide get a
+  door now; locked exits are unaffected. Also fixed dungeon puddle tiles
+  z-fighting with broken masonry tiles as the camera moved.
+
+**Client**
+
+- **Added the admin chat command `/tp <dungeon> <floor>`, which jumps to any
+  floor of any dungeon from anywhere** (2026-10-17) — landing where the
+  stairs from above would arrive. Dungeons now answer to unique short names
+  (the two dungeons that used to share "crypt" are now "old" and
+  "skeleton") and to a `dN` alias in list order; `/tp <dungeon>`,
+  `/tp <dungeon>-boss` and `/tp <dungeon> <floor>` all accept the short
+  name, the full id, or any word of it, and a name shared by two dungeons
+  is refused rather than guessed. Client-only; regular players don't see
+  this command.
+
+## Protocol v122 — client not yet released
+
+**New system**
+
+- **Nearby players now see a level-up effect, pose and sound**
+  (2026-10-17) — the server broadcasts `PlayerLeveledUp` to nearby players;
+  the leveling player plays gold orbs spiraling up the body with rising
+  rings and a light column, while holding the enchantment pose. This batch
+  of messages bumped the protocol to v122.
+- **Added a sort dropdown to the inventory panel (type, weight — heaviest
+  or lightest, name, or most recent pickup; the choice persists per
+  browser), plus an oldest-first bag sort and a rare "jackpot" coin pile
+  (3% chance of 5,000–15,000 copper, about 1 gold, instead of the usual
+  1–10)** (2026-10-17).
+
+**Fix**
+
+- **Pickup, wallet, chest and tip-hat messages now show copper amounts as
+  g/s/c instead of a raw number** (2026-10-17) — the server still sends raw
+  copper; formatting moved to the client's localization layer, and coin
+  pouch messages are now localized too.
+
+## Protocol v121 — client not yet released
+
+**New system**
+
+- **New dungeon "Sundered Bastion" is live: 25 floors, final boss Barkan**
+  (2026-10-17) — a tier 5 equipment dungeon. Its chest has no guaranteed
+  signature drop, just the independent-roll tier 5 item pool; floors
+  5/10/15/20/25 each lock behind their matching Sundered Bastion key.
+
+**New items & assets**
+
+- **Added the Helm of Brilliance: +1 INT while worn, plus a Radiance-like
+  light effect** (2026-10-16 – 2026-10-17) — the character panel shows the
+  bonus as "11 (+1)". It currently has no drop or purchase source yet; the
+  data is registered ahead of release, the same way the Great Sword's tier
+  was parked ahead of a dungeon.
+
+**Fix**
+
+- **Fixed the agent-client (the AI driver, not the web client) still
+  issuing position-dependent actions before a teleport scroll had taken
+  effect** (2026-10-16) — for teleport and party-summon actions that move
+  the character, the agent-client now waits for completion and discards
+  any remaining position-dependent actions queued in the same turn.
+- **Fixed dungeon pathfinding sometimes skipping the entrance landing
+  waypoint when the goal cell sat mid-stairwell** (2026-10-16).
+- **Fixed dungeon puddles, the Stalker and the wall torch potentially
+  overflowing their vertex buffer on WebGPU** (2026-10-17).
+
+**Performance**
+
+- **Compressed or trimmed several monster and scene models (the Stalker,
+  the Guard, the Maid, the stone hearth, Tobin, the wall torch) to smaller
+  file sizes for faster loading** (2026-10-16) — Tobin's background music
+  playback was also tuned in the same pass.
+
+## Protocol v120 — client v0.67.0
 
 **New system**
 

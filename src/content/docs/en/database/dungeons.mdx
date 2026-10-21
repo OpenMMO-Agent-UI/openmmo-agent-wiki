@@ -4,7 +4,7 @@ description: Dungeon locations, floor counts, bosses and the chest drop rules.
 ---
 
 import FilterTable from '../../../../components/FilterTable.astro';
-import { dungeons, monsters, items, lockedFloors } from '../../../../lib/gamedata.js';
+import { dungeons, monsters, items, lockedFloors, dungeonSpawns } from '../../../../lib/gamedata.js';
 import { itemName } from '../../../../lib/en.js';
 
 export const signature = (d) => (d.chestDrops.length ? d.chestDrops.map(itemName).join(', ') : '—');
@@ -64,6 +64,14 @@ The **Orc Warlord** is a step up: its 120 health is set directly in the data
 (not the 45 the level would derive), with Guard 13, +6 to hit and 2d8 damage.
 Orc Warrens runs 10 floors, so put a full leather set together before going
 down.
+
+**Barkan** (the Sundered Bastion boss) casts a rune slash in place of a
+plain swing starting 6s into a fight and every 15s after: he locks his
+facing and holds still through the cast, ignoring staggers, with raising
+the sword as the only tell. At the 2.55s mark the blade sweeps and every
+player in the 90° × 4m fan in front takes 5x a plain hit with no guard
+roll; stepping out of the fan before the sweep avoids it, and he's open
+for 2.8s after the swing for a counter.
 
 A slain boss doesn't respawn on a timer — its floor holds it dead until the
 next **sunset dungeon reset** (once per game day), which also teleports
@@ -177,19 +185,22 @@ yet, with no real way to obtain it right now.
   placeholder="Search monsters…"
   columns={[
     { key: 'name', label: 'Monster' },
+    { key: 'dungeon', label: 'Dungeon' },
     { key: 'level', label: 'Level', align: 'right' },
     { key: 'depth', label: 'Spawn depth' },
     { key: 'weight', label: 'Weight', align: 'right' },
     { key: 'hp', label: 'Health', align: 'right' },
     { key: 'dmg', label: 'Damage', align: 'center' },
   ]}
-  rows={monsters
-    .filter((m) => m.dungeonMinDepth !== null)
-    .sort((a, b) => a.dungeonMinDepth - b.dungeonMinDepth || a.level - b.level)
-    .map((m) => ({
-      name: m.name, level: m.level,
-      depth: `Floors ${m.dungeonMinDepth} – ${m.dungeonMaxDepth}`,
-      weight: m.dungeonWeight, hp: m.healthEffective, dmg: m.damageRollEffective,
+  rows={dungeonSpawns
+    .map((s) => ({ s, m: monsters.find((x) => x.id === s.monsterId) }))
+    .sort((a, b) => a.s.minDepth - b.s.minDepth || a.m.level - b.m.level)
+    .map(({ s, m }) => ({
+      name: m.name,
+      dungeon: dungeons.filter((d) => (d.spawnGroup || null) === s.group).map((d) => d.name).join(', '),
+      level: m.level,
+      depth: `Floors ${s.minDepth} – ${s.maxDepth}`,
+      weight: s.weight, hp: m.healthEffective, dmg: m.damageRollEffective,
     }))}
 />
 

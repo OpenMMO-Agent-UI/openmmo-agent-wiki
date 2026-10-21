@@ -4,8 +4,11 @@ description: OpenMMO 全部怪物的數值 —— 生命、Guard、傷害、行�
 ---
 
 import FilterTable from '../../../components/FilterTable.astro';
-import { monsters, items, averageRoll, healthForLevel, attackBonusForLevel, damageRollForLevel } from '../../../lib/gamedata.js';
-import { monsterName, itemName, behaviorNames } from '../../../lib/zh.js';
+import { monsters, items, dungeons, dungeonSpawns, averageRoll, healthForLevel, attackBonusForLevel, damageRollForLevel } from '../../../lib/gamedata.js';
+import { monsterName, itemName, behaviorNames, dungeonNames } from '../../../lib/zh.js';
+
+export const dungeonName = (d) => dungeonNames[d.id] ?? d.name;
+export const spawnDungeons = (group) => dungeons.filter((d) => (d.spawnGroup || null) === group).map(dungeonName).join('、');
 
 export const mark = (value, derived) => (derived ? `${value} *` : `${value}`);
 export const byLevel = (a, b) => a.level - b.level;
@@ -98,6 +101,7 @@ export const byLevel = (a, b) => a.level - b.level;
   placeholder="搜尋怪物…"
   columns={[
     { key: 'name', label: '名稱' },
+    { key: 'dungeon', label: '所在地城' },
     { key: 'depth', label: '地城深度' },
     { key: 'weight', label: '生成權重', align: 'right' },
     { key: 'note', label: '備註' },
@@ -105,12 +109,20 @@ export const byLevel = (a, b) => a.level - b.level;
   rows={monsters
     .slice()
     .sort(byLevel)
-    .map((m) => ({
-      name: monsterName(m.id),
-      depth: m.dungeonMinDepth !== null ? `${m.dungeonMinDepth} – ${m.dungeonMaxDepth} 層` : '不在地城生成',
-      weight: m.dungeonWeight ?? '—',
-      note: m.boss ? '頭目,固定配置在地城最底層' : '',
-    }))}
+    .flatMap((m) => {
+      const note = m.boss ? '頭目,固定配置在地城最底層' : '';
+      const entries = dungeonSpawns.filter((s) => s.monsterId === m.id);
+      if (entries.length === 0) {
+        return [{ name: monsterName(m.id), dungeon: '—', depth: '不在地城生成', weight: '—', note }];
+      }
+      return entries.map((s) => ({
+        name: monsterName(m.id),
+        dungeon: spawnDungeons(s.group),
+        depth: `${s.minDepth} – ${s.maxDepth} 層`,
+        weight: s.weight,
+        note,
+      }));
+    })}
 />
 
 ## 掉落

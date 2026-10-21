@@ -4,7 +4,7 @@ description: OpenMMO 地城的位置、樓層數、頭目與寶箱掉落規則�
 ---
 
 import FilterTable from '../../../components/FilterTable.astro';
-import { dungeons, monsters, items, worldDrops, lockedFloors } from '../../../lib/gamedata.js';
+import { dungeons, monsters, items, worldDrops, lockedFloors, dungeonSpawns } from '../../../lib/gamedata.js';
 import { dungeonNames, monsterName, itemName } from '../../../lib/zh.js';
 
 export const dungeonName = (d) => dungeonNames[d.id] ?? d.name;
@@ -71,6 +71,11 @@ export const signature = (d) => (d.chestDrops.length ? d.chestDrops.map(itemName
 
 **獸人督軍**的落差很大 —— 生命 120 是資料裡直接指定的(不是等級推算的 45),
 Guard 13、命中 +6、傷害 2d8。獸人巢穴有 10 層,建議先把皮甲一套湊齊再下去。
+
+**巴爾坎**(桑德德・巴斯蒂恩的頭目)戰鬥開始 6 秒後、之後每 15 秒會用「符文斬擊」
+取代一般揮劍:蓄力時鎖定朝向、無視擊退,舉劍是唯一預兆;蓄力 2.55 秒時劍鋒橫掃,
+正面 90 度、4 公尺扇形內會直接吃下 5 倍一般攻擊的傷害、不擲命中骰,蓄力中側移出
+扇形範圍就能躲過,斬擊後牠也有 2.8 秒的空檔可以反打。
 
 頭目死亡後不會用計時器重生 —— 牠所在的樓層會卡住,直到當天的**日落地城重置**
 (每個遊戲日一次)才會復活;重置同時會把還留在該地城裡的所有人傳送回入口,
@@ -166,20 +171,22 @@ Guard 13、命中 +6、傷害 2d8。獸人巢穴有 10 層,建議先把皮甲一
   placeholder="搜尋怪物…"
   columns={[
     { key: 'name', label: '怪物' },
+    { key: 'dungeon', label: '所在地城' },
     { key: 'level', label: '等級', align: 'right' },
     { key: 'depth', label: '出現深度' },
     { key: 'weight', label: '權重', align: 'right' },
     { key: 'hp', label: '生命', align: 'right' },
     { key: 'dmg', label: '傷害', align: 'center' },
   ]}
-  rows={monsters
-    .filter((m) => m.dungeonMinDepth !== null)
-    .sort((a, b) => a.dungeonMinDepth - b.dungeonMinDepth || a.level - b.level)
-    .map((m) => ({
+  rows={dungeonSpawns
+    .map((s) => ({ s, m: monsters.find((x) => x.id === s.monsterId) }))
+    .sort((a, b) => a.s.minDepth - b.s.minDepth || a.m.level - b.m.level)
+    .map(({ s, m }) => ({
       name: monsterName(m.id),
+      dungeon: dungeons.filter((d) => (d.spawnGroup || null) === s.group).map(dungeonName).join('、'),
       level: m.level,
-      depth: `${m.dungeonMinDepth} – ${m.dungeonMaxDepth} 層`,
-      weight: m.dungeonWeight,
+      depth: `${s.minDepth} – ${s.maxDepth} 層`,
+      weight: s.weight,
       hp: m.healthEffective,
       dmg: m.damageRollEffective,
     }))}

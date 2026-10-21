@@ -13,6 +13,7 @@ const FILES = [
   'items.csv',
   'monsters.csv',
   'dungeons.csv',
+  'dungeon_spawns.csv',
   'merchants.csv',
   'npcs.csv',
   'world_drop.csv',

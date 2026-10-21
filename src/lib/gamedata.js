@@ -12,6 +12,7 @@
 import itemsCsv from '../data/game/items.csv?raw';
 import monstersCsv from '../data/game/monsters.csv?raw';
 import dungeonsCsv from '../data/game/dungeons.csv?raw';
+import dungeonSpawnsCsv from '../data/game/dungeon_spawns.csv?raw';
 import merchantsCsv from '../data/game/merchants.csv?raw';
 import npcsCsv from '../data/game/npcs.csv?raw';
 import worldDropCsv from '../data/game/world_drop.csv?raw';
@@ -22,6 +23,7 @@ const sources = {
   items: itemsCsv,
   monsters: monstersCsv,
   dungeons: dungeonsCsv,
+  dungeon_spawns: dungeonSpawnsCsv,
   merchants: merchantsCsv,
   npcs: npcsCsv,
   world_drop: worldDropCsv,
@@ -186,10 +188,6 @@ export const monsters = parseCsv('monsters').map((r) => {
     attackCooldown: num(r.attackCooldown),
     weapon: r.weapon || null,
     weaponDropChance: num(r.weaponDropChance),
-    dungeonMinDepth: num(r.dungeonMinDepth),
-    dungeonMaxDepth: num(r.dungeonMaxDepth),
-    dungeonWeight: num(r.dungeonWeight),
-    dungeonGroup: r.dungeonGroup || null,
     scale: num(r.scale),
     boss: bool(r.boss),
     sharedAnims: bool(r.sharedAnims),
@@ -215,6 +213,17 @@ export const dungeons = parseCsv('dungeons').map((r) => ({
   chestDrops: r.chestDrops ? r.chestDrops.split(';') : [],
   keyPrefix: r.keyPrefix || null,
   spawnGroup: r.spawnGroup || null,
+}));
+
+/** Monsters a dungeon's `spawnGroup` can roll per depth (data-src/dungeon_spawns.csv). */
+export const dungeonSpawns = parseCsv('dungeon_spawns').map((r) => ({
+  id: r.id,
+  group: r.group || null,
+  monsterId: r.monster,
+  minDepth: num(r.minDepth),
+  maxDepth: num(r.maxDepth),
+  weight: num(r.weight) ?? 1,
+  aggressive: bool(r.aggressive),
 }));
 
 /** Every 5th floor gets a locked stair room, keyed `{keyPrefix}_{floor}` (doc/DUNGEON_REWARD.md). */

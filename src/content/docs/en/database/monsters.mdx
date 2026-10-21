@@ -4,8 +4,10 @@ description: Stats for every monster in OpenMMO — health, Guard, damage, behav
 ---
 
 import FilterTable from '../../../../components/FilterTable.astro';
-import { monsters, items, averageRoll, healthForLevel, attackBonusForLevel, damageRollForLevel } from '../../../../lib/gamedata.js';
+import { monsters, items, dungeons, dungeonSpawns, averageRoll, healthForLevel, attackBonusForLevel, damageRollForLevel } from '../../../../lib/gamedata.js';
 import { monsterName, itemName, behaviorNames } from '../../../../lib/en.js';
+
+export const spawnDungeons = (group) => dungeons.filter((d) => (d.spawnGroup || null) === group).map((d) => d.name).join(', ');
 
 export const mark = (value, derived) => (derived ? `${value} *` : `${value}`);
 export const byLevel = (a, b) => a.level - b.level;
@@ -96,16 +98,25 @@ regions. A higher weight means it turns up more often within its depth range.
   placeholder="Search monsters…"
   columns={[
     { key: 'name', label: 'Name' },
+    { key: 'dungeon', label: 'Dungeon' },
     { key: 'depth', label: 'Dungeon depth' },
     { key: 'weight', label: 'Spawn weight', align: 'right' },
     { key: 'note', label: 'Notes' },
   ]}
-  rows={monsters.slice().sort(byLevel).map((m) => ({
-    name: m.name,
-    depth: m.dungeonMinDepth !== null ? `Floors ${m.dungeonMinDepth} – ${m.dungeonMaxDepth}` : 'Does not spawn in dungeons',
-    weight: m.dungeonWeight ?? '—',
-    note: m.boss ? 'Boss, placed on the dungeon’s bottom floor' : '',
-  }))}
+  rows={monsters.slice().sort(byLevel).flatMap((m) => {
+    const note = m.boss ? 'Boss, placed on the dungeon’s bottom floor' : '';
+    const entries = dungeonSpawns.filter((s) => s.monsterId === m.id);
+    if (entries.length === 0) {
+      return [{ name: m.name, dungeon: '—', depth: 'Does not spawn in dungeons', weight: '—', note }];
+    }
+    return entries.map((s) => ({
+      name: m.name,
+      dungeon: spawnDungeons(s.group),
+      depth: `Floors ${s.minDepth} – ${s.maxDepth}`,
+      weight: s.weight,
+      note,
+    }));
+  })}
 />
 
 ## Drops
