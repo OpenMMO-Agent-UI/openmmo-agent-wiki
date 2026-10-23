@@ -23,6 +23,7 @@ export const itemNames = {
   leather_armor: '가죽 갑옷',
   chain_mail: '체인 메일',
   wool_cape: '양모 망토',
+  invisibility_cloak: '투명 망토',
   cape_dye: '망토 염료',
   cape_transfer_kit: '망토 전사 키트',
   breastplate: '흉갑',
@@ -69,6 +70,7 @@ export const itemNames = {
   gold_ring: '금반지',
   silver_necklace: '은목걸이',
   earth_amulet: '대지의 아뮬렛',
+  terraclash_token: '테라클래시 파편',
   leather_belt: '가죽 벨트',
   coin_pile: '동전 무더기',
   healing_potion: '치유 물약',
@@ -207,6 +209,7 @@ export const itemDescriptions = {
   leather_armor: '가죽끈과 버클로 여민 부드러운 가죽 흉갑.',
   chain_mail: '금속 고리를 엮어 만든 갑옷.',
   wool_cape: '어깨에 걸쳐 걸을 때마다 끌리는 묵직한 양모 망토.',
+  invisibility_cloak: '빛을 휘어 착용자를 투명하게 만드는 은빛 망토다. 무언가를 공격하면 마법이 풀리며, 다시 입어야 투명해진다.',
   cape_dye: '마개로 막힌 안료 병. 망토를 착용한 상태에서 사용하면 원하는 색으로 천을 물들인다.',
   cape_transfer_kit: '왁스를 먹인 천과 정착액 한 통. 망토를 착용한 상태에서 사용하면 원하는 그림을 천에 인쇄한다.',
   breastplate: '광을 낸 강철 흉갑. 어지간한 공격은 튕겨낸다.',
@@ -252,7 +255,8 @@ export const itemDescriptions = {
   ring_of_protection: '십자 방패 문장이 새겨진 은반지. 공격을 빗나가게 한다.',
   gold_ring: '수수한 금반지.',
   silver_necklace: '수확 메달이 달린 섬세한 은사슬.',
-  earth_amulet: '룬이 새겨진 철 띠로 묶인 돌 심장이다. 안에서 아직 희미한 박동이 느껴진다.',
+  earth_amulet: '룬이 새겨진 철 띠로 묶인 돌 심장이다. 안에서 아직 희미한 박동이 느껴지며, 마치 뜯겨 나온 몸으로 돌아가길 바라는 듯하다.',
+  terraclash_token: '테라클래시의 몸에서 떨어져 나온 바위 조각이다. 균열 속 마그마와 봉인 룬이 여전히 빛나며, 토벌에 손을 보탰음을 증명한다.',
   leather_belt: '폭이 넓은 가죽 벨트.',
   coin_pile: '흩어진 동화 한 무더기.',
   healing_potion: '상처를 아물게 하고 활력을 되돌리는 진홍색 물약.',
@@ -392,6 +396,7 @@ export const monsterNames = {
   skeleton_warrior: '스켈레톤 전사',
   skeleton_knight: '스켈레톤 기사',
   barkan: '바르칸',
+  terraclash: '테라클래시',
 };
 
 export const debuffNames = {
@@ -447,6 +452,7 @@ export const categoryNames = {
   estate_return_scroll: '영지 귀환 주문서',
   house_scroll: '주택 주문서',
   peddler_stall: '행상 좌판',
+  raid_token: '토벌 증표',
 };
 
 export const slotNames = {

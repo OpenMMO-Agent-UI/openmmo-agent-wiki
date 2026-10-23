@@ -1,0 +1,83 @@
+---
+title: Field Raids
+description: How to get the Earth amulet, wake Terraclash at the altar, and what the raid pays out.
+---
+
+A public co-op fight shipped in protocol v126. Unlike dungeon bosses, a field
+raid is open to **anyone nearby** — no party required, and you don't need to
+own the summoning item yourself. There's one field boss today: **Terraclash**.
+
+## Getting started
+
+[Sundered Bastion](../../database/dungeons/)'s personal reward chest has
+about a 10% chance to contain an **Amulet of the Earth** (`earth_amulet`).
+You can wear it as a neck slot item (it adds max HP equal to your level), or
+offer it at the altar to summon Terraclash — pick one; offering consumes the
+amulet, and a worn amulet has to be unequipped before it can be offered.
+
+The altar sits near Sundered Bastion's entrance, with a heart-shaped recess
+on top. Clicking it tells you whether you can offer right now:
+
+- You need at least one Amulet of the Earth in your inventory (not worn).
+- It has to be **night, with a full moon** — either the big moon Eldor or the
+  small moon Serin counts, but the condition only starts after sunset even if
+  the moon rose earlier in the day.
+- No raid can already be in progress.
+
+If everything checks out, the confirmation dialog shows which amulet gets
+consumed and what you're about to summon. If not, you just get a hint and the
+amulet stays untouched. There's no server-wide announcement when someone
+offers, so gather people nearby before you do.
+
+## Waking up and the fight
+
+Offering makes the unremarkable rock and cliff around the altar crumble, and
+Terraclash rises out of it to attack anyone nearby. The fight zone is a 40m
+radius centered on the boss.
+
+It has 80,000 HP, never moves, and its basic attack targets whoever has dealt
+it the most recent damage — occasionally switching to someone who just drank
+a potion or hasn't hit it in over 10 seconds. Until its HP drops to 5%, it
+weaves these three skills in between basic attacks:
+
+| Skill | Damage | How to deal with it |
+|---|---|---|
+| Earth Roar | Fixed 165, ignores hit roll and armor | Hits everyone within 11m of its body — heal through it |
+| Formation Break | Basic attack ×3, ignores guard | A 12m fan in front of it (50° half-angle) — step out of the fan; up to 4 distant spots also get marked and turn to burning magma — move off a mark when you see one |
+| Earthquake | Fixed 120 | 9 random marked spots within 16m of its body — stand on unmarked ground |
+
+Each skill has its own cooldown, and it won't use another skill within 8
+seconds of the last one. Once its HP drops to 5%, it enters a **last stand**:
+five more Earth Roars, 10 seconds apart, with no basic attacks in between —
+the final healing check before the kill.
+
+## When the raid fails
+
+Two things put it back to sleep, and the amulet you offered isn't returned
+either way:
+
+- Everyone in the fight zone dies or leaves — no one left standing.
+- The full moon that was up when you summoned it sets, or day breaks.
+
+A server restart also cuts a raid short, and the amulet still isn't returned.
+
+## Rewards
+
+At the end of the fight (win or lose), anyone who dealt Terraclash damage and
+is still alive in the fight zone counts as a **valid participant**:
+
+- **Terraclash Shard** (`terraclash_token`): paid out by cumulative damage —
+  1+ gets you 1, 1,000+ gets you 2, 3,000+ gets you 3. Shards can't be traded,
+  but they bank toward an equipment exchange (what you can trade them for
+  hasn't shipped yet).
+- **Summoner-only reward**: if the raid succeeds, whoever offered the amulet
+  that started it gets a **Helm of Brilliance** (`helm_of_brilliance`, head
+  slot, +1 INT while worn, and it lights up your head enough to stand in for
+  a torch) — as long as they're also a valid participant.
+- **Titles**: see "Field raid titles" in [Titles](../../guides/titles/).
+
+## agent-client (bot players)
+
+The event feed carries the same warning format used for Barkan's rune strike
+— area, countdown, and marked coordinates — plus the hit results, and leaves
+it to the LLM to decide whether to step away or heal.

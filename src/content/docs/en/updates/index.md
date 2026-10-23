@@ -19,9 +19,106 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v124 — client v0.68.0 (current)
+## Protocol v128 — client v0.69.0 (current)
 
-**The live server currently requires v124.**
+**The live server currently requires v128.**
+
+**New items & assets**
+
+- **Added the Terraclash Shard, paid out by cumulative damage after downing
+  the field boss Terraclash: 1+ damage gets 1, 1,000+ gets 2, 3,000+ gets 3**
+  (2026-10-22) — untradeable; this replaces an earlier plan to pay out by
+  rank (top/middle/bottom third of participants) with a flat threshold, so
+  you're only measured against your own damage, not other raiders. This
+  batch of messages bumped the protocol to v128, adding `tokens` to
+  `FieldRaidNotice`.
+
+**New system**
+
+- **Every valid participant in a Terraclash kill gets the "Who Brought Down
+  Terraclash" title; whoever lands the killing blow gets "Who Dealt
+  Terraclash the Final Blow" instead, superseding the other one**
+  (2026-10-22) — see [Titles](../../guides/titles/).
+
+**Balance**
+
+- **Field bosses are now immune to hit-stagger, and no longer play a hit
+  reaction** (2026-10-22) — regular monsters flinch for about 800ms per hit,
+  which left Terraclash barely able to land a basic attack with 20 people
+  hitting it at once (simulated: 2 basic attacks in 11 minutes); it also now
+  drops straight into its death animation with no hit pose first.
+
+**Performance**
+
+- **Fixed client memory growing steadily while moving and teleporting
+  around the world** (2026-10-20) — three's WebGPU renderer keeps every
+  drawn object's render state until it or its material fires dispose, so
+  despawned monsters, players, arrows, ground items, mounts and streamed
+  terrain tiles stayed pinned in memory; measured over repeated teleport
+  rounds, heap floor growth fell from ~210MB per round to ~10MB.
+- **Fixed shadow shaders leaking a shared render resource on every
+  rebuild** (2026-10-20) — entering dungeon floors and combat rebuilds
+  shadow shaders, and each rebuild left behind a shared resource that was
+  never freed; measured over repeated dungeon cycles, heap growth fell from
+  ~105–144MB per cycle to ~10–20MB.
+- **Re-encoded the Drums of Valor battle track as 112kbps m4a, shrinking it
+  from 6.5MB to 3.7MB** (2026-10-19).
+
+**Fix**
+
+- **Fixed the game view shrinking after a browser window resize instead of
+  keeping its scale** (2026-10-20).
+
+## Protocol v127 — client not yet released
+
+**New system**
+
+- **Terraclash wakes up and attacks anyone nearby; it goes back to sleep
+  (unreturned amulet) if the full moon that woke it sets, dawn breaks, or
+  everyone in the fight zone dies or leaves. Whoever offered the amulet
+  that started a successful raid additionally gets a Helm of Brilliance**
+  (2026-10-21).
+- **Terraclash's combat skills shipped: Earth Roar (fixed 165 damage,
+  ignores hit roll and armor, 11m range, usable every 45s), Formation
+  Break (basic attack ×3, ignores guard, 12m fan at 50° half-angle, also
+  drops burning magma on up to 4 distant spots, usable every 20s), and
+  Earthquake (fixed 120 damage, 9 random marked spots within 16m, usable
+  every 30s); at 5% HP it enters a last stand of five Earth Roars in a row
+  with no basic attacks between them. Skills stay at least 8 seconds apart**
+  (2026-10-22) — this batch of messages bumped the protocol to v127, adding
+  `FieldBossWaking`, `FieldBossSleeping`, `MonsterGroundStrike`, and
+  replacing the per-victim `MonsterAttackedPlayer` with a single
+  `MonsterSkillStruck` listing every victim.
+
+**Balance**
+
+- **Earth Roar's telegraph grew from 3s to 4s, giving more time to react**
+  (2026-10-22).
+
+## Protocol v126 — client not yet released
+
+**New system**
+
+- **Offering the Amulet of the Earth at the altar near Sundered Bastion's
+  entrance summons the field boss Terraclash** (2026-10-21) — only works at
+  night under a full moon, and there's no server-wide announcement when
+  someone offers. This batch of messages bumped the protocol to v126,
+  adding `InspectAltar`, `OfferAtAltar`, `AltarStatus`, and
+  `FieldRaidNotice`.
+
+## Protocol v125 — client not yet released
+
+**New items & assets**
+
+- **Added the Cloak of Invisibility, an operator-only item regular players
+  can't obtain** (2026-10-20) — not in any chest or drop table, untradeable,
+  only reachable through an admin `/give`. Putting it on makes you
+  invisible at once; attacking breaks it, and you have to take it off and
+  put it back on to go invisible again. It can't be put on while in combat
+  (within 10s of your last attack or hit). This batch of messages bumped
+  the protocol to v125, adding `InvisibilityChanged`.
+
+## Protocol v124 — client v0.68.0
 
 **New items & assets**
 

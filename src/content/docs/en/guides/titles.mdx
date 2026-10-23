@@ -5,9 +5,10 @@ description: How boss-kill and fishing titles are earned, how to pick which one 
 
 Titles shipped in protocol v46. They're an achievement mark **only the server
 can grant** — you can't buy, sell or trade one, and it stays with the
-character across relogs. There are two sources today: boss kills (see the
-boss section of [Dungeons](../../database/dungeons/)) and fishing (added in
-protocol v47).
+character across relogs. There are three sources today: boss kills (see the
+boss section of [Dungeons](../../database/dungeons/)), fishing (added in
+protocol v47), and field raids (added 2026-10-22, see "Field raid titles"
+below).
 
 ## Earning one
 
@@ -25,13 +26,15 @@ only looks at **damage dealt**; it doesn't matter who landed the final hit,
 and the party XP-share rule (being nearby counts) does **not** apply here —
 standing around while your party fights earns nothing.
 
-There are 3 bosses today, each with its own pair (6 titles total):
+There are 5 bosses today, each with its own pair (10 titles total):
 
 | Boss | Shared title | Solo title |
 |---|---|---|
 | Goblin Chief | Slayer of the Goblin Chief | Who Slew the Goblin Chief Alone |
 | Orc Warlord | Slayer of the Orc Warlord | Who Slew the Orc Warlord Alone |
 | Ogre Warlord | Slayer of the Ogre Warlord | Who Slew the Ogre Warlord Alone |
+| Skeleton Knight | Slayer of the Skeleton Knight | Who Slew the Skeleton Knight Alone |
+| Barkan | Slayer of Barkan | Who Slew Barkan Alone |
 
 Being offline doesn't matter — if you're in the damage log when the boss
 dies, you get the title, and it shows up in your list next time you log in
@@ -42,6 +45,24 @@ dies, you get the title, and it shows up in your list next time you log in
 Landing a Golden Sturgeon earns "Who Landed the Golden Sturgeon" (protocol
 v47), earned and picked the same way as boss titles. If other fish start
 granting titles later, they'll show up here too.
+
+### Field raid titles
+
+Downing **Terraclash** (see [Field Raids](../../guides/field-raid/)) grants
+two titles (shipped 2026-10-22). The check works differently from boss
+titles — it's not about damage share, it's about showing up and landing the
+kill:
+
+| Condition | Title |
+|---|---|
+| Dealt it damage and alive in the fight zone when Terraclash dies | Who Brought Down Terraclash |
+| Landed the hit that brought its HP to 0 — supersedes the one above | Who Dealt Terraclash the Final Blow |
+
+The final-blow title doesn't require meeting the participation threshold, and
+it doesn't matter whether you summoned the raid; other valid participants
+still get the "Brought Down" title on their own. Both unlock permanently —
+someone else landing a later killing blow doesn't take yours away, and
+earning either one again doesn't stack.
 
 ## Picking which one shows
 

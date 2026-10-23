@@ -199,6 +199,15 @@ export const monsters = parseCsv('monsters').map((r) => {
     weaponOffsetZ: num(r.weaponOffsetZ),
     weaponRotation: r.weaponRotation || null,
     drops,
+    footprint: r.footprint || null,
+    rangedAttackRange: num(r.rangedAttackRange),
+    animAttackLeft: r.animAttackLeft || null,
+    attackSound: r.attackSound || null,
+    rangedAttackSound: r.rangedAttackSound || null,
+    wakeSound: r.wakeSound || null,
+    sleepSound: r.sleepSound || null,
+    crumbleSound: r.crumbleSound || null,
+    staggerImmune: bool(r.staggerImmune),
   };
 });
 

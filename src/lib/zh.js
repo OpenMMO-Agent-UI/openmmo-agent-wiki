@@ -23,6 +23,7 @@ export const itemNames = {
   leather_armor: '皮甲',
   chain_mail: '鎖子甲',
   wool_cape: '羊毛斗篷',
+  invisibility_cloak: '隱形斗篷',
   cape_dye: '斗篷染料',
   cape_transfer_kit: '斗篷轉印組',
   breastplate: '胸甲',
@@ -69,6 +70,7 @@ export const itemNames = {
   gold_ring: '金戒指',
   silver_necklace: '銀項鍊',
   earth_amulet: '大地護符',
+  terraclash_token: '泰拉克拉什碎片',
   leather_belt: '皮革腰帶',
   coin_pile: '錢幣堆',
   healing_potion: '治療藥水',
@@ -207,6 +209,7 @@ export const itemDescriptions = {
   leather_armor: '以皮帶與扣環交叉固定的柔韌皮製胸甲。',
   chain_mail: '互扣金屬環構成的護甲。',
   wool_cape: '厚重的羊毛斗篷,披在肩頭,行走時會隨風擺盪拖曳。',
+  invisibility_cloak: '一件銀灰色的斗篷,能讓光線繞過穿著者。只要出手攻擊,法術就會解除,得重新穿上才能再次隱形。',
   cape_dye: '一瓶塞著瓶塞的顏料。裝備斗篷時使用,可以把布料染成你選的顏色。',
   cape_transfer_kit: '一張蠟紙與一罐定色劑。裝備斗篷時使用,可以把自己的圖片印上布料。',
   breastplate: '拋光鋼製胸甲,除了最精準的一擊之外都能擋下。',
@@ -252,7 +255,8 @@ export const itemDescriptions = {
   ring_of_protection: '鑲有十字盾紋章的銀戒,能擋開攻擊。',
   gold_ring: '樸素的金戒指。',
   silver_necklace: '細緻的銀鍊,墜著一枚豐收徽章。',
-  earth_amulet: '一顆石心,以刻滿符文的鐵環束縛著,內部似乎還有微弱的脈動。',
+  earth_amulet: '一顆石心,以刻滿符文的鐵環束縛著,內部似乎還有微弱的脈動,彷彿渴望回到被撕離的那個身體。',
+  terraclash_token: '從泰拉克拉什身上崩落的一塊岩石碎片。裂縫中的岩漿與封印符文依然發光,證明了誰曾出手討伐牠。',
   leather_belt: '寬版皮革腰帶。',
   coin_pile: '一小堆散落的銅幣。',
   healing_potion: '深紅色的藥劑,能癒合傷口、恢復活力。',
@@ -392,6 +396,7 @@ export const monsterNames = {
   skeleton_warrior: '骷髏戰士',
   skeleton_knight: '骷髏騎士',
   barkan: '巴爾坎',
+  terraclash: '泰拉克拉什',
 };
 
 export const debuffNames = {
@@ -447,6 +452,7 @@ export const categoryNames = {
   estate_return_scroll: '領地歸還捲軸',
   house_scroll: '房屋捲軸',
   peddler_stall: '行商小攤',
+  raid_token: '討伐證物',
 };
 
 export const slotNames = {
