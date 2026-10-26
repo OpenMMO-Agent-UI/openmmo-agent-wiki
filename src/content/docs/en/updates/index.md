@@ -19,9 +19,64 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v128 — client v0.69.0 (current)
+## Protocol v129 — client v0.70.0 (current)
 
-**The live server currently requires v128.**
+**The live server currently requires v129.**
+
+**New system**
+
+- **Added the archaeologist NPC Ysolde, who camps near the Terraclash altar**
+  (2026-10-22 – 2026-10-24) — Terraclash Shards finally have somewhere to go.
+  She spends most of the day digging around two spots in her camp, lights a
+  fire in the evening, and sleeps in her tent 21:00–06:00 (the exchange is
+  closed then). See [Field Raids](../../guides/field-raid/#rewards).
+- **Added player critical hits** (2026-10-25) — a base 5% chance, rolled
+  independently after a hit succeeds, dealing 2× damage; each hit of a basic
+  attack and each hit of Double Slash rolls on its own, for both melee and
+  ranged. This batch of messages bumped the protocol to v129, adding
+  `critical` to `PlayerAttacked` and `critical_chance_percent` to
+  `EffectiveStatsUpdated`. See [Combat](../../guides/combat/#critical-hits-protocol-v129).
+
+**New items & assets**
+
+- **Added Shield of the Earth** (`earth_shield`, off-hand shield, +3 guard)
+  (2026-10-24) **and Rift Ring** (`rift_ring`, ring, +5 percentage points of
+  crit chance, doesn't stack with a second one) (2026-10-25) — both exchange
+  for 30 Terraclash Shards with Ysolde, and both trade normally too.
+- **Added Ysolde's camp**: a placeable tent and field cot (2026-10-24).
+
+**Balance**
+
+- **Shield of the Earth's weight was adjusted from 8 to 5** (2026-10-25).
+
+**Fix**
+
+- **A key you used to open a door tonight is now required at the chest,
+  instead of just being consumed if you happened to be carrying it** —
+  setting it on the ground or handing it off no longer dodges the cost
+  (2026-10-23). See [Dungeons](../../database/dungeons/#keys-and-locked-floors).
+- **Players sealed in a stair room's arrival grace period used to be
+  invisible to every monster; now they're only invisible to monsters outside
+  the stair room** (2026-10-23, issue 197) — a monster lured inside can still
+  see you, and it no longer freezes helplessly at a closed door.
+- **Fixed a remote player teleporting straight to their latest position
+  after an attack, pickup, or other clip animation ended**, cutting corners
+  through walls on turns (2026-10-22) — they now replay the trail of
+  positions received during the clip, in order, at 1.5× speed.
+- **Sank the Terraclash altar 0.2m into the ground** (2026-10-22), fixing a
+  floating edge on its downhill side.
+
+**Performance**
+
+- **When a monster is stuck on an unreachable target, A\* pathfinding now
+  remembers a terrain snapshot tied to the failure, and only re-searches
+  once the nearby terrain actually changes** (2026-10-22) — previously, any
+  door toggle (dungeon doors flip roughly every 20s) wiped every monster's
+  failed-path cache and forced an immediate retry, triggering over 1,086
+  searches that blew the 40ms AI tick budget between the 10/19 and 10/22
+  deploys.
+
+## Protocol v128 — client v0.69.0
 
 **New items & assets**
 

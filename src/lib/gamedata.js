@@ -239,12 +239,23 @@ export const dungeonSpawns = parseCsv('dungeon_spawns').map((r) => ({
 export const lockedFloors = (dungeon) =>
   Array.from({ length: Math.floor(dungeon.floors / 5) }, (_, i) => (i + 1) * 5);
 
-export const merchants = parseCsv('merchants').map((r) => ({
-  id: r.id,
-  npcName: r.npcName,
-  sellRatePercent: num(r.sellRatePercent),
-  catalog: r.catalog ? r.catalog.split(';') : [],
-}));
+export const merchants = parseCsv('merchants').map((r) => {
+  const catalogPrices = {};
+  (r.catalogPrices || '').split(';').filter(Boolean).forEach((entry) => {
+    const [itemId, price] = entry.split(':');
+    catalogPrices[itemId] = Number(price);
+  });
+  return {
+    id: r.id,
+    npcName: r.npcName,
+    sellRatePercent: num(r.sellRatePercent),
+    catalog: r.catalog ? r.catalog.split(';') : [],
+    currencyItem: r.currencyItem || null,
+    catalogPrices,
+    discountBudget: num(r.discountBudget),
+    playerDiscountCap: num(r.playerDiscountCap),
+  };
+});
 
 export const npcs = parseCsv('npcs').map((r) => ({
   id: r.id,
@@ -257,6 +268,15 @@ export const npcs = parseCsv('npcs').map((r) => ({
   keepsakes: r.keepsakes ? r.keepsakes.split(';') : [],
   loadout: r.loadout ? r.loadout.split(';') : [],
   chatAliases: r.chatAliases ? r.chatAliases.split(';') : [],
+  spawnAtSchedule: bool(r.spawnAtSchedule),
+  minLevel: num(r.minLevel),
+  minMaxHp: num(r.minMaxHp),
+  minGuard: num(r.minGuard),
+  unarmedDamageRoll: r.unarmedDamageRoll || null,
+  respawnAtSpawn: bool(r.respawnAtSpawn),
+  selfDefense: bool(r.selfDefense),
+  walkSpeed: num(r.walkSpeed),
+  dialogueOnly: bool(r.dialogueOnly),
 }));
 
 export const worldDrops = parseCsv('world_drop').map((r) => ({

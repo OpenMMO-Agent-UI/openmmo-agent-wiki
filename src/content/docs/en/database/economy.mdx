@@ -5,9 +5,10 @@ description: Rica's catalogue, sell rates, world drop chances, and how haggling 
 
 import FilterTable from '../../../../components/FilterTable.astro';
 import { items, itemsById, merchants, npcs, worldDrops, formatCoins, sellPrice } from '../../../../lib/gamedata.js';
-import { itemName, categoryNames } from '../../../../lib/en.js';
+import { itemName, itemDescriptions, categoryNames } from '../../../../lib/en.js';
 
 export const rica = merchants.find((m) => m.id === 'rica');
+export const ysolde = merchants.find((m) => m.id === 'ysolde');
 export const karl = npcs.find((n) => n.id === 'karl');
 export const wick = merchants.find((m) => m.id === 'wick');
 
@@ -240,6 +241,40 @@ buy one, while the offer lives (a few minutes); a sold keepsake is restocked
 after a while. The current example is Signe's gilded mandolin — how to become
 a regular she would offer it to is covered in
 [Music & the bard](../../guides/music/).
+
+## Ysolde's shard exchange
+
+**Terraclash Shards** from [field raids](../../guides/field-raid/) aren't
+money — you can't sell them to Rica or convert them to gold. The only thing
+they're good for is trading with the archaeologist **Ysolde** for gear. She
+camps near the altar, spends most of the day digging around her camp, lights
+a fire in the evening, and **sleeps in her tent 21:00–06:00, when the
+exchange is closed**.
+
+<FilterTable
+  placeholder="Search…"
+  columns={[
+    { key: 'name', label: 'Item' },
+    { key: 'price', label: 'Shard price', align: 'right' },
+    { key: 'desc', label: 'Description' },
+  ]}
+  rows={ysolde.catalog.map((id) => ({
+    name: itemName(id),
+    price: `${ysolde.catalogPrices[id]}`,
+    desc: itemDescriptions[id] ?? itemsById.get(id)?.description ?? '—',
+  }))}
+/>
+
+- She's an LLM-driven NPC like Rica, and you can haggle — a higher CHA widens
+  the discount band. But her discount budget is tracked **separately** from
+  the gold merchants': up to {ysolde.discountBudget} shards of discount per
+  day for her, and up to {ysolde.playerDiscountCap} shards per day for any
+  one player.
+- Shards themselves **can't be traded**, and Ysolde **won't buy them back** —
+  they're only good for the exchange. Anything left over just banks toward
+  the next raid.
+- There's no general sale list in this first version. Shards from future
+  field bosses are expected to route through her too.
 
 ## World drops
 

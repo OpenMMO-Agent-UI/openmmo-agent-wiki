@@ -194,6 +194,24 @@ The STR modifier applies **to every hit**, so it lifts low-damage weapons
 proportionally more: STR 18 (+4) with a Dagger (1d4, average 2.5) actually
 averages 6.5 — 2.6× the base.
 
+## Critical hits (protocol v129)
+
+Every player has a base **5%** chance to land a critical hit on a successful
+attack — that's an **independent roll made after the hit roll passes**; a
+natural 20 on the exploding d20 only guarantees a hit, not a crit. A crit
+deals **2× normal damage**, counting stat bonuses, weapon enchants, and ammo
+damage in the multiplier. Each hit of a basic attack and each hit of Double
+Slash (see "Skills and mana" below) rolls independently, and this applies to
+both melee and ranged weapons. Monster attacks, boss skills, and environmental
+damage are unaffected.
+
+The **{itemName('rift_ring')}** (`rift_ring`) adds **+5 percentage points**,
+for 10% total while worn. Wearing one in each hand doesn't stack the bonus —
+it still caps at 10%. You can exchange Terraclash Shards for one from Ysolde;
+see [Field Raids](../field-raid/#rewards). The character panel shows your
+server-computed current crit chance, and it updates the moment you equip or
+unequip the ring.
+
 ## Ranged weapons (protocol v53)
 
 A weapon can declare three extra fields: `range` (meters; absent means melee,

@@ -5,11 +5,12 @@ description: Rica 的商品目錄、收購價、世界掉落機率,以及議價�
 
 import FilterTable from '../../../components/FilterTable.astro';
 import { items, itemsById, merchants, npcs, worldDrops, formatCoins, sellPrice } from '../../../lib/gamedata.js';
-import { itemName, categoryNames } from '../../../lib/zh.js';
+import { itemName, itemDescriptions, categoryNames } from '../../../lib/zh.js';
 
 export const rica = merchants.find((m) => m.id === 'rica');
 export const karl = npcs.find((n) => n.id === 'karl');
 export const wick = merchants.find((m) => m.id === 'wick');
+export const ysolde = merchants.find((m) => m.id === 'ysolde');
 
 ## 貨幣
 
@@ -202,6 +203,36 @@ LLM 驅動的 NPC 會保留最近的對話(最近 30 行,附遊戲內時間戳),
 報價有效的幾分鐘內買走一件;賣掉之後過段時間會補回。
 目前的例子是吟遊詩人 Signe 的鍍金曼陀林 ——
 怎麼成為她願意開價的熟客,見[音樂與吟遊詩人](../../guides/music/)。
+
+## 伊索德的碎片兌換
+
+[野外討伐](../../guides/field-raid/)拿到的**泰拉克拉什碎片**不是錢,不能賣給
+Rica,也不能直接換金幣 —— 只能帶去找考古學家**伊索德**(Ysolde)換裝備。她紮營
+在祭壇附近,白天多半在營地周圍挖掘,晚上生起營火,**21:00–06:00 睡在帳篷裡,
+這段時間不開放兌換**。
+
+<FilterTable
+  placeholder="搜尋…"
+  columns={[
+    { key: 'name', label: '裝備' },
+    { key: 'en', label: '遊戲內名稱' },
+    { key: 'price', label: '碎片價格', align: 'right' },
+    { key: 'desc', label: '說明' },
+  ]}
+  rows={ysolde.catalog.map((id) => ({
+    name: itemName(id),
+    en: itemsById.get(id)?.name ?? id,
+    price: `${ysolde.catalogPrices[id]} 個`,
+    desc: itemDescriptions[id] ?? itemsById.get(id)?.description ?? '—',
+  }))}
+/>
+
+- 跟 Rica 一樣是 LLM 驅動的 NPC,可以用對話殺價,CHA 愈高折扣帶愈寬;但折扣額度
+  跟金幣商人**分開計算**:伊索德每天最多讓出 {ysolde.discountBudget} 個碎片的折扣,
+  每位玩家每天最多拿到 {ysolde.playerDiscountCap} 個碎片的折扣。
+- 碎片本身**不能交易**,伊索德也**不收購碎片** —— 只能拿去換裝備,換完剩下的碎片
+  留著等下次討伐累積。
+- 第一版沒有一般商品可買,未來其他野外頭目的碎片也會改到她這裡兌換。
 
 ## 世界掉落
 

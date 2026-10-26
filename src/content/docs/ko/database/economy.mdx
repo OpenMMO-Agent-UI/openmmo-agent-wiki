@@ -5,9 +5,10 @@ description: Rica의 카탈로그, 매입가, 월드 드랍 확률, 그리고 �
 
 import FilterTable from '../../../../components/FilterTable.astro';
 import { items, itemsById, merchants, npcs, worldDrops, formatCoins, sellPrice } from '../../../../lib/gamedata.js';
-import { itemName, categoryNames } from '../../../../lib/ko.js';
+import { itemName, itemDescriptions, categoryNames } from '../../../../lib/ko.js';
 
 export const rica = merchants.find((m) => m.id === 'rica');
+export const ysolde = merchants.find((m) => m.id === 'ysolde');
 export const karl = npcs.find((n) => n.id === 'karl');
 export const wick = merchants.find((m) => m.id === 'wick');
 
@@ -229,6 +230,37 @@ NPC가 개인 거래를 제안할 만한 단골로 대하기 시작합니다 —
 애장품은 시간이 지나면 다시 채워집니다. 현재의 예는 바드 Signe의 금장
 만돌린 — 그녀가 제안해 줄 단골이 되는 법은
 [음악과 바드](../../guides/music/)에 있습니다.
+
+## 이졸데의 파편 교환
+
+[필드 레이드](../../guides/field-raid/)에서 받는 **테라클래시 파편**은 돈이
+아닙니다 — Rica에게 팔 수도, 금화로 바꿀 수도 없습니다. 유일한 용도는
+고고학자 **이졸데**(Ysolde)에게 장비로 교환하는 것뿐입니다. 제단 근처에
+야영하며, 낮에는 대부분 야영지 주변을 발굴하고, 저녁에는 모닥불을 피우며,
+**21:00–06:00에는 천막에서 자고 그 시간 동안 교환이 닫힙니다**.
+
+<FilterTable
+  placeholder="검색…"
+  columns={[
+    { key: 'name', label: '장비' },
+    { key: 'price', label: '파편 가격', align: 'right' },
+    { key: 'desc', label: '설명' },
+  ]}
+  rows={ysolde.catalog.map((id) => ({
+    name: itemName(id),
+    price: `${ysolde.catalogPrices[id]}개`,
+    desc: itemDescriptions[id] ?? itemsById.get(id)?.description ?? '—',
+  }))}
+/>
+
+- Rica처럼 LLM이 운영하는 NPC라 흥정할 수 있고, CHA가 높을수록 할인 폭이
+  넓어집니다. 다만 할인 예산은 금화 상인들과 **별도로** 집니다 — 하루에
+  이졸데가 내줄 수 있는 할인은 파편 {ysolde.discountBudget}개, 플레이어
+  한 명이 하루에 받을 수 있는 할인은 파편 {ysolde.playerDiscountCap}개입니다.
+- 파편은 **거래할 수 없고**, 이졸데도 **파편을 사들이지 않습니다** — 오직
+  교환에만 쓰며, 남은 파편은 다음 토벌까지 그대로 쌓입니다.
+- 첫 버전에는 일반 판매 목록이 없습니다. 앞으로 다른 필드 보스의 파편도
+  이졸데에게서 교환하게 될 예정입니다.
 
 ## 월드 드랍
 
