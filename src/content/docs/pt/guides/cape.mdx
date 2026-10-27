@@ -1,0 +1,53 @@
+---
+title: 'Tingimento e estampa de capa'
+description: 'Como funcionam o frasco de tinta e o kit de transferência, como o resultado viaja com a instância do item, e o fluxo de moderação de imagens.'
+---
+
+O tingimento (protocolo v33) e a estampa (protocolo v34) se apoiam na [Capa de lã](../../database/items/). Os dois são **consumíveis** vendidos pela Rica, e os dois exigem que você já esteja com **uma capa equipada**.
+
+| Item | Categoria | Preço na loja | Efeito |
+|---|---|---:|---|
+| Tinta de capa | `cape_dye` | 800c | Tinge da cor que você quiser a capa que está vestindo |
+| Kit de transferência | `cape_texture` | 5,000c | Estampa na sua capa equipada uma imagem que você enviar |
+
+Os dois resultados **viajam com a instância do item da capa** — igual a um nível de encantamento — então descartar, trocar, ou vender e recomprar (veja [Lojas e economia](../../database/economy/)) nunca perde o efeito, e os jogadores por perto e a tela de seleção de personagem veem o mesmo resultado que você.
+
+## Tingir
+
+Usar um frasco de tinta da bolsa abre primeiro um **seletor de cor**; nada é consumido ainda:
+
+- Enquanto o seletor está aberto, a sua capa **mostra a cor ao vivo**, mas só na sua tela.
+- Confirmar manda de fato a mudança e gasta um frasco. Fechar o seletor em vez disso não faz nada, e a capa volta à cor anterior.
+- A cor é de **escolha livre**, não uma paleta fixa — há algumas amostras prontas ao lado, por conveniência.
+- Você pode **tingir de novo quantas vezes quiser**; cada tingimento sobrescreve a cor anterior e custa um frasco.
+
+O seguinte é recusado de saída, sem consumir o item:
+
+- **Incapacitado** (caído) — você não pode usar.
+- **Sem capa equipada** — o alvo é só o item com propriedades de tinta no espaço das costas; uma capa parada na bolsa não conta.
+
+## Estampar
+
+O kit de transferência também exige uma capa equipada. O fluxo dele acrescenta um passo de envio por cima do tingimento:
+
+1. Usar o kit abre um **seletor de imagem**.
+2. A imagem escolhida é primeiro recortada em quadrado localmente — centrada pela altura, com qualquer lado acima de 512 px reduzido a 512 (imagens pequenas não são ampliadas) — e então enviada.
+3. O servidor a **decodifica e recodifica** como PNG, o que também remove qualquer coisa disfarçada de imagem, então o resultado final não é garantidamente idêntico byte a byte ao seu arquivo original. O tamanho de envio é limitado a **2 MB**.
+4. O servidor nomeia o arquivo pelo **hash do conteúdo** da imagem, então a mesma imagem enviada por muitos jogadores é guardada uma única vez. Assim que o hash é confirmado válido, o kit é consumido e a estampa é aplicada à capa.
+
+A estampa fica sobre a tinta: **as áreas transparentes deixam ver a cor tingida**, e só as partes opacas a cobrem — então você pode pôr um emblema numa capa cuja cor de base continua vindo da tinta. O forro (o lado virado para o seu corpo) sempre mostra apenas a cor da tinta; ele nunca espelha a estampa.
+
+Os envios são limitados a **10 a cada 10 minutos** por conta.
+
+### Moderação de imagens
+
+Uma imagem enviada é vista por todo mundo por perto, então denunciar e bloquear vêm embutidos desde o começo:
+
+- **Clique com o botão direito num jogador** para “Denunciar capa” e sinalizar a estampa que ele estiver usando no momento.
+- Um administrador pode **bloquear** um hash — uma vez bloqueado, o servidor para de servir aquela imagem na hora, e toda capa que estiver usando aquele hash **volta imediatamente à cor da tinta**, sem precisar reconectar.
+- Como o nome do arquivo é o hash do conteúdo, uma imagem bloqueada **não pode ser reenviada para furar o bloqueio** — o hash nunca muda.
+- Bloquear uma capa não devolve o kit de transferência gasto nela.
+
+## Capas no chão
+
+Tinta e estampa só mudam como o tecido procedural é renderizado enquanto **vestido**; uma capa descartada usa um modelo fixo. Os dados de cor continuam na instância do item, então reequipar uma capa recolhida os restaura.

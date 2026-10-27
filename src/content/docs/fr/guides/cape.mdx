@@ -1,0 +1,53 @@
+---
+title: 'Teinture et impression de cape'
+description: 'Comment fonctionnent le flacon de teinture et le kit de transfert, comment le résultat voyage avec l''instance de l''objet, et le flux de modération des images.'
+---
+
+La teinture (protocole v33) et l'impression (protocole v34) s'appuient sur la [Cape de laine](../../database/items/). Les deux sont des **consommables** vendus par Rica, et les deux exigent que vous ayez déjà **une cape équipée**.
+
+| Objet | Catégorie | Prix en boutique | Effet |
+|---|---|---:|---|
+| Teinture de cape | `cape_dye` | 800c | Teint la cape que vous portez de la couleur que vous voulez |
+| Kit de transfert | `cape_texture` | 5,000c | Imprime sur votre cape équipée une image que vous téléversez |
+
+Les deux résultats **voyagent avec l'instance de l'objet cape** — comme un niveau d'enchantement — si bien qu'un jet, un échange, ou une vente suivie d'un rachat (voir [Boutiques et économie](../../database/economy/)) ne les perd jamais, et les joueurs à proximité comme l'écran de sélection de personnage voient le même résultat que vous.
+
+## Teindre
+
+Utiliser un flacon de teinture depuis votre sac ouvre d'abord un **sélecteur de couleur** ; rien n'est encore consommé :
+
+- Tant que le sélecteur est ouvert, votre cape **prévisualise la couleur en direct**, mais seulement sur votre écran.
+- Confirmer envoie réellement le changement et dépense un flacon. Fermer le sélecteur ne fait rien, et la cape revient à sa couleur précédente.
+- La couleur est un **choix libre**, pas une palette fixe — quelques échantillons préréglés sont là à côté par commodité.
+- Vous pouvez **reteindre autant de fois que vous voulez** ; chaque teinture écrase la couleur précédente et coûte un flacon.
+
+Les cas suivants sont refusés d'emblée, sans consommer l'objet :
+
+- **Hors de combat** (à terre) — vous ne pouvez pas l’utiliser.
+- **Aucune cape équipée** — la cible n'est que l'objet aux propriétés de teinture dans l'emplacement du dos ; une cape qui dort dans votre sac ne compte pas.
+
+## Imprimer
+
+Le kit de transfert exige aussi une cape équipée. Son flux ajoute une étape de téléversement par-dessus celui de la teinture :
+
+1. Utiliser le kit ouvre un **sélecteur d'image**.
+2. L'image choisie est d'abord recadrée en carré en local — centrée sur la hauteur, tout côté dépassant 512 px étant réduit à 512 (les petites images ne sont pas agrandies) — puis téléversée.
+3. Le serveur la **redécode et la réencode** en PNG, ce qui retire du même coup tout ce qui serait déguisé en image ; le résultat final n'est donc pas garanti identique octet pour octet à votre fichier d'origine. La taille de téléversement est plafonnée à **2 Mo**.
+4. Le serveur nomme le fichier par le **hachage du contenu** de l'image, si bien que la même image téléversée par de nombreux joueurs n'est stockée qu'une fois. Dès que le hachage est confirmé valide, le kit est consommé et l'impression est appliquée à la cape.
+
+L'impression se pose sur la teinture : **les zones transparentes laissent voir la couleur teinte**, et seules les parties opaques la recouvrent — vous pouvez donc poser un emblème sur une cape dont la couleur de fond vient toujours de la teinture. La doublure (la face tournée vers votre corps) ne montre jamais que la couleur de teinture ; elle ne reflète jamais l'impression.
+
+Les téléversements sont limités à **10 par 10 minutes** et par compte.
+
+### Modération des images
+
+Une image téléversée est visible de tous ceux qui sont à proximité ; le signalement et le blocage sont donc intégrés depuis le départ :
+
+- **Clic droit sur un joueur** pour « Signaler la cape » et dénoncer l'impression qu'il porte à ce moment.
+- Un administrateur peut **bloquer** un hachage — une fois bloqué, le serveur cesse immédiatement de servir cette image, et toutes les capes qui utilisent ce hachage **reviennent aussitôt à leur couleur de teinture**, sans avoir à se reconnecter.
+- Comme le nom de fichier est le hachage du contenu, une image bloquée **ne peut pas être reversée pour contourner le blocage** — le hachage ne change jamais.
+- Bloquer une cape ne rembourse pas le kit de transfert dépensé pour elle.
+
+## Les capes au sol
+
+La teinture et l'impression ne changent que la façon dont le tissu procédural est rendu **porté** ; une cape jetée utilise un modèle fixe à la place. Les données de couleur vivent toujours sur l'instance de l'objet, donc rééquiper une cape ramassée les rétablit.

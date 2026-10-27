@@ -1,0 +1,53 @@
+---
+title: 'Teñido e impresión de capas'
+description: 'Cómo funcionan el frasco de tinte y el kit de transferencia, cómo el resultado viaja con la instancia del objeto, y el flujo de moderación de imágenes.'
+---
+
+El teñido (protocolo v33) y la impresión (protocolo v34) se construyen sobre la [Capa de lana](../../database/items/). Ambos son **consumibles** que vende Rica, y los dos exigen que ya lleves **una capa equipada**.
+
+| Objeto | Categoría | Precio en tienda | Efecto |
+|---|---|---:|---|
+| Tinte de capa | `cape_dye` | 800c | Tiñe del color que quieras la capa que llevas puesta |
+| Kit de transferencia | `cape_texture` | 5,000c | Imprime en tu capa equipada una imagen que subas |
+
+Los dos resultados **viajan con la instancia del objeto de la capa** —igual que un nivel de encantamiento—, así que tirarla, comerciarla, o venderla y recomprarla (mira [Tiendas y economía](../../database/economy/)) no la pierde nunca, y los jugadores cercanos y la pantalla de selección de personaje ven el mismo resultado que tú.
+
+## Teñir
+
+Usar un frasco de tinte desde la bolsa abre primero un **selector de color**; todavía no se consume nada:
+
+- Mientras el selector está abierto, tu propia capa **muestra el color en vivo**, pero solo en tu pantalla.
+- Confirmar envía de verdad el cambio y gasta un frasco. Cerrar el selector en cambio no hace nada, y la capa vuelve a su color anterior.
+- El color es de **elección libre**, no una paleta fija: hay unas cuantas muestras preestablecidas al lado por comodidad.
+- Puedes **reteñir tantas veces como quieras**; cada tinte sobrescribe el color anterior y cuesta un frasco.
+
+Lo siguiente se rechaza de plano, sin consumir el objeto:
+
+- **Incapacitado** (caído): no puedes usarlo.
+- **Sin capa equipada**: el objetivo es solo el objeto con propiedades de tinte en la ranura de la espalda; una capa en la bolsa no cuenta.
+
+## Imprimir
+
+El kit de transferencia también exige llevar una capa puesta. Su flujo añade un paso de subida sobre el del teñido:
+
+1. Usar el kit abre un **selector de imagen**.
+2. La imagen elegida se recorta primero a un cuadrado en local —centrada en la altura, y cualquier lado que pase de 512 px se reduce a 512 (las imágenes pequeñas no se amplían)— y luego se sube.
+3. El servidor la **vuelve a decodificar y recodificar** como PNG, lo que además quita cualquier cosa disfrazada de imagen, así que el resultado final no tiene por qué ser idéntico byte a byte a tu archivo original. El tamaño de subida está limitado a **2 MB**.
+4. El servidor nombra el archivo por el **hash del contenido** de la imagen, así que la misma imagen subida por muchos jugadores se guarda una sola vez. En cuanto el hash se confirma válido, se consume el kit y la impresión se aplica a la capa.
+
+La impresión va sobre el tinte: **las zonas transparentes dejan ver el color teñido**, y solo las partes opacas lo cubren, así que puedes poner un emblema en una capa sin que el color base deje de venir del tinte. El forro (la cara que da a tu cuerpo) muestra siempre solo el color del tinte; nunca refleja la impresión.
+
+Las subidas están limitadas a **10 cada 10 minutos** por cuenta.
+
+### Moderación de imágenes
+
+Una imagen subida la ve todo el que esté cerca, así que denunciar y bloquear están incorporados desde el principio:
+
+- **Clic derecho en un jugador** para «Denunciar capa» y marcar la impresión que lleve puesta en ese momento.
+- Un administrador puede **bloquear** un hash: una vez bloqueado, el servidor deja de servir esa imagen de inmediato, y todas las capas que usen ese hash **vuelven al instante a su color de tinte**, sin necesidad de volver a entrar.
+- Como el nombre del archivo es el hash del contenido, una imagen bloqueada **no se puede volver a subir para esquivar el bloqueo**: el hash nunca cambia.
+- Bloquear una capa no devuelve el kit de transferencia que se gastó en ella.
+
+## Capas en el suelo
+
+El tinte y la impresión solo cambian cómo se dibuja la tela procedural mientras está **puesta**; una capa tirada usa un modelo fijo en su lugar. Los datos de color siguen viviendo en la instancia del objeto, así que volver a equipar una capa recogida los restaura.

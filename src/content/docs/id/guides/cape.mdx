@@ -1,0 +1,53 @@
+---
+title: 'Pewarnaan dan cetak jubah'
+description: 'Cara kerja botol Pewarna Jubah dan Kit Transfer Jubah, bagaimana hasilnya menempel pada instance item, dan alur moderasi gambar.'
+---
+
+Pewarnaan (protokol v33) dan pencetakan (protokol v34) dibangun di atas [Jubah Wol](../../database/items/). Keduanya **barang pakai** yang dijual Rica, dan keduanya menuntut kamu sudah **memakai sebuah jubah**.
+
+| Item | Kategori | Harga toko | Efek |
+|---|---|---:|---|
+| Pewarna jubah | `cape_dye` | 800c | Mewarnai jubah yang kamu pakai dengan warna apa pun |
+| Kit transfer jubah | `cape_texture` | 5,000c | Mencetak gambar yang kamu unggah ke jubah yang kamu pakai |
+
+Kedua hasilnya **menempel pada instance item jubahnya** — sama seperti tingkat peningkatan — jadi dibuang, diperdagangkan, atau dijual lalu dibeli kembali (lihat [Toko dan ekonomi](../../database/economy/)) tidak pernah menghilangkannya, dan pemain di sekitar serta layar pemilihan karakter melihat hasil yang sama denganmu.
+
+## Mewarnai
+
+Memakai botol pewarna dari tas pertama-tama membuka **pemilih warna**; belum ada yang terpakai:
+
+- Selama pemilihnya terbuka, jubahmu sendiri **menampilkan pratinjau warnanya secara langsung**, tapi hanya di layarmu.
+- Mengonfirmasi benar-benar mengirim perubahannya dan menghabiskan satu botol. Menutup pemilihnya tidak melakukan apa pun, dan jubahnya kembali ke warna sebelumnya.
+- Warnanya **bebas dipilih**, bukan palet tetap — ada beberapa contoh warna siap pakai di sampingnya untuk memudahkan.
+- Kamu bisa **mewarnai ulang sesuka hati**; setiap pewarnaan menimpa warna sebelumnya dan memakan satu botol.
+
+Hal berikut ditolak langsung, tanpa memakan itemnya:
+
+- **Tak berdaya** (tumbang) — kamu tidak bisa memakainya.
+- **Tidak memakai jubah** — sasarannya hanya item berproperti pewarnaan di slot punggung; jubah yang tergeletak di tas tidak dihitung.
+
+## Mencetak
+
+Kit transfer juga menuntut sebuah jubah dipakai. Alurnya menambah satu langkah unggah di atas pewarnaan:
+
+1. Memakai kitnya membuka **pemilih gambar**.
+2. Gambar yang dipilih mula-mula dipotong jadi persegi secara lokal — dipusatkan pada tingginya, dan sisi mana pun di atas 512 px dikecilkan ke 512 (gambar kecil tidak diperbesar) — lalu diunggah.
+3. Server **mendekode dan mengodekan ulang** sebagai PNG, yang sekaligus membuang apa pun yang menyamar sebagai gambar, jadi hasil akhirnya tidak dijamin identik bita per bita dengan berkas aslimu. Ukuran unggahan dibatasi **2 MB**.
+4. Server menamai berkasnya dengan **hash isi** gambarnya, jadi gambar yang sama yang diunggah banyak pemain hanya disimpan sekali. Begitu hash-nya dipastikan sah, kitnya terpakai dan cetakannya diterapkan ke jubah.
+
+Cetakannya berada di atas pewarnaan: **bagian transparan menampakkan warna cat di bawahnya**, dan hanya bagian pekat yang menutupinya — jadi kamu bisa menaruh lambang di jubah sementara warna dasarnya tetap dari pewarna. Lapisan dalam (sisi yang menghadap tubuhmu) selalu menampilkan warna cat saja; ia tidak pernah memantulkan cetakannya.
+
+Unggahan dibatasi **10 per 10 menit** per akun.
+
+### Moderasi gambar
+
+Gambar yang diunggah terlihat oleh semua orang di sekitar, jadi pelaporan dan pemblokiran dibangun sejak awal:
+
+- **Klik kanan seorang pemain** untuk “Laporkan jubah” dan menandai cetakan apa pun yang sedang ia pakai.
+- Admin bisa **memblokir** sebuah hash — begitu diblokir, server langsung berhenti menyajikan gambar itu, dan setiap jubah yang memakai hash tersebut **seketika kembali ke warna catnya**, tanpa perlu masuk ulang.
+- Karena nama berkasnya adalah hash isinya, gambar yang diblokir **tidak bisa diunggah ulang untuk mengakali blokirnya** — hash-nya tidak pernah berubah.
+- Memblokir sebuah jubah tidak mengembalikan kit transfer yang sudah terpakai padanya.
+
+## Jubah di tanah
+
+Pewarna dan cetakan hanya mengubah cara kain proseduralnya dirender saat **dipakai**; jubah yang dibuang memakai model tetap. Data warnanya tetap hidup di instance itemnya, jadi memakai kembali jubah yang dipungut akan memulihkannya.
