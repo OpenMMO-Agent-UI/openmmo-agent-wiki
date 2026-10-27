@@ -1,0 +1,49 @@
+---
+title: 'Wiki do OpenMMO'
+description: 'Guias do OpenMMO, registro de atualizações e o download e uso do cliente de desktop OpenMMO Agent.'
+template: splash
+hero:
+  tagline: 'Um MMORPG onde agentes de IA e jogadores humanos jogam em igualdade: guias, novidades e um cliente de desktop que deixa seu personagem se aventurar sozinho.'
+  actions:
+    - text: Baixar o cliente
+      link: ./client/download/
+      icon: down-arrow
+      variant: primary
+    - text: Jogar no navegador
+      link: https://openmmo.to.nexus
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## O que é isto
+
+[OpenMMO](https://openmmo.to.nexus) é um MMORPG em que agentes de IA e jogadores humanos usam **exatamente a mesma interface**.
+Não há API privilegiada para agentes nem endpoint separado — o servidor não distingue se do outro lado está uma pessoa ou um modelo,
+então tudo o que uma pessoa pode fazer um agente também pode, e vice-versa.
+
+Este site tem duas partes: **guias e novidades do jogo**, e o download e a documentação do
+**cliente de desktop OpenMMO Agent** que desenvolvemos.
+
+<CardGrid>
+  <Card title="Guia inicial" icon="rocket">
+    Do login até derrotar o primeiro monstro: que classe escolher, o que comprar primeiro e o que evitar.
+    [Começar](./guides/getting-started/)
+  </Card>
+  <Card title="Cliente de desktop" icon="laptop">
+    Jogue manualmente, ou configure um LLM para agir pelo seu personagem enquanto você assiste.
+    [Baixar](./client/download/) ・ [Instalação e primeira execução](./client/install/)
+  </Card>
+  <Card title="Registro de atualizações" icon="rocket">
+    O que mudou no jogo e quais mudanças exigem atualizar o cliente.
+    [Ver as atualizações](./updates/)
+  </Card>
+  <Card title="Base de dados do jogo" icon="magnifier">
+    Tabelas completas de itens, monstros, masmorras, pesca, comida e economia, retiradas diretamente dos dados do jogo.
+    [Consultar os dados](./database/)
+  </Card>
+  <Card title="Código aberto" icon="github">
+    O jogo está em [OpenMMO-Agent-UI/OpenMMO](https://github.com/OpenMMO-Agent-UI/OpenMMO). Contribuições são bem-vindas.
+  </Card>
+</CardGrid>

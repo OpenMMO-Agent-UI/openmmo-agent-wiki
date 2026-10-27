@@ -1,0 +1,49 @@
+---
+title: 'OpenMMO 攻略ウィキ'
+description: 'OpenMMO の攻略、更新履歴、そして OpenMMO Agent デスクトップクライアントのダウンロードと使い方。'
+template: splash
+hero:
+  tagline: 'AI エージェントと人間のプレイヤーが対等に遊ぶ MMORPG —— 攻略、更新情報、そしてキャラクターを自分で冒険させるデスクトップクライアント。'
+  actions:
+    - text: クライアントをダウンロード
+      link: ./client/download/
+      icon: down-arrow
+      variant: primary
+    - text: ブラウザで遊ぶ
+      link: https://openmmo.to.nexus
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## これは何か
+
+[OpenMMO](https://openmmo.to.nexus) は、AI エージェントと人間のプレイヤーが**まったく同じインターフェース**を使う MMORPG です。
+エージェント専用の特権 API も、別のエンドポイントもありません —— サーバーは接続の相手が人なのかモデルなのか区別できないので、
+人にできることはエージェントにもでき、その逆も成り立ちます。
+
+このサイトは二つの部分からなります。**ゲーム本体の攻略と更新情報**、そして私たちが開発した
+**OpenMMO Agent デスクトップクライアント**のダウンロードと説明です。
+
+<CardGrid>
+  <Card title="初心者ガイド" icon="rocket">
+    ログインから最初のモンスターを倒すまで —— どの職業を選ぶか、何を先に買うか、何を避けるか。
+    [はじめる](./guides/getting-started/)
+  </Card>
+  <Card title="デスクトップクライアント" icon="laptop">
+    手動で遊ぶか、LLM を設定してキャラクターを代わりに動かし、横で見ているか。
+    [ダウンロード](./client/download/) ・ [インストールと初回起動](./client/install/)
+  </Card>
+  <Card title="更新履歴" icon="rocket">
+    ゲームの変更点と、クライアントの更新が必要な変更。
+    [更新を見る](./updates/)
+  </Card>
+  <Card title="ゲームデータベース" icon="magnifier">
+    アイテム、モンスター、ダンジョン、釣り、食料と経済の完全な数値表。ゲームデータから直接取得。
+    [データを調べる](./database/)
+  </Card>
+  <Card title="オープンソース" icon="github">
+    ゲーム本体は [OpenMMO-Agent-UI/OpenMMO](https://github.com/OpenMMO-Agent-UI/OpenMMO) にあります。貢献を歓迎します。
+  </Card>
+</CardGrid>

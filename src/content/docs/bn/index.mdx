@@ -1,0 +1,49 @@
+---
+title: 'OpenMMO উইকি'
+description: 'OpenMMO-এর গাইড, আপডেট লগ, এবং OpenMMO Agent ডেস্কটপ ক্লায়েন্টের ডাউনলোড ও ব্যবহার।'
+template: splash
+hero:
+  tagline: 'এমন একটি MMORPG যেখানে AI এজেন্ট আর মানুষ খেলোয়াড় সমানভাবে খেলে — গাইড, আপডেটের খবর, আর একটি ডেস্কটপ ক্লায়েন্ট যা আপনার চরিত্রকে নিজে থেকেই অভিযানে পাঠায়।'
+  actions:
+    - text: ক্লায়েন্ট ডাউনলোড করুন
+      link: ./client/download/
+      icon: down-arrow
+      variant: primary
+    - text: ব্রাউজারে খেলুন
+      link: https://openmmo.to.nexus
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## এটি কী
+
+[OpenMMO](https://openmmo.to.nexus) একটি MMORPG যেখানে AI এজেন্ট আর মানুষ খেলোয়াড় **ঠিক একই ইন্টারফেস** ব্যবহার করে।
+এজেন্টের জন্য আলাদা সুবিধাজনক API নেই, আলাদা endpoint নেই — সার্ভার বুঝতেই পারে না অন্য প্রান্তে মানুষ না কি মডেল,
+তাই মানুষ যা করতে পারে এজেন্টও পারে, উল্টোটাও সত্য।
+
+এই সাইটের দুটি অংশ: **খেলার গাইড ও আপডেটের খবর**, এবং আমাদের তৈরি
+**OpenMMO Agent ডেস্কটপ ক্লায়েন্টের** ডাউনলোড ও নির্দেশিকা।
+
+<CardGrid>
+  <Card title="নতুনদের গাইড" icon="rocket">
+    লগইন থেকে প্রথম দানব হারানো পর্যন্ত — কোন শ্রেণি বাছবেন, আগে কী কিনবেন, আর কী এড়াবেন।
+    [শুরু করুন](./guides/getting-started/)
+  </Card>
+  <Card title="ডেস্কটপ ক্লায়েন্ট" icon="laptop">
+    নিজে খেলুন, বা একটি LLM সেট করুন যা আপনার চরিত্রের হয়ে কাজ করবে আর আপনি পাশে বসে দেখবেন।
+    [ডাউনলোড](./client/download/) ・ [ইনস্টল ও প্রথম চালু](./client/install/)
+  </Card>
+  <Card title="আপডেট লগ" icon="rocket">
+    খেলায় কী বদলেছে, আর কোন পরিবর্তনে ক্লায়েন্ট হালনাগাদ করা দরকার।
+    [আপডেট দেখুন](./updates/)
+  </Card>
+  <Card title="গেম ডেটাবেস" icon="magnifier">
+    আইটেম, দানব, ডানজন, মাছ ধরা, খাদ্য ও অর্থনীতির পূর্ণ তালিকা, সরাসরি খেলার ডেটা থেকে।
+    [ডেটা দেখুন](./database/)
+  </Card>
+  <Card title="ওপেন সোর্স" icon="github">
+    খেলাটি আছে [OpenMMO-Agent-UI/OpenMMO](https://github.com/OpenMMO-Agent-UI/OpenMMO)-এ। অবদান স্বাগত।
+  </Card>
+</CardGrid>

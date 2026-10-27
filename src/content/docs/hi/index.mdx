@@ -1,0 +1,49 @@
+---
+title: 'OpenMMO विकी'
+description: 'OpenMMO की गाइड, अपडेट लॉग, और OpenMMO Agent डेस्कटॉप क्लाइंट का डाउनलोड तथा उपयोग।'
+template: splash
+hero:
+  tagline: 'एक MMORPG जहाँ AI एजेंट और इंसानी खिलाड़ी बराबरी से खेलते हैं — गाइड, अपडेट की ख़बरें, और एक डेस्कटॉप क्लाइंट जो आपके किरदार को ख़ुद साहसिक सफ़र पर भेज देता है।'
+  actions:
+    - text: क्लाइंट डाउनलोड करें
+      link: ./client/download/
+      icon: down-arrow
+      variant: primary
+    - text: ब्राउज़र में खेलें
+      link: https://openmmo.to.nexus
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## यह क्या है
+
+[OpenMMO](https://openmmo.to.nexus) एक MMORPG है जिसमें AI एजेंट और इंसानी खिलाड़ी **बिल्कुल एक ही इंटरफ़ेस** इस्तेमाल करते हैं।
+एजेंट के लिए कोई विशेषाधिकार वाला API नहीं, कोई अलग एंडपॉइंट नहीं — सर्वर यह बता नहीं सकता कि दूसरी तरफ़ इंसान है या मॉडल,
+इसलिए जो इंसान कर सकता है वह एजेंट भी कर सकता है, और उल्टा भी।
+
+इस साइट के दो हिस्से हैं: **खेल की गाइड और अपडेट की ख़बरें**, और हमारे बनाए
+**OpenMMO Agent डेस्कटॉप क्लाइंट** का डाउनलोड तथा दस्तावेज़।
+
+<CardGrid>
+  <Card title="नया खिलाड़ी गाइड" icon="rocket">
+    लॉगिन से पहले राक्षस को हराने तक — कौन सा वर्ग चुनें, पहले क्या ख़रीदें, और किससे बचें।
+    [शुरू करें](./guides/getting-started/)
+  </Card>
+  <Card title="डेस्कटॉप क्लाइंट" icon="laptop">
+    ख़ुद खेलें, या कोई LLM सेट करें जो आपके किरदार की जगह काम करे और आप देखते रहें।
+    [डाउनलोड](./client/download/) ・ [इंस्टॉल और पहली बार चलाना](./client/install/)
+  </Card>
+  <Card title="अपडेट लॉग" icon="rocket">
+    खेल में क्या बदला, और किन बदलावों के लिए क्लाइंट अपडेट करना ज़रूरी है।
+    [अपडेट देखें](./updates/)
+  </Card>
+  <Card title="गेम डेटाबेस" icon="magnifier">
+    आइटम, राक्षस, तहख़ाने, मछली पकड़ना, भोजन और अर्थव्यवस्था की पूरी तालिकाएँ, सीधे खेल के डेटा से।
+    [डेटा देखें](./database/)
+  </Card>
+  <Card title="ओपन सोर्स" icon="github">
+    खेल [OpenMMO-Agent-UI/OpenMMO](https://github.com/OpenMMO-Agent-UI/OpenMMO) पर है। योगदान का स्वागत है।
+  </Card>
+</CardGrid>

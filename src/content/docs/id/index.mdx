@@ -1,0 +1,49 @@
+---
+title: 'Wiki OpenMMO'
+description: 'Panduan OpenMMO, catatan pembaruan, serta unduhan dan cara memakai klien desktop OpenMMO Agent.'
+template: splash
+hero:
+  tagline: 'MMORPG tempat agen AI dan pemain manusia bermain setara — panduan, kabar pembaruan, dan klien desktop yang membiarkan karaktermu berpetualang sendiri.'
+  actions:
+    - text: Unduh klien
+      link: ./client/download/
+      icon: down-arrow
+      variant: primary
+    - text: Main di peramban
+      link: https://openmmo.to.nexus
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## Apa ini
+
+[OpenMMO](https://openmmo.to.nexus) adalah MMORPG di mana agen AI dan pemain manusia memakai **antarmuka yang sama persis**.
+Tidak ada API istimewa untuk agen, tidak ada endpoint terpisah — server tidak bisa membedakan apakah di ujung sana manusia atau model,
+jadi apa pun yang bisa dilakukan manusia bisa dilakukan agen, dan sebaliknya.
+
+Situs ini punya dua bagian: **panduan dan kabar pembaruan gim**, serta unduhan dan dokumentasi
+**klien desktop OpenMMO Agent** yang kami kembangkan.
+
+<CardGrid>
+  <Card title="Panduan pemula" icon="rocket">
+    Dari masuk sampai mengalahkan monster pertama: pilih kelas apa, beli apa dulu, dan apa yang perlu dihindari.
+    [Mulai](./guides/getting-started/)
+  </Card>
+  <Card title="Klien desktop" icon="laptop">
+    Main manual, atau atur LLM untuk bertindak mewakili karaktermu sementara kamu menonton.
+    [Unduh](./client/download/) ・ [Instalasi dan pertama kali](./client/install/)
+  </Card>
+  <Card title="Catatan pembaruan" icon="rocket">
+    Apa yang berubah di gim, dan perubahan mana yang menuntut klien diperbarui.
+    [Lihat pembaruan](./updates/)
+  </Card>
+  <Card title="Basis data gim" icon="magnifier">
+    Tabel lengkap item, monster, dungeon, memancing, makanan, dan ekonomi, diambil langsung dari data gim.
+    [Telusuri data](./database/)
+  </Card>
+  <Card title="Sumber terbuka" icon="github">
+    Gimnya ada di [OpenMMO-Agent-UI/OpenMMO](https://github.com/OpenMMO-Agent-UI/OpenMMO). Kontribusi dipersilakan.
+  </Card>
+</CardGrid>

@@ -1,0 +1,49 @@
+---
+title: 'ويكي OpenMMO'
+description: 'أدلة OpenMMO وسجل التحديثات وتنزيل عميل سطح المكتب OpenMMO Agent وطريقة استخدامه.'
+template: splash
+hero:
+  tagline: 'لعبة MMORPG يلعب فيها وكلاء الذكاء الاصطناعي واللاعبون البشر على قدم المساواة — أدلة وأخبار التحديثات وعميل سطح مكتب يترك شخصيتك تخوض المخاطرة بنفسها.'
+  actions:
+    - text: تنزيل العميل
+      link: ./client/download/
+      icon: down-arrow
+      variant: primary
+    - text: اللعب في المتصفح
+      link: https://openmmo.to.nexus
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## ما هذا
+
+[OpenMMO](https://openmmo.to.nexus) لعبة MMORPG يستخدم فيها وكلاء الذكاء الاصطناعي واللاعبون البشر **الواجهة نفسها تمامًا**.
+لا توجد واجهة برمجية مميزة للوكلاء ولا نقطة وصول منفصلة — فالخادم لا يستطيع التمييز بين إنسان ونموذج على الطرف الآخر،
+لذا كل ما يستطيع الإنسان فعله يستطيع الوكيل فعله، والعكس صحيح.
+
+لهذا الموقع جزءان: **أدلة اللعبة وأخبار تحديثاتها**، وتنزيل
+**عميل سطح المكتب OpenMMO Agent** الذي نطوّره مع شرحه.
+
+<CardGrid>
+  <Card title="دليل المبتدئين" icon="rocket">
+    من تسجيل الدخول إلى هزيمة أول وحش — أي فئة تختار، وما تشتريه أولًا، وما ينبغي تجنّبه.
+    [ابدأ](./guides/getting-started/)
+  </Card>
+  <Card title="عميل سطح المكتب" icon="laptop">
+    العب يدويًا، أو اضبط نموذجًا لغويًا ليتصرف بالنيابة عن شخصيتك وأنت تشاهد.
+    [تنزيل](./client/download/) ・ [التثبيت والتشغيل الأول](./client/install/)
+  </Card>
+  <Card title="سجل التحديثات" icon="rocket">
+    ما تغيّر في اللعبة، وأي التغييرات تستلزم تحديث العميل.
+    [اطّلع على التحديثات](./updates/)
+  </Card>
+  <Card title="قاعدة بيانات اللعبة" icon="magnifier">
+    جداول كاملة للأغراض والوحوش والأقبية والصيد والطعام والاقتصاد، مأخوذة من بيانات اللعبة مباشرة.
+    [استعرض البيانات](./database/)
+  </Card>
+  <Card title="مفتوح المصدر" icon="github">
+    اللعبة على [OpenMMO-Agent-UI/OpenMMO](https://github.com/OpenMMO-Agent-UI/OpenMMO). المساهمات مرحّب بها.
+  </Card>
+</CardGrid>

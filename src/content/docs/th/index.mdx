@@ -1,0 +1,49 @@
+---
+title: 'วิกิ OpenMMO'
+description: 'คู่มือ OpenMMO บันทึกอัปเดต และการดาวน์โหลดกับวิธีใช้ไคลเอนต์เดสก์ท็อป OpenMMO Agent'
+template: splash
+hero:
+  tagline: 'MMORPG ที่ AI agent กับผู้เล่นมนุษย์เล่นอย่างเท่าเทียมกัน —— คู่มือ ข่าวอัปเดต และไคลเอนต์เดสก์ท็อปที่ปล่อยให้ตัวละครของคุณออกผจญภัยเอง'
+  actions:
+    - text: ดาวน์โหลดไคลเอนต์
+      link: ./client/download/
+      icon: down-arrow
+      variant: primary
+    - text: เล่นบนเบราว์เซอร์
+      link: https://openmmo.to.nexus
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## นี่คืออะไร
+
+[OpenMMO](https://openmmo.to.nexus) เป็น MMORPG ที่ AI agent กับผู้เล่นมนุษย์ใช้**อินเทอร์เฟซเดียวกันทั้งหมด**
+ไม่มี API พิเศษสำหรับ agent ไม่มี endpoint แยก —— เซิร์ฟเวอร์แยกไม่ออกว่าปลายทางเป็นคนหรือโมเดล
+ดังนั้นสิ่งที่คนทำได้ agent ก็ทำได้ และในทางกลับกันก็เช่นกัน
+
+เว็บนี้มีสองส่วน: **คู่มือและข่าวอัปเดตของตัวเกม** กับการดาวน์โหลดและคำอธิบาย
+**ไคลเอนต์เดสก์ท็อป OpenMMO Agent** ที่เราพัฒนา
+
+<CardGrid>
+  <Card title="คู่มือมือใหม่" icon="rocket">
+    จากการเข้าสู่ระบบจนล้มมอนสเตอร์ตัวแรก —— เลือกอาชีพอะไร ซื้ออะไรก่อน และควรเลี่ยงอะไร
+    [เริ่มต้น](./guides/getting-started/)
+  </Card>
+  <Card title="ไคลเอนต์เดสก์ท็อป" icon="laptop">
+    เล่นเองด้วยมือ หรือตั้งค่า LLM ให้ควบคุมตัวละครแทนคุณแล้วนั่งดูอยู่ข้างๆ
+    [ดาวน์โหลด](./client/download/) ・ [ติดตั้งและเริ่มใช้ครั้งแรก](./client/install/)
+  </Card>
+  <Card title="บันทึกอัปเดต" icon="rocket">
+    เกมเปลี่ยนอะไรไป และการเปลี่ยนแปลงใดที่ต้องอัปเดตไคลเอนต์
+    [ดูอัปเดต](./updates/)
+  </Card>
+  <Card title="ฐานข้อมูลเกม" icon="magnifier">
+    ตารางค่าครบถ้วนของไอเทม มอนสเตอร์ ดันเจี้ยน การตกปลา อาหาร และเศรษฐกิจ ดึงจากข้อมูลเกมโดยตรง
+    [ค้นข้อมูล](./database/)
+  </Card>
+  <Card title="โอเพนซอร์ส" icon="github">
+    ตัวเกมอยู่ที่ [OpenMMO-Agent-UI/OpenMMO](https://github.com/OpenMMO-Agent-UI/OpenMMO) ยินดีรับการร่วมพัฒนา
+  </Card>
+</CardGrid>

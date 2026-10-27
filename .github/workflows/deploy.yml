@@ -32,6 +32,11 @@ jobs:
       # path, so `../../` walks off the base path in zh-TW and silently lands
       # on the zh-TW copy from ko and en.
       - run: npm run check:links
+      # Reports coverage per language, and fails on the two things that break a
+      # language rather than merely leave it incomplete: a sidebar label with no
+      # translation (zh-TW text inside an otherwise translated menu) and a
+      # translated page the default locale no longer has.
+      - run: npm run check:i18n
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:

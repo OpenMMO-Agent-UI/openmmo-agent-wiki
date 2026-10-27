@@ -26,6 +26,7 @@ import { readFile, readdir } from 'node:fs/promises';
 import { join, dirname, relative, extname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import GithubSlugger from 'github-slugger';
+import { PREFIXED } from '../src/i18n/locales.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const DOCS = join(root, 'src', 'content', 'docs');
@@ -98,8 +99,12 @@ function linksIn(source) {
 const EXTERNAL = /^(?:[a-z][a-z0-9+.-]*:|\/\/)/i;
 
 /// Which translation a URL belongs to. `root` is the default locale and carries
-/// no prefix, so anything not under `ko/` or `en/` is the zh-TW copy.
-const LOCALES = new Set(['ko', 'en']);
+/// no prefix, so anything without a language prefix is the zh-TW copy. Taken
+/// from the one registry rather than listed again here — this used to say
+/// `['ko', 'en']`, and when nine more languages landed every one of their
+/// links would have read as the default locale and the check would have
+/// stopped meaning anything.
+const LOCALES = new Set(PREFIXED);
 function localeOf(url) {
   const first = url.slice(BASE.length).replace(/^\//, '').split('/')[0];
   return LOCALES.has(first) ? first : 'root';
@@ -126,7 +131,14 @@ for (const [url, page] of pages) {
       if (!resolved.endsWith('/') && !extname(resolved)) resolved += '/';
     }
     const where = relative(root, page.file);
-    const hit = pages.get(resolved);
+    // Starlight serves the default locale's page for anything a language has
+    // not translated, so `/fr/guides/x/` exists as long as `/guides/x/` does.
+    // Resolving only against source files called all 270 of those broken.
+    const fallbackOf = (url) => {
+      const m = new RegExp(`^${BASE}/(${PREFIXED.join('|')})/`).exec(url);
+      return m ? url.replace(`${BASE}/${m[1]}/`, `${BASE}/`) : null;
+    };
+    const hit = pages.get(resolved) ?? pages.get(fallbackOf(resolved) ?? '');
     if (!hit) {
       // Say what it should have been when exactly one page would match the
       // last segment — that is the fix nine times out of ten.

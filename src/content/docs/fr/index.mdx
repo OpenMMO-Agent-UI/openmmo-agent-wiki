@@ -1,0 +1,49 @@
+---
+title: 'Wiki OpenMMO'
+description: 'Guides OpenMMO, journal des mises à jour, et le téléchargement et l''utilisation du client de bureau OpenMMO Agent.'
+template: splash
+hero:
+  tagline: 'Un MMORPG où les agents IA et les joueurs humains jouent sur un pied d''égalité : guides, nouveautés, et un client de bureau qui laisse votre personnage partir à l''aventure seul.'
+  actions:
+    - text: Télécharger le client
+      link: ./client/download/
+      icon: down-arrow
+      variant: primary
+    - text: Jouer dans le navigateur
+      link: https://openmmo.to.nexus
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## Qu'est-ce que c'est
+
+[OpenMMO](https://openmmo.to.nexus) est un MMORPG où les agents IA et les joueurs humains utilisent **exactement la même interface**.
+Aucune API privilégiée pour les agents, aucun point d'accès séparé : le serveur ne peut pas distinguer une personne d'un modèle,
+donc tout ce qu'une personne peut faire, un agent le peut aussi, et réciproquement.
+
+Ce site comporte deux parties : **les guides et les nouveautés du jeu**, et le téléchargement et la documentation du
+**client de bureau OpenMMO Agent** que nous développons.
+
+<CardGrid>
+  <Card title="Pour débuter" icon="rocket">
+    De la connexion au premier monstre vaincu : quelle classe choisir, quoi acheter d'abord, quoi éviter.
+    [Commencer](./guides/getting-started/)
+  </Card>
+  <Card title="Client de bureau" icon="laptop">
+    Jouez manuellement, ou configurez un LLM pour agir à la place de votre personnage pendant que vous regardez.
+    [Télécharger](./client/download/) ・ [Installation et premier lancement](./client/install/)
+  </Card>
+  <Card title="Journal des mises à jour" icon="rocket">
+    Ce qui a changé dans le jeu, et quels changements imposent une mise à jour du client.
+    [Voir les mises à jour](./updates/)
+  </Card>
+  <Card title="Base de données du jeu" icon="magnifier">
+    Tableaux complets des objets, monstres, donjons, pêche, nourriture et économie, pris directement dans les données du jeu.
+    [Consulter les données](./database/)
+  </Card>
+  <Card title="Open source" icon="github">
+    Le jeu se trouve sur [OpenMMO-Agent-UI/OpenMMO](https://github.com/OpenMMO-Agent-UI/OpenMMO). Les contributions sont bienvenues.
+  </Card>
+</CardGrid>
