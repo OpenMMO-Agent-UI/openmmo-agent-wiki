@@ -1,0 +1,63 @@
+---
+title: 'OpenMMO Agent をダウンロード'
+description: 'OpenMMO Agent デスクトップクライアントのダウンロードリンク、動作環境、チェックサム。'
+---
+
+import release from '../../../../data/release.json';
+export const dl = (f) => `https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest/download/${f}`;
+
+OpenMMO Agent はデスクトップクライアントです。**手動で遊ぶ**こともできますし、LLM を設定して**キャラクターを操縦させ**、その視界と推論をリアルタイムで眺めることもできます。
+
+:::note[macOS はそのまま開き、Windows だけクリックが一つ増える]
+**macOS ビルドは Apple Developer ID で署名され、公証も受けている**ので、ダブルクリックで警告なしに開きます。
+
+**Windows ビルドは未署名**なので、SmartScreen が一度だけブロックします。これは想定どおりです —— [インストールと初回起動](../install/)に従い、キャンセルではなく「実行」を選んでください。
+
+Linux の AppImage に署名と呼べるものはありません。実行ビットだけ必要です。
+:::
+
+## ダウンロード
+
+現在のリリース: **v{release.version}** (プロトコル v{release.protocol}).
+ファイル名にバージョンが入ります。以下のリンクは常に最新リリースを指します:
+
+| プラットフォーム | ファイル |
+|---|---|
+| macOS (Apple Silicon) | <a href={dl(release.files.mac)}>{release.files.mac}</a> |
+| Windows (x64) | <a href={dl(release.files.win)}>{release.files.win}</a> |
+| Linux (x64) | <a href={dl(release.files.linux)}>{release.files.linux}</a> |
+
+チェックサム: <a href={dl('SHA256SUMS.txt')}>SHA256SUMS.txt</a>
+・ 全リリース: [リリースページ](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases)
+
+## 動作環境
+
+- **macOS** — Apple Silicon(M シリーズ)。Intel 版はありません。
+- **Windows** — 64 ビット。
+- **Linux** — 64 ビットで、AppImage を実行できること(ほとんどのデスクトップ配布は標準で可能)。
+- WebGPU / WebGL2 対応の GPU —— ゲームは Three.js の 3D シーンを描画します。
+- **AI の自動プレイ**には LLM に到達する手段が必要です。Claude または Codex の CLI にすでにサインインしているなら、**API キーなしで**使えます —— [モデル選択](../llm/)を参照。手動プレイにはどれも不要です。
+
+## バージョンとプロトコルバージョン
+
+サーバーはワイヤプロトコルのバージョンを**厳密に**照合し、それ以外をすべて拒否します。したがって新しいクライアントが自動的に動くクライアントになるわけではなく、稼働中のサーバーが話す版と一致していなければなりません。
+
+このページのバージョンは常に稼働中のサーバーと一致します。ファイル名の `p16` がプロトコルバージョンです(例:`openmmo-agent-v0.17.0-p16-macos-arm64`)。クライアントがプロトコル不一致を報告したら、サーバーが先へ進んだということです —— ここへ戻ってもう一度ダウンロードしてください。
+
+## ダウンロードの検証
+
+```bash
+# macOS / Linux
+shasum -a 256 openmmo-agent-macos-arm64.zip
+
+# Windows (PowerShell)
+Get-FileHash openmmo-agent-windows-x64.exe -Algorithm SHA256
+```
+
+結果を `SHA256SUMS.txt` の該当行と比べてください。
+
+## 何もインストールしたくない場合
+
+ゲームはブラウザで動きます:**[openmmo.to.nexus](https://openmmo.to.nexus)** —— Google でサインインすればすぐ遊べます。
+
+デスクトップクライアントが加えるのは、**複数のサーバープロファイル、鍵の暗号化保管、そして観戦ビュー付きの AI 自動プレイ**です。どれもブラウザ版には存在しません。

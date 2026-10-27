@@ -1,0 +1,63 @@
+---
+title: 'OpenMMO Agent ডাউনলোড করুন'
+description: 'OpenMMO Agent ডেস্কটপ ক্লায়েন্টের ডাউনলোড লিঙ্ক, সিস্টেম চাহিদা ও চেকসাম।'
+---
+
+import release from '../../../../data/release.json';
+export const dl = (f) => `https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest/download/${f}`;
+
+OpenMMO Agent একটি ডেস্কটপ ক্লায়েন্ট। আপনি **নিজে খেলতে** পারেন, বা একটি LLM সাজিয়ে **আপনার চরিত্র চালাতে** দিতে পারেন, আর পাশে বসে তার দৃষ্টি ও তার যুক্তি সরাসরি দেখতে পারেন।
+
+:::note[macOS এমনিই খোলে; কেবল Windows-এ একটি বাড়তি ক্লিক লাগে]
+**macOS বিল্ডটি Apple Developer ID দিয়ে সই করা ও নোটারাইজ করা**, তাই ডাবল-ক্লিকেই কোনো সতর্কবার্তা ছাড়া খোলে।
+
+**Windows বিল্ডটি সই করা নয়**, তাই SmartScreen একবার আটকায়। এটাই প্রত্যাশিত — [ইনস্টল ও প্রথম চালু](../install/) অনুসরণ করুন এবং Cancel-এর বদলে Run anyway বাছুন।
+
+Linux-এর AppImage-এ সই বলার মতো কিছু নেই; কেবল এক্সিকিউটেবল বিট দরকার।
+:::
+
+## ডাউনলোড
+
+বর্তমান রিলিজ: **v{release.version}** (প্রোটোকল v{release.protocol}).
+ফাইলের নামে সংস্করণ থাকে; এই লিঙ্কগুলো সব সময় সর্বশেষ রিলিজ দেখায়:
+
+| প্ল্যাটফর্ম | ফাইল |
+|---|---|
+| macOS (Apple Silicon) | <a href={dl(release.files.mac)}>{release.files.mac}</a> |
+| Windows (x64) | <a href={dl(release.files.win)}>{release.files.win}</a> |
+| Linux (x64) | <a href={dl(release.files.linux)}>{release.files.linux}</a> |
+
+চেকসাম: <a href={dl('SHA256SUMS.txt')}>SHA256SUMS.txt</a>
+・ সব রিলিজ: [রিলিজ পৃষ্ঠা](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases)
+
+## সিস্টেম চাহিদা
+
+- **macOS** — Apple Silicon (M-সিরিজ)। Intel-এর জন্য কোনো বিল্ড নেই।
+- **Windows** — ৬৪-বিট।
+- **Linux** — ৬৪-বিট, AppImage চালাতে সক্ষম (অধিকাংশ ডেস্কটপ ডিস্ট্রো এমনিতেই পারে)।
+- WebGPU / WebGL2 সমর্থনকারী একটি GPU — গেমটি Three.js-এর 3D দৃশ্য আঁকে।
+- **AI স্বয়ংক্রিয় খেলার** জন্য একটি LLM-এ পৌঁছানোর উপায় দরকার। Claude বা Codex CLI-তে আগেই সাইন ইন করা থাকলে **কোনো API চাবি ছাড়াই** সেটি ব্যবহার করতে পারেন — দেখুন [মডেল নির্বাচন](../llm/)। হাতে খেলার জন্য এর কিছুই দরকার নেই।
+
+## সংস্করণ ও প্রোটোকল সংস্করণ
+
+সার্ভার wire protocol-এর সংস্করণ **হুবহু** মিলিয়ে দেখে এবং অন্য সব ফিরিয়ে দেয়। তাই নতুন ক্লায়েন্ট মানেই চালু ক্লায়েন্ট নয় — সার্ভার যা বলে তার সঙ্গে মিলতেই হবে।
+
+এই পৃষ্ঠার সংস্করণ সব সময় চালু সার্ভারের সঙ্গে মেলে। ফাইলের নামে `p16` হলো প্রোটোকল সংস্করণ (যেমন `openmmo-agent-v0.17.0-p16-macos-arm64`)। ক্লায়েন্ট প্রোটোকল অমিল জানালে বুঝবেন সার্ভার এগিয়ে গেছে — এখানে ফিরে এসে আবার ডাউনলোড করুন।
+
+## আপনার ডাউনলোড যাচাই
+
+```bash
+# macOS / Linux
+shasum -a 256 openmmo-agent-macos-arm64.zip
+
+# Windows (PowerShell)
+Get-FileHash openmmo-agent-windows-x64.exe -Algorithm SHA256
+```
+
+ফলাফলটি `SHA256SUMS.txt`-এর মিল-থাকা লাইনের সঙ্গে মিলিয়ে দেখুন।
+
+## কিছুই ইনস্টল করতে চান না?
+
+গেমটি ব্রাউজারে চলে: **[openmmo.to.nexus](https://openmmo.to.nexus)** — Google দিয়ে সাইন ইন করুন, ঢুকে পড়েছেন।
+
+ডেস্কটপ ক্লায়েন্ট যা যোগ করে তা হলো **একাধিক সার্ভার প্রোফাইল, চাবির এনক্রিপ্টেড সংরক্ষণ, এবং দর্শক-দৃশ্যসহ AI স্বয়ংক্রিয় খেলা**। এর কোনোটিই ব্রাউজার সংস্করণে নেই।

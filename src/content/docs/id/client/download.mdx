@@ -1,0 +1,63 @@
+---
+title: 'Unduh OpenMMO Agent'
+description: 'Tautan unduhan, kebutuhan sistem, dan checksum untuk klien desktop OpenMMO Agent.'
+---
+
+import release from '../../../../data/release.json';
+export const dl = (f) => `https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest/download/${f}`;
+
+OpenMMO Agent adalah klien desktop. Kamu bisa **main manual**, atau mengatur sebuah LLM untuk **mengendalikan karaktermu** sementara kamu menonton pandangannya dan alur penalarannya secara langsung.
+
+:::note[macOS langsung terbuka; hanya Windows butuh satu klik tambahan]
+**Build macOS ditandatangani dengan Apple Developer ID dan dinotarisasi**, jadi terbuka dengan klik dua kali tanpa peringatan.
+
+**Build Windows tidak ditandatangani**, jadi SmartScreen memblokirnya sekali. Itu memang diharapkan — ikuti [Instalasi dan pertama kali dijalankan](../install/) lalu pilih Run anyway, bukan Cancel.
+
+AppImage Linux tidak punya penandatanganan yang berarti; ia hanya butuh bit eksekusi.
+:::
+
+## Unduh
+
+Rilis sekarang: **v{release.version}** (protokol v{release.protocol}).
+Nama berkas memuat versinya; tautan ini selalu mengarah ke rilis terbaru:
+
+| Platform | Berkas |
+|---|---|
+| macOS (Apple Silicon) | <a href={dl(release.files.mac)}>{release.files.mac}</a> |
+| Windows (x64) | <a href={dl(release.files.win)}>{release.files.win}</a> |
+| Linux (x64) | <a href={dl(release.files.linux)}>{release.files.linux}</a> |
+
+Checksum: <a href={dl('SHA256SUMS.txt')}>SHA256SUMS.txt</a>
+・ Semua rilis: [Halaman rilis](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases)
+
+## Kebutuhan sistem
+
+- **macOS** — Apple Silicon (seri M). Tidak ada build untuk Intel.
+- **Windows** — 64-bit.
+- **Linux** — 64-bit, mampu menjalankan AppImage (hampir semua distribusi desktop bisa tanpa setelan tambahan).
+- GPU dengan WebGPU / WebGL2 — gim merender adegan 3D Three.js.
+- Untuk **main otomatis dengan AI** kamu perlu cara menjangkau sebuah LLM. Kalau kamu sudah masuk ke CLI Claude atau Codex, kamu bisa memakainya **tanpa kunci API sama sekali** — lihat [Memilih model](../llm/). Main manual tidak butuh apa pun dari ini.
+
+## Versi dan versi protokol
+
+Server memeriksa versi protokol **secara persis** dan menolak yang lain. Jadi klien yang lebih baru belum tentu klien yang jalan — ia harus cocok dengan yang dibicarakan server yang sedang hidup.
+
+Versi di halaman ini selalu cocok dengan server yang hidup. `p16` pada nama berkas adalah versi protokol (misalnya `openmmo-agent-v0.17.0-p16-macos-arm64`). Kalau klien melaporkan ketidakcocokan protokol, berarti server sudah maju — kembalilah ke sini dan unduh lagi.
+
+## Memverifikasi unduhanmu
+
+```bash
+# macOS / Linux
+shasum -a 256 openmmo-agent-macos-arm64.zip
+
+# Windows (PowerShell)
+Get-FileHash openmmo-agent-windows-x64.exe -Algorithm SHA256
+```
+
+Bandingkan hasilnya dengan baris yang sesuai di `SHA256SUMS.txt`.
+
+## Tidak mau memasang apa pun?
+
+Gimnya jalan di peramban: **[openmmo.to.nexus](https://openmmo.to.nexus)** — masuk dengan Google dan kamu sudah di dalam.
+
+Yang ditambahkan klien desktop adalah **beberapa profil server, penyimpanan kunci terenkripsi, dan main otomatis dengan AI beserta tampilan penonton**. Tidak satu pun dari itu ada di versi peramban.

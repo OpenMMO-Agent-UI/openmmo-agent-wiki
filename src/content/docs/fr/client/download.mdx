@@ -1,0 +1,63 @@
+---
+title: 'Télécharger OpenMMO Agent'
+description: 'Liens de téléchargement, prérequis système et sommes de contrôle du client de bureau OpenMMO Agent.'
+---
+
+import release from '../../../../data/release.json';
+export const dl = (f) => `https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases/latest/download/${f}`;
+
+OpenMMO Agent est un client de bureau. Vous pouvez **jouer manuellement**, ou configurer un LLM pour **piloter votre personnage** pendant que vous observez sa vue et son raisonnement en temps réel.
+
+:::note[macOS s'ouvre simplement ; seul Windows demande un clic de plus]
+**La version macOS est signée avec un Apple Developer ID et notariée**, donc elle s'ouvre d'un double-clic sans avertissement.
+
+**La version Windows n'est pas signée**, donc SmartScreen la bloque une fois. C'est attendu — suivez [Installation et premier lancement](../install/) et choisissez Exécuter quand même plutôt que d'annuler.
+
+Les AppImage Linux n'ont pas de signature à proprement parler ; il leur faut juste le bit d'exécution.
+:::
+
+## Téléchargement
+
+Version actuelle : **v{release.version}** (protocole v{release.protocol}).
+Les noms de fichiers portent la version ; ces liens pointent toujours vers la dernière :
+
+| Plateforme | Fichier |
+|---|---|
+| macOS (Apple Silicon) | <a href={dl(release.files.mac)}>{release.files.mac}</a> |
+| Windows (x64) | <a href={dl(release.files.win)}>{release.files.win}</a> |
+| Linux (x64) | <a href={dl(release.files.linux)}>{release.files.linux}</a> |
+
+Sommes de contrôle: <a href={dl('SHA256SUMS.txt')}>SHA256SUMS.txt</a>
+・ Toutes les versions: [Page des versions](https://github.com/OpenMMO-Agent-UI/openmmo-agent-wiki/releases)
+
+## Prérequis système
+
+- **macOS** — Apple Silicon (série M). Il n'y a pas de version Intel.
+- **Windows** — 64 bits.
+- **Linux** — 64 bits, capable d'exécuter un AppImage (la plupart des distributions de bureau le peuvent d'origine).
+- Un GPU avec WebGPU / WebGL2 — le jeu rend une scène 3D Three.js.
+- Pour le **jeu automatique par IA**, il vous faut un moyen d'atteindre un LLM. Si vous êtes déjà connecté à la CLI Claude ou Codex, vous pouvez l'utiliser **sans aucune clé d'API** — voir [Choisir un modèle](../llm/). Le jeu manuel n'a besoin de rien de tout cela.
+
+## Versions et versions de protocole
+
+Le serveur vérifie la version du protocole **à l'identique** et refuse tout le reste. Un client plus récent n'est donc pas automatiquement un client qui marche : il doit correspondre à ce que parle le serveur en service.
+
+La version de cette page correspond toujours au serveur en service. Le `p16` dans le nom de fichier est la version de protocole (par exemple `openmmo-agent-v0.17.0-p16-macos-arm64`). Si le client signale une incompatibilité de protocole, c'est que le serveur a avancé — revenez ici et téléchargez de nouveau.
+
+## Vérifier votre téléchargement
+
+```bash
+# macOS / Linux
+shasum -a 256 openmmo-agent-macos-arm64.zip
+
+# Windows (PowerShell)
+Get-FileHash openmmo-agent-windows-x64.exe -Algorithm SHA256
+```
+
+Comparez le résultat à la ligne correspondante de `SHA256SUMS.txt`.
+
+## Vous ne voulez rien installer ?
+
+Le jeu tourne dans un navigateur : **[openmmo.to.nexus](https://openmmo.to.nexus)** — connectez-vous avec Google et vous y êtes.
+
+Ce que le client de bureau ajoute, ce sont **plusieurs profils de serveur, un stockage chiffré des clés, et le jeu automatique par IA avec vue spectateur**. Rien de cela n'existe dans la version navigateur.
