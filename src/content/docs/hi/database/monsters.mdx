@@ -1,0 +1,205 @@
+---
+title: Monster index
+description: Stats for every monster in OpenMMO — health, Guard, damage, behaviour, spawn depth and drops.
+---
+
+import FilterTable from '../../../../components/FilterTable.astro';
+import { monsters, items, dungeons, dungeonSpawns, averageRoll, healthForLevel, attackBonusForLevel, damageRollForLevel } from '../../../../lib/gamedata.js';
+import { monsterName, itemName, behaviorNames } from '../../../../lib/hi.js';
+
+export const spawnDungeons = (group) => dungeons.filter((d) => (d.spawnGroup || null) === group).map((d) => d.name).join(', ');
+
+export const mark = (value, derived) => (derived ? `${value} *` : `${value}`);
+export const byLevel = (a, b) => a.level - b.level;
+
+**{monsters.length} monsters** so far.
+
+:::caution[Values marked `*` are derived]
+A blank health, attack bonus or damage roll in the game data means **"don't
+override"** — the server computes it from the level. Blank is not zero. So the
+same formulas the server uses (`server/src/game/combat.rs`) run here, and
+derived values carry a `*`:
+
+- Health = `ceil(level × 9 ÷ 2)`
+- Attack bonus = `level` (monsters don't halve it the way players do — see
+  [Combat](../../guides/combat/))
+- Damage roll = a level lookup (table below)
+:::
+
+## All monsters
+
+<FilterTable
+  placeholder="राक्षस खोजें…"
+  columns={[
+    { key: 'name', label: 'नाम' },
+    { key: 'level', label: 'स्तर', align: 'right' },
+    { key: 'hp', label: 'स्वास्थ्य', align: 'right' },
+    { key: 'guard', label: 'रक्षण', align: 'right' },
+    { key: 'atk', label: 'निशाना', align: 'right' },
+    { key: 'dmg', label: 'क्षति', align: 'center' },
+    { key: 'avg', label: 'औसत क्षति', align: 'right' },
+    { key: 'behavior', label: 'व्यवहार', align: 'center' },
+  ]}
+  rows={monsters.slice().sort(byLevel).map((m) => ({
+    name: m.name,
+    level: m.level,
+    hp: mark(m.healthEffective, m.healthDerived),
+    guard: m.guard,
+    atk: mark(`+${m.attackBonusEffective}`, m.attackBonusDerived),
+    dmg: mark(m.damageRollEffective, m.damageRollDerived),
+    avg: averageRoll(m.damageRollEffective)?.toFixed(1) ?? '—',
+    behavior: behaviorNames[m.behavior] ?? m.behavior,
+  }))}
+/>
+
+There are only two behaviours. *Attacks on sight* monsters charge you from a
+distance; *fights back only* monsters wait for you to swing first. The Kobold
+and the Stalker are the latter, but either behaviour engages the moment you're
+within **5m** — "fights back only" just means it won't charge from range, not
+that you can walk right past it.
+
+## Movement and attack parameters
+
+Use this to work out whether you can outrun something, or time a gap between
+its swings. Chase range is where it starts following you; attack range is where
+it can reach you.
+
+<FilterTable
+  placeholder="राक्षस खोजें…"
+  columns={[
+    { key: 'name', label: 'नाम' },
+    { key: 'walk', label: 'चलने की गति', align: 'right' },
+    { key: 'run', label: 'दौड़ने की गति', align: 'right' },
+    { key: 'atkRange', label: 'हमले की दूरी', align: 'right' },
+    { key: 'chase', label: 'पीछा करने की दूरी', align: 'right' },
+    { key: 'cooldown', label: 'हमले का अंतराल', align: 'right' },
+  ]}
+  rows={monsters.slice().sort(byLevel).map((m) => ({
+    name: m.name,
+    walk: m.walkSpeed,
+    run: m.runSpeed,
+    atkRange: `${m.attackRange} m`,
+    chase: `${m.chaseRange} m`,
+    cooldown: `${(m.attackCooldown / 1000).toFixed(2)}s`,
+  }))}
+/>
+
+Your baseline movement speed is **3.0** (3.3 with the well-fed ×1.1 buff).
+Against that table: the Stalker runs at 8.0, so provoking one means **you
+cannot escape it**. The Orc at 4.5 and the Goblin Chief at 4.0 will also catch
+you. Only the Kobold (3.2) can be shaken off.
+
+## Where they spawn
+
+Dungeon monsters spawn by floor depth; surface monsters spawn in designated
+regions. A higher weight means it turns up more often within its depth range.
+
+<FilterTable
+  placeholder="राक्षस खोजें…"
+  columns={[
+    { key: 'name', label: 'नाम' },
+    { key: 'dungeon', label: 'तहख़ाना' },
+    { key: 'depth', label: 'गहराई' },
+    { key: 'weight', label: 'उत्पत्ति भार', align: 'right' },
+    { key: 'note', label: 'टिप्पणियाँ' },
+  ]}
+  rows={monsters.slice().sort(byLevel).flatMap((m) => {
+    const note = m.boss ? 'बॉस, तहख़ाने के सबसे निचले तल पर' : '';
+    const entries = dungeonSpawns.filter((s) => s.monsterId === m.id);
+    if (entries.length === 0) {
+      return [{ name: m.name, dungeon: '—', depth: 'तहख़ानों में नहीं आता', weight: '—', note }];
+    }
+    return entries.map((s) => ({
+      name: m.name,
+      dungeon: spawnDungeons(s.group),
+      depth: `Floors ${s.minDepth} – ${s.maxDepth}`,
+      weight: s.weight,
+      note,
+    }));
+  })}
+/>
+
+## Drops
+
+The weapon a monster carries is the weapon it drops — a deliberate design, so
+**what you can see is what you can get.** Ordinary monsters drop at 10%. The
+three dungeon bosses (Goblin Chief, Orc Warlord, Ogre Warlord) no longer drop
+their weapon themselves — it's now a guaranteed drop from that dungeon's
+chest instead; see [Dungeons](../dungeons/).
+
+<FilterTable
+  placeholder="राक्षस या ड्रॉप खोजें…"
+  columns={[
+    { key: 'name', label: 'राक्षस' },
+    { key: 'drop', label: 'गिराया हथियार' },
+    { key: 'chance', label: 'ड्रॉप दर', align: 'right' },
+    { key: 'dice', label: 'हथियार क्षति', align: 'center' },
+  ]}
+  rows={monsters.filter((m) => m.weapon && m.weaponDropChance > 0).sort(byLevel).map((m) => ({
+    name: m.name,
+    drop: itemName(m.weapon),
+    chance: `${Math.round(m.weaponDropChance * 100)}%`,
+    dice: items.find((i) => i.id === m.weapon)?.dice ?? '—',
+  }))}
+/>
+
+The **Iron Sword** isn't sold in shops — the only way to get it now is the Orc
+Warrens dungeon chest (see [Dungeons](../dungeons/)).
+
+### Bonus drops
+
+Some monsters also roll for a food item on kill, **independently** of the
+weapon drop — low odds, but it doesn't compete with the weapon roll.
+
+<FilterTable
+  placeholder="राक्षस या ड्रॉप खोजें…"
+  columns={[
+    { key: 'name', label: 'राक्षस' },
+    { key: 'drop', label: 'अतिरिक्त ड्रॉप' },
+    { key: 'chance', label: 'संभावना', align: 'right' },
+  ]}
+  rows={monsters
+    .filter((m) => m.drops.length > 0)
+    .sort(byLevel)
+    .flatMap((m) => m.drops.map((d) => ({
+      name: m.name,
+      drop: itemName(d.itemId),
+      chance: `${(d.chance * 100).toFixed(0)}%`,
+    })))}
+/>
+
+## Level defaults
+
+Blank fields use this table.
+
+<FilterTable
+  placeholder="स्तर लिखें…"
+  columns={[
+    { key: 'level', label: 'स्तर', align: 'right' },
+    { key: 'hp', label: 'स्वास्थ्य', align: 'right' },
+    { key: 'atk', label: 'निशाना', align: 'right' },
+    { key: 'dmg', label: 'क्षति पासा', align: 'center' },
+    { key: 'avg', label: 'औसत क्षति', align: 'right' },
+  ]}
+  rows={Array.from({ length: 12 }, (_, n) => n + 1).map((lv) => ({
+    level: lv,
+    hp: healthForLevel(lv),
+    atk: `+${attackBonusForLevel(lv)}`,
+    dmg: damageRollForLevel(lv),
+    avg: averageRoll(damageRollForLevel(lv)).toFixed(1),
+  }))}
+/>
+
+## How hits are resolved
+
+Attacks roll an **exploding d20** (a natural 20 rolls again and adds — see
+[Combat](../../guides/combat/) for the full mechanic):
+
+```
+roll total + attack bonus >  target Guard   →  hit
+roll total + attack bonus ≤  target Guard   →  miss
+```
+
+So Guard is the number you have to beat. Your own Guard comes from DEX
+(`clamp(10 + DEX modifier, 1, 20)`, which lands around 7–14 in practice) plus
+whatever your equipment adds.

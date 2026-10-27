@@ -1,0 +1,259 @@
+---
+title: Item list
+description: Stat tables for every item in OpenMMO — damage, defence, weight, price and where to get it.
+---
+
+import FilterTable from '../../../../components/FilterTable.astro';
+import { items, merchants, worldDrops, monsters, formatCoins, sellPrice, averageRoll } from '../../../../lib/gamedata.js';
+import { itemName, itemDescriptions, slotNames, materialNames, categoryNames, monsterName } from '../../../../lib/ja.js';
+
+export const rica = merchants.find((m) => m.id === 'rica');
+export const dropChance = new Map(worldDrops.map((d) => [d.id, d.chance]));
+export const monsterWeapons = monsters.filter((m) => m.weapon);
+
+export const otherMerchants = merchants.filter((m) => m.id !== 'rica');
+
+export const sources = (id) => {
+  const out = [];
+  if (rica.catalog.includes(id)) out.push('商店');
+  else {
+    const seller = otherMerchants.find((m) => m.catalog.includes(id));
+    if (seller) out.push(`Shop (${seller.npcName})`);
+  }
+  if (dropChance.has(id)) out.push(`World drop ${(dropChance.get(id) * 100).toFixed(1)}%`);
+  for (const m of monsterWeapons.filter((m) => m.weapon === id && m.weaponDropChance > 0)) {
+    out.push(`${monsterName(m.id)} ${Math.round(m.weaponDropChance * 100)}%`);
+  }
+  const it = items.find((i) => i.id === id);
+  if (it?.chestTier) out.push(`Chest T${it.chestTier}${it.chestChance ? ` ${Math.round(it.chestChance * 100)}%` : ' guaranteed'}`);
+  if (it?.grillsInto) out.push('釣り');
+  return out.length ? out.join(', ') : '—';
+};
+
+export const byId = (a, b) => a.id.localeCompare(b.id);
+
+All **{items.length} items**, read straight from the game's `data-src/items.csv`
+so they match what the server loads.
+
+:::note[Reading prices]
+The game stores one copper integer and converts on display:
+**1 gold (g) = 100 silver (s) = 10,000 copper (c)**.
+Items with no price (the "装備中" ones) are **refused by merchants** — that's the
+design that stops starting gear being cashed out. Those three "装備中" starting
+items are also marked **untradeable to other players** — see
+[Player trading](../../guides/trade/).
+
+**Sell price** is what merchant Rica pays, fixed at
+**{rica.sellRatePercent}%** of base. The spread means buying low and selling
+high doesn't work.
+:::
+
+## Weapons
+
+Damage is dice notation — `1d8` is one eight-sided die. The **average** column
+is there so you can compare directly.
+
+<FilterTable
+  placeholder="武器を検索…"
+  columns={[
+    { key: 'name', label: '名称' },
+    { key: 'dice', label: 'ダメージ', align: 'center' },
+    { key: 'avg', label: '平均', align: 'right' },
+    { key: 'weight', label: '重さ', align: 'right' },
+    { key: 'price', label: '商店', align: 'right' },
+    { key: 'sell', label: '売値', align: 'right' },
+    { key: 'source', label: '入手方法' },
+  ]}
+  rows={items
+    .filter((i) => i.category === 'weapon')
+    .sort((a, b) => (averageRoll(b.dice) ?? 0) - (averageRoll(a.dice) ?? 0))
+    .map((i) => ({
+      name: i.name,
+      dice: i.dice ?? '—',
+      avg: averageRoll(i.dice)?.toFixed(1) ?? '—',
+      weight: `${i.weight} kg`,
+      price: formatCoins(i.basePrice),
+      sell: formatCoins(sellPrice(i.basePrice, rica.sellRatePercent)),
+      source: sources(i.id),
+    }))}
+/>
+
+:::note[The Great Sword's "宝箱 T4 確定" isn't obtainable yet]
+The Great Sword's data is live, but the three dungeons' chests only go up to
+T3 — nothing currently reaches T4. It's data parked ahead of a dungeon that
+hasn't shipped yet, so that chest tag is a placeholder for now. See
+[Dungeons](../dungeons/).
+:::
+
+## Armor
+
+**Guard** is the number an attacker has to beat to hit you — higher is better.
+Worn Guard adds up across slots.
+
+<FilterTable
+  placeholder="防具を検索…"
+  columns={[
+    { key: 'name', label: '名称' },
+    { key: 'slot', label: '装備欄', align: 'center' },
+    { key: 'guard', label: '防御', align: 'right' },
+    { key: 'weight', label: '重さ', align: 'right' },
+    { key: 'material', label: '材質', align: 'center' },
+    { key: 'price', label: '商店', align: 'right' },
+    { key: 'sell', label: '売値', align: 'right' },
+    { key: 'source', label: '入手方法' },
+  ]}
+  rows={items
+    .filter((i) => i.category === 'armor')
+    .sort((a, b) => (b.guard ?? 0) - (a.guard ?? 0))
+    .map((i) => ({
+      name: i.name,
+      slot: slotNames[i.equipSlot] ?? i.equipSlot ?? '—',
+      guard: i.guard ?? '—',
+      weight: `${i.weight} kg`,
+      material: materialNames[i.material] ?? i.material ?? '—',
+      price: formatCoins(i.basePrice),
+      sell: formatCoins(sellPrice(i.basePrice, rica.sellRatePercent)),
+      source: sources(i.id),
+    }))}
+/>
+
+## Accessories
+
+<FilterTable
+  placeholder="アクセサリーを検索…"
+  columns={[
+    { key: 'name', label: '名称' },
+    { key: 'slot', label: '装備欄', align: 'center' },
+    { key: 'guard', label: '防御', align: 'right' },
+    { key: 'cha', label: '魅力', align: 'right' },
+    { key: 'effect', label: '効果' },
+    { key: 'weight', label: '重さ', align: 'right' },
+    { key: 'price', label: '商店', align: 'right' },
+    { key: 'sell', label: '売値', align: 'right' },
+    { key: 'source', label: '入手方法' },
+  ]}
+  rows={items
+    .filter((i) => i.category === 'accessory')
+    .sort(byId)
+    .map((i) => ({
+      name: i.name,
+      slot: slotNames[i.equipSlot] ?? '—',
+      guard: i.guard ?? '—',
+      cha: i.chaBonus ? `+${i.chaBonus}` : '—',
+      effect: i.hasSustenance ? '満腹度の減りが ×0.75' : '—',
+      weight: `${i.weight} kg`,
+      price: formatCoins(i.basePrice),
+      sell: formatCoins(sellPrice(i.basePrice, rica.sellRatePercent)),
+      source: sources(i.id),
+    }))}
+/>
+
+The Gold Ring is a ring of adornment: CHA +1, which widens your haggling price
+band by ±2 percentage points. It drops from tier-3 dungeon chests (10% roll) —
+every ring already in circulation from the old chest rules gets the effect
+retroactively. The Silver Necklace slows satiation drain to 0.75x while
+equipped (sprinting included), and drops from tier-2 dungeon chests (10%
+roll) — every necklace already in circulation from the old chest rules gets
+the effect retroactively too.
+
+## Consumables and tools
+
+<FilterTable
+  placeholder="消耗品を検索…"
+  columns={[
+    { key: 'name', label: '名称' },
+    { key: 'category', label: '分類', align: 'center' },
+    { key: 'effect', label: '効果' },
+    { key: 'weight', label: '重さ', align: 'right' },
+    { key: 'price', label: '商店', align: 'right' },
+    { key: 'source', label: '入手方法' },
+  ]}
+  rows={items
+    .filter((i) => ['healing_potion', 'return_scroll', 'enchant_scroll', 'party_summon_scroll', 'fishing_rod', 'campfire_kit', 'tip_hat', 'furniture', 'currency', 'cape_dye', 'cape_texture', 'phoenix_talisman', 'reagent'].includes(i.category))
+    .sort(byId)
+    .map((i) => ({
+      name: i.name,
+      category: categoryNames[i.category] ?? i.category,
+      effect: itemDescriptions[i.id] ?? i.description,
+      weight: `${i.weight} kg`,
+      price: formatCoins(i.basePrice),
+      source: sources(i.id),
+    }))}
+/>
+
+The Healing Potion rolls `6d4` (average 15), capped at max health — drinking at
+full health or while downed keeps it rather than wasting it.
+
+## Food
+
+Full satiation mechanics are in [Food and satiation](../food/).
+
+<FilterTable
+  placeholder="食料を検索…"
+  columns={[
+    { key: 'name', label: '名称' },
+    { key: 'nutrition', label: '栄養', align: 'right' },
+    { key: 'weight', label: '重さ', align: 'right' },
+    { key: 'price', label: '商店', align: 'right' },
+    { key: 'perWeight', label: '栄養 / kg', align: 'right' },
+    { key: 'source', label: '入手方法' },
+  ]}
+  rows={items
+    .filter((i) => i.category === 'food')
+    .sort((a, b) => (b.nutrition ?? 0) - (a.nutrition ?? 0))
+    .map((i) => ({
+      name: i.name,
+      nutrition: i.nutrition ?? '—',
+      weight: `${i.weight} kg`,
+      price: formatCoins(i.basePrice),
+      perWeight: i.nutrition && i.weight ? Math.round(i.nutrition / i.weight) : '—',
+      source: sources(i.id),
+    }))}
+/>
+
+## Catches
+
+Raw fish are edible (fixed 40 nutrition) but **carry a food poisoning risk**.
+Grilling removes it. See [Fishing](../fishing/).
+
+<FilterTable
+  placeholder="釣果を検索…"
+  columns={[
+    { key: 'name', label: '名称' },
+    { key: 'category', label: '分類', align: 'center' },
+    { key: 'weight', label: '重さ', align: 'right' },
+    { key: 'price', label: '商店', align: 'right' },
+    { key: 'grill', label: '焼くと' },
+  ]}
+  rows={items
+    .filter((i) => ['fish', 'junk', 'coin_catch'].includes(i.category))
+    .sort((a, b) => (b.basePrice ?? 0) - (a.basePrice ?? 0))
+    .map((i) => ({
+      name: i.name,
+      category: categoryNames[i.category] ?? i.category,
+      weight: `${i.weight} kg`,
+      price: formatCoins(i.basePrice),
+      grill: i.grillsInto ? itemName(i.grillsInto) : '焼けない',
+    }))}
+/>
+
+## Item descriptions
+
+The in-game text, for searching.
+
+<FilterTable
+  placeholder="名称または説明を検索…"
+  columns={[
+    { key: 'name', label: '名称' },
+    { key: 'category', label: '分類', align: 'center' },
+    { key: 'desc', label: '説明' },
+  ]}
+  rows={items
+    .slice()
+    .sort((a, b) => (categoryNames[a.category] ?? a.category).localeCompare(categoryNames[b.category] ?? b.category) || a.id.localeCompare(b.id))
+    .map((i) => ({
+      name: i.name,
+      category: categoryNames[i.category] ?? i.category,
+      desc: itemDescriptions[i.id] ?? i.description,
+    }))}
+/>

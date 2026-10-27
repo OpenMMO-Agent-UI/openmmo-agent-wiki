@@ -1,0 +1,222 @@
+---
+title: 'Dungeon'
+description: Dungeon locations, floor counts, bosses and the chest drop rules.
+---
+
+import FilterTable from '../../../../components/FilterTable.astro';
+import { dungeons, monsters, items, lockedFloors, dungeonSpawns } from '../../../../lib/gamedata.js';
+import { itemName } from '../../../../lib/id.js';
+
+export const signature = (d) => (d.chestDrops.length ? d.chestDrops.map(itemName).join(', ') : '—');
+
+**{dungeons.length} dungeons** are open. Dungeons are **seed-determined**: the
+same entrance always has the same layout and is never regenerated.
+
+## The dungeons
+
+<FilterTable
+  placeholder="Cari dungeon…"
+  columns={[
+    { key: 'name', label: 'Nama' },
+    { key: 'tier', label: 'Tingkat', align: 'center' },
+    { key: 'floors', label: 'Lantai', align: 'right' },
+    { key: 'boss', label: 'Bos' },
+    { key: 'signature', label: 'Drop dijamin' },
+    { key: 'coords', label: 'Koordinat' },
+  ]}
+  rows={dungeons.map((d) => ({
+    name: d.name,
+    tier: `T${d.chestTier}`,
+    floors: `${d.floors}`,
+    boss: d.boss ? monsters.find((m) => m.id === d.boss)?.name ?? d.boss : '—',
+    signature: signature(d),
+    coords: `${d.x}, ${d.z}`,
+  }))}
+/>
+
+The world map records dungeon entrances **you have already found** — you have
+to walk to one the first time.
+
+## Bosses
+
+<FilterTable
+  placeholder="Cari bos…"
+  columns={[
+    { key: 'name', label: 'Bos' },
+    { key: 'dungeon', label: 'Dungeon' },
+    { key: 'level', label: 'Level', align: 'right' },
+    { key: 'hp', label: 'Nyawa', align: 'right' },
+    { key: 'guard', label: 'Pertahanan', align: 'right' },
+    { key: 'atk', label: 'Akurasi', align: 'right' },
+    { key: 'dmg', label: 'Damage', align: 'center' },
+  ]}
+  rows={dungeons.filter((d) => d.boss).map((d) => {
+    const m = monsters.find((x) => x.id === d.boss);
+    return {
+      name: m.name, dungeon: d.name,
+      level: m.level, hp: m.healthEffective, guard: m.guard,
+      atk: `+${m.attackBonusEffective}`, dmg: m.damageRollEffective,
+    };
+  })}
+/>
+
+The **Orc Warlord** is a step up: its 120 health is set directly in the data
+(not the 45 the level would derive), with Guard 13, +6 to hit and 2d8 damage.
+Orc Warrens runs 10 floors, so put a full leather set together before going
+down.
+
+**Barkan** (the Sundered Bastion boss) casts a rune slash in place of a
+plain swing starting 6s into a fight and every 15s after: he locks his
+facing and holds still through the cast, ignoring staggers, with raising
+the sword as the only tell. At the 2.55s mark the blade sweeps and every
+player in the 90° × 4m fan in front takes 5x a plain hit with no guard
+roll; stepping out of the fan before the sweep avoids it, and he's open
+for 2.8s after the swing for a counter.
+
+A slain boss doesn't respawn on a timer — its floor holds it dead until the
+next **sunset dungeon reset** (once per game day), which also teleports
+everyone still in that dungeon back to its entrance with a distant roar.
+Opening the chest no longer requires killing the boss or standing next to it
+— see "Kunci dan lantai terkunci" below. The weapon each boss used to drop
+itself (Goblin Sword, Iron Sword, Steel Longsword) is now a guaranteed chest
+drop instead; see the table below.
+
+## Keys and locked floors
+
+Every **5th floor**'s stair-room exit has a locked door that always exists,
+blocking the way on completely:
+
+<FilterTable
+  placeholder="Cari dungeon…"
+  columns={[
+    { key: 'name', label: 'Dungeon' },
+    { key: 'floors', label: 'Lantai terkunci' },
+    { key: 'chest', label: 'Kunci peti' },
+  ]}
+  rows={dungeons
+    .filter((d) => d.keyPrefix)
+    .map((d) => {
+      const locked = lockedFloors(d);
+      return {
+        name: d.name,
+        floors: locked.map((f) => `Floor ${f}`).join(', '),
+        chest: itemName(`${d.keyPrefix}_${locked[locked.length - 1]}`),
+      };
+    })}
+/>
+
+- **Keys drop in the section just before their locked door** (for example,
+  Orc Warrens floors 1–4 drop the floor-5 key, floors 6–9 drop the floor-10
+  key). Monsters killed in that section have a **5%** chance to drop the
+  matching key; breaking a barrel, crate or clutter chest there is **1%**. The
+  roll is skipped once a character already holds that key, or has already
+  opened that dungeon's chest tonight.
+- Keys drop on the ground for anyone to pick up; **a floor-5 key won't open a
+  floor-10 door.**
+- Holding the key and clicking the locked door opens it. **The door doesn't
+  consume the key** — dying or leaving and coming back still works, and keys
+  never expire. An opened door **stays open for 30 seconds** before
+  auto-closing, so someone without a key can slip in behind you during that
+  window, but once it closes they're stuck on whichever side they ended up
+  on.
+- **The key for the dungeon's deepest locked door** (Old Crypt floor 5, Orc
+  Warrens floor 10, Ogre Stronghold floor 15) is the ticket to the chest —
+  carry it to the bottom floor and open the chest without ever killing the
+  boss. Opening it spends one of **every key type you're carrying** for that
+  dungeon. The boss still guards the chest room, so opening it safely
+  usually still means dealing with it.
+- **A key you yourself used to open a door tonight is required at the
+  chest** — you can't set it on the ground or hand it off to dodge being
+  consumed (fixed 2026-10-23; earlier-section keys had been "consumed if you
+  happen to be carrying one," not mandatory, and only the deepest door's key
+  was required).
+
+## Chest drop rules
+
+Each dungeon's chest drops come in three parts:
+
+1. **Signature drop(s)** — one or two guaranteed items per dungeon, the
+   "Drop dijamin" column above; the three boss weapons now count among
+   them.
+2. **Independent rolls** — every other piece in that tier's pool rolls
+   separately at its own chance.
+3. **Lower-tier carry-over** — equipment from tiers below the dungeon each get
+   an extra 10% roll, so you can fill gaps in a higher dungeon.
+
+Gold is `depth × 500` to `depth × 1500`.
+
+The target is roughly **five runs on average** to collect everything a tier
+introduces.
+
+<FilterTable
+  placeholder="Cari perlengkapan…"
+  columns={[
+    { key: 'name', label: 'Perlengkapan' },
+    { key: 'tier', label: 'Tingkat peti', align: 'center' },
+    { key: 'chance', label: 'Peluang drop', align: 'right' },
+    { key: 'guard', label: 'Pertahanan', align: 'right' },
+    { key: 'cha', label: 'CHA', align: 'right' },
+    { key: 'effect', label: 'Efek' },
+  ]}
+  rows={items
+    .filter((i) => i.chestTier)
+    .sort((a, b) => a.chestTier - b.chestTier || (b.guard ?? 0) - (a.guard ?? 0))
+    .map((i) => ({
+      name: i.name,
+      tier: `T${i.chestTier}`,
+      chance: i.chestChance ? `${Math.round(i.chestChance * 100)}%` : 'Dijamin',
+      guard: i.guard ?? '—',
+      cha: i.chaBonus ? `+${i.chaBonus}` : '—',
+      effect: i.hasSustenance ? 'Penyusutan kenyang ×0,75' : '—',
+    }))}
+/>
+
+:::note[The only weapons in chests are the three boss weapons — plus the Great Sword, sort of]
+Weapons are normally obtained from "the monster carrying it drops it" — the
+exception is the Goblin Sword, Iron Sword and Steel Longsword, which are now
+guaranteed chest drops instead of boss drops. Every other weapon still works
+the old way: what you see a monster carrying is what it can drop, and chests
+don't carry it.
+
+The **Great Sword** (T4) in the table above doesn't fit that rule either way —
+the three dungeons' chests only go up to T3, so nothing currently reaches the
+Great Sword's tier. It's data parked ahead of a dungeon that hasn't shipped
+yet, with no real way to obtain it right now.
+:::
+
+## What you'll meet down there
+
+<FilterTable
+  placeholder="Cari monster…"
+  columns={[
+    { key: 'name', label: 'Monster' },
+    { key: 'dungeon', label: 'Dungeon' },
+    { key: 'level', label: 'Level', align: 'right' },
+    { key: 'depth', label: 'Kedalaman munculnya' },
+    { key: 'weight', label: 'Berat', align: 'right' },
+    { key: 'hp', label: 'Nyawa', align: 'right' },
+    { key: 'dmg', label: 'Damage', align: 'center' },
+  ]}
+  rows={dungeonSpawns
+    .map((s) => ({ s, m: monsters.find((x) => x.id === s.monsterId) }))
+    .sort((a, b) => a.s.minDepth - b.s.minDepth || a.m.level - b.m.level)
+    .map(({ s, m }) => ({
+      name: m.name,
+      dungeon: dungeons.filter((d) => (d.spawnGroup || null) === s.group).map((d) => d.name).join(', '),
+      level: m.level,
+      depth: `Floors ${s.minDepth} – ${s.maxDepth}`,
+      weight: s.weight, hp: m.healthEffective, dmg: m.damageRollEffective,
+    }))}
+/>
+
+## Other things down there
+
+- **Barrels and crates break** — click one and your character walks up and
+  swings once. Treasure chests don't break.
+- **Chests are opened** — click one and your character walks over and lifts the
+  lid. A real coin pile drops in front of it; picking it up credits 1–10 copper
+  straight to your wallet without taking a bag slot.
+- **Corridors have doors** — where a corridor opens into a room there's a
+  clickable wooden double door.
+- **Corridor and room walls differ** — rooms use medieval stone, corridors use
+  rock. Useful for telling where you are.

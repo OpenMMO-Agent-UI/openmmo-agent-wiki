@@ -1,0 +1,135 @@
+---
+title: 'ตกปลา'
+description: Species, rarity, size dice, trophy thresholds, and how to learn Fishing from Tobin.
+---
+
+import FilterTable from '../../../../components/FilterTable.astro';
+import { items, formatCoins, averageRoll } from '../../../../lib/gamedata.js';
+
+export const catchables = items.filter((i) => i.catchWeight !== null);
+export const fish = catchables.filter((i) => i.category === 'fish');
+
+Equip a **Fishing Rod** and cast at water — after learning Fishing from
+Tobin by the river. There's no fishing level; once you've learned it, every
+species is open. See [Fishing gameplay](../../guides/fishing/) for how. There
+are **{catchables.length} catchable things**, **{fish.length}** of them fish;
+the rest is flotsam and coin catches.
+
+## The catch table
+
+`catchWeight` is the relative weight — bigger means more often. Everyone who's
+learned Fishing draws from the same weights; there's no version of this table
+that improves with practice.
+
+<FilterTable
+  placeholder="ค้นสิ่งที่ตกได้…"
+  columns={[
+    { key: 'name', label: 'ชื่อ' },
+    { key: 'tier', label: 'ความหายาก', align: 'center' },
+    { key: 'weight', label: 'น้ำหนัก', align: 'right' },
+    { key: 'size', label: 'ลูกเต๋าขนาด', align: 'center' },
+    { key: 'avgSize', label: 'ความยาวเฉลี่ย', align: 'right' },
+    { key: 'trophy', label: 'สถิติที่', align: 'right' },
+    { key: 'price', label: 'ขายได้', align: 'right' },
+  ]}
+  rows={catchables
+    .sort((a, b) => (b.rarityTier ?? 0) - (a.rarityTier ?? 0) || (b.catchWeight ?? 0) - (a.catchWeight ?? 0))
+    .map((i) => ({
+      name: i.name,
+      tier: i.rarityTier === 0 ? 'เศษลอยน้ำ' : `★${i.rarityTier}`,
+      weight: i.catchWeight,
+      size: i.sizeDice ?? '—',
+      avgSize: averageRoll(i.sizeDice) ? `${averageRoll(i.sizeDice).toFixed(0)} cm` : '—',
+      trophy: i.trophyCm ? `${i.trophyCm} cm` : '—',
+      price: formatCoins(i.basePrice),
+    }))}
+/>
+
+## How the odds work
+
+- **Two independent pools**: flotsam holds a flat **20%** of the draw. No
+  amount of fishing thins out the old boots.
+- **Fixed weights**: the current `catchWeight` values are the old "level 10"
+  balance point — species that used to need levelling, like River Salmon and
+  Golden Sturgeon, are now open the moment you've learned Fishing. Golden
+  Sturgeon is still the rarest draw; it will never be more common than a
+  Minnow.
+
+## Size and trophies
+
+Length is the `size dice` roll. Every bite also rolls a separate trophy
+check: a flat **20% chance** hits directly, doubling the size roll too; even
+on a miss, the size roll can still clear that species' trophy-size
+threshold on its own. Junk never becomes a trophy. Once you subtract the
+flat 20% of bites that are always flotsam, trophies work out to roughly one
+in **six bites** (16–17% of all bites).
+
+Trophy status is decided the instant the fish bites and announced on the
+first fight beat, but species and exact size are only revealed once it's
+landed. A trophy fight is tougher than an ordinary one: it only drains
+stamina at **80 tension or higher**, its tension moves at **40%** of the
+normal rate, and its timeout is shortened from 60 seconds to **40**. Once
+tension has crossed 80, letting it slip back below 80 for a full second
+rolls a 1-in-3 chance of losing the hook on the spot. Landing one always
+awards a separate `trophy_*` fish sharing the ordinary species' icon, at
+twice the weight and three times the price. See
+[Fishing gameplay](../../guides/fishing/) for the full fight
+mechanics.
+
+Size is **not stored on the item**; it exists only in the catch announcement.
+
+## Is it worth the time?
+
+The expected **sell** value of one catch runs around **20 copper**, and it
+doesn't move with practice anymore. For comparison:
+
+- Coin piles: 1–10 copper
+- An NPC's daily wage in this economy: 50 silver
+
+So an hour of active fishing is roughly half a guard's daily salary.
+**Steady pocket money, not a money printer** — that's deliberate, and a
+contract test pins the per-catch expected value between **5 and 25 copper**.
+
+The Golden Sturgeon is the jackpot: it sells for
+{formatCoins(items.find((i) => i.id === 'golden_sturgeon').basePrice)} — a
+goblin sword's worth — but it's only about **1.3%** of all bites.
+
+## Fish are edible, but not raw
+
+Fish are both **food** and **healing items**:
+
+<FilterTable
+  placeholder="ค้นปลา…"
+  columns={[
+    { key: 'name', label: 'ปลาสด' },
+    { key: 'heal', label: 'ฟื้นฟู', align: 'center' },
+    { key: 'avgHeal', label: 'เฉลี่ย', align: 'right' },
+    { key: 'grill', label: 'ย่างได้เป็น' },
+    { key: 'grillNutrition', label: 'โภชนาการเมื่อย่าง', align: 'right' },
+    { key: 'grillPrice', label: 'ราคาเมื่อย่าง', align: 'right' },
+  ]}
+  rows={fish.map((i) => {
+    const g = items.find((x) => x.id === i.grillsInto);
+    return {
+      name: i.name,
+      heal: i.dice ?? '—',
+      avgHeal: averageRoll(i.dice)?.toFixed(1) ?? '—',
+      grill: g ? g.name : '—',
+      grillNutrition: g?.nutrition ?? '—',
+      grillPrice: formatCoins(g?.basePrice ?? null),
+    };
+  })}
+/>
+
+:::caution[Raw fish cause food poisoning]
+Raw fish give a fixed **40** nutrition regardless of species, and carry a
+**food poisoning risk**: five minutes of move speed ×0.6, attack speed ×0.6,
+max carry ×0.6, satiation draining 4× faster and HP regen stopped. These
+**multiply** with your current state — even Well-Fed leaves you moving at ×0.66.
+
+Eating raw is an emergency measure. The answer is **a campfire**. Grilled fish
+carry no risk and far more nutrition.
+:::
+
+Fish stack by **species**, and trophy catches stack separately from
+ordinary ones (`trophy_*` is a distinct item id).
