@@ -29,13 +29,13 @@ whether you need a new client.
   (2026-10-22 – 2026-10-24) — Terraclash Shards finally have somewhere to go.
   She spends most of the day digging around two spots in her camp, lights a
   fire in the evening, and sleeps in her tent 21:00–06:00 (the exchange is
-  closed then). See [Field Raids](../../guides/field-raid/#rewards).
+  closed then). See [Field Raids](../guides/field-raid/#rewards).
 - **Added player critical hits** (2026-10-25) — a base 5% chance, rolled
   independently after a hit succeeds, dealing 2× damage; each hit of a basic
   attack and each hit of Double Slash rolls on its own, for both melee and
   ranged. This batch of messages bumped the protocol to v129, adding
   `critical` to `PlayerAttacked` and `critical_chance_percent` to
-  `EffectiveStatsUpdated`. See [Combat](../../guides/combat/#critical-hits-protocol-v129).
+  `EffectiveStatsUpdated`. See [Combat](../guides/combat/#critical-hits-protocol-v129).
 
 **New items & assets**
 
@@ -54,7 +54,7 @@ whether you need a new client.
 - **A key you used to open a door tonight is now required at the chest,
   instead of just being consumed if you happened to be carrying it** —
   setting it on the ground or handing it off no longer dodges the cost
-  (2026-10-23). See [Dungeons](../../database/dungeons/#keys-and-locked-floors).
+  (2026-10-23). See [Dungeons](../database/dungeons/#keys-and-locked-floors).
 - **Players sealed in a stair room's arrival grace period used to be
   invisible to every monster; now they're only invisible to monsters outside
   the stair room** (2026-10-23, issue 197) — a monster lured inside can still
@@ -93,7 +93,7 @@ whether you need a new client.
 - **Every valid participant in a Terraclash kill gets the "Who Brought Down
   Terraclash" title; whoever lands the killing blow gets "Who Dealt
   Terraclash the Final Blow" instead, superseding the other one**
-  (2026-10-22) — see [Titles](../../guides/titles/).
+  (2026-10-22) — see [Titles](../guides/titles/).
 
 **Balance**
 
@@ -2222,7 +2222,7 @@ This bumped the protocol to v78. See [Weather](../guides/weather/).
 - **Landing a Golden Sturgeon earns a title** (2026-08-31) — titles gained a
   new "fishing" source alongside boss kills, and landing a Golden Sturgeon
   grants "Who Landed the Golden Sturgeon", picked the same way as boss
-  titles. See [Titles](../../guides/titles/).
+  titles. See [Titles](../guides/titles/).
 
 **Client**
 
@@ -2252,14 +2252,14 @@ This bumped the protocol to v78. See [Weather](../guides/weather/).
   chest" mechanic is gone too. This also fixed dungeon monsters seeing
   through walls to chase players and packs from the next room piling on the
   moment you reached a new floor; locked stair rooms no longer spawn
-  monsters. See [Dungeons](../../database/dungeons/#keys-and-locked-floors)
+  monsters. See [Dungeons](../database/dungeons/#keys-and-locked-floors)
   for details.
 - **Boss-kill titles** (2026-08-30) — dealing 50%+ of a boss's total damage
   earns "Slayer of the ⟪Boss⟫"; 90%+ earns "Who Slew the ⟪Boss⟫ Alone". Both
   stick to the character, and you can pick which one shows from the
   character panel's Titles tab or the `/title` command. Titles show above
   the head, at character select, and in the character panel; chat doesn't
-  show them. See [Titles](../../guides/titles/).
+  show them. See [Titles](../guides/titles/).
 - **Death now respawns you in an inn bed instead of at the town spawn**
   (2026-08-30) — the character lies down in a free bed in the inn's sick
   room (4 beds total), pose decided by the server; if all 4 are taken, the
@@ -2719,7 +2719,7 @@ This bumped the protocol to v78. See [Weather](../guides/weather/).
   (2026-08-24) — rolled independently of the weapon drop, at low odds (mostly
   1%, 5% for the Goblin Chief). Kobolds, Goblins, Orcs and Female Orcs,
   Hobgoblins, and the Goblin Chief currently carry a bonus drop — see
-  [Monsters](../../database/monsters/#bonus-drops).
+  [Monsters](../database/monsters/#bonus-drops).
 - **Bread and Lembas Wafer got pricier, and eating at full satiation is now
   refused** (2026-08-24) — Bread went from 20 to 60 coins, Lembas Wafer from
   60 to 120. Eating while already at the 1000 satiation cap is now refused

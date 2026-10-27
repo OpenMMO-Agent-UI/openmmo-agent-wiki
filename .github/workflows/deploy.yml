@@ -24,6 +24,14 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      # Before the build, not after: a link that resolves nowhere is invisible
+      # to whoever wrote it — `astro build` is happy, the page looks finished,
+      # and the reader finds the 404. Twenty of them had accumulated in the
+      # three `updates/index.md` files before anyone noticed, all the same
+      # mistake: an `index` page serves one URL segment shallower than its
+      # path, so `../../` walks off the base path in zh-TW and silently lands
+      # on the zh-TW copy from ko and en.
+      - run: npm run check:links
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
         with:
