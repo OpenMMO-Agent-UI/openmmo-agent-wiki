@@ -1,0 +1,67 @@
+---
+title: 'Groupe'
+description: 'Invitations `/party`, pouvoirs du chef (exclure, transmettre le commandement), le panneau de groupe, le parchemin d''invocation et les règles de dissolution.'
+---
+
+Un groupe accueille jusqu'à **5 personnes** et repose sur un **chef** — seul le chef peut inviter, exclure ou transmettre le commandement.
+
+## Inviter
+
+Dans le chat :
+
+```
+/party <name>
+```
+
+- La cible reçoit une **notification d'invitation** et a **30 secondes** pour répondre avant qu'elle n'expire.
+- Celui qui invite peut avoir **jusqu'à 5** invitations en attente à la fois ; les suivantes sont refusées.
+- Un groupe complet (5 membres) refuse à la fois les nouvelles invitations et l'acceptation d'une invitation déjà envoyée.
+- La première personne qui accepte forme le groupe (celui qui a invité devient chef automatiquement) ; chaque invitation ensuite ne fait qu'ajouter au groupe existant.
+
+## Consulter la liste et le chat de groupe
+
+- `/party` sans argument liste les membres actuels dans le chat ; le nom du chef est marqué `(leader)`.
+- `/p <message>` ne parle que sur le canal du groupe — personne en dehors ne le voit.
+
+## Pouvoirs du chef : exclure et transmettre
+
+```
+/party kick <name>
+/party leader <name>
+```
+
+- Seul le chef peut les utiliser ; tout autre reçoit un refus motivé.
+- Vous viser vous-même avec `kick`, ou viser avec l'une ou l'autre commande quelqu'un qui n'est pas dans votre groupe, est refusé avec son propre motif.
+- Le membre exclu reçoit un message système ; tous les autres voient « X a été retiré ».
+- Transmettre le commandement ne touche pas la liste — cela déplace seulement la marque de chef vers le membre nommé, et tout le groupe en est averti.
+
+## Partir et dissoudre
+
+```
+/party leave
+```
+
+- Le départ d'un membre ordinaire n'affecte pas le reste du groupe.
+- **Le départ du chef (ou sa déconnexion) ne dissout pas le groupe** — le membre restant qui a rejoint le plus tôt devient automatiquement le nouveau chef.
+- Le groupe se **dissout automatiquement** dès qu'il tomberait à **1 membre**, et ce dernier reçoit un message système « groupe dissous ».
+
+## Le panneau de groupe
+
+Le panneau de groupe affiche en direct les **PV / PV max / classe** de chaque membre — le serveur envoie une fois par seconde tout groupe dont la santé a changé, il n'y a donc rien à rafraîchir à la main. Les positions actuelles des membres apparaissent aussi sur la carte du monde ; le serveur envoie une mise à jour dès que l'un bouge, au lieu que le client l'interroge.
+
+## Partage de l'expérience de mise à mort
+
+Tuer un monstre ne paie pas seulement celui qui porte le coup final.
+
+- Tout membre du groupe **vivant, à l'étage du tueur et à moins de 150 m** est éligible et partage la mise à mort.
+- La réserve d'XP gagne **+25 %** par membre éligible au-delà du premier ; le total majoré est ensuite **partagé à parts égales** entre tous les éligibles (le tueur compris), arrondi à l'inférieur, avec un **minimum garanti de 1**.
+- À deux éligibles ou plus, chaque part est **garantie de ne pas dépasser** ce que paierait une mise à mort en solo — gonfler le groupe ne peut pas battre le solo.
+- Avec un seul éligible (ou sans groupe du tout), l'XP est exactement la même qu'en solo.
+
+## Le parchemin d'invocation
+
+Utiliser un **Parchemin d'invocation de groupe** depuis votre sac lance un appel à **tous les autres membres du groupe en ligne**, chacun recevant sa propre notification accepter/refuser qui expire au bout de **30 secondes**.
+
+- Si un membre a déjà de vous une invocation sans réponse, relire le parchemin n'en envoie pas une seconde — il attend que la première expire ou reçoive une réponse.
+- Accepter vous téléporte auprès de celui qui l'a lu ; l'invocation est refusée si le lanceur ou le membre qui répond est en combat ou déjà vaincu (la même règle que suit `/escape`, pour qu'une invocation ne serve pas de sortie gratuite d'un combat).
+- Rica le vend à côté de ses autres parchemins — voir [Objets](../../database/items/).

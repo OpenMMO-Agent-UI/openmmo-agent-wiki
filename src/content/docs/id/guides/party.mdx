@@ -1,0 +1,67 @@
+---
+title: 'Party'
+description: 'Undangan `/party`, wewenang ketua (mengeluarkan, menyerahkan kepemimpinan), panel party, gulungan panggil, dan aturan pembubaran.'
+---
+
+Satu party memuat hingga **5 orang** dan berjalan dengan seorang **ketua** — hanya ketua yang bisa mengundang, mengeluarkan, atau menyerahkan kepemimpinan.
+
+## Mengundang
+
+Di obrolan:
+
+```
+/party <name>
+```
+
+- Sasarannya menerima **notifikasi undangan** dan punya **30 detik** untuk menjawab sebelum kedaluwarsa.
+- Pengundang bisa punya **hingga 5** undangan tertunda sekaligus; sisanya ditolak.
+- Party yang penuh (5 anggota) menolak baik undangan baru maupun penerimaan undangan yang sudah ada.
+- Orang pertama yang menerima membentuk party-nya (pengundang otomatis jadi ketua); setiap undangan sesudah itu hanya menambah ke party yang sudah ada.
+
+## Melihat daftar anggota dan obrolan party
+
+- `/party` tanpa argumen menampilkan daftar anggota sekarang di obrolan; nama ketua ditandai `(leader)`.
+- `/p <pesan>` hanya berbicara di saluran party — tidak ada orang luar yang melihatnya.
+
+## Wewenang ketua: mengeluarkan dan menyerahkan
+
+```
+/party kick <name>
+/party leader <name>
+```
+
+- Hanya ketua yang bisa memakainya; yang lain ditolak beserta alasannya.
+- Menyasar diri sendiri dengan `kick`, atau menyasar orang di luar party-mu dengan salah satu perintah itu, ditolak dengan alasannya sendiri.
+- Anggota yang dikeluarkan menerima pesan sistem; semua yang lain melihat “X dikeluarkan”.
+- Menyerahkan kepemimpinan tidak menyentuh daftar anggota — ia hanya memindahkan tanda ketua ke anggota yang disebut, dan seluruh party diberi tahu.
+
+## Keluar dan bubar
+
+```
+/party leave
+```
+
+- Anggota biasa yang keluar tidak memengaruhi sisa party.
+- **Ketua yang keluar (atau terputus) tidak membubarkan party** — anggota tersisa yang paling awal masuk otomatis menjadi ketua baru.
+- Party **bubar sendiri** begitu jumlahnya akan turun ke **1 anggota**, dan anggota terakhir itu menerima pesan sistem “party dibubarkan”.
+
+## Panel party
+
+Panel party menampilkan **HP / HP maks / kelas** setiap anggota secara langsung — server mengirim setiap party yang nyawanya berubah sekali per detik, jadi tidak ada yang perlu disegarkan manual. Posisi anggota party juga tampil di peta dunia; server mengirim pembaruan setiap kali seseorang bergerak, bukan klien yang menanyakan.
+
+## Pembagian XP dari bunuhan
+
+Membunuh monster tidak hanya membayar yang memberi pukulan terakhir.
+
+- Anggota party mana pun yang **hidup, di lantai yang sama dengan pembunuhnya, dan dalam 150 m** memenuhi syarat dan ikut berbagi bunuhan itu.
+- Kolam XP bertambah **+25%** per anggota memenuhi syarat di luar yang pertama; totalnya yang sudah naik lalu **dibagi rata** ke semua yang memenuhi syarat (termasuk pembunuhnya), dibulatkan ke bawah, dengan **minimum terjamin 1**.
+- Dengan dua anggota memenuhi syarat atau lebih, setiap bagian **dijamin tidak melebihi** yang dibayar bunuhan sendirian — menggemukkan party tidak bisa mengalahkan main solo.
+- Dengan hanya 1 anggota memenuhi syarat (atau tanpa party sama sekali), XP-nya sama persis dengan bunuhan solo.
+
+## Gulungan panggil
+
+Memakai **Gulungan Panggil Party** dari tasmu mengirim seruan ke **semua anggota party lain yang sedang daring**, masing-masing mendapat notifikasi terima/tolak sendiri yang kedaluwarsa setelah **30 detik**.
+
+- Kalau seorang anggota masih punya panggilan darimu yang belum dijawab, membaca gulungan lagi tidak mengirim yang kedua — ia menunggu yang pertama kedaluwarsa atau dijawab.
+- Menerima akan meneleportasi kamu ke sisi pemanggilnya; panggilannya ditolak kalau pemanggil atau anggota yang menjawab sedang bertarung atau sudah tumbang (aturan yang sama diikuti `/escape`, jadi panggilan tidak bisa dipakai sebagai jalan keluar gratis dari pertarungan).
+- Rica menjualnya bersama stok gulungan lainnya — lihat [Item](../../database/items/).

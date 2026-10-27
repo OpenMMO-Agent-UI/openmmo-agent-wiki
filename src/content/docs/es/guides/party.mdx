@@ -1,0 +1,67 @@
+---
+title: 'Grupo'
+description: 'Invitaciones `/party`, poderes del líder (expulsar, pasar el liderazgo), el panel de grupo, el pergamino de invocación y las reglas de disolución.'
+---
+
+Un grupo admite hasta **5 personas** y funciona con un **líder**: solo el líder puede invitar, expulsar o pasar el mando.
+
+## Invitar
+
+En el chat:
+
+```
+/party <name>
+```
+
+- El objetivo recibe un **aviso de invitación** y tiene **30 segundos** para responder antes de que caduque.
+- Quien invita puede tener **hasta 5** invitaciones pendientes a la vez; las demás se rechazan.
+- Un grupo completo (5 miembros) rechaza tanto nuevas invitaciones como la aceptación de una ya enviada.
+- La primera persona que acepta forma el grupo (quien invitó se convierte en líder automáticamente); cada invitación posterior solo añade al grupo existente.
+
+## Ver la lista y el chat de grupo
+
+- `/party` sin argumentos lista en el chat a los miembros actuales; el nombre del líder va marcado con `(leader)`.
+- `/p <mensaje>` habla solo por el canal del grupo: nadie de fuera lo ve.
+
+## Poderes del líder: expulsar y pasar el mando
+
+```
+/party kick <name>
+/party leader <name>
+```
+
+- Solo el líder puede usarlos; a cualquier otro se le rechaza con un motivo.
+- Apuntarte a ti mismo con `kick`, o apuntar con cualquiera de los dos comandos a alguien que no está en tu grupo, se rechaza con su propio motivo.
+- El miembro expulsado recibe un mensaje del sistema; todos los demás ven «X fue expulsado».
+- Pasar el mando no toca la lista: solo mueve la marca de líder al miembro nombrado, y se notifica a todo el grupo.
+
+## Salir y disolver
+
+```
+/party leave
+```
+
+- Que un miembro normal se vaya no afecta al resto del grupo.
+- **Que el líder se vaya (o se desconecte) no disuelve el grupo**: el miembro que entró antes de entre los que quedan pasa a ser líder automáticamente.
+- El grupo se **autodisuelve** en cuanto bajaría a **1 miembro**, y ese último recibe un mensaje del sistema: «grupo disuelto».
+
+## El panel de grupo
+
+El panel de grupo muestra en vivo la **vida / vida máxima / clase** de cada miembro: el servidor envía una vez por segundo cualquier grupo cuya salud haya cambiado, así que no hay nada que refrescar a mano. Las posiciones actuales de los miembros también aparecen en el mapa del mundo; el servidor manda una actualización cada vez que alguien se mueve, en lugar de que el cliente lo consulte.
+
+## Reparto de la experiencia por muerte
+
+Matar a un monstruo no paga solo a quien da el golpe final.
+
+- Cualquier miembro del grupo **vivo, en el piso del que mata y a menos de 150 m** es elegible y comparte la muerte.
+- La bolsa de XP gana **+25 %** por cada miembro elegible más allá del primero; el total aumentado se **reparte a partes iguales** entre todos los elegibles (incluido el que mata), redondeando hacia abajo, con un **mínimo garantizado de 1**.
+- Con dos o más elegibles, se **garantiza que ninguna parte supere** lo que pagaría una muerte en solitario: inflar el grupo no puede batir el ir solo.
+- Con solo 1 elegible (o sin grupo), la XP es exactamente la misma que en solitario.
+
+## El pergamino de invocación
+
+Usar un **Pergamino de invocación de grupo** desde la bolsa envía una llamada a **todos los demás miembros del grupo que estén en línea**, cada uno con su propio aviso de aceptar o rechazar que caduca a los **30 segundos**.
+
+- Si un miembro ya tiene una invocación tuya sin responder, leer el pergamino otra vez no envía una segunda: espera a que la primera caduque o se responda.
+- Aceptar te teletransporta junto a quien lo usó; la invocación se rechaza si el invocador o el miembro que responde está en combate o ya derrotado (la misma regla que sigue `/escape`, así que una invocación no sirve de salida gratis de una pelea).
+- Rica lo vende junto a su demás existencia de pergaminos — mira [Objetos](../../database/items/).
