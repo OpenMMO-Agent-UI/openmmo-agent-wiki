@@ -1,0 +1,53 @@
+---
+title: 'Amigos'
+description: 'Como funcionam os pedidos `/friend` e o consentimento, por que bloquear e ser amigo se excluem, o painel de amigos, e como o estado on-line é apurado.'
+---
+
+O sistema de amigos chegou no protocolo v23. A amizade exige **consentimento dos dois lados**, e é registrada por **personagem**, não por conta — entre com outro personagem da mesma conta e a lista de amigos está vazia.
+
+## Adicionar um amigo
+
+Digite no chat:
+
+```
+/friend add <name>
+```
+
+`/f add <name>` é a forma curta; as duas funcionam.
+
+- O outro jogador recebe um **aviso de pedido** e tem **120 segundos** para aceitar ou recusar; um pedido sem resposta simplesmente expira.
+- Se **os dois lados mandarem um pedido antes de qualquer um expirar**, vocês viram amigos na hora — ninguém precisa clicar em aceitar.
+- Cada jogador pode ter **até 5 pedidos pendentes** ao mesmo tempo; além disso, os novos são recusados até um antigo expirar ou ser respondido.
+- Um pedido recusado **continua ali até o TTL acabar** em vez de desaparecer na hora, então recusar não serve para liberar vaga para spam.
+
+## O painel de amigos
+
+Aperte **F**, ou clique no ícone de amigos no HUD. O nome de cada amigo mostra o **ícone da classe** (o mesmo conjunto que o painel de grupo usa, caindo para um selo de letra se não houver ícone), e ao lado você pode:
+
+- **Sussurrar direto** — isso preenche `/w <name> ` na entrada do chat (não envia automaticamente, então você pode editar antes).
+- **Convidar para o seu grupo** — passa pelo fluxo normal de convite, então as falhas são informadas pelo servidor do mesmo jeito.
+
+O painel também tem um botão **+ Adicionar**: clique, digite um nome, e ele manda o mesmo pedido que digitar `/friend add <name>`, sem trocar para o chat.
+
+## Como o estado on-line é determinado
+
+A presença dos amigos não é empurrada pelo servidor — **o painel consulta**: a cada **15 segundos** enquanto está aberto, caindo para cada **60 segundos** enquanto está fechado. O aviso “X entrou” é deduzido **comparando respostas consecutivas**, então só existe no cliente; o servidor não tem esse conceito.
+
+## Remover um amigo
+
+```
+/friend remove <name>
+```
+
+`/friend delete` também funciona. A remoção é **unilateral e vale para os dois imediatamente** — sem consentimento, as duas listas atualizam de uma vez, e nenhum de vocês precisa reconectar para ver.
+
+## Amizade e bloqueio se excluem
+
+Você não pode ser amigo de alguém e tê-lo bloqueado ao mesmo tempo:
+
+- **Bloquear um amigo encerra a amizade** na hora.
+- Mandar pedido de amizade para quem você bloqueou é recusado — e a mensagem de recusa é **palavra por palavra idêntica** a “pedido enviado, aguardando resposta”, então a outra pessoa não tem como saber que foi bloqueada.
+
+## Listar seus amigos
+
+Digite `/friend` sem argumentos, ou só `/f`, para listar seus amigos atuais.

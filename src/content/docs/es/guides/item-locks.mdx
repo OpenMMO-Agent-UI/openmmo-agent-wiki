@@ -1,0 +1,33 @@
+---
+title: 'Bloqueo de objetos'
+description: 'Bloquea objetos para no tirarlos ni venderlos por accidente — el bloqueo también impide comerciar, poner en puesto, encantar y las acciones en lote; desbloquear exige escribir una confirmación.'
+---
+
+El panel de la bolsa tiene un botón **Bloquear** junto a **Seleccionar** (protocolo v69). Al activarlo aparece un candado en cada ranura de la bolsa y del equipo, y al hacer clic en uno se bloquea ese objeto. Al desactivar **Bloquear**, cambiar a **Seleccionar** o cerrar la bolsa, solo quedan visibles los candados de los objetos ya bloqueados. **El candado amarillo de un objeto bloqueado siempre se puede pulsar para empezar a desbloquearlo, esté o no activo el modo Bloquear.** El estado de bloqueo también aparece en la descripción del objeto.
+
+Si llevas más de una unidad del mismo objeto, el candado solo afecta a la ranura o al montón en que haces clic, no a toda la cantidad. Activar el modo Bloquear cancela cualquier selección de tirado en lote que tuvieras en marcha.
+
+## Desbloquear exige escribir una confirmación
+
+Pulsar el candado de un objeto bloqueado abre un diálogo que lista el nombre, el nivel de encantamiento y la cantidad del objeto, y te pide escribir **UNLOCK** en mayúsculas antes de poder pulsar **Desbloquear**. Cancelar o Esc deja el objeto bloqueado, y la próxima vez tendrás que escribir la confirmación de nuevo. Si el objeto de esa ranura cambia mientras el diálogo está abierto, el diálogo se cierra por sí solo.
+
+## Qué impide el bloqueo
+
+- **Tirar objetos de uno en uno o en lote, venderlos en una tienda, ponerlos en un intercambio entre jugadores y listarlos en un puesto** los rechaza todos el servidor. En las acciones en lote, un solo objeto bloqueado hace que se rechace toda la petición. Mira [Comercio entre jugadores](../trade/).
+- **Un arma bloqueada no puede ser elegida por un pergamino de encantamiento, y la armadura bloqueada queda excluida del objetivo aleatorio del encantamiento de armadura.** Si no queda nada encantable, no se consume ni el pergamino ni el aceite de afilar. Mira [Encantamiento](../enchant/).
+- Un objeto que ya está en la mesa de intercambio o listado en un puesto hay que retirarlo antes de poder cambiar su bloqueo, y tanto los intercambios como las ventas en puesto vuelven a comprobar los bloqueos en el momento de cerrarse.
+
+## Qué no impide el bloqueo
+
+- **Equipar, desequipar y el uso normal** funcionan como siempre.
+- Usar un **pergamino o aceite de afilar bloqueado en sí** no está impedido: el bloqueo solo protege el objeto sobre el que actuaría el pergamino o el aceite, no el consumible que se usa.
+
+## Los bloqueos viajan con el objeto
+
+- Los bloqueos se conservan al depositar en un cofre de almacenamiento o al retirar de él.
+- Dos montones con distinto estado de bloqueo **no se juntan**.
+- Los bloqueos sobreviven a una reconexión. Los objetos que existían antes de llegar el protocolo v69 empiezan **desbloqueados**.
+
+## Registro de auditoría de traspasos en el suelo
+
+El servidor registra los tirados y recogidas de objetos ordinarios, sueltos y en lote, que tienen éxito, en un registro `item_audit` (las peticiones fallidas no dejan rastro; las bolsas de monedas conservan su registro de recogida existente). Cada entrada guarda el personaje, el tipo de objeto y su encantamiento, la cantidad realmente movida, el lugar y el piso del tirado o la recogida, y quién lo tiró. Este registro es para los operadores que auditan el juego: no hay interfaz para él dentro del juego.

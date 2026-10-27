@@ -1,0 +1,33 @@
+---
+title: 'Kunci item'
+description: 'Kunci item agar tidak terbuang atau terjual karena kelalaian — penguncian juga menghalangi perdagangan, kios, peningkatan, dan aksi borongan; membuka kunci perlu konfirmasi yang diketik.'
+---
+
+Panel tas punya tombol **Kunci** di samping **Pilih** (protokol v69). Menyalakannya menampilkan gembok di setiap slot tas dan perlengkapanmu, dan mengklik salah satunya mengunci item itu. Mematikan **Kunci** lagi, beralih ke **Pilih**, atau menutup tas hanya menyisakan gembok pada item yang sudah terkunci. **Gembok kuning pada item terkunci selalu bisa diklik untuk mulai membukanya, baik mode Kunci menyala atau tidak.** Status kunci juga muncul di tooltip item.
+
+Kalau kamu memegang lebih dari satu item yang sama, gembok hanya memengaruhi slot atau tumpukan yang kamu klik, bukan seluruh jumlahnya. Menyalakan mode Kunci membatalkan pilihan buang-borongan yang sedang kamu susun.
+
+## Membuka kunci perlu konfirmasi yang diketik
+
+Mengklik gembok pada item terkunci membuka dialog yang memuat nama item, tingkat peningkatannya, dan jumlahnya, lalu meminta kamu mengetik **UNLOCK** dengan huruf kapital sebelum bisa menekan **Buka kunci**. Membatalkan atau Esc membuat item tetap terkunci, dan berikutnya kamu harus mengetik konfirmasinya lagi. Kalau item di slot itu berubah sementara dialog terbuka, dialognya menutup sendiri.
+
+## Apa yang dihalangi penguncian
+
+- **Buang tunggal maupun borongan, menjual ke toko, menaruh item ke perdagangan antarpemain, dan memajangnya di kios** semuanya ditolak server. Untuk aksi borongan, satu item terkunci membuat seluruh permintaan ditolak. Lihat [Perdagangan pemain](../trade/).
+- **Senjata terkunci tidak bisa dipilih gulungan peningkatan, dan pelindung terkunci dikeluarkan dari sasaran acak peningkatan pelindung.** Kalau tidak ada lagi yang bisa ditingkatkan, baik gulungan maupun minyak asahnya tidak terpakai. Lihat [Peningkatan](../enchant/).
+- Item yang sudah ada di meja perdagangan atau terpajang di kios harus ditarik kembali sebelum kamu bisa mengubah kuncinya, dan baik perdagangan maupun penjualan kios memeriksa ulang kunci tepat saat transaksi diselesaikan.
+
+## Apa yang tidak dihalangi penguncian
+
+- **Memakai, melepas, dan penggunaan biasa** berjalan seperti biasa.
+- Memakai **gulungan atau minyak asah yang terkunci itu sendiri** tidak dihalangi — kunci hanya melindungi item yang akan dikenai gulungan atau minyak, bukan barang pakai yang sedang digunakan.
+
+## Kunci ikut bersama itemnya
+
+- Kunci tetap terjaga saat kamu menyimpan ke atau mengambil dari peti penyimpanan.
+- Dua tumpukan dengan status kunci berbeda **tidak akan menyatu**.
+- Kunci bertahan melewati sambungan ulang. Item yang sudah ada sebelum protokol v69 hadir dimulai dalam keadaan **tidak terkunci**.
+
+## Catatan audit perpindahan di tanah
+
+Server mencatat buang dan ambil item biasa yang berhasil, tunggal maupun borongan, ke sebuah catatan `item_audit` (permintaan yang gagal tidak meninggalkan catatan; pundi koin tetap memakai log pengambilannya yang lama). Setiap entri merekam karakternya, jenis item dan peningkatannya, jumlah yang benar-benar berpindah, lokasi dan lantai saat dibuang/diambil, serta siapa yang membuangnya. Log ini untuk operator yang mengaudit gim — tidak ada antarmuka dalam gim untuk melihatnya.

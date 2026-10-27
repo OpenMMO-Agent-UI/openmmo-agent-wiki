@@ -1,0 +1,33 @@
+---
+title: 'Verrouillage d''objets'
+description: 'Verrouillez des objets pour ne pas les jeter ou les vendre par accident — le verrou bloque aussi l''échange, les étals, l''enchantement et les actions groupées ; déverrouiller exige de taper une confirmation.'
+---
+
+Le panneau du sac a un bouton **Verrouiller** à côté de **Sélectionner** (protocole v69). L'activer affiche un cadenas sur chaque emplacement du sac et de l'équipement, et cliquer sur l'un d'eux verrouille cet objet. Désactiver **Verrouiller**, passer à **Sélectionner** ou fermer le sac ne laisse visibles que les cadenas des objets déjà verrouillés. **Le cadenas jaune d'un objet verrouillé est toujours cliquable pour commencer à le déverrouiller, que le mode Verrouiller soit actif ou non.** L'état de verrouillage apparaît aussi dans l'infobulle de l'objet.
+
+Si vous détenez plusieurs exemplaires du même objet, le cadenas n'affecte que l'emplacement ou la pile sur laquelle vous cliquez, pas toute la quantité. Activer le mode Verrouiller annule toute sélection de jet groupé en cours.
+
+## Déverrouiller exige de taper une confirmation
+
+Cliquer le cadenas d'un objet verrouillé ouvre une boîte de dialogue qui liste le nom de l'objet, son niveau d'enchantement et sa quantité, et vous demande de taper **UNLOCK** en majuscules avant de pouvoir appuyer sur **Déverrouiller**. Annuler ou Échap laisse l'objet verrouillé, et il faudra retaper la confirmation la fois suivante. Si l'objet de cet emplacement change pendant que la boîte est ouverte, elle se ferme d'elle-même.
+
+## Ce que le verrou bloque
+
+- **Les jets isolés et groupés, la vente à une boutique, la mise d'un objet dans un échange entre joueurs et sa mise en vente sur un étal** sont tous refusés par le serveur. Pour les actions groupées, un seul objet verrouillé fait refuser toute la requête. Voir [Échange entre joueurs](../trade/).
+- **Une arme verrouillée ne peut pas être choisie par un parchemin d'enchantement, et une armure verrouillée est exclue de la cible aléatoire de l'enchantement d'armure.** S'il ne reste rien d'enchantable, ni le parchemin ni l'huile à aiguiser ne sont consommés. Voir [Enchantement](../enchant/).
+- Un objet déjà posé sur la table d'échange ou mis en vente sur un étal doit être retiré avant que vous puissiez changer son verrou, et les échanges comme les ventes sur étal revérifient les verrous au moment de se conclure.
+
+## Ce que le verrou ne bloque pas
+
+- **Équiper, déséquiper et l'usage normal** fonctionnent comme d'habitude.
+- Utiliser un **parchemin ou une huile à aiguiser verrouillé lui-même** n'est pas bloqué — le verrou ne protège que l'objet sur lequel le parchemin ou l'huile agirait, pas le consommable employé.
+
+## Les verrous voyagent avec l'objet
+
+- Les verrous sont conservés lors d'un dépôt dans un coffre de stockage ou d'un retrait.
+- Deux piles aux états de verrouillage différents **ne fusionnent pas**.
+- Les verrous survivent à une reconnexion. Les objets qui existaient avant l'arrivée du protocole v69 commencent **déverrouillés**.
+
+## Journal d’audit des transferts au sol
+
+Le serveur consigne dans un enregistrement `item_audit` les jets et ramassages réussis, isolés et groupés, d'objets ordinaires (les requêtes échouées ne laissent rien ; les bourses de pièces gardent leur journal de ramassage existant). Chaque entrée note le personnage, le type d'objet et son enchantement, la quantité réellement déplacée, le lieu et l'étage du jet ou du ramassage, et qui l'a jeté. Ce journal sert aux opérateurs qui auditent le jeu — il n'y a aucune interface en jeu pour le consulter.

@@ -1,0 +1,53 @@
+---
+title: 'Amis'
+description: 'Comment fonctionnent les demandes `/friend` et le consentement, pourquoi bloquer et être ami s''excluent, le panneau d''amis, et comment l''état en ligne est déduit.'
+---
+
+Le système d'amis est arrivé avec le protocole v23. L'amitié exige **le consentement des deux côtés**, et elle est suivie par **personnage**, pas par compte — connectez-vous avec un autre personnage du même compte et la liste d'amis est vide.
+
+## Ajouter un ami
+
+Tapez dans le chat :
+
+```
+/friend add <name>
+```
+
+`/f add <name>` est la forme courte ; les deux marchent.
+
+- L'autre joueur reçoit une **notification de demande** et a **120 secondes** pour accepter ou refuser ; une demande sans réponse expire simplement.
+- Si **les deux côtés s'envoient une demande avant que l'une des deux n'expire**, vous devenez amis immédiatement — personne n'a à cliquer sur accepter.
+- Chaque joueur peut avoir **jusqu'à 5 demandes en attente** à la fois ; au-delà, les nouvelles sont refusées jusqu'à ce qu'une ancienne expire ou reçoive une réponse.
+- Une demande refusée **reste en place jusqu'à la fin de son TTL** au lieu de disparaître aussitôt, pour qu'un refus ne serve pas à libérer un créneau pour du spam.
+
+## Le panneau d'amis
+
+Appuyez sur **F**, ou cliquez sur l'icône d'amis du HUD. Le nom de chaque ami affiche son **icône de classe** (le même jeu que le panneau de groupe, avec un badge-lettre en secours s'il n'y a pas d'icône correspondante), et à côté vous pouvez :
+
+- **Lui chuchoter directement** — cela préremplit `/w <name> ` dans la saisie du chat (ce n'est pas envoyé automatiquement, vous pouvez donc le modifier d'abord).
+- **L'inviter dans votre groupe** — cela passe par le flux normal d'invitation, donc les échecs sont signalés par le serveur de la même façon.
+
+Le panneau a aussi un bouton **+ Ajouter** : cliquez, tapez un nom, et il envoie la même demande que `/friend add <name>`, sans passer au chat.
+
+## Comment l'état en ligne est déterminé
+
+La présence des amis n'est pas poussée par le serveur — **le panneau l'interroge** : toutes les **15 secondes** tant qu'il est ouvert, et toutes les **60 secondes** quand il est fermé. L'avis « X s'est connecté » est déduit en **comparant deux réponses consécutives**, il n'existe donc que côté client ; le serveur n'en a aucune notion.
+
+## Retirer un ami
+
+```
+/friend remove <name>
+```
+
+`/friend delete` marche aussi. Le retrait est **unilatéral et prend effet pour vous deux immédiatement** — aucun consentement requis, les deux listes se mettent à jour d'un coup, et aucun de vous n'a besoin de se reconnecter pour le voir.
+
+## Amitié et blocage s'excluent mutuellement
+
+Vous ne pouvez pas être l'ami de quelqu'un et l'avoir bloqué en même temps :
+
+- **Bloquer un ami met fin à l'amitié** immédiatement.
+- Envoyer une demande d'ami à quelqu'un que vous avez bloqué est refusé — et le message de refus est **mot pour mot identique** à « demande envoyée, en attente de réponse », si bien que l'autre ne peut pas savoir qu'il est bloqué.
+
+## Lister vos amis
+
+Tapez `/friend` sans argument, ou simplement `/f`, pour lister vos amis actuels.

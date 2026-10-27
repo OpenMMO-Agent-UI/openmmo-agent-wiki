@@ -1,0 +1,53 @@
+---
+title: 'Amigos'
+description: 'Cómo funcionan las solicitudes `/friend` y el consentimiento, por qué bloquear y ser amigo son mutuamente excluyentes, el panel de amigos, y cómo se calcula el estado en línea.'
+---
+
+El sistema de amigos llegó en el protocolo v23. La amistad necesita **el consentimiento de ambas partes**, y se registra por **personaje**, no por cuenta: entra con otro personaje de la misma cuenta y la lista de amigos está vacía.
+
+## Añadir un amigo
+
+Escribe en el chat:
+
+```
+/friend add <name>
+```
+
+`/f add <name>` es la forma corta; ambas valen.
+
+- El otro jugador recibe un **aviso de solicitud** y tiene **120 segundos** para aceptar o rechazar; una solicitud sin respuesta simplemente caduca.
+- Si **ambas partes se envían una solicitud antes de que ninguna caduque**, os hacéis amigos de inmediato: nadie tiene que pulsar aceptar.
+- Cada jugador puede tener **hasta 5 solicitudes pendientes** a la vez; pasado eso, las nuevas se rechazan hasta que una antigua caduque o se responda.
+- Una solicitud rechazada **sigue ahí hasta que se agota su TTL** en lugar de desaparecer al momento, así que rechazar no sirve para liberar un hueco para spam.
+
+## El panel de amigos
+
+Pulsa **F**, o haz clic en el icono de amigos del HUD. El nombre de cada amigo muestra su **icono de clase** (el mismo juego que usa el panel de grupo, con una insignia de letra como respaldo si no hay icono), y a su lado puedes:
+
+- **Susurrarle directamente** — esto rellena `/w <name> ` en la entrada del chat (no lo envía automáticamente, así que puedes editarlo antes).
+- **Invitarle a tu grupo** — pasa por el flujo normal de invitación, así que los fallos los informa el servidor igual que siempre.
+
+El panel también tiene un botón **+ Añadir**: haz clic, escribe un nombre, y envía la misma solicitud que escribir `/friend add <name>`, sin cambiar al chat.
+
+## Cómo se determina el estado en línea
+
+La presencia de los amigos no la envía el servidor — **el panel la consulta**: cada **15 segundos** mientras está abierto, bajando a cada **60 segundos** mientras está cerrado. El aviso de «X se ha conectado» se deduce **comparando respuestas consecutivas**, así que solo existe en el cliente; el servidor no tiene ese concepto.
+
+## Quitar un amigo
+
+```
+/friend remove <name>
+```
+
+`/friend delete` también funciona. Quitar es **unilateral y surte efecto para los dos de inmediato**: no hace falta consentimiento, ambas listas se actualizan a la vez, y ninguno de los dos tiene que volver a entrar para verlo.
+
+## Amistad y bloqueo son mutuamente excluyentes
+
+No puedes ser amigo de alguien y tenerlo bloqueado al mismo tiempo:
+
+- **Bloquear a un amigo termina la amistad** de inmediato.
+- Enviar una solicitud de amistad a alguien a quien has bloqueado se rechaza — y el mensaje de rechazo es **palabra por palabra idéntico** a «solicitud enviada, esperando respuesta», así que la otra persona no puede saber que está bloqueada.
+
+## Listar tus amigos
+
+Escribe `/friend` sin argumentos, o solo `/f`, para listar tus amigos actuales.

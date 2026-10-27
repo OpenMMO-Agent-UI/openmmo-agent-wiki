@@ -1,0 +1,33 @@
+---
+title: 'Bloqueio de itens'
+description: 'Bloqueie itens para não descartá-los nem vendê-los por acidente — o bloqueio também impede trocar, pôr em barraca, encantar e ações em lote; desbloquear exige digitar uma confirmação.'
+---
+
+O painel da bolsa tem um botão **Bloquear** ao lado de **Selecionar** (protocolo v69). Ligá-lo mostra um cadeado em cada espaço da bolsa e do equipamento, e clicar em um bloqueia aquele item. Desligar **Bloquear** de novo, mudar para **Selecionar** ou fechar a bolsa deixa visíveis só os cadeados dos itens já bloqueados. **O cadeado amarelo de um item bloqueado é sempre clicável para começar a desbloqueá-lo, esteja o modo Bloquear ligado ou não.** O estado de bloqueio também aparece na dica do item.
+
+Se você estiver com mais de uma unidade do mesmo item, o cadeado só afeta o espaço ou a pilha em que você clica, não a quantidade toda. Ligar o modo Bloquear cancela qualquer seleção de descarte em lote que estivesse em andamento.
+
+## Desbloquear exige digitar uma confirmação
+
+Clicar no cadeado de um item bloqueado abre um diálogo que lista o nome do item, o nível de encantamento e a quantidade, e pede que você digite **UNLOCK** em maiúsculas antes de poder apertar **Desbloquear**. Cancelar ou Esc mantém o item bloqueado, e na próxima vez você terá de digitar a confirmação de novo. Se o item naquele espaço mudar enquanto o diálogo está aberto, o diálogo se fecha sozinho.
+
+## O que o bloqueio impede
+
+- **Descartes avulsos e em lote, vender para uma loja, pôr o item numa troca entre jogadores e anunciá-lo numa barraca** são todos recusados pelo servidor. Em ações em lote, um único item bloqueado faz recusar o pedido inteiro. Veja [Comércio entre jogadores](../trade/).
+- **Uma arma bloqueada não pode ser escolhida por um pergaminho de encantamento, e armadura bloqueada fica fora do alvo aleatório do encantamento de armadura.** Se não sobrar nada encantável, nem o pergaminho nem o óleo de amolar são consumidos. Veja [Encantamento](../enchant/).
+- Um item que já está na mesa de troca ou anunciado numa barraca precisa ser retirado antes que você possa mudar o bloqueio dele, e tanto trocas quanto vendas em barraca reconferem os bloqueios no momento de fechar.
+
+## O que o bloqueio não impede
+
+- **Equipar, desequipar e o uso normal** funcionam como sempre.
+- Usar um **pergaminho ou óleo de amolar bloqueado em si** não é impedido — o bloqueio só protege o item sobre o qual o pergaminho ou o óleo agiria, não o consumível que está sendo usado.
+
+## Os bloqueios viajam com o item
+
+- Os bloqueios são preservados ao depositar num baú de armazenamento ou retirar dele.
+- Duas pilhas com estados de bloqueio diferentes **não se juntam**.
+- Os bloqueios sobrevivem a uma reconexão. Itens que já existiam antes do protocolo v69 começam **desbloqueados**.
+
+## Registro de auditoria de transferências no chão
+
+O servidor registra os descartes e coletas bem-sucedidos de itens comuns, avulsos e em lote, num registro `item_audit` (pedidos que falham não deixam registro; bolsas de moedas mantêm o log de coleta que já tinham). Cada entrada guarda o personagem, o tipo de item e seu encantamento, a quantidade realmente movida, o local e o andar do descarte ou da coleta, e quem descartou. Esse log é para operadores auditando o jogo — não há interface dentro do jogo para ele.

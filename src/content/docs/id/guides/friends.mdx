@@ -1,0 +1,53 @@
+---
+title: 'Teman'
+description: 'Cara kerja permintaan `/friend` dan persetujuannya, mengapa memblokir dan berteman saling meniadakan, panel teman, dan bagaimana status daring ditentukan.'
+---
+
+Sistem teman hadir pada protokol v23. Pertemanan butuh **persetujuan kedua belah pihak**, dan dicatat per **karakter**, bukan per akun — masuk dengan karakter lain di akun yang sama dan daftar temannya kosong.
+
+## Menambah teman
+
+Ketik di obrolan:
+
+```
+/friend add <name>
+```
+
+`/f add <name>` adalah bentuk singkatnya; keduanya bisa.
+
+- Pemain lain menerima **notifikasi permintaan** dan punya **120 detik** untuk menerima atau menolak; permintaan yang tak dijawab akan kedaluwarsa sendiri.
+- Kalau **kedua pihak saling mengirim permintaan sebelum salah satunya kedaluwarsa**, kalian langsung berteman — tak ada yang perlu menekan terima.
+- Setiap pemain bisa punya **maksimal 5 permintaan tertunda** sekaligus; lewat dari itu, yang baru ditolak sampai yang lama kedaluwarsa atau dijawab.
+- Permintaan yang ditolak **tetap ada sampai TTL-nya habis** alih-alih langsung hilang, jadi menolak tidak bisa dipakai untuk mengosongkan slot demi spam.
+
+## Panel teman
+
+Tekan **F**, atau klik ikon teman di HUD. Nama setiap teman menampilkan **ikon kelasnya** (set yang sama dengan panel party, jatuh ke lencana huruf kalau tak ada ikon yang cocok), dan di sebelahnya kamu bisa:
+
+- **Membisikinya langsung** — ini mengisi awal `/w <name> ` di kolom obrolan (tidak terkirim otomatis, jadi kamu bisa menyuntingnya dulu).
+- **Mengundangnya ke party-mu** — lewat alur undangan party yang biasa, jadi kegagalan dilaporkan server dengan cara yang sama.
+
+Panelnya juga punya tombol **+ Tambah** — klik, ketik sebuah nama, dan ia mengirim permintaan yang sama seperti mengetik `/friend add <name>`, tanpa beralih ke obrolan.
+
+## Bagaimana status daring ditentukan
+
+Kehadiran teman tidak dikirim server — **panelnya yang menanyakan**: tiap **15 detik** selama panel terbuka, turun ke tiap **60 detik** selama tertutup. Pemberitahuan “X baru daring” diturunkan dengan **membandingkan dua jawaban berurutan**, jadi ia hanya ada di sisi klien; server tidak punya konsep itu.
+
+## Menghapus teman
+
+```
+/friend remove <name>
+```
+
+`/friend delete` juga bisa. Penghapusan bersifat **satu arah dan langsung berlaku untuk kalian berdua** — tak perlu persetujuan, kedua daftar diperbarui sekaligus, dan tak seorang pun perlu masuk ulang untuk melihatnya.
+
+## Pertemanan dan pemblokiran saling meniadakan
+
+Kamu tidak bisa menjadi teman seseorang sekaligus memblokirnya:
+
+- **Memblokir seorang teman mengakhiri pertemanan** saat itu juga.
+- Mengirim permintaan teman ke orang yang kamu blokir akan ditolak — dan pesan penolakannya **sama kata per kata** dengan “permintaan terkirim, menunggu jawaban”, jadi orang itu tidak bisa tahu bahwa ia diblokir.
+
+## Melihat daftar temanmu
+
+Ketik `/friend` tanpa argumen, atau cukup `/f`, untuk melihat daftar temanmu saat ini.
