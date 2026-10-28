@@ -152,6 +152,7 @@ export const items = parseCsv('items').map((r) => {
     hands: num(r.hands),
     ammoKind: r.ammoKind || null,
     useAction: r.useAction || null,
+    attackIntervalMs: num(r.attackIntervalMs),
   };
 });
 
