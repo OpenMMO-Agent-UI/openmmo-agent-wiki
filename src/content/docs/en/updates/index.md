@@ -19,9 +19,89 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v129 — client v0.70.0 (current)
+## Protocol v131 — client v0.72.0 (current)
 
-**The live server currently requires v129.**
+**The live server currently requires v131.**
+
+**New system**
+
+- **Added the Caveman skill Primal Roar** (2026-10-29) — roars for 1.85s
+  without swinging; at 1.05s the stomp staggers living monsters within 4m
+  on your floor that aren't behind a wall for 3.7s and turns them on you.
+  You also gain max(4, 15% of max HP) temporary HP for 10s; monster and
+  debuff damage comes off that shield before your real health, it doesn't
+  stack, and it ends when spent, when it expires, or on death. Cooldown is
+  30s, costs 1 MP. This batch of messages bumped the protocol to v131,
+  adding `AbilityId::PrimalRoar`, an owner-only `TempHealthUpdate`, and a
+  nearby `MonsterStunned`. See
+  [Combat](../guides/combat/#skills-and-mana-protocol-v71v79).
+
+**Balance**
+
+- **Kill XP now splits by each side's share of the damage dealt instead of
+  all going to whoever lands the finishing blow** (2026-10-28) — everyone
+  who dealt damage gets at least 1 XP, with shares that don't divide evenly
+  rounded up in order of their fractional remainder so the total always
+  equals the kill's XP. A party's damage is pooled into one share first, so
+  the party earns what one member dealing it all would, and it doesn't
+  matter who lands the kill within the party — see
+  [Kill XP sharing](../guides/party/#kill-xp-sharing) for how that share
+  then splits within the party.
+- **Field (non-dungeon) monsters now scale with distance from town, the
+  same way dungeon floors scale with depth** (2026-10-28) — level +1 every
+  120m, capping at 1500m to match the deepest dungeon floor (25), with HP,
+  to-hit, damage, and XP all scaling along with it; the underlying place
+  attack bonus itself also stopped scaling without limit at "distance /
+  20m" and now caps at +60 (matching floor 25).
+
+**New items & assets**
+
+- **Leather Armor, Leather Gloves, and Leather Boots now render in the
+  rogue outfit on female characters; Leather Pants and the helmet stay in
+  the barbarian outfit** (2026-10-27).
+
+**Fix**
+
+- **During a server update, non-admin players can't enter the game until
+  the restart finishes; trying to shows "The server is preparing an
+  update. Please reconnect after it finishes," and everyone online gets an
+  "An update is coming shortly. Please log out in a safe place" announcement
+  first** (2026-10-28) — the client now only records the rejoin character
+  after a successful join and clears it on returning to character select,
+  so a refused entry isn't silently retried on reconnect.
+
+**Performance**
+
+- **When a monster waits outside a closed house for a player inside, A*
+  pathfinding now checks early whether the goal's area is sealed off, and
+  if so returns the route to the nearest outside cell instead of searching
+  to the budget** (2026-10-27) — on the same stuck case, search nodes
+  dropped from up to 2,000 to 56 at the door and 114 from 24m away.
+- **Compressed the Ysolde tent textures; the GLB dropped from 4,230,908 to
+  2,076,344 bytes (56.2% smaller compressed)** (2026-10-28).
+- **Re-compressed the social animations (social.glb) with Meshopt; the file
+  dropped from 2,584,864 to 1,689,720 bytes (30.2% smaller compressed)**
+  (2026-10-28).
+- **Compressed the hearthbound rug texture; the file dropped from 1,638,688
+  to 394,820 bytes (75.9% smaller)** (2026-10-28).
+- **Compressed the female rogue top and skirt textures, 44.4% and 56.5%
+  smaller respectively** (2026-10-28).
+
+## Protocol v130 — client v0.72.0
+
+**New system**
+
+- **Added the Barbarian skill Rage** (2026-10-29) — usable with a Sword,
+  Great Sword, Axe, Mace, Club, Spear, or Dagger in your main hand: for 1 MP
+  you get +(3 + Level/10) damage on every hit and Guard −2 for 10s, on a
+  20s cooldown. It ends early on death, logout, or swapping your main hand
+  to a non-melee weapon; nearby players see a reddish shimmer and rising
+  embers around you while it's active. This batch of messages bumped the
+  protocol to v130, adding `AbilityId::Rage` and a nearby
+  `PlayerRageToggled`. See
+  [Combat](../guides/combat/#skills-and-mana-protocol-v71v79).
+
+## Protocol v129 — client v0.70.0
 
 **New system**
 

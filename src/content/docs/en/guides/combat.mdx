@@ -551,6 +551,8 @@ drag-and-tooltip code as your inventory.
 | Double Slash | Rogue, by default | Dagger in main hand | Your next basic attack becomes two independent hits, each at 100% damage | 10s |
 | Guardian Ward | Knight, by default | Sword or Mace in main hand + Shield off-hand | +10% Guard for yourself and party members within 20m on the same floor, for 60s | 45s, costs 2 MP |
 | Auscultation | **Every class** | {itemName('stethoscope')} in the neck slot | Left-click a living target within 2m on your floor, unobstructed, to see its name, level, HP/Guard and equipment enchants | 0.8s (success only) |
+| Rage | Barbarian, by default | Sword, Great Sword, Axe, Mace, Club, Spear, or Dagger in main hand | +(3 + Level/10) damage on every hit and Guard −2, for 10s | 20s, costs 1 MP |
+| Primal Roar | Caveman, by default | None | Roars for 1.85s without swinging; at 1.05s the stomp staggers living monsters within 4m on your floor (unobstructed) for 3.7s and turns them on you. You also gain max(4, 15% of max HP) temporary HP for 10s | 30s, costs 1 MP |
 
 Guardian Ward used to cost satiation; as of protocol v79 it costs 2 MP
 instead. You can't cast it below 2 MP, and a failed cast doesn't spend MP
@@ -577,6 +579,22 @@ red toast just below screen centre for 2.5 seconds (protocol v91); repeated
 failures just replace it with the latest reason, and it never blocks mouse
 clicks. This toast is a **shared component** used by every skill, not
 something specific to Auscultation.
+
+**Rage (protocol v130)** is a Barbarian's default skill, usable with a
+Sword, Great Sword, Axe, Mace, Club, Spear, or Dagger in your main hand: for
+1 MP you get +(3 + Level/10) damage on every hit and Guard −2 for 10s, on a
+20s cooldown. It ends early on death, logout, or swapping your main hand to
+a non-melee weapon (including unequipping it); nearby players see a reddish
+shimmer and rising embers around you while it's active.
+
+**Primal Roar (protocol v131)** is a Caveman's default skill: for 1 MP you
+roar for 1.85s without swinging, and at 1.05s the stomp staggers living
+monsters within 4m on your floor that aren't behind a wall for 3.7s and
+turns them on you — their swing timer waits out the stagger, and a missed
+swing doesn't cut it short. You also gain max(4, 15% of max HP) temporary
+HP for 10s; monster and debuff damage comes off that shield before your
+real health, it doesn't stack, and it ends when spent, when it expires, or
+on death. Cooldown is 30s.
 
 Resting on a [bed placed on an estate](../estates/#orkea-furniture-shop-protocol-v87v89)
 for 16 consecutive seconds (protocol v89) doubles both HP and MP natural
