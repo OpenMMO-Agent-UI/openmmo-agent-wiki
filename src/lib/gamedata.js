@@ -209,6 +209,7 @@ export const monsters = parseCsv('monsters').map((r) => {
     sleepSound: r.sleepSound || null,
     crumbleSound: r.crumbleSound || null,
     staggerImmune: bool(r.staggerImmune),
+    undead: bool(r.undead),
   };
 });
 

@@ -19,9 +19,103 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v131 — client v0.72.0 (current)
+## Protocol v134 — client v0.73.0 (current)
 
-**The live server currently requires v131.**
+**The live server currently requires v134.**
+
+**New system**
+
+- **Added the Bard skill Battle Hymn** (2026-10-31) — usable with an
+  instrument in the bag or main hand: play a 10-second march (one of three
+  recordings, picked at random, heard by everyone on your floor the same
+  way). Moving, attacking, getting hit, teleporting, or stopping or starting
+  another tune interrupts it at once at no cost, and you can start again
+  right away. Finishing the performance costs 5 MP and gives you and living
+  party members within 20m on your floor ×1.08 movement and attack speed
+  for 10 minutes; the range is only checked the moment it finishes, so
+  members who leave afterward keep what they already got, recasting just
+  refreshes the duration without stacking, and it ends on death or logout.
+  This batch of messages bumped the protocol to v134, adding
+  `AbilityId::BattleHymn`, `BattleHymnStarted` for nearby players, and the
+  `Interrupted` reject reason. See
+  [Combat](../guides/combat/#skills-and-mana-protocol-v71v79).
+
+**New items & assets**
+
+- **Added the Priest's starting main-hand weapon, the Worn Mace
+  (`worn_mace`), replacing the Worn Iron Sword** (2026-10-31) — newly
+  created Priests get the mace directly; existing Priests receive one in
+  the bag the next time the server restarts, while their equipped sword,
+  its enchant, and their gear stay as they are.
+
+## Protocol v133 — client v0.73.0
+
+**New system**
+
+- **Added the Priest skill Healing Prayer, and made other players' exact HP
+  private by default** (2026-10-30) — for 6 MP on an 8s cooldown, it heals
+  yourself or a living player within 10m on your floor, in sight, for
+  max(1, 2d6 + Level/3 + WIS modifier), or deals the same amount to one of
+  the four undead monster types now flagged with a new `undead` column in
+  `monsters.csv` (Forgotten Dead, Skeleton, Skeleton Warrior, Skeleton
+  Knight); a full-HP target, a non-undead monster, being out of range, or a
+  blocked line all refuse the cast at no MP cost. The same update made
+  other players' exact HP visible only to yourself and your own party
+  members — everyone else only sees whether they're alive, except players
+  wearing a stethoscope, who continuously see nearby players' exact HP.
+  This batch of messages bumped the protocol to v133, adding
+  `AbilityId::HealingPrayer`, `HealingPrayed` for nearby players, and the
+  `FullHealth`/`NotUndead` reject reasons. See
+  [Combat](../guides/combat/#skills-and-mana-protocol-v71v79).
+
+**New items & assets**
+
+- **Players healed by someone else's Healing Prayer now see the same green
+  +amount over their head that a self-heal shows, and the prayer got a
+  sound effect** (2026-10-30) — the sound plays at a lower volume within
+  20m of the caster, and requests queued for over a second are dropped
+  rather than replayed, so a tab coming back from the background doesn't
+  burst-play a backlog.
+
+## Protocol v132 — client v0.73.0
+
+**New system**
+
+- **Added the Valkyrie skill Valhalla Charge** (2026-10-30) — usable with a
+  one-handed Sword or Spear in your main hand: dash 0.4s to a monster 4-10m
+  away on your floor and land one basic attack on arrival, on a 10s
+  cooldown for 1 MP. A hit slows the target to 60% movement speed for 3s, or
+  1.5s against bosses and stagger-immune monsters. This batch of messages
+  bumped the protocol to v132, adding `AbilityId::ValhallaCharge`,
+  `PlayerCharged` and `MonsterSlowed` for nearby players, the
+  `PlayerAttacked.charge` flag, and the `TooClose`/`Blocked` reject reasons.
+  See [Combat](../guides/combat/#skills-and-mana-protocol-v71v79).
+
+**Fix**
+
+- **The client now checks the bag for arrows itself before sending an
+  attack request** (2026-10-29) — a player with an empty quiver used to
+  send ten attack requests a second, each refused by the server as
+  out_of_ammo; the client now checks the bag the same way the server does
+  and shows the same refusal without sending the request.
+
+**Performance**
+
+- **A monster's A\* search for a sealed-off target now just ends at the
+  closest reached cell instead of running a second full search** (2026-10-29)
+  — the same stuck case drops from 2,000 search nodes to 199.
+- **A monster path search's node budget within one tick is now what's left
+  of that tick's budget, not a fixed per-search cap** (2026-10-29) — once
+  any brain had spent nodes, every later dungeon search that tick used to
+  be deferred and end the tick early (about 4,000 deferrals in 21h of prod
+  logs).
+- **All 20 male and female character animation packs now share duplicate
+  keyframe arrays and use Meshopt compression, with every decoded keyframe
+  bit-identical to before** (2026-10-29) — total size drops from 6.36MB to
+  3.82MB (gzipped); male locomotion, loaded at every spawn, drops from
+  737KB to 164KB.
+
+## Protocol v131 — client v0.72.0
 
 **New system**
 

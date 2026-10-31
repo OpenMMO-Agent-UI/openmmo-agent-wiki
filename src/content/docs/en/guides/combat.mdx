@@ -553,6 +553,9 @@ drag-and-tooltip code as your inventory.
 | Auscultation | **Every class** | {itemName('stethoscope')} in the neck slot | Left-click a living target within 2m on your floor, unobstructed, to see its name, level, HP/Guard and equipment enchants | 0.8s (success only) |
 | Rage | Barbarian, by default | Sword, Great Sword, Axe, Mace, Club, Spear, or Dagger in main hand | +(3 + Level/10) damage on every hit and Guard −2, for 10s | 20s, costs 1 MP |
 | Primal Roar | Caveman, by default | None | Roars for 1.85s without swinging; at 1.05s the stomp staggers living monsters within 4m on your floor (unobstructed) for 3.7s and turns them on you. You also gain max(4, 15% of max HP) temporary HP for 10s | 30s, costs 1 MP |
+| Valhalla Charge | Valkyrie, by default | One-handed Sword or Spear in main hand | Dashes 0.4s to a monster 4-10m away on your floor and lands one basic attack on arrival; a hit slows the target to 60% movement speed for 3s (1.5s for bosses and stagger-immune monsters) | 10s, costs 1 MP |
+| Healing Prayer | Priest, by default | None | Heals yourself or a living player within 10m on your floor, in sight, for max(1, 2d6 + Level/3 + WIS modifier), or deals the same amount to one of the four undead monster types | 8s, costs 6 MP |
+| Battle Hymn | Bard, by default | An instrument in the bag or main hand | After a 10s performance, you and living party members within 20m on your floor move and attack at ×1.08 speed for 10 minutes | None (refused while still playing), costs 5 MP |
 
 Guardian Ward used to cost satiation; as of protocol v79 it costs 2 MP
 instead. You can't cast it below 2 MP, and a failed cast doesn't spend MP
@@ -595,6 +598,55 @@ swing doesn't cut it short. You also gain max(4, 15% of max HP) temporary
 HP for 10s; monster and debuff damage comes off that shield before your
 real health, it doesn't stack, and it ends when spent, when it expires, or
 on death. Cooldown is 30s.
+
+**Valhalla Charge (protocol v132)** is a Valkyrie's default skill, usable
+with a one-handed Sword or Spear in your main hand: it fires at once on
+whatever's under your cursor or currently targeted if that's a monster
+4-10m away on your floor; with neither, it enters click-to-target mode like
+Auscultation and fires on your next left-click (Escape cancels). For 1 MP
+you dash in a straight line for 0.4s — a blocked path or a target that's too
+close or too far refuses the cast at no cost — and land one basic attack on
+arrival, with the same hit, damage, and critical roll as a normal attack. A
+hit slows the target to 60% movement speed for 3s, or 1.5s against bosses
+and stagger-immune monsters. Cooldown is 10s, meant for once per monster
+like Double Slash; a basic attack still mid-swing also refuses the cast.
+
+**Healing Prayer (protocol v133)** is a Priest's default skill, with no
+equipment requirement: for 6 MP on an 8s cooldown, it heals yourself or a
+living player within 10m on your floor, in sight, for max(1, 2d6 +
+Level/3 + WIS modifier), capped at max HP; aimed at one of the four undead
+monster types that `monsters.csv` now flags with an `undead` column
+(Forgotten Dead, Skeleton, Skeleton Warrior, Skeleton Knight), it deals the
+same roll as damage instead, through the same kill path as a basic attack
+so XP shares and loot match. A full-HP target, a non-undead monster, being
+out of range, or a blocked line all refuse the cast at no MP cost. Healing
+someone already in combat puts you in combat too, so healing a fighting
+party member can't be used to dodge the no-regen-in-combat rule.
+
+The same update also made **other players' exact HP private by default**
+(protocol v133) — everyone except yourself and your own party members now
+only sees whether a player is alive (`health` reads 1 while alive, 0 when
+dead; `max_health` reads 0), which will matter once PvP means you can't read
+an opponent's health. Wearing {itemName('stethoscope')} is the exception:
+it continuously shows the exact HP and max HP of nearby players (the same
+radius used for other nearby-player updates) as an HP bar over their heads,
+so you no longer need to re-check with Auscultation.
+
+**Battle Hymn (protocol v134)** is a Bard's default skill, usable with an
+`instrument`-category item in the bag or main hand: you play a 10-second
+march, one of three recordings picked at random, and everyone on your floor
+hears the same one; if you were already playing via `/play_music` or a live
+performance, that stops first. Moving, attacking, getting hit, teleporting,
+or stopping or starting another tune interrupts it at once at no cost, and
+you can start again immediately; using the skill again while still playing
+shows the time left as the skill's cooldown and is refused. Finishing the
+performance costs 5 MP (it fizzles with no effect below that) and gives you
+and living party members within 20m on your floor ×1.08 movement and attack
+speed for 10 minutes — the range is checked only at that moment, so members
+who leave the area or the party afterward keep the buff they already got.
+It ends on death or logout, recasting just refreshes the duration back to
+10 minutes without stacking, and multiple Bards' hymns don't stack either.
+The movement multiplier also applies to mounts and boats.
 
 Resting on a [bed placed on an estate](../estates/#orkea-furniture-shop-protocol-v87v89)
 for 16 consecutive seconds (protocol v89) doubles both HP and MP natural
