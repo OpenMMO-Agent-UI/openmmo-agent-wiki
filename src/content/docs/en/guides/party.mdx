@@ -86,6 +86,27 @@ Killing a monster doesn't just pay out to whoever lands the finishing blow.
   damage gets at least 1 XP. A party's damage is pooled into one share first,
   then split within the party by the rules above.
 
+## Kill loot ownership
+
+(2026-11-01) The weapon, drops, and dungeon key a monster leaves behind now belong to
+whoever dealt the most damage over the fight (ties go to whoever hit it first), not
+whoever landed the finishing blow. Unlike the XP rule above, party damage **isn't**
+pooled first here — this is purely per-character. Loot from a broken barrel, crate,
+or clutter chest belongs to whoever broke it.
+
+- Once an item hits the ground, the player with first claim gets a **30-second**
+  exclusive pickup window before anyone else can take it.
+- The server tells clients who holds the claim through the ground item's
+  `claimed_by` field, and sends `GroundItemClaimEnded` once the 30 seconds run out.
+- Trying to pick up someone else's claimed loot gets the same head-shake refusal as
+  an overweight bag, naming whoever has first claim — the client won't grab it and
+  quietly put it back.
+- The kill log line now names whoever dealt the most damage, not whoever landed the
+  finishing blow.
+
+This fixes loot going to whoever landed the finishing blow even when they weren't the
+one who actually won the fight (issue #199).
+
 ## The summon scroll
 
 Using a **Scroll of Party Summon** from your bag sends a call to **every

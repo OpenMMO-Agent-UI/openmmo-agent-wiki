@@ -19,9 +19,43 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v134 — client v0.73.0 (current)
+## Protocol v135 — client v0.75.0 (current)
 
-**The live server currently requires v134.**
+**The live server currently requires v135.**
+
+**New system**
+
+- **Kill loot (weapon, drops, dungeon key) now goes to whoever dealt the most
+  damage, not whoever landed the finishing blow** (2026-11-01) — ownership no
+  longer looks at the last hit, but at who did the most damage over the whole
+  fight (ties go to whoever hit it first); only that player can pick it up for
+  the first 30 seconds, after which anyone can. Loot from a broken barrel,
+  crate, or clutter chest belongs to whoever broke it the same way. Trying to
+  grab someone else's claimed loot gets the same head-shake refusal as an
+  overweight bag, naming whoever has first claim, instead of grabbing the item
+  and quietly putting it back. The server tells clients who holds the claim
+  through the ground item's new `claimed_by` field, and sends
+  `GroundItemClaimEnded` once the 30 seconds run out — this batch of messages
+  bumped the protocol to v135. Fixes loot going to whoever landed the
+  finishing blow instead of whoever actually won the fight (issue #199). See
+  [Party system](../guides/party/#kill-loot-ownership).
+
+**Balance**
+
+- **The dungeon chest now needs every locked floor's key for that dungeon,
+  and spends them all at once** (2026-11-01) — only the deepest locked
+  floor's key used to be required, with earlier-section keys merely
+  "consumed if you happened to be carrying one"; now every key type is
+  required, which also retires the old exception where "a key you yourself
+  used to open a door tonight is required at the chest" (2026-10-23) — there's
+  nothing left for that exception to except now that every key is mandatory
+  anyway. Keys stay tradeable — selling one sells the buyer the right to open
+  tonight's chest with it, so a character too weak to clear a section can
+  still buy their way in (issue #199). Mid-floor key item descriptions now
+  mention that the chest takes them too. See
+  [Dungeons](../database/dungeons/#keys-and-locked-floors).
+
+## Protocol v134 — client v0.73.0
 
 **New system**
 
