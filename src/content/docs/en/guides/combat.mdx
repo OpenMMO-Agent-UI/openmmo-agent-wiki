@@ -25,7 +25,9 @@ Note it's **strictly greater**. Rolling exactly the target's Guard is a
 
 **Attack bonus**:
 
-- Player = `floor(level / 2)` + your **STR modifier** + weapon enchant `+N`
+- Player = `floor(level / 2)` + your **STR modifier** (a Dagger in main hand
+  uses your DEX modifier instead; a weapon declaring `rangedAbility` uses
+  that attribute, see "Ranged weapons" below) + weapon enchant `+N`
 - Monster = **level** (not halved) — steeper than the player curve, because
   player Guard climbs from gear rather than level. A CSV `attackBonus` in
   `monsters.csv` overrides the default, and the **place attack bonus** below
@@ -103,7 +105,8 @@ really does reach **100%**. In the other direction, hit chance **approaches
 
 ### Hitting each monster
 
-Look up your total attack bonus (half your level, plus your STR modifier):
+Look up your total attack bonus (half your level, plus your STR modifier —
+DEX modifier if you're wielding a Dagger):
 
 <FilterTable
   placeholder="Search monsters…"
@@ -163,7 +166,8 @@ Damage is only rolled on a hit. Dice notation is `{count}d{sides}`:
 2d6  →  roll two six-sided dice and sum (2–12)
 ```
 
-Player melee adds your **STR modifier**.
+Player melee adds your **STR modifier** — except a Dagger, which adds your
+**DEX modifier** instead.
 
 ### Weapon damage
 
@@ -190,9 +194,12 @@ Player melee adds your **STR modifier**.
     })}
 />
 
-The STR modifier applies **to every hit**, so it lifts low-damage weapons
-proportionally more: STR 18 (+4) with a Dagger (1d4, average 2.5) actually
-averages 6.5 — 2.6× the base.
+The STR modifier (DEX for a Dagger) applies **to every hit**, so it lifts
+low-damage weapons proportionally more: DEX 18 (+4) with a Dagger (1d4,
+average 2.5) actually averages 6.5 — 2.6× the base. Rogues get DEX +3 and
+STR −1 by default, so before the Dagger switched to DEX (2026-11-01) they
+were rolling on the attribute they're penalized in, dealing roughly half a
+sword user's damage — few reached level 10.
 
 ## Critical hits (protocol v129)
 
@@ -236,7 +243,9 @@ damage driven by **DEX**.
 - The **Dagger** is the first weapon to declare `attackIntervalMs`: its
   `range` is only 1.5m (2m once the lag slack is added), shorter than the
   melee default, but it swings every 1.2s instead of the default — trading
-  reach for speed.
+  reach for speed. It's still a melee weapon (the `range` field isn't what
+  makes it ranged), but its hit and damage bonus is always driven by **DEX**,
+  not STR (see "Weapon damage" above).
 
 The bow's own die is a token (`1d1`) — the real damage comes from the arrow,
 and the two dice roll together, the same path a monster takes when it adds
@@ -549,7 +558,7 @@ drag-and-tooltip code as your inventory.
 | Ability | Granted to | Requires | Effect | Cooldown |
 |---|---|---|---|---|
 | Double Slash | Rogue, by default | Dagger in main hand | Your next basic attack becomes two independent hits, each at 100% damage | 10s |
-| Guardian Ward | Knight, by default | Sword or Mace in main hand + Shield off-hand | +10% Guard for yourself and party members within 20m on the same floor, for 60s | 45s, costs 2 MP |
+| Guardian Ward | Knight, by default | Sword or Mace in main hand + Shield off-hand | **Flat +2 Guard** for yourself and party members within 20m on the same floor, for 60s | 45s, costs 2 MP |
 | Auscultation | **Every class** | {itemName('stethoscope')} in the neck slot | Left-click a living target within 2m on your floor, unobstructed, to see its name, level, HP/Guard and equipment enchants | 0.8s (success only) |
 | Rage | Barbarian, by default | Sword, Great Sword, Axe, Mace, Club, Spear, or Dagger in main hand | +(3 + Level/10) damage on every hit and Guard −2, for 10s | 20s, costs 1 MP |
 | Primal Roar | Caveman, by default | None | Roars for 1.85s without swinging; at 1.05s the stomp staggers living monsters within 4m on your floor (unobstructed) for 3.7s and turns them on you. You also gain max(4, 15% of max HP) temporary HP for 10s | 30s, costs 1 MP |
@@ -560,7 +569,12 @@ drag-and-tooltip code as your inventory.
 Guardian Ward used to cost satiation; as of protocol v79 it costs 2 MP
 instead. You can't cast it below 2 MP, and a failed cast doesn't spend MP
 or start the cooldown. Recasting just refreshes the duration back to 60s —
-it doesn't stack.
+it doesn't stack. The bonus used to be 10% of the sum of base Guard +
+equipment Guard + enchant bonus, so it grew with gear — +4 at the production
+median Guard of 40, +6 at 60, and Knights at those levels were taking
+roughly half as many hits per kill as other classes. As of 2026-11-02 it's a
+flat +2 instead, which lowers a monster's hit chance by 10 percentage points
+at any Guard.
 
 **Auscultation (protocol v91)** is the only ability every class gets, but
 it's **useless without the item** — the {itemName('stethoscope')} only drops

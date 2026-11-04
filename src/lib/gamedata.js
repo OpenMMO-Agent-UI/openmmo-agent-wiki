@@ -224,6 +224,13 @@ export const dungeons = parseCsv('dungeons').map((r) => ({
   chestDrops: r.chestDrops ? r.chestDrops.split(';') : [],
   keyPrefix: r.keyPrefix || null,
   spawnGroup: r.spawnGroup || null,
+  /** Item:chance rolls only this dungeon's chest makes (data-src/dungeons.csv chestRolls). */
+  chestRolls: r.chestRolls
+    ? r.chestRolls.split(';').map((entry) => {
+        const [itemId, chance] = entry.split(':');
+        return { itemId, chance: Number(chance) };
+      })
+    : [],
 }));
 
 /** Monsters a dungeon's `spawnGroup` can roll per depth (data-src/dungeon_spawns.csv). */

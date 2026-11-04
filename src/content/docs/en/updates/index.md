@@ -39,6 +39,23 @@ whether you need a new client.
   bumped the protocol to v135. Fixes loot going to whoever landed the
   finishing blow instead of whoever actually won the fight (issue #199). See
   [Party system](../guides/party/#kill-loot-ownership).
+- **Two new dungeons, Thieves' Den and Shadow Guild, 20 and 25 floors, with
+  the Thief King and Shadow Master as their bosses** (2026-11-01) — Thieves'
+  Den's chest guarantees the Thief King's Cutthroat Dirk (1d6); Shadow
+  Guild's chest has a 20% chance of Shadowfang (1d8). Both dungeons reuse
+  the existing locked-floor key mechanic (Thieves' Den `den_key_5/10/15/20`,
+  Shadow Guild `guild_key_5/10/15/20/25`). The Rune Blade (20%) and Amulet of
+  the Earth (10%), which used to share Sundered Bastion's tier pool, moved
+  to a roll exclusive to that dungeon so they don't also start showing up in
+  Shadow Guild — the chances didn't change. As of 2026-11-02 the Thief King
+  and Shadow Master use the player's dagger-stab animation every 2s instead
+  of a plain slash every 2.8s, still for 3d6 damage. See
+  [Dungeons](../database/dungeons/#chest-drop-rules).
+- **Server notices (such as a planned-restart announcement) now stay up
+  until the restart instead of disappearing after 30 seconds** (2026-11-01)
+  — the notice clears if the restart is delayed or cancelled, and anyone who
+  reconnects while logins are paused sees it again on entry. No protocol
+  change; agent-client now also sees server notices as `[Notice]` lines.
 
 **Balance**
 
@@ -54,6 +71,50 @@ whether you need a new client.
   still buy their way in (issue #199). Mid-floor key item descriptions now
   mention that the chest takes them too. See
   [Dungeons](../database/dungeons/#keys-and-locked-floors).
+- **Dagger hits now roll on DEX instead of STR** (2026-11-01) — Rogues get
+  DEX +3 and STR −1 by default, so before this they were rolling on the
+  attribute they're penalized in, dealing roughly half a sword user's
+  damage; few reached level 10. See
+  [Combat](../guides/combat/#weapon-damage).
+- **Guardian Ward's Guard bonus is now a flat +2 instead of 10% of your
+  total Guard** (2026-11-02) — the old percentage grew with gear: +4 at the
+  production median Guard of 40, +6 at 60, and Knights at those levels were
+  taking roughly half as many hits per kill as other classes. See
+  [Combat](../guides/combat/#skills-and-mana-protocol-v71v79).
+- **An "out of range" rejection now restarts the chase and swings again from
+  0.5m closer instead of ending combat outright** (2026-11-01) — a fleeing
+  monster outrunning the client's lagging view used to trigger this
+  rejection, and the player had to click again to keep fighting; a target
+  behind a wall still ends combat, since the server reports a walled-off
+  swing with the same "out of range" reason.
+
+**New items & assets**
+
+- **Added five Valkyrie-exclusive worn armor pieces (helmet, cuirass, waist
+  armor, bracers, boots)** (2026-11-03) — Valkyrie switched to the modular
+  female body, so empty equipment slots showed the bare base mesh; the
+  existing 1,072 Valkyrie characters get the missing pieces on next login,
+  and armor they already had equipped is unchanged.
+
+**Client**
+
+- **agent-client now plans around fences and walls on long walks with
+  8m-sector A\*, instead of only sending a straight-line endpoint**
+  (2026-11-03) — walks longer than 48m used to send a straight endpoint
+  every time; when a fence or town wall sat on the line, the server's
+  2,000-node search couldn't get around it and the walk simply failed. Open
+  ground is unaffected and server load doesn't change.
+- **agent-client adds an `auto_update` setting (true / false / "ask",
+  defaulting to "ask")** (2026-11-01) — set to true, it installs a new
+  release at startup without asking; when the server refuses the connection
+  (protocol mismatch or a desync reconnect conflict), the client no longer
+  gives up, checking GitHub for a new release every 5 minutes and installing
+  and restarting automatically.
+- **agent-client now checks locally whether the bag holds arrows before a
+  bow attack, refusing and reporting `[AttackRejected] out_of_ammo` instead**
+  (2026-11-01) — stops sending attacks that the server was always going to
+  refuse anyway.
+- **agent-client updated to v0.75.0, matching protocol v135** (2026-11-03).
 
 ## Protocol v134 — client v0.73.0
 

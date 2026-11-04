@@ -8,6 +8,9 @@ import { dungeons, monsters, items, lockedFloors, dungeonSpawns } from '../../..
 import { itemName } from '../../../../lib/en.js';
 
 export const signature = (d) => (d.chestDrops.length ? d.chestDrops.map(itemName).join(', ') : '—');
+export const claimedItemIds = new Set(
+  dungeons.flatMap((d) => [...d.chestDrops, ...d.chestRolls.map((r) => r.itemId)])
+);
 
 **{dungeons.length} dungeons** are open. Dungeons are **seed-determined**: the
 same entrance always has the same layout and is never regenerated.
@@ -71,15 +74,20 @@ facing and holds still through the cast, ignoring staggers, with raising
 the sword as the only tell. At the 2.55s mark the blade sweeps and every
 player in the 90° × 4m fan in front takes 5x a plain hit with no guard
 roll; stepping out of the fan before the sweep avoids it, and he's open
-for 2.8s after the swing for a counter.
+for 2.8s after the swing for a counter. Admins have a `/god` test command
+that takes no damage, connection-local only, invisible to regular players.
+
+**The Thief King** (Thieves' Den) and the **Shadow Master** (Shadow Guild)
+share the same attack timing: instead of the plain 2.8s slash, both use the
+player's dagger-stab animation every 2s, still for 3d6 damage.
 
 A slain boss doesn't respawn on a timer — its floor holds it dead until the
 next **sunset dungeon reset** (once per game day), which also teleports
 everyone still in that dungeon back to its entrance with a distant roar.
 Opening the chest no longer requires killing the boss or standing next to it
 — see "Keys and locked floors" below. The weapon each boss used to drop
-itself (Goblin Sword, Iron Sword, Steel Longsword) is now a guaranteed chest
-drop instead; see the table below.
+itself (Goblin Sword, Iron Sword, Steel Longsword, Cutthroat Dirk) is now a
+guaranteed chest drop instead; see the table below.
 
 ## Keys and locked floors
 
@@ -138,20 +146,44 @@ blocking the way on completely:
 
 ## Chest drop rules
 
-Each dungeon's chest drops come in three parts:
+Each dungeon's chest drops come in a few parts:
 
 1. **Signature drop(s)** — one or two guaranteed items per dungeon, the
-   "Guaranteed drop" column above; the three boss weapons now count among
+   "Guaranteed drop" column above; several boss weapons now count among
    them.
-2. **Independent rolls** — every other piece in that tier's pool rolls
-   separately at its own chance.
-3. **Lower-tier carry-over** — equipment from tiers below the dungeon each get
+2. **Exclusive rolls** — only that dungeon's own chest rolls these, at the
+   chance listed below. This layer was added once tiers 4 and 5 each got a
+   second dungeon: tier-pool items would otherwise be shared by both
+   dungeons of the same tier, and Sundered Bastion's Rune Blade and Amulet
+   of the Earth were meant to stay exclusive to it rather than also showing
+   up in Shadow Guild. The chances didn't change.
+3. **Tier-pool independent rolls** — the equipment pool shared by dungeons of
+   that tier (below), minus anything already counted as a signature or
+   exclusive-roll item; every remaining piece rolls separately at its own
+   chance.
+4. **Lower-tier carry-over** — equipment from tiers below the dungeon each get
    an extra 10% roll, so you can fill gaps in a higher dungeon.
 
 Gold is `depth × 500` to `depth × 1500`.
 
 The target is roughly **five runs on average** to collect everything a tier
 introduces.
+
+<FilterTable
+  placeholder="Search dungeons…"
+  columns={[
+    { key: 'dungeon', label: 'Dungeon' },
+    { key: 'name', label: 'Equipment' },
+    { key: 'chance', label: 'Drop chance', align: 'right' },
+  ]}
+  rows={dungeons.flatMap((d) =>
+    d.chestRolls.map((r) => ({
+      dungeon: d.name,
+      name: items.find((i) => i.id === r.itemId)?.name ?? r.itemId,
+      chance: `${Math.round(r.chance * 100)}%`,
+    }))
+  )}
+/>
 
 <FilterTable
   placeholder="Search equipment…"
@@ -164,7 +196,7 @@ introduces.
     { key: 'effect', label: 'Effect' },
   ]}
   rows={items
-    .filter((i) => i.chestTier)
+    .filter((i) => i.chestTier && !claimedItemIds.has(i.id))
     .sort((a, b) => a.chestTier - b.chestTier || (b.guard ?? 0) - (a.guard ?? 0))
     .map((i) => ({
       name: i.name,
@@ -176,17 +208,16 @@ introduces.
     }))}
 />
 
-:::note[The only weapons in chests are the three boss weapons — plus the Great Sword, sort of]
+:::note[The only weapons in chests are boss weapons — plus Shadowfang]
 Weapons are normally obtained from "the monster carrying it drops it" — the
-exception is the Goblin Sword, Iron Sword and Steel Longsword, which are now
-guaranteed chest drops instead of boss drops. Every other weapon still works
-the old way: what you see a monster carrying is what it can drop, and chests
-don't carry it.
-
-The **Great Sword** (T4) in the table above doesn't fit that rule either way —
-the three dungeons' chests only go up to T3, so nothing currently reaches the
-Great Sword's tier. It's data parked ahead of a dungeon that hasn't shipped
-yet, with no real way to obtain it right now.
+exception is the Goblin Sword, Iron Sword, Steel Longsword and Cutthroat
+Dirk, which are now guaranteed chest drops instead of boss drops (the Thief
+King and Shadow Master both fight with a generic dagger animation, so
+killing them doesn't drop Cutthroat Dirk or Shadowfang). **Shadowfang**
+doesn't fit that rule either — it isn't any boss's weapon, it's purely
+Shadow Guild's exclusive chest roll (see the table above), at 20%. Every
+other weapon still works the old way: what you see a monster carrying is
+what it can drop, and chests don't carry it.
 :::
 
 ## What you'll meet down there
