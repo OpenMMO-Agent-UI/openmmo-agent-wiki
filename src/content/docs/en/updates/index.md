@@ -19,7 +19,7 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v135 — client v0.75.0 (current)
+## Protocol v135 — client v0.76.0 (current)
 
 **The live server currently requires v135.**
 
@@ -87,6 +87,26 @@ whether you need a new client.
   rejection, and the player had to click again to keep fighting; a target
   behind a wall still ends combat, since the server reports a walled-off
   swing with the same "out of range" reason.
+- **Guardian Ward's Guard bonus now scales with the caster's level as
+  2 + Level/20 (rounded down), instead of a flat +2** (2026-11-04) — the flat
+  bonus fell behind Rage's damage bonus (3 + Level/10), which grows with
+  level; counting potions saved per kill, the flat +2 saved 17-20% at every
+  level, while the new formula saves 17% at level 1, 27% at level 20, and
+  40% at level 50. The bonus is fixed at cast time based on the caster's
+  level, and a later recast from a lower-level Knight only refreshes the
+  duration without overwriting a higher bonus already in place. See
+  [Combat](../guides/combat/#skills-and-mana-protocol-v71v79).
+- **The price index now compares against a target path instead of the last
+  meeting's reading** (2026-11-03) — `M` is now the past 24 hours' average
+  of hourly snapshots, and is now defined as the wallets of accounts with a
+  session in the window (summed across all of an account's characters,
+  excluding NPC and estate tax accounts) divided by that account count,
+  fixing the old calculation which divided total server gold — including
+  idle accounts, NPCs, and estate treasuries — by the midnight unique-account
+  count. Each meeting stores its target and grows it forward at
+  `targetDailyGrowth`, which dropped from 0.002 to 0.0003 per game day to
+  match the measured pace; the ±10 percentage point per-meeting cap and the
+  50%–200% index range are unchanged.
 
 **New items & assets**
 
@@ -95,6 +115,24 @@ whether you need a new client.
   female body, so empty equipment slots showed the bare base mesh; the
   existing 1,072 Valkyrie characters get the missing pieces on next login,
   and armor they already had equipped is unchanged.
+- **Female Cavemen get four starter outfit pieces of their own (top, bottom,
+  bracers, boots)** (2026-11-03) — reuses the existing `worn_caveman_top`,
+  `worn_caveman_pants`, `worn_caveman_bracers`, and `worn_caveman_boots` item
+  IDs with new female-body models; the helmet still uses the Barbarian look
+  and isn't part of this addition. Existing female Caveman characters get
+  any missing pieces granted by an offline tool, and armor they already had
+  equipped is unchanged.
+
+**Performance**
+
+- **Female Valkyrie players now load the same shared base.glb as other
+  female characters and apply the Valkyrie look in code, instead of
+  downloading a whole separate valkyrie.glb** (2026-11-03) — valkyrie.glb
+  used to be base.glb plus one female_class flag, so every client was
+  downloading essentially the same ~2.4MB body twice.
+- **Night merchant Wick's model textures are compressed, 2048² JPEG down to
+  1024² WebP, dropping the GLB from 2,045,760 to 562,960 bytes (72.48%
+  smaller)** (2026-11-03).
 
 **Client**
 
@@ -115,6 +153,13 @@ whether you need a new client.
   (2026-11-01) — stops sending attacks that the server was always going to
   refuse anyway.
 - **agent-client updated to v0.75.0, matching protocol v135** (2026-11-03).
+- **agent-client now also prints operator notices to stdout, instead of only
+  showing them in the watch view** (2026-11-03) — the per-IP operator
+  notices the server sends used to only reach the watch view; each one now
+  also prints as its own block on stdout, so anyone running the CLI sees it
+  too.
+- **agent-client updated to v0.76.0, still matching protocol v135**
+  (2026-11-04).
 
 ## Protocol v134 — client v0.73.0
 

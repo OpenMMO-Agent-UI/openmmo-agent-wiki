@@ -558,7 +558,7 @@ drag-and-tooltip code as your inventory.
 | Ability | Granted to | Requires | Effect | Cooldown |
 |---|---|---|---|---|
 | Double Slash | Rogue, by default | Dagger in main hand | Your next basic attack becomes two independent hits, each at 100% damage | 10s |
-| Guardian Ward | Knight, by default | Sword or Mace in main hand + Shield off-hand | **Flat +2 Guard** for yourself and party members within 20m on the same floor, for 60s | 45s, costs 2 MP |
+| Guardian Ward | Knight, by default | Sword or Mace in main hand + Shield off-hand | **+2 + caster's Level/20 Guard** (rounded down) for yourself and party members within 20m on the same floor, for 60s | 45s, costs 2 MP |
 | Auscultation | **Every class** | {itemName('stethoscope')} in the neck slot | Left-click a living target within 2m on your floor, unobstructed, to see its name, level, HP/Guard and equipment enchants | 0.8s (success only) |
 | Rage | Barbarian, by default | Sword, Great Sword, Axe, Mace, Club, Spear, or Dagger in main hand | +(3 + Level/10) damage on every hit and Guard −2, for 10s | 20s, costs 1 MP |
 | Primal Roar | Caveman, by default | None | Roars for 1.85s without swinging; at 1.05s the stomp staggers living monsters within 4m on your floor (unobstructed) for 3.7s and turns them on you. You also gain max(4, 15% of max HP) temporary HP for 10s | 30s, costs 1 MP |
@@ -569,12 +569,19 @@ drag-and-tooltip code as your inventory.
 Guardian Ward used to cost satiation; as of protocol v79 it costs 2 MP
 instead. You can't cast it below 2 MP, and a failed cast doesn't spend MP
 or start the cooldown. Recasting just refreshes the duration back to 60s —
-it doesn't stack. The bonus used to be 10% of the sum of base Guard +
-equipment Guard + enchant bonus, so it grew with gear — +4 at the production
-median Guard of 40, +6 at 60, and Knights at those levels were taking
-roughly half as many hits per kill as other classes. As of 2026-11-02 it's a
-flat +2 instead, which lowers a monster's hit chance by 10 percentage points
-at any Guard.
+it doesn't stack, and if the target already carries a higher bonus than this
+cast would give (say, a lower-level Knight refreshing a higher-level
+teammate), the larger bonus is kept instead of being overwritten. The bonus
+used to be 10% of the sum of base Guard + equipment Guard + enchant bonus,
+so it grew with gear — +4 at the production median Guard of 40, +6 at 60,
+and Knights at those levels were taking roughly half as many hits per kill
+as other classes. As of 2026-11-02 it became a flat +2, which lowers a
+monster's hit chance by 10 percentage points at any Guard. A flat bonus fell
+behind Rage's damage bonus (3 + Level/10) at high levels — counting potions
+saved per kill, the flat +2 saved 17-20% at every level, while the old 10%
+saved 36% at level 20 and 60% at level 50 as gear scaled up. As of 2026-11-04
+it's **2 + caster's Level/20** (rounded down) instead, saving 17% at level
+1, 27% at level 20, and 40% at level 50.
 
 **Auscultation (protocol v91)** is the only ability every class gets, but
 it's **useless without the item** — the {itemName('stethoscope')} only drops
