@@ -19,9 +19,57 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v135 — client v0.76.0 (current)
+## Protocol v136 — client v0.77.0 (current)
 
-**The live server currently requires v135.**
+**The live server currently requires v136.**
+
+**New system**
+
+- **Female characters can now pick a hairstyle, hair color, and eye color at
+  character creation, across all seven modular classes (Knight, Barbarian,
+  Rogue, Caveman, Valkyrie, Ranger, Priest)** (2026-11-05) — three hairstyles
+  are available: bob, long, and ponytail; the per-class default is ponytail
+  for Ranger, long for Valkyrie, and bob for everyone else, and switching
+  class re-applies the new default as long as the player hasn't manually
+  picked a hairstyle. Existing female characters have the male default baked
+  into their appearance data, so the server now swaps it on load for the
+  class's default hairstyle and that hairstyle texture's average color (bob
+  `#ceb294`, long `#d2bda2`, ponytail `#432e26`), with eye color defaulting to
+  `#786545` — kept to match how they already looked, without touching the
+  database itself. This batch bumped the protocol to v136.
+
+**New items & assets**
+
+- **Added five Priest-exclusive worn armor pieces for female characters
+  (mitre, robe, skirt, gloves, boots), including a new `worn_priest_gloves`
+  item** (2026-11-04) — Priest never had a starter item for the glove slot
+  before; this fills the gap. Existing female Priest characters get the
+  missing pieces backfilled by an offline tool at deploy, and armor they
+  already had equipped is unchanged. Priest and Ranger item descriptions
+  were rewritten at the same time, and their icons re-rendered upright from
+  slightly above and facing left, matching the Breastplate.
+- **Added four Ranger-exclusive worn armor pieces for female characters
+  (top, pants, gloves, boots), and Rangers now get a ponytail** (2026-11-04)
+  — reuses the existing `worn_ranger_top`, `worn_ranger_pants`,
+  `worn_ranger_gloves`, and `worn_ranger_boots` item IDs with female-body
+  models; existing female Ranger characters get the missing pieces
+  backfilled by an offline tool.
+
+**Fix**
+
+- **Teleport, return, and estate-return scrolls, plus accepted summons, now
+  wait 520ms on the server before actually teleporting, broadcasting the
+  departure to nearby players first and cancelling if the player moves more
+  than 0.1m or disconnects** (2026-11-04) — the "can't move while
+  teleporting" rule used to live only in the web client; the server now
+  enforces it too, and onlookers no longer have to delay a teleporting
+  player's updates themselves.
+
+**Client**
+
+- **agent-client updated to v0.77.0, matching protocol v136** (2026-11-05).
+
+## Protocol v135 — client v0.76.0
 
 **New system**
 
