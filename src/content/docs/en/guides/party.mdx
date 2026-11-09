@@ -107,6 +107,28 @@ or clutter chest belongs to whoever broke it.
 This fixes loot going to whoever landed the finishing blow even when they weren't the
 one who actually won the fight (issue #199).
 
+## Party loot sharing
+
+(2026-11-06)
+
+```
+/party loot
+/party loot shared
+/party loot priority
+```
+
+- The default is "priority" mode — the same rule as Kill loot ownership above: only
+  the top damage dealer can pick up during the 30-second exclusive window. `/party
+  loot` with no argument toggles between the two modes; you can also set `shared` or
+  `priority` directly.
+- Only the leader can change it; anyone else gets refused with a reason.
+- Switching to "shared" doesn't remove the 30-second exclusive window or the
+  `claimed_by` lock — it widens who's allowed through it to include every online
+  party member, not just whoever holds the claim. Switching back to "priority"
+  restores the original one-person rule.
+- `/party` with no arguments now also shows whether the party is set to `loot:
+  shared` or `loot: priority`.
+
 ## The summon scroll
 
 Using a **Scroll of Party Summon** from your bag sends a call to **every

@@ -210,6 +210,9 @@ export const monsters = parseCsv('monsters').map((r) => {
     crumbleSound: r.crumbleSound || null,
     staggerImmune: bool(r.staggerImmune),
     undead: bool(r.undead),
+    reactionMs: num(r.reactionMs),
+    crystalGlow: bool(r.crystalGlow),
+    bodyRadius: num(r.bodyRadius),
   };
 });
 
@@ -224,6 +227,7 @@ export const dungeons = parseCsv('dungeons').map((r) => ({
   chestDrops: r.chestDrops ? r.chestDrops.split(';') : [],
   keyPrefix: r.keyPrefix || null,
   spawnGroup: r.spawnGroup || null,
+  layoutStyle: r.layoutStyle || null,
   /** Item:chance rolls only this dungeon's chest makes (data-src/dungeons.csv chestRolls). */
   chestRolls: r.chestRolls
     ? r.chestRolls.split(';').map((entry) => {
@@ -318,4 +322,5 @@ export const debuffs = parseCsv('debuffs').map((r) => ({
   group: r.group || null,
   staggerM: num(r.staggerM),
   hitMod: num(r.hitMod),
+  petrifies: bool(r.petrifies),
 }));

@@ -81,6 +81,11 @@ that takes no damage, connection-local only, invisible to regular players.
 share the same attack timing: instead of the plain 2.8s slash, both use the
 player's dagger-stab animation every 2s, still for 3d6 damage.
 
+**The Rampaging Foreman** (Blackvein Mine) has a "crystal eruption" skill
+that drops a marker under up to 6 players within 14m, erupting 2.4 seconds
+later and petrifying whoever's hit for 20 seconds — see
+[Combat](../../guides/combat/#debuffs).
+
 A slain boss doesn't respawn on a timer — its floor holds it dead until the
 next **sunset dungeon reset** (once per game day), which also teleports
 everyone still in that dungeon back to its entrance with a distant roar.
@@ -208,16 +213,18 @@ introduces.
     }))}
 />
 
-:::note[The only weapons in chests are boss weapons — plus Shadowfang]
+:::note[The only weapons in chests are boss weapons — plus Shadowfang and the Foreman's Pickaxe]
 Weapons are normally obtained from "the monster carrying it drops it" — the
 exception is the Goblin Sword, Iron Sword, Steel Longsword and Cutthroat
 Dirk, which are now guaranteed chest drops instead of boss drops (the Thief
 King and Shadow Master both fight with a generic dagger animation, so
 killing them doesn't drop Cutthroat Dirk or Shadowfang). **Shadowfang**
 doesn't fit that rule either — it isn't any boss's weapon, it's purely
-Shadow Guild's exclusive chest roll (see the table above), at 20%. Every
-other weapon still works the old way: what you see a monster carrying is
-what it can drop, and chests don't carry it.
+Shadow Guild's exclusive chest roll (see the table above), at 20%. Same
+story for the **Foreman's Pickaxe**: the Rampaging Foreman fights unarmed
+(no weapon model), so the pickaxe is purely Blackvein Mine's exclusive
+chest roll, also at 20%. Every other weapon still works the old way: what
+you see a monster carrying is what it can drop, and chests don't carry it.
 :::
 
 ## What you'll meet down there
@@ -256,3 +263,17 @@ what it can drop, and chests don't carry it.
   clickable wooden double door.
 - **Corridor and room walls differ** — rooms use medieval stone, corridors use
   rock. Useful for telling where you are.
+- **Blackvein Mine's ore heaps and crystal clusters can be mined** (2026-11-05) —
+  carry a {itemName('miner_pickaxe')} or {itemName('foreman_pickaxe')} (in hand or
+  bag) and click the heap or cluster to swing for 3 seconds in place; moving,
+  getting hit, or starting another action (fishing, performing, etc.) cancels it.
+  A completed swing has a 20% chance to yield {itemName('blackvein_ore')} with the
+  {itemName('miner_pickaxe')}, 40% with the {itemName('foreman_pickaxe')}; crystal
+  clusters yield {itemName('blackvein_crystal_shard')} instead. Yield scales with
+  depth ("2 + depth/8" for ore heaps, "1 + depth/10" for crystal clusters). A
+  mined-out node stays empty until that day's sunset dungeon reset.
+- **Blackvein Mine's ore carts roll down their rail once pushed** (2026-11-05) —
+  up to 12 cells at 3.6 cells/sec, stopping at a wall, a monster spawn point, or
+  whoever's in the way. Striking a player deals 4d10 damage, dodgeable by stepping
+  out of the cell before the cart arrives; striking a monster counts as an attack
+  from whoever pushed it, XP and all.

@@ -66,6 +66,7 @@ export const itemNames = {
   worn_bard_top: '磨損的吟遊詩人背心',
   worn_bard_pants: '磨損的吟遊詩人長褲',
   worn_bard_boots: '磨損的吟遊詩人靴',
+  worn_bard_gloves: '磨損的吟遊詩人手套',
   worn_barbarian_helmet: '磨損的蠻族頭盔',
   worn_barbarian_armor: '磨損的蠻族護肩',
   worn_barbarian_pants: '磨損的蠻族毛皮護腿',
@@ -151,6 +152,11 @@ export const itemNames = {
   guild_key_15: '暗影公會鑰匙(15 層)',
   guild_key_20: '暗影公會鑰匙(20 層)',
   guild_key_25: '暗影公會鑰匙(25 層)',
+  mine_key_5: '黑脈礦坑鑰匙(5 層)',
+  mine_key_10: '黑脈礦坑鑰匙(10 層)',
+  mine_key_15: '黑脈礦坑鑰匙(15 層)',
+  mine_key_20: '黑脈礦坑鑰匙(20 層)',
+  mine_key_25: '黑脈礦坑鑰匙(25 層)',
   bow: '弓',
   iron_arrow: '鐵箭',
   steel_arrow: '鋼箭',
@@ -207,6 +213,10 @@ export const itemNames = {
   furniture_small_sword: '小劍裝飾品',
   furniture_shop_sign_weathered: '商店招牌(風化拱形)',
   furniture_hearthbound_rug: '歸鄉地毯',
+  miner_pickaxe: '礦工鐵鎬',
+  foreman_pickaxe: '工頭鐵鎬',
+  blackvein_ore: '黑脈礦石',
+  blackvein_crystal_shard: '黑脈水晶碎片',
 };
 
 export const itemDescriptions = {
@@ -273,6 +283,7 @@ export const itemDescriptions = {
   worn_bard_top: '發給新進吟遊詩人的舊衣物。商人不會收購。',
   worn_bard_pants: '發給新進吟遊詩人的舊衣物。商人不會收購。',
   worn_bard_boots: '發給新進吟遊詩人的舊衣物。商人不會收購。',
+  worn_bard_gloves: '發給新進吟遊詩人的露指手套,配著繫帶護腕。商人不會收購。',
   worn_barbarian_helmet: '發給新進蠻族的舊裝備。商人不會收購。',
   worn_barbarian_armor: '發給新進蠻族的舊裝備。商人不會收購。',
   worn_barbarian_pants: '發給新進蠻族的舊裝備。商人不會收購。',
@@ -358,6 +369,11 @@ export const itemDescriptions = {
   guild_key_15: '一把沒有工匠標記的黑漆鑰匙。可以打開暗影公會第 15 層的封鎖樓梯間。寶箱也需要它。',
   guild_key_20: '一把沒有工匠標記的黑漆鑰匙。可以打開暗影公會第 20 層的封鎖樓梯間。寶箱也需要它。',
   guild_key_25: '一把沒有工匠標記的黑漆鑰匙。可以打開暗影公會第 25 層的封鎖樓梯間,以及該地城的寶箱。',
+  mine_key_5: '一把煤黑色的鐵鑰匙,出自老工頭的鑰匙環。可以打開黑脈礦坑第 5 層的封鎖樓梯間。寶箱也需要它。',
+  mine_key_10: '一把煤黑色的鐵鑰匙,出自老工頭的鑰匙環。可以打開黑脈礦坑第 10 層的封鎖樓梯間。寶箱也需要它。',
+  mine_key_15: '一把煤黑色的鐵鑰匙,出自老工頭的鑰匙環。可以打開黑脈礦坑第 15 層的封鎖樓梯間。寶箱也需要它。',
+  mine_key_20: '一把煤黑色的鐵鑰匙,出自老工頭的鑰匙環。可以打開黑脈礦坑第 20 層的封鎖樓梯間。寶箱也需要它。',
+  mine_key_25: '一把煤黑色的鐵鑰匙,出自老工頭的鑰匙環。可以打開黑脈礦坑第 25 層的封鎖樓梯間,以及該地城的寶箱。',
   bow: '層層迭起的紫杉反曲弓。靠的是穩定的手,不是蠻力。',
   iron_arrow: '鐵製箭頭的箭矢。便宜到弄丟幾支也無所謂。',
   steel_arrow: '鋼製箭頭,比鐵箭咬得更深,價錢也貴一些。',
@@ -414,6 +430,10 @@ export const itemDescriptions = {
   furniture_small_sword: '拆封後可在自己的領地放置小劍裝飾品。ORKEA 出品的裝飾家具。',
   furniture_shop_sign_weathered: '拆封後可在自己的領地放置商店招牌(風化拱形)。ORKEA 出品的裝飾家具。',
   furniture_hearthbound_rug: '溫暖手織羊毛地毯,織有爐火與家的圖案。拆封後可放置在自己的領地。',
+  miner_pickaxe: '灰木柄上裝著沉重的鐵鎬頭。帶上它就能在黑脈礦坑挖掘礦堆與水晶叢,緊急時勉強能當武器使用。',
+  foreman_pickaxe: '狂暴工頭本人的鎬頭,鐵製鎬頭上貫穿著黑水晶紋路。這是一把沉重的雙手武器,挖礦時比普通鎬頭更容易挖出礦石。',
+  blackvein_ore: '一塊夾著紫色紋路的暗色礦石。商人按重量收購。',
+  blackvein_crystal_shard: '一片冰冷的黑紫色碎片,核心隱隱透出藍光。收藏家會出高價收購。',
 };
 
 export const monsterNames = {
@@ -448,6 +468,12 @@ export const monsterNames = {
   thief_king: '盜賊王',
   shadow_master: '暗影公會長',
   terraclash: '泰拉克拉什',
+  mine_remnant: '殘留礦工',
+  mine_crystal: '結晶礦工',
+  mine_twisted: '扭曲礦工',
+  mine_veinfused: '礦脈融合者',
+  mine_predator: '深處掠食者',
+  mine_foreman: '狂暴工頭',
 };
 
 export const debuffNames = {
@@ -458,6 +484,7 @@ export const debuffNames = {
   tipsy: '微醺',
   drunk: '醉了',
   wasted: '爛醉',
+  petrified: '石化',
 };
 
 export const dungeonNames = {
@@ -468,6 +495,7 @@ export const dungeonNames = {
   sundered_bastion: '桑德德・巴斯蒂恩',
   thieves_den: '盜賊窟',
   shadow_guild: '暗影公會',
+  blackvein_mine: '黑脈礦坑',
 };
 
 export const categoryNames = {

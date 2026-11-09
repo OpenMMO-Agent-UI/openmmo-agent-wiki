@@ -19,9 +19,117 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v136 — client v0.77.0 (current)
+## Protocol v139 — client v0.78.0 (current)
 
-**The live server currently requires v136.**
+**The live server currently requires v139.**
+
+**New system**
+
+- **Female characters get a "custom face" option, and hair/eye color can now
+  keep the texture's original color instead of a custom tint** (2026-11-08) —
+  at character creation, all eight female classes now have this new custom
+  face on top of the existing default face. Character appearance data gained
+  two flags, `hair_color_original` and `eye_color_original`, both off by
+  default; turning one on makes the hair or eyes use the color baked into the
+  texture itself instead of the custom-picked tint — this isn't a new color
+  option, it's a toggle for whether the custom tint applies at all. Existing
+  characters keep their current face unchanged. This batch bumped the
+  protocol to v139.
+
+**Client**
+
+- **agent-client updated to v0.78.0, matching protocol v139** (2026-11-08).
+
+## Protocol v138 — client v0.78.0
+
+**New system**
+
+- **Added a party loot-sharing toggle, `/party loot`** (2026-11-08) — the
+  default is "priority" mode, the same rule v135 added: only the top damage
+  dealer can pick up during the 30-second exclusive window. `/party loot`
+  with no argument toggles between "priority" and "shared"; you can also set
+  `shared` or `priority` directly. Only the leader can change it; anyone else
+  gets refused with a reason. Switching to "shared" lets **online party
+  members also pick up** loot claimed by the top damage dealer during the
+  30-second window — the `claimed_by` lock isn't removed, it's just widened
+  to include the whole party; switching back to "priority" restores the
+  original one-person rule. `/party` with no arguments now also shows
+  whether the party is set to `loot: shared` or `loot: priority`.
+  `Party.loot_shared` and `PartySetLoot` bumped the protocol to v138. See
+  [Party](../guides/party/#party-loot-sharing).
+
+## Protocol v137 — client v0.78.0
+
+**New system**
+
+- **New dungeon "Blackvein Mine" goes live, 25 floors, final boss the
+  Rampaging Foreman** (2026-11-03 – 2026-11-08) — entrance at world
+  (-1884, 1.2, 6360), in the mountains about 640m east of Shadow Guild. Reuses
+  the existing locked-floor key mechanic (`mine_key_5/10/15/20/25`). Floors
+  1–5 are the Lingering Miner, 6–10 the Crystallized Miner, 11–15 the Twisted
+  Miner, 16–20 the Veinfused, 21–24 the Deep Predator, and floor 25 has only
+  the Rampaging Foreman standing alone (the server specifically allows an
+  empty regular-spawn table on the final floor). The chest has no guaranteed
+  drop; as of 2026-11-08 its exclusive roll includes the Foreman's Pickaxe at
+  20%. The dungeon uses a brand-new `layoutStyle=mine` generator: a normal
+  floor is "arrival room → 2-3 small rooms → stairs room"; every 5th floor
+  (5/10/15/20) instead branches from a fork room into 3 wide workshops, only
+  one of which holds the stairs down, and that floor spawns 3 extra monsters;
+  floor 25 follows the normal flow but ends in the single largest workshop,
+  holding the boss and chest. See [Dungeons](../database/dungeons/).
+- **Added mining and mine carts (Blackvein Mine only), the Petrified status,
+  and continuous monster HP for stethoscope wearers** (2026-11-03 –
+  2026-11-06) — carry a Foreman's Pickaxe or Miner's Pickaxe in hand or bag
+  and click an ore heap or crystal cluster to swing in place for 3 seconds;
+  moving, getting hit, or starting another action cancels it. A completed
+  swing has a 20% chance to yield Blackvein Ore with the Miner's Pickaxe, 40%
+  with the Foreman's Pickaxe; crystal clusters yield Blackvein Crystal Shard
+  instead, and yield scales with depth. A mined-out node stays empty until
+  that day's sunset dungeon reset. Pushing a cart sends it rolling up to 12
+  cells along its rail at 3.6 cells/sec; striking a player deals 4d10 damage
+  (dodgeable by stepping out of the cell before it arrives), and striking a
+  monster counts as an attack from whoever pushed it. The Rampaging Foreman's
+  "crystal eruption" skill drops a marker under up to 6 players within 14m of
+  the boss that erupts 2.4 seconds later, petrifying whoever's hit for 20
+  seconds — while petrified you can't move, attack, use abilities/items,
+  interact, or run slash commands (chat still works), you take no damage and
+  aren't targeted by monsters, and HP regen and healing both stop; if
+  everyone's petrified the Foreman waits 10 seconds beside one of them and
+  shatters them with a normal attack that ignores armor for 4× damage.
+  Separately, stethoscope wearers can now continuously see nearby monsters'
+  exact HP, the same way v133 let them continuously see players' HP. This
+  batch of messages (`MineDungeonProp`, `MiningStarted`/`MiningEnded`,
+  `PushDungeonCart`, `DungeonCartPushed`, `CartStruckPlayer`,
+  `Player.petrified`, `PlayerPetrifiedToggled`, `MonsterHealthUpdate`) bumped
+  the protocol to v137. See
+  [Other things down there](../database/dungeons/#other-things-down-there)
+  and [Debuffs](../guides/combat/#debuffs).
+
+**New items & assets**
+
+- **Added the Foreman's Pickaxe, Miner's Pickaxe, Blackvein Ore, Blackvein
+  Crystal Shard, and five Blackvein Mine keys** (2026-11-03 – 2026-11-05) —
+  Tobin now also sells the Miner's Pickaxe.
+- **Added a Bard-exclusive worn glove for female characters, a new
+  `worn_bard_gloves` item** (2026-11-06) — Bard never had a starter item for
+  the glove slot before; this fills the gap with fingerless gloves and laced
+  bracers.
+
+**Balance**
+
+- **Attacking a monster that isn't in combat yet from behind now guarantees
+  a critical hit on a hit** (2026-11-05) — the monster must have no player
+  target and not be chasing, waiting, or attacking, and the attacker must be
+  within a 90° arc centered on the exact opposite of the monster's facing
+  direction; the hit roll itself is unchanged, a miss is still a miss. Melee,
+  ranged (from the firing position), Double Slash, and Valhalla Charge all
+  qualify, but only once — whether the swing lands or not, the monster now
+  targets the attacker, so neither the same attacker's next swing nor a
+  party mate's back-attack on it gets the guarantee. This change didn't bump
+  the protocol. See
+  [Combat](../guides/combat/#opening-back-attack-2026-11-05).
+
+## Protocol v136 — client v0.77.0
 
 **New system**
 

@@ -5,7 +5,7 @@ description: Hit resolution, damage, the Guard scale, XP formulas, the levelling
 
 import FilterTable from '../../../../components/FilterTable.astro';
 import { monsters, items, averageRoll, debuffs } from '../../../../lib/gamedata.js';
-import { itemName, debuffName } from '../../../../lib/en.js';
+import { itemName, debuffName, monsterName } from '../../../../lib/en.js';
 import { hitChance, xpForLevel, monsterXp, expectedHitDieGain, classes } from '../../../../lib/classes.js';
 
 Every roll happens **on the server**. The client only sends "I want to attack
@@ -218,6 +218,23 @@ it still caps at 10%. You can exchange Terraclash Shards for one from Ysolde;
 see [Field Raids](../field-raid/#rewards). The character panel shows your
 server-computed current crit chance, and it updates the moment you equip or
 unequip the ring.
+
+### Opening back-attack (2026-11-05)
+
+Attacking a monster that **isn't in combat yet** (no player target, and not
+chasing, waiting, or attacking) from directly **behind** it **guarantees a
+critical hit** if the attack hits — the hit roll itself is unchanged, a miss
+is still a miss. "Behind" is a 90° arc (±45°) centered on the exact opposite
+of the monster's facing direction, measured from the monster's center to the
+attacker's position. This applies to melee, ranged (from the firing
+position), Double Slash, and Valhalla Charge alike. It only ever fires once:
+whether the swing lands or not, the monster now targets the attacker, so
+neither a second swing at the same monster nor a party mate's back-attack on
+it gets the guarantee. Swinging from within 10m but out of attack range still
+wakes the monster and burns the opportunity, and aggressive monsters detect
+in every direction, so you can't flank one that's already alert within its
+detection radius. Monster attacks, boss skills, and environmental damage are
+unaffected.
 
 ## Ranged weapons (protocol v53)
 
@@ -538,6 +555,19 @@ multipliers combining: ×0.9 move and attack speed, ×1.5 hunger drain, no
 armor-weight penalty. It lasts the same 450 seconds as Wet and dries off
 just as fast next to a campfire. See
 [Weather](../weather/#snow-and-cold-protocol-v103) for the details.
+
+**Petrified (protocol v137)** — triggered by a hit from {monsterName('mine_foreman')}'s
+"crystal eruption" (`crystal_eruption`) skill, the floor-25 boss of Blackvein Mine, and
+lasts 20 seconds. The skill drops a marker under every player within 14m of the boss
+(up to 6 at once); each erupts 2.4 seconds later, so stepping off a marker dodges it.
+While petrified you can't move, attack, use abilities or items, interact, or run slash
+commands (chat still works), and any in-progress movement, attack, fishing, mining, or
+performance stops immediately. You take no damage and aren't targeted by monsters while
+petrified, and HP regen and healing are both suspended. {monsterName('mine_foreman')}
+himself is the one exception — he targets non-petrified players first, and only when
+everyone is petrified does he wait 10 seconds beside one of them and shatter them with a
+normal attack that ignores armor for 4× damage. Dying clears the status, and
+disconnecting makes it disappear.
 
 ## Skills and mana (protocol v71–v79)
 

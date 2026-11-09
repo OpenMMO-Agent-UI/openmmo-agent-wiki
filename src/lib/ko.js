@@ -66,6 +66,7 @@ export const itemNames = {
   worn_bard_top: '낡은 바드 조끼',
   worn_bard_pants: '낡은 바드 바지',
   worn_bard_boots: '낡은 바드 부츠',
+  worn_bard_gloves: '낡은 바드 장갑',
   worn_barbarian_helmet: '낡은 야만인 투구',
   worn_barbarian_armor: '낡은 야만인 견갑',
   worn_barbarian_pants: '낡은 야만인 모피 각반',
@@ -151,6 +152,11 @@ export const itemNames = {
   guild_key_15: '그림자 길드 열쇠 (15층)',
   guild_key_20: '그림자 길드 열쇠 (20층)',
   guild_key_25: '그림자 길드 열쇠 (25층)',
+  mine_key_5: '검은 광맥 광산 열쇠 (5층)',
+  mine_key_10: '검은 광맥 광산 열쇠 (10층)',
+  mine_key_15: '검은 광맥 광산 열쇠 (15층)',
+  mine_key_20: '검은 광맥 광산 열쇠 (20층)',
+  mine_key_25: '검은 광맥 광산 열쇠 (25층)',
   bow: '활',
   iron_arrow: '철화살',
   steel_arrow: '강철 화살',
@@ -207,6 +213,10 @@ export const itemNames = {
   furniture_small_sword: '작은 검 장식품',
   furniture_shop_sign_weathered: '상점 간판(풍화된 아치)',
   furniture_hearthbound_rug: '귀향의 러그',
+  miner_pickaxe: '광부의 곡괭이',
+  foreman_pickaxe: '감독관의 곡괭이',
+  blackvein_ore: '검은 광맥 광석',
+  blackvein_crystal_shard: '검은 광맥 수정 조각',
 };
 
 export const itemDescriptions = {
@@ -273,6 +283,7 @@ export const itemDescriptions = {
   worn_bard_top: '신참 바드에게 지급하는 낡은 옷이다. 상인은 사주지 않는다.',
   worn_bard_pants: '신참 바드에게 지급하는 낡은 옷이다. 상인은 사주지 않는다.',
   worn_bard_boots: '신참 바드에게 지급하는 낡은 옷이다. 상인은 사주지 않는다.',
+  worn_bard_gloves: '신참 바드에게 지급하는, 끈으로 묶은 손목 보호대가 달린 손가락 없는 장갑이다. 상인은 사주지 않는다.',
   worn_barbarian_helmet: '신참 야만인에게 지급하는 낡은 장비다. 상인은 사주지 않는다.',
   worn_barbarian_armor: '신참 야만인에게 지급하는 낡은 장비다. 상인은 사주지 않는다.',
   worn_barbarian_pants: '신참 야만인에게 지급하는 낡은 장비다. 상인은 사주지 않는다.',
@@ -358,6 +369,11 @@ export const itemDescriptions = {
   guild_key_15: '제작자 표식이 없는 검게 칠한 열쇠다. 그림자 길드 15층의 봉인된 계단방을 연다. 보물 상자도 필요하다.',
   guild_key_20: '제작자 표식이 없는 검게 칠한 열쇠다. 그림자 길드 20층의 봉인된 계단방을 연다. 보물 상자도 필요하다.',
   guild_key_25: '제작자 표식이 없는 검게 칠한 열쇠다. 그림자 길드 25층의 봉인된 계단방과 그 던전의 보물 상자를 연다.',
+  mine_key_5: '옛 감독관의 열쇠고리에서 나온 검게 그은 철제 열쇠다. 검은 광맥 광산 5층의 봉인된 계단방을 연다. 보물 상자도 필요하다.',
+  mine_key_10: '옛 감독관의 열쇠고리에서 나온 검게 그은 철제 열쇠다. 검은 광맥 광산 10층의 봉인된 계단방을 연다. 보물 상자도 필요하다.',
+  mine_key_15: '옛 감독관의 열쇠고리에서 나온 검게 그은 철제 열쇠다. 검은 광맥 광산 15층의 봉인된 계단방을 연다. 보물 상자도 필요하다.',
+  mine_key_20: '옛 감독관의 열쇠고리에서 나온 검게 그은 철제 열쇠다. 검은 광맥 광산 20층의 봉인된 계단방을 연다. 보물 상자도 필요하다.',
+  mine_key_25: '옛 감독관의 열쇠고리에서 나온 검게 그은 철제 열쇠다. 검은 광맥 광산 25층의 봉인된 계단방과 그 던전의 보물 상자를 연다.',
   bow: '층층이 겹친 주목으로 만든 리커브 활. 힘보다 안정된 손이 중요하다.',
   iron_arrow: '철촉을 단 화살대. 몇 개 잃어버려도 아깝지 않을 만큼 싸다.',
   steel_arrow: '강철촉이 철보다 깊게 박히는 만큼 값도 더 나간다.',
@@ -414,6 +430,10 @@ export const itemDescriptions = {
   furniture_small_sword: '펼쳐서 자기 영지에 작은 검 장식품을 놓는다. ORKEA에서 만든 장식용 가구다.',
   furniture_shop_sign_weathered: '펼쳐서 자기 영지에 상점 간판(풍화된 아치)을 놓는다. ORKEA에서 만든 장식용 가구다.',
   furniture_hearthbound_rug: '따뜻하게 손으로 짠 양모 러그로, 벽난로와 가정을 상징하는 문양이 있다. 펼쳐서 자기 영지에 놓는다.',
+  miner_pickaxe: '물푸레나무 자루에 달린 무거운 철제 곡괭이다. 들고 있으면 검은 광맥 광산의 광석 더미와 수정 무더기를 캘 수 있다. 급할 때는 무기로도 쓸 수 있지만 변변찮다.',
+  foreman_pickaxe: '광란의 감독관이 쓰던 곡괭이다. 철제 머리에 검은 수정 줄기가 박혀 있다. 무거운 양손 무기이면서도 일반 곡괭이보다 광석을 더 자주 캐낸다.',
+  blackvein_ore: '보랏빛 줄기가 섞인 어두운 광석 덩어리다. 상인은 무게로 값을 쳐서 사들인다.',
+  blackvein_crystal_shard: '차가운 흑자색 조각으로, 중심에서 희미한 푸른빛이 새어 나온다. 수집가들이 비싸게 사들인다.',
 };
 
 export const monsterNames = {
@@ -448,6 +468,12 @@ export const monsterNames = {
   thief_king: '도적왕',
   shadow_master: '그림자 길드장',
   terraclash: '테라클래시',
+  mine_remnant: '떠도는 광부',
+  mine_crystal: '결정화된 광부',
+  mine_twisted: '뒤틀린 광부',
+  mine_veinfused: '광맥융합체',
+  mine_predator: '심층 포식자',
+  mine_foreman: '광란의 감독관',
 };
 
 export const debuffNames = {
@@ -458,6 +484,7 @@ export const debuffNames = {
   tipsy: '알딸딸함',
   drunk: '취함',
   wasted: '만취',
+  petrified: '석화',
 };
 
 export const dungeonNames = {
@@ -468,6 +495,7 @@ export const dungeonNames = {
   sundered_bastion: '부서진 요새',
   thieves_den: '도적의 소굴',
   shadow_guild: '그림자 길드',
+  blackvein_mine: '검은 광맥 광산',
 };
 
 export const categoryNames = {
