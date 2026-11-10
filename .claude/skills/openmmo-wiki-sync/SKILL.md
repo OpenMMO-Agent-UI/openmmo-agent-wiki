@@ -21,10 +21,16 @@ they abort loudly rather than asking.
 
 ```
 git ls-remote https://github.com/OpenMMO-Agent-UI/OpenMMO refs/heads/master
-cat scripts/.last-upstream-sync
+git ls-remote https://github.com/OpenMMO-Agent-UI/openmmo-agent-ui refs/heads/master
+cat scripts/.last-upstream-sync      # "<game sha> <client sha>"
 ```
 
-If the remote master SHA equals the recorded SHA, **stop here** — say so in
+Two repos, because this wiki documents two moving things: the game, and the
+desktop client whose panel `client/panel.mdx` describes. Whichever moved is
+what this run has work for — the game SHA drives Steps 2-4, the client SHA
+drives Step 4b.
+
+If both recorded SHAs equal the remotes, **stop here** — say so in
 one line and end. (The CI workflow's `check` job normally short-circuits
 before the agent even starts; this guard is for manual runs.) If
 `scripts/.last-upstream-sync` is missing, keep going — Step 1's state
@@ -125,11 +131,40 @@ translations in `astro.config.mjs`.
 `agent-client/data/templates/`. Never invent numbers or behavior. If you
 cannot verify something, leave it out and say so in the commit message.
 
-Do not touch `src/content/docs/**/client/**` — those pages track the
-desktop client, which a different pipeline keeps in sync.
-
 Never delete or rewrite existing hand-written sections unless they became
 factually wrong; when a number changed upstream, update it in place.
+
+## Step 4b: the client's panel, when the client moved
+
+Skip when the client SHA is unchanged.
+
+This step replaces a line that used to sit in Step 4: *"Do not touch
+`src/content/docs/**/client/**` — those pages track the desktop client,
+which a different pipeline keeps in sync."* **No such pipeline existed.**
+`publish-downloads.yml` rewrites download links and `release.json` and has
+never touched a prose page, so the client docs were assigned to a flow that
+was never built and nobody owned them. `client/panel.mdx` sat at client
+v0.19.0 until v0.79.0: six drawers that no longer exist, two settings tabs
+replaced, and no mention of the Auto Worker — the fighter, the fisher and
+the dungeon conqueror, which is most of what the app now does.
+
+The panel's own markup is the source of truth, not the release notes:
+
+```
+src/renderer/index.html      # drawers, tabs, every field and its min/max
+src/renderer/app.js          # WORKER_KINDS, DUNGEONS, RESTOCK_ITEMS
+src/settingsStore.js         # the defaults the panel writes
+```
+
+Defaults appear in two places and must agree before you quote one: the
+panel's `settingsStore.js` and the engine's own `default_*` functions in
+`deps/OpenMMO/agent-client/src/driver/worker/mod.rs`. Quote the number only
+when both say it.
+
+Same rules as Step 4 otherwise: all three locales, verified against source,
+nothing invented, existing prose updated in place rather than rewritten.
+`node scripts/check-drift.mjs` names every drawer and tab the docs are
+missing — it is the measure of whether this step is done, not a suggestion.
 
 ## Step 5: verify (the safety gates)
 
@@ -140,15 +175,26 @@ node scripts/check-drift.mjs
 ```
 
 Grep `dist/` to confirm each new name renders in all three locales. The
-drift script's **game-data check must report parity**; its release/protocol
-check may legitimately fail while the client release lags the server — that
-is fixed by the client repo's pipeline, not from here.
+drift script's **game-data check and panel check must both report parity**;
+its release/protocol check may legitimately fail while the client release
+lags the server — that is fixed by the client repo's pipeline, not from
+here.
 
 ## Step 6: record the sync point and push
 
-Write the upstream `origin/master` SHA the run reconciled against into
-`scripts/.last-upstream-sync`, commit everything to `main` with a message
-that says what changed upstream and what was updated, and push.
+Write both SHAs the run reconciled against into
+`scripts/.last-upstream-sync`, one line, game first:
+
+```
+printf '%s %s\n' "$GAME_SHA" "$CLIENT_SHA" > scripts/.last-upstream-sync
+```
+
+Both, always — recording only the one you acted on makes the other read as
+synced, and the next run would skip work it never did. If a step was
+skipped because that repo had not moved, its SHA is unchanged anyway.
+
+Commit everything to `main` with a message that says what changed in each
+repo and what was updated, and push.
 
 (In CI the workflow kicks `deploy.yml` after the push — pushes made with
 `GITHUB_TOKEN` don't fire `on: push` workflows on their own. A push from a

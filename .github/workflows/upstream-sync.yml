@@ -25,6 +25,15 @@ concurrency:
 
 env:
   UPSTREAM: https://github.com/OpenMMO-Agent-UI/OpenMMO
+  # The desktop client, watched for the same reason and separately: the wiki
+  # documents its panel, and that panel moves on its own schedule. Watching
+  # only the game repo is why `client/panel.mdx` sat at client v0.19.0 while
+  # the client reached v0.79.0 — by then it described six drawers that no
+  # longer exist, two settings tabs that had been replaced, and had never
+  # once mentioned the Auto Worker, which is most of what the app now does.
+  # Nothing was broken enough to notice; it was just quietly wrong for fifty
+  # releases, because nothing ever woke up to look.
+  CLIENT: https://github.com/OpenMMO-Agent-UI/openmmo-agent-ui
 
 jobs:
   # Cheap gate so the agent only spins up when upstream actually moved.
@@ -37,14 +46,24 @@ jobs:
       - uses: actions/checkout@v4
       - id: cmp
         run: |
+          # Two heads, one recorded line: "<game sha> <client sha>". A line
+          # with only one field is the old single-repo state and reads as
+          # "the client has never been looked at", which fires one catch-up
+          # run rather than silently carrying the gap forward.
           upstream="$(git ls-remote "$UPSTREAM" refs/heads/master | cut -f1)"
-          recorded="$(cat scripts/.last-upstream-sync 2>/dev/null || true)"
-          if [[ -n "$upstream" && "$upstream" != "$recorded" ]]; then
+          client="$(git ls-remote "$CLIENT" refs/heads/master | cut -f1)"
+          read -r was_upstream was_client < <(cat scripts/.last-upstream-sync 2>/dev/null || true)
+          if [[ -z $upstream || -z $client ]]; then
+            echo "could not read one of the remotes — upstream='$upstream' client='$client'" >&2
+            exit 1
+          fi
+          if [[ $upstream != "$was_upstream" || $client != "$was_client" ]]; then
             echo "needs-sync=true" >> "$GITHUB_OUTPUT"
-            echo "upstream moved: ${recorded:-<none>} -> $upstream"
+            echo "game:   ${was_upstream:-<none>} -> $upstream"
+            echo "client: ${was_client:-<none>} -> $client"
           else
             echo "needs-sync=false" >> "$GITHUB_OUTPUT"
-            echo "nothing to do — upstream still at ${recorded:-<none>}"
+            echo "nothing to do — game and client both still recorded"
           fi
 
   sync:

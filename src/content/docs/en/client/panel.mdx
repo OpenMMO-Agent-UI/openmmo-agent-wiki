@@ -1,6 +1,6 @@
 ---
 title: Panel reference
-description: The six drawers, the four settings tabs, and every setting with its default and what it actually does.
+description: The three drawers, every knob the Auto Worker carries, the four settings tabs, and what each default actually does.
 ---
 
 import FilterTable from '../../../../components/FilterTable.astro';
@@ -21,158 +21,164 @@ get playing, [Install and first run](../install/) is enough.
 | Manual / AI switch | Swap between the two modes live |
 | Change character / server | Back to the earlier screens |
 
-## The six drawers
+## The three drawers
 
-### Equipment
+The icons down the left edge carry no text; the labels appear on hover and
+focus rather than waiting on an OS tooltip.
 
-What's worn, slot by slot.
+### Character
 
-:::note[Why equipment comes through the relay]
-The agent's own panel API **reports the bag but never the gear.** So this
-drawer is reconstructed from the inventory frames the relay sees — one of the
-things the desktop client adds that running `agent-client` directly does not
-give you.
+Three tabs:
+
+- **Stats** — level, attributes, learned skills and titles. Titles are switched here.
+- **Equipment** — every worn slot, empty ones included.
+- **Bag** — what is carried, and the sell/drop marks (next section).
+
+:::note[Why equipment comes from the relay]
+The agent's own panel API **reports the bag and never the worn gear**.
+So the Equipment tab is reconstructed from the inventory frames the relay
+sees — one of the things the desktop client adds, and not visible if you run
+`agent-client` directly.
 :::
 
-### Bag
+#### The bag's sell and drop marks
 
-Shows what's carried, and lets you **mark what the agent is allowed to dispose
-of**:
+Every row carries two checkboxes, with the columns named once above the list
+rather than restated per row:
 
-- **S (Sellable)** — the agent may sell it
-- **D (Dropable)** — the agent may drop it
+- **Sell** — the worker may sell it to a merchant
+- **Drop** — the worker may leave it on the ground
 
-Tick the boxes, then press **Apply labels** to send them (they're staged, not
-sent one at a time).
+Ticking only stages the change; **Apply labels** is what writes it. A few
+things worth knowing:
 
-This is the gate that stops an agent disposing of gear you care about — leave
-something unmarked and it won't touch it.
+- A mark is **per item**, not per enchant level — the agent's own sell and
+  drop actions carry no enchant field. So one item's enchant variants group
+  into a single row, with the levels named in the label (`Iron Sword (+0, +2)`).
+- The **Show every item in the game** toggle above the list swaps it for every
+  carriable item the game ships, so **you can mark something before you own
+  it** — which is the point for a dungeon conqueror: the thing you want to
+  decide about in advance is exactly the thing you have not picked up yet.
+  The default lists only what is in the bag.
+- **Unmarked means untouched.** This is the gate that stops a worker selling
+  the gear you earned.
+- Two kinds ignore a mark: the **kit it lives on** (potions, return scrolls,
+  food, a fishing rod, reins) and **dungeon keys**. Dropping a key puts a
+  dungeon run in a loop — bin it, re-farm it, bin that one too.
+- Marked both ways is **sold, not dropped**: selling pays.
+- The drop mark applies **before the pickup** — a marked item is not picked up
+  at all, so its weight is never carried. Anything already in the bag
+  underground is shed on arriving at each new floor.
 
-### Personality & Memory
+### Auto Worker
 
-Two halves:
+The rule engine that plays the character in Auto mode. Pick one under **Work**;
+the fields below it change to match.
 
-- **Personality** — this character's own prompt, layered on the shared rules.
-  Editable. **Saving while the agent is running restarts it.**
-- **Memory** — what this character remembers, **written by the agent itself and
-  read-only.**
+<FilterTable
+  placeholder="Search engines…"
+  columns={[
+    { key: 'kind', label: 'Engine' },
+    { key: 'what', label: 'What it does' },
+  ]}
+  rows={[
+    { kind: 'Monster Fighter', what: 'Hunts what it can beat around its anchor, loots, and restocks in town when the bag fills or hunger bites' },
+    { kind: 'Dungeon Conqueror', what: 'Clears one dungeon floor by floor, banking the keys the next run needs, then the boss and the great chest' },
+    { kind: 'Fisher', what: 'Casts at the nearest water from its spot; buys a rod when it has none' },
+  ]}
+/>
 
-Personality is where you shape behaviour ("you are a cautious hunter; retreat
-below half health"). Memory is what it has accumulated on its own.
+#### Knobs every engine shares
 
-### Coordinates
+<FilterTable
+  placeholder="Search settings…"
+  columns={[
+    { key: 'field', label: 'Field' },
+    { key: 'default', label: 'Default' },
+    { key: 'note', label: 'What it does' },
+  ]}
+  rows={[
+    { field: 'Level margin', default: '0', note: 'Only fight monsters at or below your level plus this. The fisher has no such field' },
+    { field: 'Drink below (%)', default: '70', note: 'Drink a potion under this much health. Out of potions and low, it reads a return scroll to escape' },
+    { field: 'Bag full at (%)', default: '90', note: 'The load that counts as full and triggers a town trip' },
+    { field: 'Eat up to', default: '700', note: 'Eat to this satiation. Eating starts once hunger has cost the sprint' },
+  ]}
+/>
 
-Place bookmarks. **Use current position** records where you are, then name it
-and add it.
+#### Knobs each engine carries alone
 
-Pairs with Dispatch: save fishing spots, dungeon entrances and shop locations,
-then send the agent to one.
+<FilterTable
+  placeholder="Search settings…"
+  columns={[
+    { key: 'engine', label: 'Engine' },
+    { key: 'field', label: 'Field' },
+    { key: 'default', label: 'Default' },
+    { key: 'note', label: 'What it does' },
+  ]}
+  rows={[
+    { engine: 'Monster Fighter', field: 'Anchor', default: 'spawn point', note: 'The centre it works around. **Where I stand** records the current position; name it and save' },
+    { engine: 'Monster Fighter', field: 'Patrol radius (m)', default: '100', note: 'How far from the anchor counts as its own ground (20–500)' },
+    { engine: 'Dungeon Conqueror', field: 'Dungeon', default: 'the shallowest', note: 'Which dungeon to work, listed in ascending difficulty' },
+    { engine: 'Dungeon Conqueror', field: 'Death limit', default: '3', note: 'Deaths in one cycle before it stops and waits for the dungeons to reset' },
+    { engine: 'Fisher', field: 'Fishing spot', default: '—', note: 'Where it casts from, saved the same way' },
+  ]}
+/>
 
-### Dispatch Presets
+:::note[The dungeon list follows the game]
+It is the game's own fixed registry, not something a server varies. A test
+holds the panel's copy against it, so "the game has it and the panel cannot
+be pointed at it" does not happen.
+:::
 
-Save frequently used instructions under a name and send them with one click
-instead of retyping.
+#### Restock
 
-Each preset has a **name** and the **prompt to send**. Saved presets appear as
-buttons beside the Dispatch input.
+How much a town trip tops up to. Three categories, each with an **item picker**
+and a **cap** (up to three digits):
+
+<FilterTable
+  placeholder="Search settings…"
+  columns={[
+    { key: 'field', label: 'Field' },
+    { key: 'default', label: 'Default' },
+    { key: 'note', label: 'What it does' },
+  ]}
+  rows={[
+    { field: 'Food', default: '10', note: 'Picking "Auto" buys whatever of that category the merchant stocks first' },
+    { field: 'Potions', default: '10', note: 'Healing potions' },
+    { field: 'Scrolls', default: '5', note: 'Return scrolls. The last one is never spent commuting — that is the low-health escape' },
+  ]}
+/>
+
+Restocking has a few rules that are not written on any field:
+
+- Order something this merchant does not stock and it falls back to whatever
+  else of that category is on the shelf — bread is Wick's, not Rica's.
+- **Merchants sleep.** At night a shopkeeper walks home and gets into bed, and
+  the server refuses every trade with one who has. A worker does not count a
+  sleeping shopkeeper as the merchant it came for: it walks the town's stops
+  looking for one who is awake, and if none is, waits five minutes and comes
+  back — saying in the log which shopkeeper is asleep.
+- The dungeon conqueror **will not go in without potions**: it waits by the
+  door until a shop can sell some. Unless the purse cannot cover one, in which
+  case it dives anyway — its gold comes from the chest, so waiting there would
+  be a deadlock rather than patience.
 
 ### Activity
 
 Two tabs:
 
-- **Thoughts** — every prompt sent and every reply, with timings. Has
-  **filters**, **Follow** (auto-scroll to newest) and **Clear**.
+- **Thoughts** — the worker's decision and progress line each turn, timestamped,
+  with a **filter**, **Follow** (stick to the newest) and **Clear**. The dungeon
+  conqueror says which floor it is on, which key it owes, and why it stopped.
 - **Log** — the agent process's own stdout / stderr.
 
-Wondering why the agent made a decision? Thoughts. Wondering why it broke? Log.
-
-## Dispatch
-
-The strip under the game view is **the one control that reaches a running
-agent**.
-
-Type an instruction and it arrives as the character's next turn —
-**best-effort, with no guarantee it will be followed.** It's a whisper, not an
-order: you're suggesting, the model still decides.
+Thoughts for why it decided something; Log for why it broke. **Drops are named
+here too**, item by item — a dropped item does not come back, so this is the
+only account of what went.
 
 ## The four settings tabs
 
-### LLM
-
-<FilterTable
-  placeholder="Search settings…"
-  columns={[
-    { key: 'field', label: 'Field' },
-    { key: 'default', label: 'Default' },
-    { key: 'note', label: 'What it does' },
-  ]}
-  rows={[
-    { field: 'Backend', default: 'Codex CLI', note: 'One of four — see below' },
-    { field: 'Model', default: 'Varies by backend', note: 'Suggestions in a dropdown; free text also works' },
-    { field: 'Base URL', default: 'https://ollama.com/v1', note: 'Only appears for the OpenAI-compatible backend' },
-    { field: 'API key', default: '—', note: 'HTTP backends only. Stored in the OS keychain' },
-    { field: 'Reasoning effort', default: 'none', note: 'none / low / medium / high. Only affects models that support it' },
-    { field: 'Maximum tokens', default: '4096', note: 'Cap on a single reply' },
-    { field: 'Temperature', default: '0.7', note: 'Lower is steadier, higher is more varied' },
-  ]}
-/>
-
-#### The four backends
-
-<FilterTable
-  placeholder="Search backends…"
-  columns={[
-    { key: 'backend', label: 'Backend' },
-    { key: 'kind', label: 'Kind', align: 'center' },
-    { key: 'models', label: 'Suggested models' },
-    { key: 'note', label: 'Notes' },
-  ]}
-  rows={[
-    { backend: 'Codex CLI', kind: 'CLI', models: 'gpt-5.4-mini, gpt-5.4, o4-mini', note: 'Uses the Codex CLI you are already signed in to. No API key needed here' },
-    { backend: 'Claude CLI', kind: 'CLI', models: 'sonnet, opus, haiku', note: 'Uses your local Claude CLI login. Also no key' },
-    { backend: 'OpenRouter', kind: 'HTTP', models: 'qwen/qwen3.7-flash and others', note: 'Needs an API key. Model guidance on the previous page' },
-    { backend: 'OpenAI-compatible', kind: 'HTTP', models: 'Whatever you enter', note: 'Any OpenAI-compatible endpoint. Defaults to Ollama, so local models work' },
-  ]}
-/>
-
-:::tip[Already have Claude or Codex CLI? You don't need an API key]
-The CLI backends reuse the login you already have on this machine.
-:::
-
-:::tip[Running fully local]
-Pick **OpenAI-compatible**, put your Ollama address in Base URL (the default is
-already in Ollama's shape) and name your local model. No API cost and no data
-leaves the machine — the trade is that local models are often slower than
-`qwen3.7-flash` and may not keep up with the game's turn cadence.
-:::
-
-### Agent
-
-The old Automatic play and Advanced tabs were **merged into this one** in
-v0.18.
-
-<FilterTable
-  placeholder="Search settings…"
-  columns={[
-    { key: 'field', label: 'Field' },
-    { key: 'default', label: 'Default' },
-    { key: 'note', label: 'What it does' },
-  ]}
-  rows={[
-    { field: 'Active response', default: '5s', note: 'Response cadence when something is happening. Shorter is more responsive and more expensive' },
-    { field: 'Quiet-world patrol', default: '8s', note: 'Response cadence when nothing is going on' },
-    { field: 'Continue adventuring while alone', default: 'On', note: 'Turn it off and it stops calling the AI when no other players are nearby — the setting to use when idling' },
-    { field: 'Active interval (s)', default: '5', note: 'The raw value behind the slider above' },
-    { field: 'Idle interval (s)', default: '8', note: 'Likewise' },
-    { field: 'Watch port', default: '8808', note: 'Port for the local spectator panel. Change only on a conflict' },
-    { field: 'Log level', default: 'info', note: 'info / debug / warn. Raise to debug before reporting a problem' },
-    { field: 'Concurrent LLM calls', default: '2', note: 'How many requests are in flight at once' },
-    { field: 'Request timeout (s)', default: '120', note: 'How long to wait for one request. Raise it for slow local models' },
-  ]}
-/>
-
-The first three are **the main cost control.** To spend less, raise both
-intervals or turn off adventuring while alone.
+**Display**, **Audio**, **Translation**, **About**.
 
 ### Display — the look of action toasts
 
@@ -215,6 +221,41 @@ lower the count and the persist time.
 These control **the embedded game view's own volume.** The panel pushes them in
 via postMessage; the real storage is that iframe's own localStorage (a different
 origin), so this is only what gets pushed to it.
+
+### Translation
+
+Turns other players' chat into the language picked in the chat panel. Takes one
+OpenAI-compatible endpoint:
+
+<FilterTable
+  placeholder="Search settings…"
+  columns={[
+    { key: 'field', label: 'Field' },
+    { key: 'note', label: 'What it does' },
+  ]}
+  rows={[
+    { field: 'Base URL', note: 'Any OpenAI-compatible endpoint. Can point at a local Ollama' },
+    { field: 'Model', note: 'Which model does the translating' },
+    { field: 'API key', note: 'Needed by HTTP endpoints. Kept in the OS keychain, never written to a config file' },
+    { field: 'Test', note: 'Translates one line on the spot, so you know the endpoint and key work' },
+  ]}
+/>
+
+**Interface language** — the panel's own language — lives on this tab too.
+
+:::note[The translation LLM has nothing to do with who plays]
+What plays the character in Auto mode is the **rule engines** above, and they
+call no LLM. These settings only translate chat; automatic play works fine
+without them.
+:::
+
+### About
+
+Version, check for updates, clear the asset cache, the privacy note (app starts
+and play modes only, via Aptabase — **never your account, characters or
+servers**), and an **Advanced** block holding **Watch port** (the local
+spectator panel's port, default 8808) and **Log level** (turn on debug before
+reporting a problem).
 
 ## Connection profiles
 

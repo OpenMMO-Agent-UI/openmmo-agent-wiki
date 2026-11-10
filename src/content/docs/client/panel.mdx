@@ -1,6 +1,6 @@
 ---
 title: 面板功能詳解
-description: 六個抽屜、四個設定分頁,以及每一項設定的預設值與實際作用。
+description: 三個抽屜、自動打工人的每一個旋鈕、四個設定分頁,以及每一項的預設值與實際作用。
 ---
 
 import FilterTable from '../../../components/FilterTable.astro';
@@ -18,147 +18,149 @@ import FilterTable from '../../../components/FilterTable.astro';
 | 重新載入 | 重載 3D 觀戰畫面(畫面卡住或錯亂時用) |
 | **暫停 / 繼續(⏸ / ▶)** | 暫停執行中的 agent。暫停期間不會呼叫 LLM,也就不會計費 —— 想中途接手或省錢時用 |
 | **Apply & restart** | **只在 agent 執行中改了設定時才出現。** agent 只在啟動時讀一次設定,所以改完必須按這個 |
-| 手動 / AI 切換 | 兩種模式即時互換 |
+| **自動 / 手動切換** | 兩種模式即時互換。自動模式下實際操作角色的是**自動打工人**(見下) |
 | 更換角色 / 更換伺服器 | 回到前面的畫面 |
 
-## 左側六個抽屜
+## 左側三個抽屜
 
-### Equipment — 裝備
+左緣那排圖示沒有文字,滑過或用鍵盤聚焦才會顯示名稱。
 
-顯示目前穿戴的裝備,逐格列出。
+### 角色(Character)
+
+三個分頁:
+
+- **數值(Stats)** —— 等級、屬性、已學技能與稱號。稱號可以在這裡切換。
+- **裝備(Equipment)** —— 身上穿戴的每一格,空格也會列出來。
+- **背包(Bag)** —— 攜帶的物品,以及賣出/丟棄的標記(見下一節)。
 
 :::note[為什麼裝備要從中繼看]
 agent 自己的面板 API **只回報背包、不回報身上的裝備**。
-所以這個抽屜的資料是從中繼看到的庫存封包還原出來的 ——
+所以裝備分頁的資料是從中繼看到的庫存封包還原出來的 ——
 這是桌面客戶端加值的東西之一,直接跑 `agent-client` 看不到。
 :::
 
-### Bag — 背包
+#### 背包的賣出與丟棄標記
 
-顯示攜帶的物品。除了看,還可以**標記 agent 能不能處分某樣東西**:
+每一列有兩個勾選框,欄位名稱寫在列表上方一次,不在每列重複:
 
-- **S(Sellable)** — 允許 agent 賣掉
-- **D(Dropable)** — 允許 agent 丟掉
+- **賣出(Sell)** —— 允許打工人把它賣給商人
+- **丟棄(Drop)** —— 允許打工人把它丟在地上
 
-勾選後按 **Apply labels** 才會送出(是暫存的,不會勾一個送一次)。
+勾選只是暫存,按 **Apply labels** 才寫入。幾件要知道的事:
 
-這是防止 agent 亂賣東西的閘門 —— 你辛苦打到的裝備,不標記它就不會處分。
+- 標記是**以物品為單位**,不分附魔等級 —— agent 的賣出與丟棄動作沒有附魔欄位。
+  所以同一件東西帶了 +0 和 +2 會合成一列,等級寫在名稱裡(`鐵劍 (+0, +2)`)。
+- 上方的**顯示遊戲中所有物品**切換,會把清單換成遊戲裡每一樣可攜帶的物品,
+  所以**不必先持有就能先標記** —— 這對地城征服者特別有用:你想預先決定不要撿的東西,
+  正是你還沒撿到的東西。預設只列背包裡有的。
+- **沒有標記就不處分。** 這是防止打工人賣掉你辛苦打到的裝備的閘門。
+- 有兩類東西標了也不會動:**隨身補給**(藥水、回城卷軸、食物、釣竿、韁繩)
+  和**地城鑰匙**。鑰匙被丟掉會讓地城跑進無盡循環 —— 丟掉、回去刷、再丟掉。
+- 同時勾選賣出與丟棄時,**會賣掉而不是丟掉**:賣有錢拿。
+- 丟棄標記在**撿之前**就生效 —— 勾了的東西,打工人根本不會撿起來,
+  連重量都不會揹。地城裡已經在身上的,一進新的一層就會丟掉。
 
-### Personality & Memory — 個性與記憶
+### 自動打工人(Auto Worker)
 
-兩塊內容:
+自動模式下實際操作角色的規則引擎。**Work** 下拉選單選一種,其餘欄位跟著它變。
 
-- **Personality** —— 這隻角色專屬的提示詞,疊在共用規則之上。可以編輯。
-  **在 agent 執行中儲存會重啟 agent。**
-- **Memory** —— 這隻角色記得什麼,**由 agent 自己寫入,唯讀**。
+<FilterTable
+  placeholder="搜尋引擎…"
+  columns={[
+    { key: 'kind', label: '引擎' },
+    { key: 'what', label: '做什麼' },
+  ]}
+  rows={[
+    { kind: 'Monster Fighter — 怪物獵人', what: '在錨點周圍打贏得了的怪、撿戰利品,滿了或餓了就回城補給' },
+    { kind: 'Dungeon Conqueror — 地城征服者', what: '一座地城逐層往下清,刷出下一輪要用的鑰匙,打完頭目開寶箱' },
+    { kind: 'Fisher — 釣魚人', what: '在指定地點對最近的水面下竿;沒有釣竿就先去買一支' },
+  ]}
+/>
 
-Personality 是你塑造角色行為的地方(「你是個謹慎的獵人,血量低於一半就撤退」),
-Memory 則是它自己累積下來的東西。
+#### 共用的旋鈕
 
-### Coordinates — 座標
+<FilterTable
+  placeholder="搜尋設定…"
+  columns={[
+    { key: 'field', label: '欄位' },
+    { key: 'default', label: '預設值' },
+    { key: 'note', label: '說明' },
+  ]}
+  rows={[
+    { field: 'Level margin', default: '0', note: '只打等級不超過「自己 + 這個數」的怪。釣魚人沒有這項' },
+    { field: 'Drink below (%)', default: '70', note: '血量低於這個百分比就喝藥水。沒藥水又低血時會讀回城卷軸逃走' },
+    { field: 'Bag full at (%)', default: '90', note: '負重到這個百分比算滿,觸發回城' },
+    { field: 'Eat up to', default: '700', note: '吃到這個飽食度為止。掉到會失去衝刺的程度就會進食' },
+  ]}
+/>
 
-存放地點書籤。可以用 **Use current position** 直接記下目前位置,再命名加入。
+#### 各引擎自己的旋鈕
 
-配合 Dispatch 使用:記下釣點、地城入口、商店位置,之後叫 agent 去那裡。
+<FilterTable
+  placeholder="搜尋設定…"
+  columns={[
+    { key: 'engine', label: '引擎' },
+    { key: 'field', label: '欄位' },
+    { key: 'default', label: '預設值' },
+    { key: 'note', label: '說明' },
+  ]}
+  rows={[
+    { engine: '怪物獵人', field: 'Anchor', default: '出生點', note: '活動中心。用 **Where I stand** 記下目前位置,命名存起來' },
+    { engine: '怪物獵人', field: 'Patrol radius (m)', default: '100', note: '離錨點多遠以內算自己的地盤(20–500)' },
+    { engine: '地城征服者', field: 'Dungeon', default: '最淺的一座', note: '要攻略哪一座地城,由淺到深排列' },
+    { engine: '地城征服者', field: 'Death limit', default: '3', note: '一個週期內死幾次就停下來等地城重置' },
+    { engine: '釣魚人', field: 'Fishing spot', default: '—', note: '下竿的位置,同樣用 **Where I stand** 存' },
+  ]}
+/>
 
-### Dispatch Presets — 派遣預設
+:::note[地城選單跟著遊戲走]
+地城清單是遊戲自己的註冊表,不是伺服器可調的東西。上游新增一座地城,
+面板這份清單有專門的測試盯著,所以不會出現「官方有、面板選不到」的情況。
+:::
 
-把常用的指令存成有名字的預設,之後一鍵送出,不用每次重打。
+#### 補給(Restock)
 
-每個預設有**名稱**和**要送出的提示詞**。存好之後會變成 Dispatch 輸入框旁的按鈕。
+回城那趟要補到幾個。三類各有一個**物品下拉**和一個**數量上限**(最多三位數):
 
-### Activity — 活動
+<FilterTable
+  placeholder="搜尋設定…"
+  columns={[
+    { key: 'field', label: '欄位' },
+    { key: 'default', label: '預設值' },
+    { key: 'note', label: '說明' },
+  ]}
+  rows={[
+    { field: 'Food', default: '10', note: '食物。選「Auto」就買商人架上該類的第一種' },
+    { field: 'Potions', default: '10', note: '治療藥水' },
+    { field: 'Scrolls', default: '5', note: '回城卷軸。最後一張不會用來通勤,那是低血時的逃命用' },
+  ]}
+/>
+
+補給的實際行為有幾個不會寫在欄位上的規則:
+
+- 選了商人沒賣的東西,會退而買那家店同類的其他貨 —— 麵包是 Wick 的,不是 Rica 的。
+- **商人會睡覺。** 入夜後店主走回家躺上床,伺服器會拒絕所有交易。
+  打工人不會把睡著的店主當成「我來找的那個商人」,
+  會走完城裡各站找清醒的;都沒有就等五分鐘再回來,並在紀錄裡說是誰睡了。
+- 地城征服者**沒有藥水就不會下坑**:等買到再走。
+  但如果錢不夠買一瓶,它還是會下去 —— 地城征服者的錢來自寶箱,死等會變死結。
+
+### 動態(Activity)
 
 兩個分頁:
 
-- **Thoughts** —— 每一次送出的提示與收到的回覆,附時間。
+- **Thoughts** —— 打工人每一回合的決定與進度說明,附時間。
   有**篩選器**、**Follow**(自動捲到最新)和 **Clear**。
+  地城征服者在這裡會說它在哪一層、缺哪把鑰匙、為什麼停下來。
 - **Log** —— agent 程序本身的 stdout / stderr。
 
-想知道 agent 為什麼做某個決定,看 Thoughts;想知道它為什麼壞掉,看 Log。
-
-## Dispatch
-
-遊戲畫面下方那一條,是**唯一能對執行中的 agent 說話的管道**。
-
-輸入一句指示,它會成為角色下一個回合的參考 —— **盡力而為,不保證照做**。
-它是「悄悄話」不是「指令」:你在建議,決定權還是在模型手上。
+想知道它為什麼做某個決定,看 Thoughts;想知道它為什麼壞掉,看 Log。
+**丟棄也會寫在這裡**,逐項列出丟了什麼 —— 東西丟掉不會回來,
+所以這是唯一能回頭查的紀錄。
 
 ## Settings 的四個分頁
 
-### LLM
-
-<FilterTable
-  placeholder="搜尋設定…"
-  columns={[
-    { key: 'field', label: '欄位' },
-    { key: 'default', label: '預設值' },
-    { key: 'note', label: '說明' },
-  ]}
-  rows={[
-    { field: 'Backend', default: 'Codex CLI', note: '四選一,見下方後端說明' },
-    { field: 'Model', default: '依後端而異', note: '有下拉建議,也可以直接打' },
-    { field: 'Base URL', default: 'https://ollama.com/v1', note: '只有 OpenAI 相容後端會出現' },
-    { field: 'API key', default: '—', note: 'HTTP 類後端才需要。存在作業系統鑰匙圈' },
-    { field: 'Reasoning effort', default: 'none', note: 'none / low / medium / high。支援的模型才有作用' },
-    { field: 'Maximum tokens', default: '4096', note: '單次回覆的長度上限' },
-    { field: 'Temperature', default: '0.7', note: '越低越穩定,越高越有變化' },
-  ]}
-/>
-
-#### 四種後端
-
-<FilterTable
-  placeholder="搜尋後端…"
-  columns={[
-    { key: 'backend', label: '後端' },
-    { key: 'kind', label: '類型', align: 'center' },
-    { key: 'models', label: '預設可選模型' },
-    { key: 'note', label: '說明' },
-  ]}
-  rows={[
-    { backend: 'Codex CLI', kind: 'CLI', models: 'gpt-5.4-mini、gpt-5.4、o4-mini', note: '用你本機已登入的 Codex CLI,不需要在這裡填 API key' },
-    { backend: 'Claude CLI', kind: 'CLI', models: 'sonnet、opus、haiku', note: '用你本機已登入的 Claude CLI,同樣不需要填 key' },
-    { backend: 'OpenRouter', kind: 'HTTP', models: 'qwen/qwen3.7-flash 等', note: '需要 API key。模型選擇建議見下一頁' },
-    { backend: 'OpenAI 相容', kind: 'HTTP', models: '自行填寫', note: '任何 OpenAI 相容端點。預設指向 Ollama,可以接本地模型' },
-  ]}
-/>
-
-:::tip[已經有 Claude 或 Codex CLI 就不用另外辦 API key]
-CLI 類後端直接用你本機那份已登入的 CLI,省掉再申請一組 key。
-:::
-
-:::tip[想完全本地跑]
-選 **OpenAI 相容**,Base URL 填你的 Ollama 位址(預設就是 Ollama 的格式),
-Model 填本地模型名稱。這樣不會有任何 API 費用,資料也不出你的機器 ——
-代價是本地模型多半比 `qwen3.7-flash` 慢,可能追不上遊戲的回合節奏。
-:::
-
-### Agent
-
-舊版的 Automatic play 與 Advanced 兩個分頁在 v0.18 之後**合併成這一個**。
-
-<FilterTable
-  placeholder="搜尋設定…"
-  columns={[
-    { key: 'field', label: '欄位' },
-    { key: 'default', label: '預設值' },
-    { key: 'note', label: '說明' },
-  ]}
-  rows={[
-    { field: 'Active response', default: '5 秒', note: '有事發生時的回應間隔。越短越靈敏,但 API 費用越高' },
-    { field: 'Quiet-world patrol', default: '8 秒', note: '周圍沒事時的回應間隔' },
-    { field: 'Continue adventuring while alone', default: '開啟', note: '關掉的話,附近沒有其他玩家時就停止呼叫 AI —— 掛機時省錢用' },
-    { field: 'Active interval (s)', default: '5', note: '上面那個滑桿的原始數值' },
-    { field: 'Idle interval (s)', default: '8', note: '同上' },
-    { field: 'Watch port', default: '8808', note: '本機觀戰面板的連接埠。和別的程式衝突才需要改' },
-    { field: 'Log level', default: 'info', note: 'info / debug / warn。回報問題前先開 debug' },
-    { field: 'Concurrent LLM calls', default: '2', note: '同時發出的請求數' },
-    { field: 'Request timeout (s)', default: '120', note: '單次請求等多久放棄。本地模型慢的話要調大' },
-  ]}
-/>
-
-前三項是**費用的主要控制項**。想省錢就把兩個間隔拉長,或者關掉「獨自時繼續冒險」。
+**Display**、**Audio**、**Translation**、**About**。
 
 ### Display —— 動作提示的外觀
 
@@ -199,6 +201,38 @@ agent 每做一個動作會跳一個提示(toast)。這個分頁調它的外觀,
 這兩項調的是**內嵌遊戲畫面自己的音量** —— 面板透過 postMessage 推給它,
 實際的設定值存在那個 iframe 自己的 localStorage(不同來源),
 所以這裡只是把值推過去。
+
+### Translation — 翻譯
+
+把別人的聊天訊息翻成你在聊天面板選的語言。填一組 OpenAI 相容的端點:
+
+<FilterTable
+  placeholder="搜尋設定…"
+  columns={[
+    { key: 'field', label: '欄位' },
+    { key: 'note', label: '說明' },
+  ]}
+  rows={[
+    { field: 'Base URL', note: '任何 OpenAI 相容端點。可以指向本地的 Ollama' },
+    { field: 'Model', note: '用哪個模型翻譯' },
+    { field: 'API key', note: 'HTTP 端點需要。存在作業系統鑰匙圈,不會寫進設定檔' },
+    { field: 'Test', note: '當場試翻一句,確認端點與金鑰可用' },
+  ]}
+/>
+
+這一頁也放**介面語言**(面板自己的語言)。
+
+:::note[翻譯用的 LLM 跟誰在玩沒有關係]
+自動模式操作角色的是上面那些**規則引擎**,不呼叫 LLM。
+這裡的設定只用來翻譯聊天 —— 不設定也能正常自動遊玩。
+:::
+
+### About — 關於
+
+版本、檢查更新、清除資源快取、隱私說明(只回報 app 啟動與遊玩模式,
+經 Aptabase,**不含帳號、角色或伺服器**),以及 **Advanced** 區塊裡的
+**Watch port**(本機觀戰面板的連接埠,預設 8808)和 **Log level**
+(回報問題前先開 debug)。
 
 ## 連線設定檔
 
