@@ -226,24 +226,30 @@ chest on every floor has been emptied and recovered.
 
 ## ORKEA furniture shop (protocol v87–v89)
 
-A showroom near town at `world(-1450.5, 1.0, 4775.5)` sells 24 decorative
+A showroom near town at `world(-1450.5, 1.0, 4775.5)` sells 25 decorative
 estate items: a bed, rustic bed, chair, table, chest, barrel, crate, stone
 hearth, wall torch, signpost, four shop-sign variants, a
-**{itemName('furniture_hearthbound_rug')}**, and potion, scroll, and sword
-ornaments. Potions, scrolls, and sword ornaments cost 200 copper each, the
-wall torch 300, the crate 500, the barrel 600, chairs and signs 800 each, the
-chest 900, the {itemName('furniture_hearthbound_rug')}
+**{itemName('furniture_hearthbound_rug')}**, a **{itemName('furniture_mailbox')}**,
+and potion, scroll, and sword ornaments. Potions, scrolls, and sword
+ornaments cost 200 copper each, the wall torch 300, the crate 500, the
+barrel 600, chairs and signs 800 each, the chest 900, the
+{itemName('furniture_mailbox')} {formatCoins(itemsById.get('furniture_mailbox').basePrice)},
+the {itemName('furniture_hearthbound_rug')}
 {formatCoins(itemsById.get('furniture_hearthbound_rug').basePrice)}, the
 table 3000, the bed and rustic bed 4000 each, and the stone hearth 12000.
 Most decorative items have no real function — ornamental potions and
 scrolls don't consume, ornamental weapons can't be equipped, and the
 ornamental chest has no storage (buy the {itemName('storage_chest')} above
-for that). The {itemName('furniture_hearthbound_rug')} is the exception:
-installed on your own homestead, it becomes the
+for that). The {itemName('furniture_hearthbound_rug')} and
+{itemName('furniture_mailbox')} are the exceptions: the
+{itemName('furniture_hearthbound_rug')} installed on your own homestead
+becomes the
 [priority return spot](#buying-a-deed-and-claiming-land-protocol-v55) for
-estate return (2026-10-03). Indoor furniture like the rug can also have its
-height nudged with the mouse wheel while placing or moving it, in 5cm steps
-up to 20cm off the floor.
+estate return (2026-10-03), and the {itemName('furniture_mailbox')} lets
+anyone send and collect letters at it once placed — see
+[Mail & notice boards](../mail-and-notices/). Indoor furniture like the rug
+or mailbox can also have its height nudged with the mouse wheel while
+placing or moving it, in 5cm steps up to 20cm off the floor.
 
 The shop's clerk, a female orc named **Grida**, greets customers at the
 west end of the shop from 06:30–18:00 and 18:30–midnight. Click her to open

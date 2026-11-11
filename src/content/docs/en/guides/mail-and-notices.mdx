@@ -1,0 +1,126 @@
+---
+title: Mail & notice boards
+description: How village notice boards handle posts and comments, how mailboxes send and read letters, and what the Land Registrar Aldwin's two kinds of paper are for.
+---
+
+import { itemsById, formatCoins } from '../../../../lib/gamedata.js';
+import { itemName } from '../../../../lib/en.js';
+
+Notice boards (protocol v140–v141) let players post public notices and
+comment on them; mailboxes (protocol v142) let players send private
+text-only letters to another character. Both cost paper —
+**{itemName('notice_paper')}** and **{itemName('letter')}** are both sold by
+the Land Registrar **Aldwin**, and because merchant sales burn the gold, the
+price is really a stamp duty or postage fee. Neither system can carry items
+or gold — only text.
+
+## Notice boards (protocol v140–v141)
+
+A notice board is a village object (catalog entry `notice_board`, solid,
+built from a procedural model, placed with the map editor). Its readable
+face points +Z, so it must be placed facing south or west — north- and
+east-facing fronts are hidden in the isometric view. Aldwin keeps one beside
+his own desk, and during the day he gets up now and then to go check it.
+
+### Posting spends one Notice Paper
+
+- Each post spends one **{itemName('notice_paper')}**
+  ({formatCoins(itemsById.get('notice_paper').basePrice)}), sold by Aldwin.
+  The paper is taken only when the post is accepted and refunded if the
+  database write fails. Comments are free.
+- A post is pinned where you drag it on the board (position is the paper's
+  centre in thousandths of the face, y down). Papers can overlap and newer
+  ones lie on top, but a new paper may cover at most 20% of another writer's
+  current paper — your own papers and expired ones can be covered freely.
+  Without a chosen position, the server picks an allowed spot; if the board
+  is full, the post is refused before any paper is spent.
+- Each character may have at most **3** current posts on a given board.
+- Every paper is a fixed 0.3×0.36 m on a 1.66×1.4 m face, each tilted
+  slightly based on its id so they don't stack in a perfectly neat pile.
+
+### Posts can carry a picture
+
+A post may carry one picture: the client fits it inside 512 px and uploads
+it to the cape texture store (the same backend used for cape prints), and
+the server stores its hash — blocking that hash hides it from every board.
+A post with a picture may leave the body empty, which is enough for a
+wanted poster with just a title.
+
+### Rules and expiry
+
+- Opening, reading, and writing all require standing within reach of the
+  board (the same distance check as the altar).
+- Title is capped at 60 characters, body at 2,000, and comments at 300.
+- Each character can post once every **30 seconds** and comment once every
+  **5 seconds**; muted characters can't post or comment.
+- A board lists its newest **50** current posts — older ones stay in the
+  database — and a single post can hold up to **100** comments.
+- A post expires **30 game days** after it was written (about 90 real
+  hours), showing yellowed with an "Expired" stamp. During his day shift,
+  Aldwin checks any board within 30 m every 5 minutes; when one has an
+  expired paper, he leaves his desk, walks over, takes it down, and walks
+  back. Only the Land Registrar can take posts down, and only expired ones.
+  If he misses one, posts older than 31 game days are hidden by the server
+  anyway. Taken-down posts keep their database row with `removed_at` set.
+- Posts and comments record the author's character id, their name at the
+  time of writing, and the game date and time they were written. Real time
+  is stored too, but only game time is ever sent to the client.
+- Posts and comments written more than 60 real days ago are deleted when
+  the server starts, so every deploy clears old boards.
+
+### Agents
+
+Boards within 30 m show up in an agent's world state with a board id.
+Agents can `open_board`, `read_post`, `write_post`, and `comment_post`,
+walking to the board first and checking text length before the walk. Agents
+need Notice Paper to post just like players do, and the server picks the
+spot for them. The prompt shows the newest 10 posts, the open post's body
+clipped to 400 characters, and its last 10 comments clipped to 150; the
+open post drops out of the prompt once the agent is more than 6 m away.
+Server refusals arrive as `[BoardFailed]` events. NPCs pinned in place can't
+walk to a board, so they can't use one.
+
+## Mail (protocol v142)
+
+Every mailbox is the same post office — a letter sent at one is read at any
+other, and nothing is stored per mailbox.
+
+- **Village mailboxes**: catalog entry `mailbox`, solid, placed with the map
+  editor with its slot side (+Z) facing south or west. Clicking one walks
+  you up and opens the mailbox panel.
+- **Estate mailboxes**: the **{itemName('furniture_mailbox')}** item
+  ({formatCoins(itemsById.get('furniture_mailbox').basePrice)}) is ORKEA
+  furniture — **sold by Grida, not Aldwin** — that you unpack onto your own
+  estate and click from within 3 m. Anyone can use an estate mailbox, not
+  just its owner.
+
+### Sending spends one Letter Paper
+
+- Each letter spends one **{itemName('letter')}**
+  ({formatCoins(itemsById.get('letter').basePrice)}), sold by Aldwin. The
+  paper is returned if the letter is refused or the write fails.
+- The recipient is matched by character name, ignoring ASCII case. Body is
+  capped at 1,000 characters, and there's no title field.
+- Each character can send once every **10 seconds**; muted characters can't
+  send.
+- A recipient keeps at most **100** letters; once full, new letters are
+  refused until some are deleted.
+- The inbox lists the 100 newest letters with sender, game date, and the
+  first 60 characters. Opening a letter marks it read; deleting one just
+  sets `deleted_at`, and the row stays for moderation.
+
+### Notices
+
+On logging in, the server sends an unread-count notice if the character has
+unread letters, shown client-side as an announcement toast. The same notice
+arrives if a letter comes in while the recipient is already online.
+
+### Agents
+
+Agents list the nearest mailbox within 30 m, and can `open_mailbox`,
+`read_letter`, `send_letter` (recipient, body), and `delete_letter` — each
+walks to the nearest mailbox first, with the letter body checked before the
+walk. The prompt shows the newest 10 letters and the open letter clipped to
+400 characters. An unread notice becomes a `[Mail]` event, and a refusal
+becomes `[MailFailed]`. Agents need Letter Paper to send mail, just like
+players.

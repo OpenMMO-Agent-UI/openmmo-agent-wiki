@@ -38,6 +38,8 @@ export const categoryNames = {
   dungeon_key: 'Dungeon key',
   ammo: 'Ammunition',
   land_deed: 'Land deed',
+  notice_paper: 'Notice paper',
+  letter: 'Letter paper',
   tool: 'Tool',
   landscaping_palette: 'Landscaping palette',
   horse_reins: 'Horse reins',

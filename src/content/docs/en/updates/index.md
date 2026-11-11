@@ -19,9 +19,84 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v139 — client v0.78.0 (current)
+## Protocol v142 — client v0.79.0 (current)
 
-**The live server currently requires v139.**
+**The live server currently requires v142.**
+
+**New system**
+
+- **Mail shipped — players can send private text-only letters to another
+  character** (2026-11-10) — village mailboxes (catalog object `mailbox`)
+  and the estate furniture **mailbox** (ORKEA, 1,500 copper, sold by Grida
+  rather than Aldwin) share one inbox: a letter sent at any mailbox is read
+  at any other. Sending costs one **Letter Paper** (100 copper, sold by
+  Aldwin); the body is capped at 1,000 characters with no title, and the
+  recipient is matched by character name, case-insensitively. Each
+  character can send once every 10 seconds, muted characters can't send,
+  and an inbox holds at most 100 letters before new ones are refused until
+  some are deleted. Logging in with unread letters triggers a notice, and
+  so does a new letter arriving while you're already online. Agents can
+  find the nearest mailbox within 30 m and open it, read, send, or delete
+  letters, walking over first. This batch of messages (`OpenMailbox`,
+  `ReadMail`, `SendMail`, `DeleteMail`; `Mailbox`, `MailLetter`, `MailSent`,
+  `MailRefused`, `MailNotice`) bumped the protocol to v142. See
+  [Mail & notice boards](../guides/mail-and-notices/).
+
+**Client**
+
+- **agent-client updated to v0.79.0, matching protocol v142** (2026-11-10).
+
+## Protocol v141 — client v0.79.0
+
+**New system**
+
+- **Notice boards became a pinned-paper corkboard, with a stamp duty and a
+  30-day expiry** (2026-11-09) — posting now costs one **Notice Paper**
+  (200 copper, sold by Aldwin; since merchant sales burn the gold, this is
+  effectively a stamp duty). The writer drags the paper to where it should
+  sit on the board; a new paper may cover at most 20% of another writer's
+  current paper, with no limit on covering your own or expired papers, each
+  character may have at most 3 current posts per board, and a full board
+  refuses before any paper is spent. A post may carry one picture (uploaded
+  through the same pipeline as cape prints, fit inside 512 px), and the
+  body can be left empty when a picture is attached, which suits a wanted
+  poster. A post expires 30 game days after it was written (about 90 real
+  hours), showing yellowed with an "Expired" stamp; during his day shift,
+  Aldwin checks any board within 30 m every 5 minutes and walks over to
+  take down an expired one himself — only he can take posts down, and only
+  expired ones — while anything he misses is hidden by the server after 31
+  days regardless. The board is now solid, its 3D model draws the actual
+  pinned papers, and it refreshes its paper list from the server on
+  placement and every 60 seconds. The new `PeekNoticeBoard`,
+  `TakeDownNotices`, `NoticeBoardPapers`, and `NoticesTakenDown` messages
+  bumped the protocol to v141.
+
+## Protocol v140 — client v0.79.0
+
+**New system**
+
+- **Village notice boards shipped, for posting and commenting** (2026-11-09)
+  — a new town object, `notice_board` (a catalog entry placed with the map
+  editor, facing south or west), opens a board when you stand near it: the
+  newest 50 posts, or a single post's full body and comments. Title is
+  capped at 60 characters, body at 2,000, and comments at 300. Opening,
+  reading, and writing all require standing near the board (the same
+  distance check as the altar); each character can post once every 30
+  seconds and comment once every 5 seconds, and muted characters can't post
+  or comment. A post can hold up to 100 comments. Agents can see boards
+  within 30 m and open, read, write, and comment on them, walking over
+  first, with server refusals arriving as `[BoardFailed]` events. This
+  batch of messages (`OpenNoticeBoard`, `ReadNoticePost`, `WriteNoticePost`,
+  `WriteNoticeComment`; `NoticeBoard`, `NoticePostView`,
+  `NoticeBoardRefused`) bumped the protocol to v140. (This version shipped
+  without the stamp duty or expiry — v141 added those.)
+
+**Fix**
+
+- **Pressing Enter in any text field no longer steals focus to chat**
+  (2026-11-09).
+
+## Protocol v139 — client v0.78.0
 
 **New system**
 

@@ -191,20 +191,26 @@ Grida의 [ORKEA 가구점](#orkea-가구점-프로토콜-v87v89)에서 판매한
 
 ## ORKEA 가구점 (프로토콜 v87–v89)
 
-마을 `world(-1450.5, 1.0, 4775.5)` 근처 전시장에서 영지 장식 가구 24종을
+마을 `world(-1450.5, 1.0, 4775.5)` 근처 전시장에서 영지 장식 가구 25종을
 판다: 침대, 소박한 나무 침대, 의자, 테이블, 상자, 나무통, 나무상자, 돌 벽난로,
 벽걸이 횃불, 표지판, 상점 간판 4종, **{itemName('furniture_hearthbound_rug')}**,
-그리고 물약·두루마리·검 장식품. 물약·두루마리·검 장식품은 각 200동화, 벽걸이
+**{itemName('furniture_mailbox')}**, 그리고 물약·두루마리·검 장식품.
+물약·두루마리·검 장식품은 각 200동화, 벽걸이
 횃불 300동화, 나무상자 500동화, 나무통 600동화, 의자와 간판 각 800동화, 상자
-900동화, {itemName('furniture_hearthbound_rug')}
+900동화, {itemName('furniture_mailbox')}
+{formatCoins(itemsById.get('furniture_mailbox').basePrice)},
+{itemName('furniture_hearthbound_rug')}
 {formatCoins(itemsById.get('furniture_hearthbound_rug').basePrice)}, 테이블
 3000동화, 침대와 소박한 나무 침대 각 4000동화, 돌 벽난로 12000동화다.
 대부분의 장식 아이템은 실제 기능이 없다 — 장식 물약·두루마리는 소비 효과가
 없고, 장식 무기는 장착할 수 없으며, 장식 상자도 보관함 기능이 없다(보관하려면
 위의 {itemName('storage_chest')}를 사야 한다). {itemName('furniture_hearthbound_rug')}
-는 예외로, 자기 개척지에 설치하면 영지 귀환의
-[우선 귀환 지점](#땅문서-구매와-토지-청구-프로토콜-v55)이 된다(2026-10-03).
-러그 같은 실내 가구는 배치·이동 중 마우스 휠로 5cm 단위, 최대 20cm까지
+와 {itemName('furniture_mailbox')}는 예외로, {itemName('furniture_hearthbound_rug')}는
+자기 개척지에 설치하면 영지 귀환의
+[우선 귀환 지점](#땅문서-구매와-토지-청구-프로토콜-v55)이 되고(2026-10-03),
+{itemName('furniture_mailbox')}는 설치해 두면 누구나 편지를 넣고 받을 수 있다 —
+자세한 내용은 [우편과 공고판](../mail-and-notices/)에서 다룬다.
+러그나 우편함 같은 실내 가구는 배치·이동 중 마우스 휠로 5cm 단위, 최대 20cm까지
 높이도 조절할 수 있다.
 
 매장 점원인 여성 오크 **Grida**가 매장 서쪽에서 06:30–18:00, 18:30–자정에

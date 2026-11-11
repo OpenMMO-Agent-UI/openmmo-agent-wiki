@@ -167,18 +167,23 @@ Rowan 買,可指定數量)是可以在自己領地邊界上安裝、回收的一
 
 ## ORKEA 家具店(協議 v87–v89)
 
-城鎮 `world(-1450.5, 1.0, 4775.5)` 附近的展示店賣 24 種領地裝飾家具:床、樸素木床、
+城鎮 `world(-1450.5, 1.0, 4775.5)` 附近的展示店賣 25 種領地裝飾家具:床、樸素木床、
 椅子、桌子、箱子、木桶、木箱、石造壁爐、壁掛火把、路標、四款商店招牌、
-**{itemName('furniture_hearthbound_rug')}**,以及物藥、捲軸、劍形裝飾品。物藥、捲
+**{itemName('furniture_hearthbound_rug')}**、**{itemName('furniture_mailbox')}**,
+以及物藥、捲軸、劍形裝飾品。物藥、捲
 軸、劍形裝飾品各 200 銅,壁掛火把 300 銅,木箱 500 銅,木桶 600 銅,椅子與招牌各
-800 銅,箱子 900 銅,{itemName('furniture_hearthbound_rug')}
+800 銅,箱子 900 銅,{itemName('furniture_mailbox')}
+{formatCoins(itemsById.get('furniture_mailbox').basePrice)},
+{itemName('furniture_hearthbound_rug')}
 {formatCoins(itemsById.get('furniture_hearthbound_rug').basePrice)},桌子 3000
 銅,床與樸素木床各 4000 銅,石造壁爐 12000 銅。多數裝飾道具沒有實際功能——裝飾藥
 水、捲軸沒有消耗效果,裝飾武器不能裝備,裝飾箱子也沒有儲物功能(要儲物請買上面的
-{itemName('storage_chest')});{itemName('furniture_hearthbound_rug')}是例外,裝在
+{itemName('storage_chest')});{itemName('furniture_hearthbound_rug')}與
+{itemName('furniture_mailbox')}是例外:{itemName('furniture_hearthbound_rug')}裝在
 自己的開拓地上會成為[領地歸還的優先落點](#買地契認領土地協議-v55)
-(2026-10-03)。室內家具(例如地毯)擺放、移動時可以用滑鼠滾輪以 5 公分為單位微調
-離地高度,最多 20 公分。
+(2026-10-03);{itemName('furniture_mailbox')}裝好後任何人都能在這裡投信、取信,
+詳見[信件與公告板](../mail-and-notices/)。室內家具(例如地毯、信箱)擺放、移動時可
+以用滑鼠滾輪以 5 公分為單位微調離地高度,最多 20 公分。
 
 店裡的女性半獸人店員 **Grida(格里妲)** 於 06:30–18:00、18:30–午夜在店鋪西側接待客
 人。點擊 Grida 開啟交易視窗:左側賣場清單列出全部品項可直接點選購買,也可以靠近店
