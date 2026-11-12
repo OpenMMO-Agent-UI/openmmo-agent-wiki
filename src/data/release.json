@@ -1,9 +1,9 @@
 {
-  "version": "0.80.0",
-  "protocol": 145,
+  "version": "0.83.1",
+  "protocol": 149,
   "files": {
-    "mac": "openmmo-agent-v0.80.0-p145-macos-arm64.dmg",
-    "win": "openmmo-agent-v0.80.0-p145-windows-x64.exe",
-    "linux": "openmmo-agent-v0.80.0-p145-linux-x64.AppImage"
+    "mac": "openmmo-agent-v0.83.1-p149-macos-arm64.dmg",
+    "win": "openmmo-agent-v0.83.1-p149-windows-x64.exe",
+    "linux": "openmmo-agent-v0.83.1-p149-linux-x64.AppImage"
   }
 }
