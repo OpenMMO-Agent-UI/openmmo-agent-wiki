@@ -19,9 +19,198 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v142 — client v0.79.0 (current)
+## Protocol v149 — client v0.83.0 (current)
 
-**The live server currently requires v142.**
+**The live server currently requires v149.**
+
+**New system**
+
+- **Interactable object doors** (2026-11-12) — any catalog object with a
+  `swingDoor` entry now grows a door leaf, opened and closed by clicking it
+  or pressing E; the server keeps each door's open/closed state in memory
+  and broadcasts it to nearby players with the new generic `DoorState {
+  door: "object:rx:rz:id" }` message. A closed door blocks its opening, a
+  door won't close while someone stands in the doorway, and every door
+  resets closed on server restart. This mechanism bumped the protocol to
+  v149. The first building in Aldermark to use it is the newly built
+  **Two Moons Chapel**.
+- **The Two Moons faith, priest Maelis, and the merger rite at the chapel**
+  (2026-11-12) — Aldermark's Two Moons Chapel honors Eldor, the elder moon
+  (standing for keeping watch) and Serin, the lesser moon (standing for
+  moving forward); the faith holds the world whole only when both moons
+  share the sky, and its symbol is two interlocking rings. The day the two
+  moons return to the same position, every 60 days, is the faith's
+  festival. The chapel is kept by priest **Maelis**, who stands behind a
+  lectern in the chancel — now a walkable annex linked to the nave by a
+  6 m-wide arch. From this version on, merging two families is only
+  possible through a **family merger rite** held here: both heads must
+  stand on the same floor within 8 m of Maelis, and she must be awake and
+  not sitting, or the proposal is refused. The server runs the whole
+  sequence — propose → Maelis opens the rite reciting the conditions → 8
+  seconds later a consent prompt goes to the proposing head (answered with
+  `ConfirmFamilyMerge`) → once accepted, 6 seconds later a consent prompt
+  goes to the other head (answered with `RespondFamilyMerge`) → accepting
+  completes the merge and announces it server-wide. The rite ends if
+  either head refuses, walks away before answering, or 120 seconds pass.
+  Maelis's lines are LLM-generated — the server sends her alone a step-by-
+  step `MergerRiteCue` — but only the server decides whether the merge
+  succeeds; her lines and the announcement are gender-neutral and never
+  call it a wedding. The family panel's old direct "merge with another
+  family" button had already been hidden ahead of this rite shipping — for
+  now merging only happens at the chapel. See
+  [Families](../guides/family/#merging-families).
+
+**Fix**
+
+- The chapel's walls and buttresses now have collision, so players can no
+  longer stand inside them; the area in front of the main door stays open,
+  and the bell tower is blocked off (2026-11-12). Like a house, the whole
+  building now hides behind a flagstone-only footprint when it blocks the
+  player's view.
+
+## Protocol v148 — client v0.83.0
+
+**New system**
+
+- **Whispers, party chat, the party roster, and the friend list all show
+  family names** (2026-11-11) — whisper messages now carry the sender's
+  and recipient's family name, and your own whisper echo shows the other
+  side's family; party chat lines and party roster entries also carry a
+  family name (the roster uses a live family for nearby party members and
+  the family from login time for distant ones). The friend list and the
+  online-friends query likewise look up and show family: online friends
+  update live, while an offline friend's family is a snapshot from your
+  last login and only refreshes the next time you log in. Family-channel
+  login/logout notices now also name the member. The server now reads
+  `Player.family` straight from memory instead of hitting the database on
+  every chat line. This batch bumped the protocol to v148.
+
+## Protocol v147 — client v0.82.0
+
+**New system**
+
+- **Family emblems, cape overlays, banners and pennants, and family
+  mergers** (2026-11-11) — a rank with `EDIT_EMBLEM` can set the family
+  emblem from the family panel: a color plus a picture uploaded through the
+  same pipeline as cape prints (320×512, with the same upload limits,
+  reporting, and hash blocking). Once set, members' worn capes show the
+  family emblem and color in the world and on the character-select screen,
+  overriding the cape's own dye and print; leaving the family restores the
+  original look, and a blocked picture falls back to showing only the
+  color. Each member can toggle "show the family emblem on my cape" off
+  individually (on by default). ORKEA added two new display furniture
+  pieces: a **family banner** (3,000 copper, free-standing) and a **family
+  pennant** (1,500 copper, wall-mounted like a display sword, raised up the
+  wall); both can only be placed on an estate attached to a family, the
+  server fills in the picture from whichever family the estate is
+  currently attached to, and an estate leaving the family turns the
+  banner/pennant back into bare, emblem-less linen. Heads can merge two
+  families: the proposer picks which name, emblem, and head survive, and
+  the other head has two minutes to accept; the family whose name is kept
+  absorbs the other's members, estates, furniture, and storage log, the
+  absorbed head is demoted to "elder" rank, and the retired name is never
+  reused (this direct-proposal interface was later hidden ahead of v149 —
+  see above). Families also gained a **seat** setting: the head can pick
+  an attached estate as the seat from the family panel, paired with the
+  new **Scroll of Family Return** (sold by Rica and Wick, 800 copper) that
+  lands there directly — preferring a hearthbound rug if one is placed,
+  defaulting to the head's own estate if no seat is chosen, and otherwise
+  the first estate ever attached. This batch bumped the protocol to v147.
+
+## Protocol v146 — client v0.81.0
+
+**New system**
+
+- **Family chat, family chests, and family notice boards** (2026-11-11) —
+  `/g` (or the chat channel menu) speaks to every online family member,
+  with blocks and mutes still applying; members coming online or leaving
+  also post a system line to the family channel. Aldwin added a **family
+  chest** (6,000 copper) furniture piece, placeable only on an estate
+  attached to a family, capped at 4 per family, holding 200 kg (versus 50
+  kg for a regular [estate chest](../guides/estates/#estate-storage-protocol-v61));
+  its contents belong to the whole family — depositing needs
+  `STORAGE_DEPOSIT` and withdrawing needs `STORAGE_WITHDRAW`, and the
+  estate's own owner can't reach them without the matching rank either.
+  Every deposit and withdrawal is logged, and the family panel shows the
+  newest 200 entries. An estate can't leave its family while its family
+  chests still hold anything, and a dissolved family's leftover contents
+  can only be withdrawn by the last head. Aldwin also added a **family
+  notice board** (2,000 copper) furniture piece, readable and writable only
+  by members of the estate's family; writing costs no Notice Paper and
+  posts never expire, but a board caps out at 50 posts, pushing out the
+  oldest. Notice messages now identify their board with `NoticeBoardRef`
+  (Village or Estate), and the rank editor gained toggles for the new
+  storage and board permissions. This batch bumped the protocol to v146.
+
+## Protocol v145 — client v0.80.0
+
+**New system**
+
+- **Female characters gained a fourth hairstyle, "Long Bangs," and the
+  existing long hair was replaced with a side-part cut** (2026-11-11) — the
+  female long hairstyle (`long`) at character creation and in the
+  appearance screen was regenerated as a side part, and a fourth option,
+  `long_bangs` (long hair with bangs), was added; both long hairstyles'
+  per-face fit corrections fade out below the shoulders, since every face
+  shares the same body. This batch bumped the protocol to v145.
+
+**Fix**
+
+- Fixed the new hairstyles clipping through the knight and horned helmets
+  — both long hairstyles now have fits re-cut for the helmets (2026-11-11).
+
+**Client**
+
+- **agent-client updated to v0.80.0** (2026-11-11).
+
+## Protocol v144 — client v0.79.0
+
+**New system**
+
+- **Families shipped: found one on your estate, invite members, share the
+  land** (2026-11-11) — a character with an unindebted estate can found a
+  family at Land Registrar Aldwin's for 10 **Revenue Stamps** (1,000 copper
+  each from Aldwin, 10,000 copper total — a fifth of a Land Deed's 50,000);
+  the founder becomes head, and the founder's estate is automatically
+  attached as the family's estate. Family names follow the same rules as
+  character names (ASCII alphanumerics, `_`, CJK characters, can't start
+  with a digit or `_`), are unique case-insensitively, and can't collide
+  with any character name. Member nameplates, chat, and the character-
+  select screen all append the family name after the character's own.
+  Families have four ranks: head (rank 0, exactly one, every permission),
+  and three ranks below it whose titles the head can set and whose seven
+  permissions the head can toggle individually (invite, kick, build,
+  demolish, place furniture, landscape, and every estate-storage access
+  besides the personal kind); new members default to the lowest rank. An
+  estate can attach to only one family; once attached, the build, demolish,
+  place-furniture, landscape, and treasury-deposit permissions that used to
+  require the same account now also accept the matching family permission
+  — withdrawing from the treasury still requires the owning account alone.
+  Invites last 120 seconds, families cap out at 30 members, and leaving or
+  being kicked locks you out of joining a new family for 24 hours. Renaming
+  and dissolving both happen at Aldwin's: renaming costs 10 Revenue Stamps
+  and is limited to once every 30 real days; dissolving costs 1 Revenue
+  Stamp and requires the head to be the only member left. A retired or
+  pre-rename name becomes reusable 30 days later; a name retired by a merge
+  is never reused. This batch bumped the protocol to v144. See
+  [Families](../guides/family/).
+
+## Protocol v143 — client v0.79.0
+
+**New system**
+
+- **Notice board writers can now take down their own posts** (2026-11-10) —
+  posts still can't be edited, but the writer can now take down their own
+  post, current or expired, while standing at the board; the paper isn't
+  returned, and the post keeps its content with just a removed-at
+  timestamp, the same as when Aldwin takes down an expired one. Anyone else
+  trying is refused with `not_yours`. A removed post no longer counts
+  toward the 3-post-per-board limit, and agent-client gained a
+  `remove_post` action. This batch (the new `RemoveNoticePost` and
+  `NoticePostRemoved` messages, plus the `not_yours` refusal) bumped the
+  protocol to v143.
+
+## Protocol v142 — client v0.79.0
 
 **New system**
 

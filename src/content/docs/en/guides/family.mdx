@@ -1,0 +1,265 @@
+---
+title: Families
+description: Found a family on your estate, invite members, share land and storage, and hold a merger rite at the Two Moons Chapel.
+---
+
+import { itemsById, formatCoins } from '../../../../lib/gamedata.js';
+import { itemName } from '../../../../lib/en.js';
+
+A character with an unindebted estate can found a family at **Aldwin**, the
+Land Registrar on Aldermark's town square (protocol v144). Every batch of
+features added since then — chat, storage, notice boards (protocol v146),
+emblems, banners, and mergers (protocol v147), family names shown in
+whispers and the friend list (protocol v148) — builds on this same family.
+
+:::note[Not a guild, not a house]
+In the code this is called `family`; `guild` is the name used only by the
+Shadow Guild dungeon and has nothing to do with player families, and
+`house` refers specifically to housing. There's no war, alliance, or
+ranking between families yet, and no family level, experience, or
+dedicated treasury — only deposits into the tax account are tied to a
+family permission.
+:::
+
+## Founding (protocol v144)
+
+Talk to Aldwin and open "Family business"; with no family you'll see
+"Found". Founding costs 10 **{itemName('revenue_stamp')}**
+({formatCoins(itemsById.get('revenue_stamp').basePrice)} each from Aldwin,
+10,000 copper total — a fifth of a Land Deed's 50,000). Stamps are
+consumed from your bag, refunded if the request is refused, the same flow
+as Notice Paper or Letter Paper. Aldwin can't handle any family business
+while he's asleep.
+
+The founder becomes **head**, and the founder's own unindebted estate is
+automatically attached as the family's estate — founding fails if that
+estate is already attached to another family (usually through another
+character on the same account).
+
+Family names follow the same rules as character names: ASCII
+alphanumerics, `_`, and CJK characters, can't start with a digit or `_`,
+same length limit, same banned-name list. Names are unique server-wide,
+case-insensitively, and can't collide with any character name either.
+Only the head can rename, once every 30 real days, for another 10 stamps.
+Dissolving requires the head to be the only member left; it's done at
+Aldwin's for 1 stamp, not from the family panel. A retired or pre-rename
+name becomes reusable 30 days later; a name retired by a merge is never
+reused.
+
+Every member's nameplate, chat lines, and the character-select screen
+append the family name after the character's own.
+
+## Joining, leaving, and kicking
+
+A member with invite permission can invite any online, family-less
+character; the invite lives in memory and expires after 120 seconds, the
+same as a friend request. Official NPCs can't be invited. Families cap
+out at **30 members**.
+
+- Any member but the head can leave at any time.
+- A member with kick permission and a higher rank than the target can kick
+  them.
+- Leaving or being kicked locks you out of joining a new family for **24
+  hours** — enough to stop someone looting the shared storage and
+  hopping families.
+- The head can only leave after handing off headship.
+- Deleting a character counts as leaving; if it was the head, the
+  succession order below takes over automatically.
+
+## Ranks and permissions (protocol v144)
+
+Ranks are fixed at four tiers; the titles are the family's own:
+
+| Rank | Default title | Notes |
+|---|---|---|
+| 0 | Head | Exactly 1, every permission, can't be changed |
+| 1 | Elder | |
+| 2 | Family | New members default here |
+| 3 | Guest | |
+
+The head toggles these permissions individually for ranks 1–3: invite
+(`INVITE`), kick (`KICK`), build (`BUILD_HOUSE`), demolish
+(`DEMOLISH_HOUSE`), place furniture and banners (`PLACE_FURNITURE`),
+landscape and fences (`LANDSCAPE`), family-chest deposit
+(`STORAGE_DEPOSIT`) and withdraw (`STORAGE_WITHDRAW`), board-write
+(`BOARD_WRITE`) and take-down (`BOARD_MODERATE`), treasury deposit
+(`TREASURY_DEPOSIT`), emblem editing (`EDIT_EMBLEM`), and rank/permission
+editing (`EDIT_RANKS`). Reading the board and family chat are open to
+every member regardless of permissions.
+
+Succession: the head can directly hand headship to another member.
+Deleting the head's character auto-promotes whoever is first in the
+succession order — highest rank first, then earliest to join. If the head
+goes 30 days without logging in, whoever is first in the succession order
+can claim headship; if they're also gone 30 days, the claim passes to the
+next in line.
+
+## Sharing land (protocol v144)
+
+A family doesn't own estates — ownership stays with the account, and the
+family only overlays access on top. An estate attaches to at most one
+family at a time; a member who owns an estate and belongs to that family
+can attach or detach it. Merging (see "Merging families" below) attaches
+both families' estates to the new family, with no separate cap on estate
+count — since every account already gets only one estate, the 30-member
+cap is the real ceiling.
+
+Once attached, these checks that used to require the same account now
+also accept the matching family permission:
+
+- Building and demolishing — family permission `BUILD_HOUSE` /
+  `DEMOLISH_HOUSE`.
+- Placing, moving, and recovering furniture, and editing sign text —
+  family permission `PLACE_FURNITURE`.
+- Fences and landscaping — family permission `LANDSCAPE`.
+- Treasury deposits — family permission `TREASURY_DEPOSIT`; **withdrawing
+  still requires the owning account alone**.
+
+[Estate chests](../estates/#estate-storage-protocol-v61) aren't covered by
+family permissions at all — they're still placed and opened by the
+estate's owning account only, since chest access is checked against the
+estate's account and placing one on someone else's estate would hand its
+contents to that estate's owner. An indebted estate stays off-limits to
+family members, exactly as it does to the owner. A seized estate detaches
+from its family; the family itself isn't dissolved, it just loses the
+building, banner, board, and storage features tied to that estate.
+
+### Seat and the Scroll of Family Return (protocol v147)
+
+The head can pick a **seat** from the family panel's list of attached
+estates; without a choice it defaults to the head's own estate, and
+failing that, the first estate ever attached. Rica and Wick both sell a
+**{itemName('scroll_of_family_return')}**
+({formatCoins(itemsById.get('scroll_of_family_return').basePrice)}), which
+takes you to the seat — landing on a hearthbound rug if one is placed
+there, otherwise safe outdoor ground. The scroll isn't consumed if there's
+no family, the seat has no estate attached, or the seat is indebted. The
+regular [Scroll of Estate Return](../estates/#buying-a-deed-and-claiming-land-protocol-v55)
+is unaffected and still returns you to your own estate.
+
+## Family chat (protocol v146)
+
+`/g` (or the chat channel menu) speaks to every online family member, with
+blocks and mutes still applying. Members coming online, going offline,
+joining, leaving, or taking over headship all post a system line to the
+family channel.
+
+## Family chest (protocol v146)
+
+Aldwin sells a **{itemName('family_chest')}**
+({formatCoins(itemsById.get('family_chest').basePrice)}), placeable only on
+an estate attached to a family, capped at **4 per family**, holding **200
+kg** each (versus 50 kg for a regular
+[estate chest](../estates/#estate-storage-protocol-v61)). Placement
+records which family the estate belongs to at that moment, and the owner
+is recorded as the estate's owner rather than whoever placed it — so the
+chest survives even if the placer later leaves or is deleted.
+
+- Opening requires standing within 3 m and belonging to that family.
+- Depositing needs `STORAGE_DEPOSIT`, withdrawing needs
+  `STORAGE_WITHDRAW` — **the estate's own owner can't reach the contents
+  without the matching rank either**; the chest belongs to the whole
+  family, not the estate's owner.
+- Every deposit and withdrawal is logged; the family panel's "Family
+  storage log" shows the newest 200.
+- Recovering a chest only works while it's empty.
+- An estate can't detach from its family while its family chests still
+  hold anything.
+- An estate that detaches through a kick or seizure leaves its chests
+  withdraw-only, until a member empties them and the estate's owner
+  recovers them.
+- Once a family dissolves, only the last head can withdraw whatever is
+  left in its chests.
+
+## Family notice board (protocol v146)
+
+Aldwin sells a **{itemName('family_board')}**
+({formatCoins(itemsById.get('family_board').basePrice)}), placed on a
+family estate and readable, writable, and commentable only by that
+family's members. Unlike the
+[village notice board](../mail-and-notices/), writing costs no Notice
+Paper and posts **never expire** — instead a board caps out at 50 posts,
+pushing out the oldest. Taking down a post needs `BOARD_MODERATE`
+(or being the writer). Posts stay on a board that detaches from its
+family, but reading and writing are both locked.
+
+## Family emblem, capes, and banners (protocol v147)
+
+A member with `EDIT_EMBLEM` can set the family emblem from the panel's
+"Emblem" tab: a color plus a picture uploaded through the same pipeline as
+cape prints (320×512, with the same upload limits, reporting, and hash
+blocking — a blocked picture shows only the color). Once set, every
+member's worn cape shows the family emblem and color in the world and on
+the character-select screen, overriding the cape's own dye and print;
+leaving the family restores the original look. Each member can toggle
+"show the family emblem on my cape" off individually (on by default).
+
+ORKEA's furniture shop gained two emblem pieces, also placeable only on an
+estate attached to a family:
+
+- **{itemName('family_banner')}**
+  ({formatCoins(itemsById.get('family_banner').basePrice)}) — free-standing.
+- **{itemName('family_pennant')}**
+  ({formatCoins(itemsById.get('family_pennant').basePrice)}) — wall-mounted,
+  raised up the wall like a display sword.
+
+Both pieces get their picture filled in by the server from whichever
+family the estate is currently attached to, rather than storing it on the
+furniture itself; an estate leaving the family turns either one back into
+bare, emblem-less linen.
+
+## Merging families
+
+### Terms and effects
+
+Heads can merge two families. The proposer picks which name, emblem, and
+head survive (one from each side), and the other head accepting completes
+it; both heads must be online, a proposal expires after 120 seconds, and a
+refused proposal can't be resent until it expires. The family whose name
+is kept absorbs the other's members, estates, furniture, and storage log,
+and the absorbed family's row is deleted outright; a merge that would push
+the combined membership past 30 is refused. The absorbed head is demoted
+to **Elder**, everyone else keeps their rank, and rank titles and
+permissions follow whichever family's name was kept. A retired name is
+never reused. **A merge can't be undone** — the accept screen lists
+everything that will change.
+
+### The merger rite (protocol v149)
+
+As of protocol v149, merging is only possible through a **family merger
+rite** held at the **Two Moons Chapel** — the family panel's old direct
+"merge with another family" proposal button has been hidden. Aldermark's
+Two Moons Chapel honors Eldor, the elder moon (standing for keeping watch)
+and Serin, the lesser moon (standing for moving forward); the faith holds
+the world whole only when both moons share the sky, and its symbol is two
+interlocking rings. The chapel is kept by priest **Maelis**.
+
+Holding the rite requires Maelis to be awake and not sitting, with both
+heads on the same floor within 8 m of her, or the proposal is refused. The
+server runs the whole sequence:
+
+1. One head proposes.
+2. Maelis opens the rite, reciting the conditions.
+3. 8 seconds later, the proposing head gets a consent prompt, answered
+   with `ConfirmFamilyMerge`.
+4. Once accepted, 6 seconds later the other head gets a consent prompt,
+   answered with `RespondFamilyMerge`.
+5. Accepting completes the merge and announces it server-wide.
+
+The rite ends if either head refuses, walks away before answering, or 120
+seconds pass. Maelis's lines are LLM-generated — the server sends her
+alone a step-by-step `MergerRiteCue` — but only the server decides whether
+the merge succeeds; her lines and the announcement are gender-neutral and
+never call it a wedding.
+
+## Whispers, party, and the friend list (protocol v148)
+
+Whisper messages carry the sender's and recipient's family name, and your
+own whisper echo shows the other side's family. Party chat lines and
+party roster entries also carry a family name — the roster uses a live
+family for nearby party members and the family from login time for
+distant ones. The friend list and the online-friends query likewise look
+up and show family: online friends update live, while an offline friend's
+family is a snapshot from your last login and only refreshes the next
+time you log in. Family-channel login/logout notices now also name the
+member.
