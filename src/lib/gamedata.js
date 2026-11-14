@@ -228,6 +228,8 @@ export const dungeons = parseCsv('dungeons').map((r) => ({
   keyPrefix: r.keyPrefix || null,
   spawnGroup: r.spawnGroup || null,
   layoutStyle: r.layoutStyle || null,
+  /** Redraws its maze layout at every sunset reset instead of keeping the fixed one (data-src/dungeons.csv nightlyLayout, protocol v150). */
+  nightlyLayout: bool(r.nightlyLayout),
   /** Item:chance rolls only this dungeon's chest makes (data-src/dungeons.csv chestRolls). */
   chestRolls: r.chestRolls
     ? r.chestRolls.split(';').map((entry) => {

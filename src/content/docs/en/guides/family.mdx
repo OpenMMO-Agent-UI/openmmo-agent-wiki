@@ -224,7 +224,7 @@ permissions follow whichever family's name was kept. A retired name is
 never reused. **A merge can't be undone** — the accept screen lists
 everything that will change.
 
-### The merger rite (protocol v149)
+### The merger rite (protocol v149 on)
 
 As of protocol v149, merging is only possible through a **family merger
 rite** held at the **Two Moons Chapel** — the family panel's old direct
@@ -232,25 +232,41 @@ rite** held at the **Two Moons Chapel** — the family panel's old direct
 Two Moons Chapel honors Eldor, the elder moon (standing for keeping watch)
 and Serin, the lesser moon (standing for moving forward); the faith holds
 the world whole only when both moons share the sky, and its symbol is two
-interlocking rings. The chapel is kept by priest **Maelis**.
+interlocking rings. The chapel is kept by priest **Maelis**, who sleeps in
+the rectory behind the chapel and has her own chair at the inn.
 
 Holding the rite requires Maelis to be awake and not sitting, with both
-heads on the same floor within 8 m of her, or the proposal is refused. The
-server runs the whole sequence:
+heads on the same floor within 8 m of her, or the proposal is refused.
+Only one rite can run at a time — other proposals are refused while it's
+in progress. The server runs the whole sequence:
 
-1. One head proposes.
+1. A head hands Maelis the terms — right-click her and pick "Submit
+   merger pledge" to name the other head and the name, emblem, and head
+   the merge should keep (protocol v152), or, from protocol v154 on,
+   simply tell her in words that you want to merge families and her LLM
+   opens the pledge form for you directly. Once the other head is
+   entered, the form shows that family's current name and emblem.
 2. Maelis opens the rite, reciting the conditions.
 3. 8 seconds later, the proposing head gets a consent prompt, answered
    with `ConfirmFamilyMerge`.
 4. Once accepted, 6 seconds later the other head gets a consent prompt,
-   answered with `RespondFamilyMerge`.
+   answered with `RespondFamilyMerge`. The prompt lists the merged
+   family's name, emblem, head, and size as a table, with the kept emblem
+   drawn.
 5. Accepting completes the merge and announces it server-wide.
 
 The rite ends if either head refuses, walks away before answering, or 120
-seconds pass. Maelis's lines are LLM-generated — the server sends her
-alone a step-by-step `MergerRiteCue` — but only the server decides whether
-the merge succeeds; her lines and the announcement are gender-neutral and
-never call it a wedding.
+seconds pass — Maelis gets a cue when it closes either way. Maelis's
+lines are LLM-generated — the server sends her alone a step-by-step
+`MergerRiteCue` — but only the server decides whether the merge succeeds;
+her lines and the announcement are gender-neutral and never call it a
+wedding.
+
+On success, the server broadcasts `MergerCelebrated` to everyone nearby
+(protocol v152): petals fall over the chapel floor (or within 4.5 m
+outdoors) for 13 seconds, and three bell peals ring in random order,
+overlapping 1-2 seconds apart. Nearby members of both families become
+guests. Admins can preview the bells with `/bell`.
 
 ## Whispers, party, and the friend list (protocol v148)
 

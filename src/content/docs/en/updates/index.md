@@ -19,9 +19,122 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v149 — client v0.83.0 (current)
+## Protocol v154 — client v0.84.0 (current)
 
-**The live server currently requires v149.**
+**The live server currently requires v154.**
+
+**New system**
+
+- **You can now just ask Maelis for the merger pledge** (2026-11-13) — a
+  head no longer has to use the right-click menu; telling Maelis in words
+  that you want to merge families makes her LLM answer with an
+  `offer_pledge` action, and the server opens the pledge form directly on
+  screen once it confirms the speaker is a family head standing before her
+  (protocol v154). The right-click "Submit merger pledge" entry still
+  works too. Once the other head is entered, the form now looks up and
+  shows that family's current name and emblem; the consent prompt is
+  narrower, lists the merged family's name, emblem, head, and size as a
+  table with the kept emblem drawn, drops the countdown bar, and its
+  buttons no longer wrap. See
+  [Families](../guides/family/#merging-families).
+
+**Fix**
+
+- NPC dialogue agents now only mention actions their own role actually
+  supports — `open_trade` and `offer_deal` are taught only to NPCs that
+  can push a trade window, and `offer_pledge` only to the merger officiant
+  (Maelis), so ordinary residents no longer claim they can open a trade
+  window; the table-serving action is taught only to NPCs that serve
+  tables, and the recite action only to NPCs that perform music
+  (2026-11-13).
+
+## Protocol v153 — client v0.83.0
+
+**New system**
+
+- **The Two Moons Chapel gained a priest's door** (2026-11-13) — a
+  1.1 m-wide pointed-arch door with three stone steps outside now sits in
+  the east end of the chancel's south wall, facing the rectory, and that's
+  the door Maelis uses to come and go. Catalog objects can now carry
+  multiple `sideDoors` besides their main entrance, each gated
+  independently with the door's index folded into the object door id
+  (protocol v153); clicking a leaf now approaches it from whichever side
+  the player can actually reach.
+
+**Fix**
+
+- The wall between the nave and the chancel is now its own model node,
+  hidden while standing in the chancel so it no longer blocks the camera's
+  view of the character; the three steps outside the side door now give
+  walking NPCs one consistent standing height, at the middle step
+  (2026-11-13).
+
+## Protocol v152 — client v0.83.0
+
+**New system**
+
+- **The merger pledge moves to Maelis's right-click menu, and a sworn
+  merger now gets petals and bells** (2026-11-12) — a head now hands
+  Maelis the terms from her right-click menu with "Submit merger pledge,"
+  naming the other head and the name, emblem, and head the merge should
+  keep; the family panel keeps only a one-line hint. Only one rite can run
+  at a time — other proposals are refused while it's in progress — and it
+  closes with a cue to Maelis if a proposal goes 120 seconds unanswered,
+  the merge fails, or a head logs out. On success, the server broadcasts
+  `MergerCelebrated` to everyone nearby (protocol v152): petals fall over
+  the chapel floor (or within 4.5 m outdoors) for 13 seconds, and three
+  bell peals ring in random order, overlapping 1-2 seconds apart; nearby
+  members of both families become guests. Admins can preview the bells
+  with `/bell`. Maelis now sleeps in the rectory behind the chapel and has
+  her own chair at the inn.
+
+**Fix**
+
+- Maelis, walking from the rectory, used to get stuck outside the chapel
+  door — walkers now try the side of a blocking door they can actually
+  reach first; object doors used to wrongly stay "open" in the world cache
+  across a server restart, and now reset closed like everything else
+  (2026-11-12).
+
+**Performance**
+
+- Shadow passes no longer recompute their material cache key every frame
+  — switching between cut-out and opaque shadow casters used to bump the
+  shared shadow material's version and force every shadow-rendering object
+  to rebuild its cache key each frame; shaders for newly seen objects now
+  go through a deferred build queue that only runs once loading screens
+  are over (2026-11-13).
+
+## Protocol v151 — client v0.83.0
+
+**Performance**
+
+- **Houses, dungeons, and object doors now address every door with one
+  id** (2026-11-12) — a single `ToggleDoor` and `DoorState` message now
+  serves house doors and windows, dungeon doors, and object doors alike.
+  Toggling a house door no longer broadcasts the whole house's data, only
+  that door's state to players who can see the house; a player who comes
+  into view later gets the already-updated door state in `HouseUpdated`.
+
+## Protocol v150 — client v0.83.0
+
+**New system**
+
+- **The Old Crypt redraws its maze at every sunset reset** (2026-11-12) —
+  dungeons flagged `nightlyLayout` (only the Old Crypt, for now) swap to a
+  maze variant derived from that night's epoch at every sunset reset;
+  every other dungeon keeps its original fixed layout (variant 0). The
+  entrance shaft and floor count depend only on the entrance id and never
+  change with the variant — what changes is each floor's rooms,
+  corridors, props, monster spawns, and chest positions. The swap waits
+  until everyone has left, then the server exchanges the floor runtime,
+  passability grid, and interest subscriptions and clears any loot left
+  underground. The server sends `DungeonLayoutVariants` on join and on
+  every redraw (protocol v150), and both the web client and agent-client
+  rebuild layout and passability from it. Restarting the server the same
+  night still gets you the same maze.
+
+## Protocol v149 — client v0.83.0
 
 **New system**
 
