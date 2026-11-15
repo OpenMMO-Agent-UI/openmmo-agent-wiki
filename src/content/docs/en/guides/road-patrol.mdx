@@ -1,0 +1,80 @@
+---
+title: Road patrol
+description: Aldermark guards clear estate fences blocking public roads. A first offense gets impounded and can be bought back from guard captain Karl.
+---
+
+import { npcs } from '../../../../lib/gamedata.js';
+
+export const karl = npcs.find((n) => n.id === 'karl');
+
+Starting at the north gate of Aldermark, four guards — **Garrick**,
+**Brenna**, **Osric**, and **Halda** — patrol in day and night pairs,
+clearing [estate fences](../estates/#wooden-fences-protocol-v57) built on top
+of public roads. Placing a fence is still unrestricted — only one that
+actually blocks the road gets torn down (protocol v156).
+
+## What counts as blocking
+
+The server decides this on its own; you don't need to report anything. An
+estate fence counts as a violation when its center sits within **3m** of a
+worldgen road's centerline. Fences an operator placed outside any estate
+don't count. Clearing is a guard-only `PatrolSweep` action — clearing
+several fence segments under the same account in one sweep still counts as
+**one violation**.
+
+For the first 3 game days after the server starts (about 9 real hours),
+guards only warn you instead of actually clearing fences. Enforcement
+begins after that.
+
+## Violations and buy-back
+
+- The **first** violation gets your fence impounded. Pay half its base
+  value to guard captain **{karl.npcName}** and you get everything back.
+- The **second** violation onward is forfeit — no buy-back.
+- Every fence cleared sends the owner a letter signed by Karl.
+
+Right-click Karl and choose "Find impounded items" to open the buy-back
+window, or just ask him in words — his LLM recognizes the request. If
+you're standing near him it opens right away; if you're too far, Karl just
+gets a note that you asked.
+
+## Patrol schedule and route
+
+| Time | Day watch (Garrick, Brenna, Karl) | Night watch (Osric, Halda) |
+|---|---|---|
+| 05:15 | Wake, breakfast at the inn | Asleep |
+| 05:45 | Report to Karl, head out | |
+| 06:05–17:00 | Patrol; Karl walks a lap of the village on the hour | |
+| 17:00 | Dinner at the inn | |
+| 17:50 | | Wake |
+| 18:40 | | Report to Karl, head out |
+| 19:00–05:00 | | Patrol |
+
+The route runs along Aldermark's north road, out past the Skeleton Crypt
+fork to the Thieves' Den fork and back — about **1,145m** round trip, taking
+roughly 2 game hours per lap. A lap interrupted (say, by the guard dying)
+picks back up where it stopped; guards respawn at the guard station.
+
+## The patrol guards
+
+All four are level 50 with 700 max HP and Guard 24, wielding a rune blade.
+Garrick and Osric wear plate armor, Brenna and Halda wear valkyrie armor,
+and all of them wear a wool cape printed with the Aldermark crest
+(protocol v157). A guard's name shows their **rank** in place of a family
+name: Karl is captain, Garrick and Osric are sergeants, and Brenna and
+Halda are guards.
+
+Guards keep their weapon sheathed while walking. If a partner or player
+within 20m gets into a fight with a monster, they join in against that
+monster; within 40m, they run over to help. The weapon is sheathed again
+10 seconds after the last hit.
+
+Before clearing a fence, the guard assigned to it walks up and swings their
+weapon three times first, then clears every qualifying fence within 24m at
+once (protocol v158) — it isn't instant just because a guard walked past.
+
+## Notices
+
+Karl posts a bilingual Korean/English notice on Aldermark's board under his
+own name explaining the rule, refreshed automatically 5 game days before it
+expires. See [Mail & notice boards](../mail-and-notices/).

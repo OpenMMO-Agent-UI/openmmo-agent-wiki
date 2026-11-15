@@ -292,6 +292,9 @@ export const npcs = parseCsv('npcs').map((r) => ({
   selfDefense: bool(r.selfDefense),
   walkSpeed: num(r.walkSpeed),
   dialogueOnly: bool(r.dialogueOnly),
+  capeCrest: r.capeCrest || null,
+  rank: r.rank || null,
+  protects: bool(r.protects),
 }));
 
 export const worldDrops = parseCsv('world_drop').map((r) => ({

@@ -19,9 +19,107 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v154 — client v0.84.0 (current)
+## Protocol v158 — client v0.85.0 (current)
 
-**The live server currently requires v154.**
+**The live server currently requires v158.**
+
+**New system**
+
+- **The sweeping guard now walks up to a fence and strikes it before
+  clearing it** (2026-11-14) — the guard assigned to clear a lap sends a
+  `PatrolScout` at every waypoint. During the warning period the server
+  answers with the owners to warn; once enforcement is live it answers with
+  the nearest fence to take down (`sweep_plan`), so the scout and the actual
+  sweep always agree on the same plan. Once a target comes back, the guard
+  walks to within 1.3m of it, draws their weapon, and swings three times
+  (`PatrolStrike`, visible to anyone nearby as `PlayerSwung` attack
+  animations) before `PatrolSweep` clears every qualifying fence within 24m
+  at once. See [Road patrol](../guides/road-patrol/). (protocol v158)
+
+## Protocol v157 — client v0.85.0
+
+**New system**
+
+- **The Aldermark guard station doubled into proper barracks, and the
+  guards got rank, a crest, and uniforms** (2026-11-14) — the watch house
+  doubled in size, with five bunks split between Garrick, Brenna, Osric,
+  Halda, and Captain Karl. The day watch (Garrick, Brenna) and night watch
+  (Osric, Halda) both eat at the inn, report to Karl before heading out, and
+  the day pair wakes the night pair at the change of watch. Karl stands at
+  his post by day, walks a lap of the village on the hour, and sleeps at
+  night. All four guards now use the modular character model in plate armor
+  (Garrick, Osric) or valkyrie armor (Brenna, Halda), with a wool cape
+  printed with the Aldermark crest (`npcs.csv`'s `capeCrest`; the server
+  dresses them automatically on join and stashes their old gear in their
+  bag) — the crest is a built-in server asset and doesn't go through the
+  player cape-printing upload pipeline. A guard's name now shows their rank
+  where a family name would go (`npcs.csv`'s `rank` → `Player.rank`,
+  protocol v157): Karl is captain, Garrick and Osric are sergeants, Brenna
+  and Halda are guards. Guards keep their weapon sheathed while walking,
+  draw it the moment a fight starts, and sheathe it again 10 seconds after
+  their last hit; if a partner or player within 20m gets into a fight with a
+  monster they join in against that monster, and within 40m they run over to
+  help, picking a broken patrol lap back up where it stopped. Right-click
+  Karl and choose "Find impounded items" to open the buy-back window, or
+  just ask him in words — his LLM recognizes the `open_impound` request. See
+  [Road patrol](../guides/road-patrol/). (protocol v157)
+
+## Protocol v156 — client v0.85.0
+
+**New system**
+
+- **Road patrol guards now clear estate fences blocking public roads**
+  (2026-11-13) — four guards (Garrick, Brenna, Osric, Halda) patrol
+  Aldermark's north road in day and night pairs, eating at the inn and
+  sleeping at the guard station. The server decides what counts as
+  blocking on its own: an estate fence whose center sits within 3m of a
+  worldgen road centerline (fences an operator placed outside any estate
+  don't count) gets cleared in a guard-only `PatrolSweep` — placing a fence
+  there is still unrestricted. Violations are counted per account; clearing
+  several fence segments under the same account in one sweep still counts
+  as one offense. The first offense gets impounded — pay half the item's
+  value to guard captain Karl and you get everything back; the second
+  offense onward is forfeit with no buy-back. Every fence cleared sends the
+  owner a letter signed by Karl. For the first 3 game days after server
+  start (about 9 real hours), guards only warn instead of actually clearing,
+  with the enforcement time recorded in `road_patrol_state.enforce_from`.
+  Karl also posts a bilingual Korean/English notice on Aldermark's board
+  under his own name, refreshed automatically 5 game days before it expires
+  (issue #208, protocol v156). See [Road patrol](../guides/road-patrol/).
+
+**Fix**
+
+- **Riding across the north road's long wooden bridge no longer gets stuck
+  at the deck** (2026-11-14) — the bridge deck sits 0.36m above the banks,
+  and the mounted movement path used to sample every 0.15m, which read the
+  rise onto the deck as a cliff past the 50° slope limit. The 50° limit is
+  now shared by one check used by both goal movement and keyboard steering,
+  and a step of up to 0.6m onto a bridge deck is exempt from it the same way
+  stairs and floor changes already were; a horse on the deck is also no
+  longer dismounted over the water depth under the span. Once a horse is
+  facing its waypoint, its route is now sampled every 1m instead of every
+  0.15m (1,408 points instead of 7,535 for the 1.1km north road, 0.36ms
+  instead of 2.05ms to build, with the same ride time), so the 8,192-point
+  sampling cap now reaches about five times farther.
+
+## Protocol v155 — client v0.85.0
+
+**Fix**
+
+- **A move refusal now logs where the client thought it was standing**
+  (2026-11-13) — `PlayerMoveGoal` now carries `client_position` (protocol
+  v155), and the "Invalid movement input" warning logs it alongside its
+  drift from the server's own position, to tell a desynced client apart
+  from input that bypasses the UI.
+- **Above-ground characters no longer get reset to the world spawn point
+  by being mistaken for standing in a dungeon** (2026-11-13) — the height
+  lookup that sets a surface walker's floor could, inside a dungeon's
+  footprint, return the dungeon grid's passability index (4 and up), which
+  got stored as a fourth floor and reset the character to the world spawn
+  on the next login; those indices are now excluded outside dungeon
+  bounds.
+
+## Protocol v154 — client v0.84.0
 
 **New system**
 
