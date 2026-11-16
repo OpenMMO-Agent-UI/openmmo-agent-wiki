@@ -19,9 +19,73 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v158 — client v0.85.0 (current)
+## Protocol v159 — client v0.86.0 (current)
 
-**The live server currently requires v158.**
+**The live server currently requires v159.**
+
+**New system**
+
+- **Village houses now come in four exterior style sets** (2026-11-15) —
+  houses move from one shared look to the original Plain plus three dressed
+  sets: Timber (a dark half-timber frame with corner braces, cream plaster,
+  a stone plinth, beaver-tail roof tiles with courses and a ridge cap,
+  bargeboards, chimneys, plank doors and timber window sashes), Storybook
+  (Timber plus a per-house palette, painted shutters, flower boxes under the
+  windows, ivy, and windows/door lanterns that light up at night — the
+  palette is picked by a hash of the house id, so it stays the same across
+  restarts), and Stone (a fieldstone ground storey with a slate roof and
+  door steps, upper floors staying half-timber like Timber). Only the
+  exterior textures change — rooms, walls and passability are untouched. The
+  map editor's Select tool picks a style per house; the admin chat command
+  `/housestyle <0-3|mix> [radius m]` (default 100m, max 500m) restyles every
+  village house within radius of the admin at once — `mix` spreads sets 1-3
+  across houses by an id hash (stable across reruns), and houses built from a
+  scroll (`sourceScrollId` set) are always skipped. `HouseData.style` is now
+  part of the protocol (protocol v159). (The same change also fixed roofs
+  rendering too dark without snow — see Fix below.)
+- **Aldermark's square gained a clothing shop, Moonthread Tailor, run by the
+  seamstress Linnea, selling the family-merger ceremony outfit** (2026-11-15)
+  — five pieces for women (Ceremony Veil, Bodice, Bell Skirt, Long Gloves,
+  Stockings and Pumps) and four for men (Ceremony Tuxedo Jacket, Dress
+  Trousers, White Gloves, Dress Shoes). Purely cosmetic purchases — wearing
+  them has no bearing on whether a merger rite succeeds. No protocol bump.
+
+**Fix**
+
+- **Roofs rendered much darker than their texture whenever no snow lay**
+  (2026-11-15) — the snow-cover normal used for lighting was only read
+  inside a branch that is skipped at zero snow cover, leaving it unset; it
+  is now always read.
+- **Walking within 8m of a worldgen road centerline no longer spawns
+  move-coupled ambient monsters** (2026-11-14).
+- **A monster or NPC heading for a goal behind a wall or inside a room no
+  longer gets stuck at the wall or walks the wrong way** (2026-11-14) — the
+  pathfinder now searches from the start and the goal at once and joins
+  where they meet. Cell edges in houses, dungeon rooms and placed buildings
+  now carry a doorway mark, and the search aims for the cells outside a
+  door — a room with no door still ends at the nearest wall cell. A goal on
+  furniture or in a fully sealed space now ends beside the furniture or at
+  the nearest reachable wall cell. Each direction has its own node limit; a
+  monster's total budget is still a hard cap across both.
+- **A monster sidestepping mid-chase no longer gets stuck repeatedly
+  refusing its own move as a wall crossing** (2026-11-14) — a sidestep
+  swapped the leg being walked without marking the turn, so the server
+  swept a straight line from the last reported pose across the bend and
+  rejected it as a wall crossing, over and over at the same spot.
+- **A road patrol guard blocked at a waypoint now turns back instead of
+  leaving its partner to carry on alone** (2026-11-14) — an unreachable
+  outbound waypoint now ends the outbound leg there, with the guard heading
+  home from the last stop it reached. The lead guard waits for its partner
+  however long it takes while the partner is in sight, and turns back after
+  20s once the partner is out of sight or dead — the way home keeps the
+  same 20s limit and skips stops it can't reach. See
+  [Road Patrol](../guides/road-patrol/).
+
+**Client**
+
+- **agent-client updated to v0.86.0** (2026-11-16).
+
+## Protocol v158 — client v0.85.0
 
 **New system**
 

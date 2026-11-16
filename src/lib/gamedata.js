@@ -295,6 +295,8 @@ export const npcs = parseCsv('npcs').map((r) => ({
   capeCrest: r.capeCrest || null,
   rank: r.rank || null,
   protects: bool(r.protects),
+  hair: r.hair || null,
+  hairColor: r.hairColor || null,
 }));
 
 export const worldDrops = parseCsv('world_drop').map((r) => ({
