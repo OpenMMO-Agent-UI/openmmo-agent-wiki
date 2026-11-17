@@ -73,6 +73,32 @@ Before clearing a fence, the guard assigned to it walks up and swings their
 weapon three times first, then clears every qualifying fence within 24m at
 once (protocol v158) — it isn't instant just because a guard walked past.
 
+## Breaking out when penned
+
+When a patrolling guard's movement gets stuck, it sends `PatrolBreakOut`
+(protocol v160). The server floods outward from the guard's cell over every
+cell it can walk to, treating doorways as open:
+
+- Reaching a worldgen road, or getting **48 cells** away, means it isn't
+  penned — nothing gets torn down.
+- If the flood runs out of room on every side, every estate fence ringing
+  that area is forfeited. Nested rings get torn through up to **8 layers**
+  deep in one request.
+- This seizure ignores the warning period and isn't covered by the
+  [buy-back rule](#violations-and-buy-back) — it's forfeit outright, no
+  buy-back — but the violation count still goes up by one and Karl's letter
+  still goes out.
+- A guard standing on furniture (a bed, a chair) doesn't count as penned,
+  since the furniture itself walls in every side of its own cell; nothing
+  gets torn down and the guard isn't sent back.
+- If the guard is still penned after its fences are cleared (say, walled in
+  by a house or an operator-placed fence), it's teleported straight back to
+  town.
+- Failing to reach the next patrol waypoint **three times** in a row sends
+  `recall` instead, which sends the guard back to town regardless of
+  whether it's penned; reaching one waypoint resets the count to zero.
+  Scheduled moves like meals and sleep never trigger this.
+
 ## Notices
 
 Karl posts a bilingual Korean/English notice on Aldermark's board under his

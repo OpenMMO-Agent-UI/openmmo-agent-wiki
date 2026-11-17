@@ -19,9 +19,91 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v159 — client v0.86.0 (current)
+## Protocol v162 — client v0.87.0 (current)
 
-**The live server currently requires v159.**
+**The live server currently requires v162.**
+
+**New system**
+
+- **A regular whose favor is high enough can buy an outfit NPC's spare set
+  of working clothes, and one who turned the sale down can be given it
+  outright once favor maxes out** (2026-11-16) — when a player of the same
+  gender with favor at or above the private-deal threshold (3) is nearby, an
+  NPC whose `npcs.csv` row carries `outfit`/`outfitPrice` (only Rica, for
+  now) offers to sell its spare outfit (`OfferOutfit`/`QueryOutfit`, the
+  player answers with `RespondOutfitOffer`, protocol v162). Each account
+  gets a given NPC's outfit at most once ever — buying it, or receiving it
+  as a gift, takes that player off the list for good. Someone who already
+  turned the sale down may be given it for free once their favor hits the
+  cap (5). Each NPC sells at most 1 outfit and gives away at most 1 per game
+  day; an offer left unanswered for about 60s counts as declined. The
+  outcome is reported back to the NPC via `OutfitStatus`, with the current
+  standing and when sales/gifts reopen. Rica's own outfit (see v161's "New
+  items & materials") is priced at 30,000 copper; both the sale and the
+  gift count toward the dashboard's gold-sink ranking under an NPC-outfit
+  category.
+
+**Client**
+
+- **agent-client updated to v0.87.0** (2026-11-17).
+
+## Protocol v161 — client v0.87.0
+
+**New system**
+
+- **Shopkeeper Rica moves to the shared modular body in a shopkeeper's
+  outfit, and gets the fifth female hairstyle, long wavy hair**
+  (2026-11-16) — Rica leaves her standalone one-piece model for the shared
+  female body, wearing a linen blouse with a leather corset, a belted apron
+  skirt with a coin pouch and keys, and heeled ankle boots — three items
+  only she wears (`shopkeeper_top`/`shopkeeper_pants`/`shopkeeper_boots`).
+  Her portrait also gets long wavy hair with two temple braids, which
+  players can pick too at character creation (`HairStyle::LongWavy`,
+  protocol v161). `npcs.csv` gains a `gender` column applied to the
+  character at boot — Rica had been created male, which her old model
+  never showed.
+
+**Fix**
+
+- **A guard at its scheduled post now turns to face the right way even
+  when the turn sent on arrival didn't land** (2026-11-16) — why the server
+  sometimes drops that turn isn't known yet.
+
+## Protocol v160 — client v0.87.0
+
+**New system**
+
+- **All eight dungeons now redraw their maze every sunset reset, not just
+  Old Crypt** (2026-11-16) — `dungeons.csv` now has `nightlyLayout` set for
+  every dungeon; the mechanic is unchanged: the swap only happens while
+  nobody's underground, the entrance and floor count stay fixed, and only
+  the rooms, corridors, props, monster spawns and chest positions change. A
+  character saved underground whose reconnect finds its saved cell is rock
+  in tonight's maze, or walled in on every side by a prop or chest, is now
+  returned straight to the dungeon entrance instead of coming back stuck —
+  this only happens when the maze changed mid-night, which takes a restart
+  that either turned `nightlyLayout` on, shipped a changed layout
+  generator, or followed a sunset where someone was still underground and
+  the old maze was kept.
+- **A patrol guard that gets penned in now breaks itself out, forfeiting
+  the fences ringing it ring by ring** (2026-11-16) — this follows Brenna
+  getting fenced into one cell of a player's estate for 45 hours. A guard
+  whose movement is stuck sends `PatrolBreakOut` (protocol v160); the
+  server floods outward from the guard's cell over every walkable cell,
+  treating doorways as open. Reaching a road or getting 48 cells away means
+  it isn't penned and nothing is torn down; if the flood has nowhere left to
+  go, every estate fence ringing that area is forfeited, tearing through up
+  to 8 nested rings in one request. This seizure ignores the warning period
+  and isn't covered by the buy-back rule — it's forfeit outright — but the
+  violation count still rises and Karl's letter still goes out. A guard
+  standing on furniture doesn't count as penned and is left alone; one still
+  penned after its fences are cleared, or blocked three patrol walks
+  running, is sent back to town. See
+  [Road Patrol](../guides/road-patrol/#breaking-out-when-penned).
+- **The clothier Linnea, of Aldermark's Moonthread Tailor, gets a trade
+  window portrait** (2026-11-16).
+
+## Protocol v159 — client v0.86.0
 
 **New system**
 

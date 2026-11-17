@@ -297,6 +297,9 @@ export const npcs = parseCsv('npcs').map((r) => ({
   protects: bool(r.protects),
   hair: r.hair || null,
   hairColor: r.hairColor || null,
+  gender: r.gender || null,
+  outfit: r.outfit ? r.outfit.split(';') : [],
+  outfitPrice: num(r.outfitPrice),
 }));
 
 export const worldDrops = parseCsv('world_drop').map((r) => ({
