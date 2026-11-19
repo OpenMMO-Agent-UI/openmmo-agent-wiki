@@ -19,9 +19,91 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v162 — client v0.87.0 (current)
+## Protocol v164 — client v0.88.0 (current)
 
-**The live server currently requires v162.**
+**The live server currently requires v164.**
+
+**New system**
+
+- **Miriel moves to the shared modular body in a maid's uniform, and gets a
+  sixth female hairstyle, twin tails** (2026-11-19) — Miriel leaves her
+  one-piece model for the shared female body: a ruffled headband, a
+  puff-sleeved bodice with a frilled collar and corset waist, a short apron
+  skirt over a lace petticoat, long satin gloves, and thigh-high stockings
+  with red-soled pumps — five items players can wear too
+  (`maid_helmet`/`maid_top`/`maid_pants`/`maid_gloves`/`maid_boots`). The
+  maid class now uses the modular body; Cocoly keeps her own model. Twin
+  tails become a sixth female hairstyle (`HairStyle::Twintail`, protocol
+  v164), which Miriel wears and players can pick at character creation. The
+  outfit still needs work, so for now it's only in Miriel's loadout — unlike
+  Rica's or the watch's outfits, she doesn't sell or gift it (2026-11-19).
+- **Dungeon keys drop straight into the bag instead of the floor, bypassing
+  the carry weight limit** (2026-11-18) — an overloaded finder's key used to
+  fall unclaimed, where it could be missed or taken by anyone. The roll
+  stays per kill (top damage dealer) or per prop opened/broken, but a
+  character who already has that key, already received that specific key
+  once tonight, or already opened that dungeon's chest tonight no longer
+  rolls for it — the drop passes instead to a nearby party member sharing
+  the kill/chest (within the XP-share range) who still can, and if nobody
+  qualifies it simply doesn't drop. This closes a loop (issue #210) where a
+  character that never picked up its key kept re-rolling the same key for a
+  second account to collect. Keys stay tradeable, though handing one off
+  doesn't make it drop again that night. The inventory also folds keys and
+  scrolls into one cell each, opening a small list window when clicked.
+
+**New items & assets**
+
+- **The miner's harness, a belt that raises the carry limit** (2026-11-19) —
+  a new `carry+N%` item effect adds 10% to max carry weight, stacking
+  multiplicatively with the hunger-based carry multiplier. Only Blackvein
+  Mine's miner monsters drop it — Lingering Miner 0.03%, Crystallized Miner
+  0.06%, Twisted Miner 0.1%, and the Rampaging Foreman 3%, about one per ten
+  full clears — and it's excluded from the chest loot pool.
+
+**Client**
+
+- **agent-client updated to v0.88.0** (2026-11-19).
+
+## Protocol v163 — client v0.87.0
+
+**New system**
+
+- **Road patrol now also clears estate furniture and player houses blocking
+  a public road, under the same rule as fences, and the startup warning
+  period is gone** (2026-11-18) — a first offense per account gets the
+  furniture impounded (bought back from Karl at half price) or, for later
+  offenses, forfeited outright, the same as fences. An impounded furniture
+  piece comes back as its item and a house as its building scroll; anything
+  a chest held is returned untouched at no extra fee, and a house's floors
+  are cleared along with it. Impounded furniture/houses are held for one
+  turn of Serin — 20 game days, about 60 real hours — before an unclaimed
+  one is forfeited; reclaiming hands over as much as your bag and purse
+  allow and leaves the rest for a later trip. Enforcement is also immediate
+  now — the old 3-game-day grace period after a server restart is gone, and
+  `road_patrol_state` is cleared at every boot instead of tracking it. A
+  guard penned in by furniture now breaks itself out the same way it does
+  for fences. See
+  [Road Patrol](../guides/road-patrol/#furniture-and-houses).
+- **Patrol guards shovel snow off the road as they walk their route**
+  (2026-11-18) — when snow is lying (over 15% cover, or forced snow) within
+  8m of the road, a guard clears roughly 5m either side of itself, then
+  walks 10m toward the next waypoint and clears again; a stretch already
+  cleared in the last 200 game minutes is skipped. A guard holds a snow
+  shovel while clearing, and the cleared stretch stays bare for 240 game
+  minutes (30 real minutes) before snow gradually returns. Admins can force
+  the conditions for testing with `/weather snow [0..1] deep`, which lays
+  the snow immediately instead of waiting for it to accumulate.
+- **Karl and all four patrol guards move to a modular watch outfit, and
+  spears switch to a two-handed thrust** (2026-11-18) — Karl, Brenna, and
+  Halda wear a six-piece set (kettle hat, hauberk, breeches, gloves, boots,
+  and a tabard that takes dye and a family emblem like a cape, with the hat
+  hiding any hairstyle); Garrick and Osric keep their plate armor but switch
+  to the new Watchman's Spear too. Spears now thrust two-handed instead of
+  slashing, and rest upright in a bent arm when sheathed. Karl, Brenna, and
+  Halda also offer their own outfit (not the spear) for sale or as a gift
+  the way Rica does (see v162's outfit gifting), priced at 25,000 copper.
+
+## Protocol v162 — client v0.87.0
 
 **New system**
 

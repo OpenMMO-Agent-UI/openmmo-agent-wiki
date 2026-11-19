@@ -9,34 +9,68 @@ export const karl = npcs.find((n) => n.id === 'karl');
 
 Starting at the north gate of Aldermark, four guards — **Garrick**,
 **Brenna**, **Osric**, and **Halda** — patrol in day and night pairs,
-clearing [estate fences](../estates/#wooden-fences-protocol-v57) built on top
-of public roads. Placing a fence is still unrestricted — only one that
-actually blocks the road gets torn down (protocol v156).
+clearing [estate fences](../estates/#wooden-fences-protocol-v57), furniture,
+and player houses built on top of public roads (protocol v156, extended to
+furniture and houses in protocol v163). Placing any of these is still
+unrestricted — only something that actually blocks the road gets torn down.
+In winter, the same pairs also shovel snow off the road as they walk their
+route (protocol v163).
 
 ## What counts as blocking
 
 The server decides this on its own; you don't need to report anything. An
-estate fence counts as a violation when its center sits within **3m** of a
-worldgen road's centerline. Fences an operator placed outside any estate
-don't count. Clearing is a guard-only `PatrolSweep` action — clearing
-several fence segments under the same account in one sweep still counts as
-**one violation**.
+estate fence or ground-level furniture piece counts as a violation when its
+center sits within **3m** of a worldgen road's centerline; a player house
+counts if any of its floor cells has its center within that 3m. Anything an
+operator placed outside any estate, or a public house whose owner isn't a
+player account, doesn't count. Clearing is a guard-only `PatrolSweep`
+action — clearing several segments under the same account in one sweep
+still counts as **one violation**.
 
-For the first 3 game days after the server starts (about 9 real hours),
-guards only warn you instead of actually clearing fences. Enforcement
-begins after that.
+Enforcement is immediate from the moment the server boots — there's no
+grace period. (There used to be a 3-game-day warning window after a
+restart; it was removed on 2026-11-18.)
 
 ## Violations and buy-back
 
-- The **first** violation gets your fence impounded. Pay half its base
-  value to guard captain **{karl.npcName}** and you get everything back.
+- The **first** violation gets your fence or furniture impounded. Pay half
+  its base value to guard captain **{karl.npcName}** and you get everything
+  back.
 - The **second** violation onward is forfeit — no buy-back.
-- Every fence cleared sends the owner a letter signed by Karl.
+- Every clearing sends the owner a letter signed by Karl.
 
 Right-click Karl and choose "Find impounded items" to open the buy-back
 window, or just ask him in words — his LLM recognizes the request. If
 you're standing near him it opens right away; if you're too far, Karl just
 gets a note that you asked.
+
+## Furniture and houses
+
+Since protocol v163, the road patrol also clears estate furniture and
+player houses blocking a public road, under the same first-offense/
+impound, later-offense/forfeit rule as fences:
+
+- An impounded furniture piece comes back as its item; an impounded house
+  comes back as its building scroll. Whatever a chest held is returned
+  untouched at no extra fee, and a house's floors are cleared along with
+  it — the terrain is restored to its original height, the same as fence
+  removal.
+- Impounded furniture and houses are held for one turn of Serin — **20
+  game days**, about **60 real hours** — before an unclaimed impound is
+  forfeited. Reclaiming hands over as much as your bag weight and purse
+  allow in one trip; anything left over waits for another visit.
+- Anyone caught inside an impounded house is moved to town.
+
+## Shovelling snow
+
+Also since protocol v163, the same patrol pairs clear snow off the road as
+they walk it: when snow is lying (over 15% cover, or forced snow) within 8m
+of the road, a guard clears roughly 5m either side of itself, then walks
+10m toward the next waypoint before clearing again. A stretch already
+cleared within the last 200 game minutes is skipped. A guard holds a snow
+shovel while clearing, and a cleared stretch stays bare for 240 game
+minutes (30 real minutes) before snow gradually returns. It's purely
+visual — it doesn't change movement speed or cold exposure.
 
 ## Patrol schedule and route
 
@@ -57,21 +91,31 @@ picks back up where it stopped; guards respawn at the guard station.
 
 ## The patrol guards
 
-All four are level 50 with 700 max HP and Guard 24, wielding a rune blade.
-Garrick and Osric wear plate armor, Brenna and Halda wear valkyrie armor,
-and all of them wear a wool cape printed with the Aldermark crest
-(protocol v157). A guard's name shows their **rank** in place of a family
-name: Karl is captain, Garrick and Osric are sergeants, and Brenna and
-Halda are guards.
+All four are level 50 with 700 max HP and Guard 24. Since protocol v163
+they all carry a Watchman's Spear, which thrusts two-handed instead of
+slashing. Garrick and Osric still wear plate armor and a wool cape printed
+with the Aldermark crest (protocol v157); Brenna and Halda instead wear a
+six-piece modular watch outfit — kettle hat, hauberk, breeches, gloves,
+boots, and a tabard that takes dye and a family emblem like a cape (the
+kettle hat hides any hairstyle underneath). Karl, back at the guard
+station, wears the same watch outfit. A guard's name shows their **rank**
+in place of a family name: Karl is captain, Garrick and Osric are
+sergeants, and Brenna and Halda are guards.
+
+Karl, Brenna, and Halda also offer their own watch outfit (helmet, hauberk,
+breeches, gloves, boots, and tabard — not the spear) for sale or as a gift
+the way Rica does with her shopkeeper outfit, priced at 25,000 copper (see
+the [update log](../../updates/) for protocol v162 and v163).
 
 Guards keep their weapon sheathed while walking. If a partner or player
 within 20m gets into a fight with a monster, they join in against that
 monster; within 40m, they run over to help. The weapon is sheathed again
 10 seconds after the last hit.
 
-Before clearing a fence, the guard assigned to it walks up and swings their
-weapon three times first, then clears every qualifying fence within 24m at
-once (protocol v158) — it isn't instant just because a guard walked past.
+Before clearing anything, the guard assigned to it walks up to the nearest
+target and swings their weapon three times first, then clears everything
+qualifying within 24m at once (protocol v158) — it isn't instant just
+because a guard walked past.
 
 ## Breaking out when penned
 
@@ -81,16 +125,19 @@ cell it can walk to, treating doorways as open:
 
 - Reaching a worldgen road, or getting **48 cells** away, means it isn't
   penned — nothing gets torn down.
-- If the flood runs out of room on every side, every estate fence ringing
-  that area is forfeited. Nested rings get torn through up to **8 layers**
-  deep in one request.
-- This seizure ignores the warning period and isn't covered by the
-  [buy-back rule](#violations-and-buy-back) — it's forfeit outright, no
-  buy-back — but the violation count still goes up by one and Karl's letter
-  still goes out.
+- If the flood runs out of room on every side, every estate fence *and*
+  estate furniture ringing that area is forfeited (furniture that's a map
+  object, like village or inn pieces, doesn't count). Nested rings get torn
+  through up to **8 layers** deep in one request.
+- This seizure isn't covered by the [buy-back rule](#violations-and-buy-back)
+  — it's forfeit outright, no buy-back — but the violation count still goes
+  up by one and Karl's letter still goes out.
 - A guard standing on furniture (a bed, a chair) doesn't count as penned,
   since the furniture itself walls in every side of its own cell; nothing
-  gets torn down and the guard isn't sent back.
+  gets torn down and the guard isn't sent back. A guard boxed into one
+  cell entirely by furniture also hits this check, but the movement rule
+  that normally yields to a trapped mover lets it step out of that cell
+  anyway.
 - If the guard is still penned after its fences are cleared (say, walled in
   by a house or an operator-placed fence), it's teleported straight back to
   town.
