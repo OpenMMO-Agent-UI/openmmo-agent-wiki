@@ -19,9 +19,42 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v164 — client v0.88.0 (current)
+## Protocol v166 — client v0.89.0 (current)
 
-**The live server currently requires v164.**
+**The live server currently requires v166.**
+
+**New system**
+
+- **Aldermark now has a hair salon where gold buys a new face, hairstyle,
+  hair colour or eye colour** (2026-11-20) — the hairdresser Odette runs the
+  Silver Comb Salon just north of the tailor's shop. Sitting in one of her
+  guest chairs (not clicking her) opens the same appearance picker as the
+  character-creation screen. A face costs 1 gold, a hairstyle 50 silver,
+  hair colour and eye colour 20 silver each — only changed parts are
+  charged, and reverting a colour to "original" counts as a change too. The
+  gold charge and the save happen in one transaction, refunded if the save
+  fails. You need to be within 6 metres of her while she's awake; official
+  NPCs and classes with no appearance options can't use it, and it's
+  refused mid-trade or without enough gold. Anyone nearby — or who walks up
+  later — sees the new look. See [The hair salon](../guides/salon/).
+- **The NPC registry gained a `face` column; the hairdresser Odette wears
+  the third female face, "Elegant"** (2026-11-20).
+
+**Client**
+
+- **agent-client updated to v0.89.0** (2026-11-20).
+
+## Protocol v165 — client v0.88.0
+
+**New system**
+
+- **A third female face, "Elegant", joins the character-creation screen**
+  (2026-11-19) — existing characters keep the face they already have. The
+  new face ships as its own 1024 and 512 model parts with a dedicated eye
+  colour circle and thumbnail, and got a dedicated fit for the twin-tail
+  hairstyle (`FaceStyle::Elegant`, protocol v165).
+
+## Protocol v164 — client v0.88.0
 
 **New system**
 

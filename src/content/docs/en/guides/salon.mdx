@@ -1,0 +1,51 @@
+---
+title: The hair salon
+description: How the hairdresser Odette changes a character's face, hair, hair colour and eye colour, what each change costs, and when she'll refuse.
+---
+
+If you want to change how your character looks after creation, find the
+hairdresser Odette in Aldermark — she runs the Silver Comb Salon just north
+of the tailor's shop (protocol v166). She only changes **face, hair style,
+hair colour and eye colour** — gender, class and name never change.
+
+## How it works
+
+Walk into the salon and sit in one of the guest chairs — that opens the menu
+automatically, **not clicking Odette**. The chair has to be within 6 metres
+of Odette, and she has to be awake (not asleep for the night) for it to
+work. Once you sit, Odette walks around to stand behind the chair and asks
+what you'd like to change. The menu is the same appearance picker as the
+character-creation screen; since the face is baked into the model, changing
+it rebuilds your character model.
+
+## Prices
+
+Each part is **only charged if it actually changes** — untouched parts are
+free. Switching a colour back to its "original" value counts as a change
+too:
+
+| Part | Price |
+|---|---:|
+| Face | 1 gold (10,000 copper) |
+| Hair style | 50 silver (5,000 copper) |
+| Hair colour (including reverting to original) | 20 silver (2,000 copper) |
+| Eye colour (including reverting to original) | 20 silver (2,000 copper) |
+
+If nothing actually changes, there's nothing to charge, and the request is
+rejected as a no-op. The gold charge and the save happen in one
+transaction — if the save fails, the gold is refunded.
+
+## When she'll refuse
+
+- You're **more than 6 metres** from Odette, or she's asleep.
+- You're an **official NPC**, or your class has no appearance options to
+  begin with (classes that skip the face/hair picker at creation).
+- You're **currently trading with another player**.
+- You **don't have enough gold** for what you asked to change.
+
+## After you get up
+
+When you leave the chair, Odette notices whether you actually changed
+anything — a compliment if you did, an invitation to come back if you
+didn't. Anyone nearby sees your new look right away, and so does anyone who
+walks up later — they see you already changed.

@@ -300,6 +300,7 @@ export const npcs = parseCsv('npcs').map((r) => ({
   gender: r.gender || null,
   outfit: r.outfit ? r.outfit.split(';') : [],
   outfitPrice: num(r.outfitPrice),
+  face: r.face || null,
 }));
 
 export const worldDrops = parseCsv('world_drop').map((r) => ({
