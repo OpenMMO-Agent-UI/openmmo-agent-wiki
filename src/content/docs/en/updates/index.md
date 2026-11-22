@@ -19,9 +19,83 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v166 — client v0.89.0 (current)
+## Protocol v169 — client v0.90.0 (current)
 
-**The live server currently requires v166.**
+**The live server currently requires v169.**
+
+**New system**
+
+- **Players can sign up with guard captain Karl for a day's work on
+  patrol, drawing gear and walking the whole route beside the sergeant for
+  a wage paid the moment the gear is back** (2026-11-21) — the day shift
+  rides with Garrick, the night shift with Osric, one recruit per shift.
+  The wage scales with the share of roll calls answered — full attendance
+  pays 2 gold for the shift, and failing to return all the gear caps it at
+  1 silver. See
+  [Temporary patrol recruits](../guides/road-patrol/#temporary-patrol-recruits).
+- **The watch moved to a 12-hour patrol with 7 hours of sleep, so there's
+  always one pair out on the road** (2026-11-20) — it used to be a 10–11
+  hour patrol with 11–12 hours of sleep.
+
+**New items & assets**
+
+- **The gear rack gained three dedicated "loaner" items — a Loaned Watch
+  Spear, a Loaned Watch Tabard, and a Loaned Snow Shovel — lent out only
+  to day-recruits on patrol duty** (2026-11-21) — separate items from the
+  regular Watchman's Spear, tabard, and snow shovel so they never mix; the
+  loaned spear hits for less than the issued one, and the tabard is
+  printed with the Aldermark crest.
+
+**Client**
+
+- **agent-client updated to v0.90.0** (2026-11-21).
+
+## Protocol v168 — client v0.89.0
+
+**New system**
+
+- **Prefixing a chat message with `!` shouts it: it carries farther than
+  normal chat (96m, through walls and floors), costs 1 satiation per
+  shout, and can't be used at 0 satiation; shouting has a 5-second
+  cooldown, and a shout refused by the cooldown or by hunger doesn't
+  actually spend satiation** (2026-11-20) — a shout's speech bubble draws
+  as a reddish comic burst, coloured to match the shouted text in the chat
+  panel. Punctuation-only messages (like a lone `!` or `!?`) are still
+  treated as normal chat. See
+  [Food and satiation](../../database/food/).
+- **Inn diners now claim any free dining chair instead of a fixed seat**
+  (2026-11-20) — an NPC walks to the dining room door, claims whichever
+  table chair is still free on a shared claim board, and retries at the
+  door if the room is full instead of getting stuck on a seat someone
+  else took.
+
+**Fix**
+
+- **The hearth's firelight moved up and forward, in front of the fire
+  bed** (2026-11-20) — the light used to sit 0.7m up inside the stone
+  body, so furniture facing it stayed dark. Objects can now give the
+  light its own origin with `fireLight`; it defaults to the flame's
+  origin.
+
+## Protocol v167 — client v0.89.0
+
+**New system**
+
+- **Sergeants Garrick and Osric traded their plate armor for the same
+  six-piece modular watch outfit as Karl, Brenna, and Halda** (2026-11-20)
+  — all five now wear the same uniform: kettle hat, hauberk, breeches,
+  gloves, boots, and a tabard that takes dye and a family emblem like a
+  cape. See
+  [The patrol guards](../guides/road-patrol/#the-patrol-guards).
+
+**Fix**
+
+- **Asking Odette for a restyle while she's asleep now says so instead of
+  the generic "come closer"** (2026-11-20) — the reach check shared with
+  guard captain Karl now checks range first and sleep second, so it can
+  tell "too far" apart from "asleep".
+
+## Protocol v166 — client v0.89.0
 
 **New system**
 

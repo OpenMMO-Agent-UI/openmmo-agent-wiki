@@ -76,13 +76,23 @@ visual — it doesn't change movement speed or cold exposure.
 
 | Time | Day watch (Garrick, Brenna, Karl) | Night watch (Osric, Halda) |
 |---|---|---|
-| 05:15 | Wake, breakfast at the inn | Asleep |
-| 05:45 | Report to Karl, head out | |
-| 06:05–17:00 | Patrol; Karl walks a lap of the village on the hour | |
-| 17:00 | Dinner at the inn | |
-| 17:50 | | Wake |
-| 18:40 | | Report to Karl, head out |
-| 19:00–05:00 | | Patrol |
+| 05:10 | Wake, breakfast at the inn | On patrol |
+| 05:40 | Report to Karl, head out | |
+| 06:00 | Patrol begins; Karl walks a lap of the village on the hour | Patrol ends, breakfast at the inn |
+| 06:45 | | Off duty: roam the village |
+| 08:15 | | Off duty: at the inn |
+| 10:00 | | Asleep |
+| 17:00 | Karl: dinner at the inn | Wake |
+| 17:15 | | Dinner at the inn |
+| 17:40 | | Report to Karl, head out; Karl back at the post |
+| 18:00 | Patrol ends, dinner at the inn | Patrol begins |
+| 18:45 | Off duty: at the inn | |
+| 20:30 | Off duty: roam the village | |
+| 22:10 | Asleep (Karl too) | |
+
+The watch moved to a 12-hour patrol with 7 hours of sleep (since
+2026-11-20; it used to be a 10–11 hour patrol with 11–12 hours of sleep),
+so there's always one pair out on the road.
 
 The route runs along Aldermark's north road, out past the Skeleton Crypt
 fork to the Thieves' Den fork and back — about **1,145m** round trip, taking
@@ -93,14 +103,13 @@ picks back up where it stopped; guards respawn at the guard station.
 
 All four are level 50 with 700 max HP and Guard 24. Since protocol v163
 they all carry a Watchman's Spear, which thrusts two-handed instead of
-slashing. Garrick and Osric still wear plate armor and a wool cape printed
-with the Aldermark crest (protocol v157); Brenna and Halda instead wear a
-six-piece modular watch outfit — kettle hat, hauberk, breeches, gloves,
-boots, and a tabard that takes dye and a family emblem like a cape (the
-kettle hat hides any hairstyle underneath). Karl, back at the guard
-station, wears the same watch outfit. A guard's name shows their **rank**
-in place of a family name: Karl is captain, Garrick and Osric are
-sergeants, and Brenna and Halda are guards.
+slashing. As of 2026-11-20, everyone — including Garrick and Osric, who
+used to wear plate — wears the same six-piece modular watch outfit: kettle
+hat, hauberk, breeches, gloves, boots, and a tabard that takes dye and a
+family emblem like a cape (the kettle hat hides any hairstyle underneath).
+Karl, back at the guard station, wears the same outfit. A guard's name
+shows their **rank** in place of a family name: Karl is captain, Garrick
+and Osric are sergeants, and Brenna and Halda are guards.
 
 Karl, Brenna, and Halda also offer their own watch outfit (helmet, hauberk,
 breeches, gloves, boots, and tabard — not the spear) for sale or as a gift
@@ -116,6 +125,69 @@ Before clearing anything, the guard assigned to it walks up to the nearest
 target and swings their weapon three times first, then clears everything
 qualifying within 24m at once (protocol v158) — it isn't instant just
 because a guard walked past.
+
+## Temporary patrol recruits
+
+Since protocol v169, a player can ask Karl for a day's work on patrol: the
+day shift rides with Garrick, the night shift with Osric, one recruit per
+shift. A recruit draws gear, walks the whole patrol beside the sergeant,
+and gets paid the moment the gear is back on the rack.
+
+### Signing up
+
+Ask Karl for work while standing near him (trading distance) and he's
+awake, or right-click him and choose the patrol job option — his LLM
+recognizes the spoken request too. He names the sergeant, the shift's
+start time, and the wage; accept and you're on the roll.
+
+Only one recruit per shift: the day shift has Garrick's slot, the night
+shift has Osric's. If both are filled, Karl just says there's no opening.
+A slot frees the instant that shift's patrol returns. A recruit who's
+hired but never shows up for a single roll call still counts as a no-show
+once that shift finishes its patrol — no wage, and the slot opens up the
+same way.
+
+### Gear
+
+Draw gear from the rack by the guard station's front door: a **Loaned
+Watch Spear** (weaker than the standard Watchman's Spear), and a **Loaned
+Watch Tabard** printed with the Aldermark crest; if there's snow lying at
+the rack when you draw, you also get a **Loaned Snow Shovel**. All three
+are dedicated loaner items that never mix with the ordinary versions. Too
+heavy to carry the spear and you get nothing; too heavy for just the
+tabard or shovel and you still get the rest. Gear can be returned early
+before the patrol leaves, but not once it's underway.
+
+Return every piece to the rack once the patrol's back, and the wage lands
+immediately — no need to report to Karl separately. If something got lost
+along the way, the rack window has a "write off and settle" button to
+close it out.
+
+### Roll call and wage
+
+Only the sergeants (Garrick, Osric) call the roll — once leaving, once at
+every waypoint, and once at the final stand-down. A recruit must be alive,
+on the ground, and within **20m** of the sergeant at roll call. Standing
+more than 20m away gets you called back and rechecked 10 seconds later;
+make it back in time and that call still counts. That grace period only
+applies once per recruit every 5 real minutes.
+
+The wage scales with the share of roll calls you answered: full attendance
+pays the shift's full **2 gold**; missing even one call halves that before
+applying the ratio. Failing to return all the loaned gear caps the wage at
+**1 silver**. A paid-off account must rest **8 real hours** before being
+hired again, and only one character per account can be on the roll at a
+time.
+
+### Other notes
+
+While on duty, a recruit can use the loaned spear to clear road
+obstructions and the loaned shovel to clear snow, under the same rules as
+the regular guards (see [Violations and buy-back](#violations-and-buy-back))
+— except the spear only works within **30m** of the sergeant's last
+roll-call position. A recruit can quit any time before the patrol
+returns: the loaned gear is taken back on the spot, with no wage and no
+rest requirement.
 
 ## Breaking out when penned
 
