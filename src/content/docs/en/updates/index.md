@@ -19,9 +19,214 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v169 — client v0.90.0 (current)
+## Protocol v174 — client v0.91.0 (current)
 
-**The live server currently requires v169.**
+**The live server currently requires v174.**
+
+**New system**
+
+- **Monsters marked dormant now spawn as statues and only wake when someone
+  comes close or hits them** (2026-11-23) — a dormant monster has no name tag
+  or health bar and holds its pose until a living player steps within its
+  wake range or strikes it; it then shakes off the stone, fights through its
+  own ambush behavior, and settles back into stone after 30 seconds with
+  nobody left to fight. Dormant monsters skip the regular AI tick entirely
+  while asleep. The statues in [the Garden of Stone](../../database/dungeons/)
+  wake at 3 meters.
+
+**New items & assets**
+
+- **The Garden of Stone's floors are now built as a buried Greek temple**
+  (2026-11-23 to 2026-11-24) — the surface entrance is a colonnaded facade
+  with a pediment; crates are drawn as petrified adventurers crumbling to
+  rubble, chests are marble with a sunken well, room doors are stone arches,
+  and statues and amphorae each shatter with their own sound. The boss hall
+  keeps its rock pillars for sightlines and movement, but they're now paved
+  and capped with the wider column model.
+- **The Temple Guardian, Buried Digger, Waking Statue, Stonescale Serpent,
+  Half-Turned Excavator, Serpent Handmaiden, Stonebreaker, Medusa and the
+  Floating Eye all got their own models** (2026-11-23 to 2026-11-24) — the
+  Stonescale Serpent is a 4-meter crawling body that trails along the path
+  its neck already walked instead of swinging as one rigid piece; Medusa's
+  movement, attacks and tail sweep were tuned alongside it.
+- **The Mirror Shield now carries a real reflection** (2026-11-24) — it
+  captures a small cube map of the terrain or dungeon around the player,
+  recaptured on movement, elevation change, or a shift in daylight; character
+  select reflects a painted stage instead.
+- **The Blindfold, Floating Eye Meat, and Ring of Teleport Control all got
+  their own models and icons** (2026-11-24).
+
+**Balance**
+
+- **The Garden of Stone deepened from 25 to 30 floors** (2026-11-25) — the
+  first five floors now open with a Temple Guardian and Buried Digger band,
+  ordinary monsters climb from level 28 on floor 1 to level 42 by floor 29,
+  and Medusa waits on floor 30. Floor 25's key turns back into a plain key,
+  and a new gold floor-30 key is needed for the final chest.
+- **Sundered Bastion, Shadow Guild, and Blackvein Mine now lend at least +35
+  to-hit from floor 6 on** (2026-11-25) — these three dungeons used to barely
+  land a hit on guard-72 monsters from floors 6–16; hit rate there is back to
+  10–35%.
+- **Rica no longer sells the Blindfold** (2026-11-25) — thieves and miners
+  drop it instead, at a 0.01% chance.
+- **The Miner's Harness now adds a flat 30 kg to carry capacity instead of
+  +10%** (2026-11-25).
+
+**Performance**
+
+- **three.js and WebGPU are out of the login bundle** (2026-11-25) — the
+  mirror reflection and the temple's break sounds now load on first use
+  instead.
+- **Character appearance shares materials and shader pipelines, picking no
+  longer skins the full skeleton, and the Mirror Shield's reflection is
+  captured once per placement while standing still** (2026-11-24) — keeps
+  walking around town at 60 fps.
+
+**Client**
+
+- **agent-client updated to v0.91.0** (2026-11-25).
+
+## Protocol v173 — client v0.90.0
+
+**New system**
+
+- **The Floating Eye now stares down whoever struck it and holds them after
+  a blink** (2026-11-22) — it turns toward whoever hit it in melee, blinks
+  once, and the hold lands the instant its eye reopens; the hold lasts 15
+  seconds and costs 2d8 damage as it lets go. Turning to stone now has its
+  own sound, and a passive monster spawned with `/spawnmob` stays passive.
+- **Wooden bridges, floors and stairs now sound footsteps** (2026-11-23) —
+  heard by you and by other players within 12 meters, once every 0.75
+  meters, or every 1.55 meters while walking to match the walk animation.
+
+**Balance**
+
+- **Medusa's gaze no longer deals direct damage — it turns whoever it
+  reaches to stone for 30 seconds** (2026-11-23) — while someone stands
+  petrified, she breaks off from the fight, goes to the nearest one, and
+  sweeps them with her tail, dealing the same 5d40+300 damage her gaze used
+  to deal directly as it shatters the stone. Stone left to wear off on its
+  own releases for half that. Her tail-sweep facing is now kept in sync with
+  what the client shows.
+
+**Fix**
+
+- **Fixed the Floating Eye's stare deadlocking the attacker it held, which
+  froze the whole login system behind it** (2026-11-22) — a melee swing
+  holds the striker's connection session while it resolves, and the stare
+  could turn that same striker to stone mid-swing; turning to stone then
+  tried to lock the same session again, so the swing never finished. Anyone
+  trying to log out had to wait on that stuck swing, so logouts queued up
+  and every later login timed out behind them. Turning to stone no longer
+  stops the attack on its own — movement already ends it, and the swing
+  itself ends the moment it petrifies its target.
+- **Player name tags no longer show through dungeon walls** (2026-11-22).
+
+## Protocol v172 — client v0.90.0
+
+**New system**
+
+- **A new dungeon, the Garden of Stone, opened south of Blackvein Mine, with
+  Medusa waiting at the bottom** (2026-11-22) — a 25-floor dungeon for level
+  40 and up, where ordinary monsters climb from level 28 on floor 1 to level
+  40 by floor 25 (through a per-dungeon depth offset, level cap, and to-hit
+  curve), rolling heavier damage dice past floor 25. Every two to four
+  minutes, and at 75%, 50% and 25% health, Medusa turns her gaze on a random
+  player in sight and deals 5d40+300 to everyone her sight reaches in a
+  quarter; those her gaze kills are left standing as statues among the
+  nameless excavators already there. Her hall has twelve rock pillars to
+  duck behind. The dungeon's last chest rolls the Ring of Teleport Control
+  at 5% — see [Teleportation & bookmarks](../../guides/teleportation/).
+
+**New items & assets**
+
+- **Mirror Shield** — held toward Medusa, it throws a third of her gaze back.
+- **Blindfold** — wearing it, her gaze can't touch you at all, at the cost of
+  -10 to-hit and a shorter bow range.
+- **Floating Eye Meat** — drops from the Floating Eye; eating it grants the
+  telepathy that makes up for the range the Blindfold costs.
+- **The Floating Eye got its own model, with blinking eyelids** (2026-11-22).
+
+## Protocol v171 — client v0.90.0
+
+**New system**
+
+- **You can now save the spot you're standing on as a bookmark, and aim a
+  teleport straight at one with a blessed scroll or the Ring of Teleport
+  Control** (2026-11-22) — a bookmark can only be saved outdoors, outside
+  any room, not in water, not on an occupied tile, and not on a steep slope;
+  each character gets up to 32, with names up to 24 characters. Agent
+  clients can save and aim bookmarks the same way, or walk to the chapel and
+  ask Maelis to bless a scroll in hand. See
+  [Teleportation & bookmarks](../../guides/teleportation/).
+- **Maelis, at the chapel, blesses plain teleport scrolls into ones that can
+  aim at a bookmark, for 5,000 copper each** (2026-11-22) — only while she's
+  standing at her lectern (whenever her schedule has no other action
+  assigned); you can also ask her outright to open the blessing menu for
+  whoever's nearby.
+
+**New items & assets**
+
+- **Blessed Scroll of Teleportation** — a teleport scroll carrying the
+  "teleport control" effect, so reading it lets you pick a bookmark as the
+  destination.
+
+**Balance**
+
+- **Maelis now stays at her rectory desk after sunset and doesn't sleep until
+  22:00, returning to the desk at 04:00 until breakfast** (2026-11-22) — she
+  used to go to bed at sunset, as early as 16:32 in winter.
+- **Rica, Aldwin and Rowan now eat by the clock and sleep at 23:00**
+  (2026-11-22) — Rica and Aldwin now eat at 06:00 and 19:00; Rica and Rowan
+  keep their shops open until bed; Aldwin leaves his desk after sunset for
+  another one in his own room. The price meeting also moved from sunset to
+  19:30, right after dinner.
+
+## Protocol v170 — client v0.90.0
+
+**New system**
+
+- **The chat command `/join_dance <name>` lets you join a nearby dance**
+  (2026-11-20) — stand within 5 meters and 2 meters of height of someone
+  dancing the twist, macarena or chicken dance to join them: same dance,
+  same facing, same beat, up to 8 per group. You can't join while down,
+  petrified, mounted or in combat, and can't join an invisible or petrified
+  dancer; the spot you join from can't cross a wall and has to be reachable
+  by both of you. A prompt reading "*name* is dancing the *dance*" offers
+  the nearest group, with Join and close buttons — closing it quiets every
+  dance in reach, and a dancer you just asked isn't offered again for 10
+  seconds.
+- **Aldermark's registered townsfolk now know each other, with quiet
+  one-sided affections for some** (2026-11-21) — twelve personas gained
+  attachments that only show in small habits and evasive answers, like a
+  maid now greeting Karl as "Captain" instead of as a traveller.
+
+**Balance**
+
+- **Healing potions now share a single 1-second cooldown** (2026-11-21) —
+  the bag shows the time left, the quickslot icon shrinks to match, and you
+  can no longer chain-drink them.
+- **Shop prices' long-term growth target dropped sharply** (2026-11-21) — it
+  used to be tuned to match "roughly +7.5% a real month," as measured in
+  November 2026; it now targets "about +5% per in-game year (360 game-days)"
+  instead, which works out to roughly +49% a real year. See
+  [Shops & economy](../../database/economy/#price-index-the-night-market).
+
+**Fix**
+
+- **NPCs can no longer notice players through house walls** (2026-11-21) —
+  arrivals, departures, the nearby-player list, and the "someone's nearby"
+  wake condition now only count people in the same house, or outdoors when
+  both sides are.
+- **Fixed a bug where the torch looked unlit after a page reload**
+  (2026-11-21) — the water and mirror reflection/refraction passes
+  temporarily hide the scene's light groups, and a material whose shader
+  finished building during that window got cached without them, staying dark
+  until the next reload.
+- **The character window now also opens from clicking the gear rack**
+  (2026-11-21).
+
+## Protocol v169 — client v0.90.0
 
 **New system**
 

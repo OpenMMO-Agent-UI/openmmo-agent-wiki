@@ -1,0 +1,76 @@
+---
+title: Teleportation & bookmarks
+description: How random teleport scroll landings are weighted, how bookmarks are saved, and how blessed scrolls and the Ring of Teleport Control aim a teleport at one.
+---
+
+A plain **teleport scroll** (`scroll_of_teleportation`) sends you somewhere between 32 meters
+and 2 kilometers away, horizontally — outdoors, or on any floor of any dungeon. The east-west
+edges follow the world's cylindrical wrap.
+
+## Landing odds
+
+Every square meter of ground you could stand on gets the same weight, wherever it is — your
+starting floor, the dungeon's name, whether you've been there before, and your character's level
+don't change the odds. The rule is:
+
+> **Chance of landing on a given floor after a successful teleport = that floor's standable area
+> ÷ (the outdoor world's standable area + every dungeon floor's standable area)**
+
+Bigger floors come up more often, and the outdoor world dwarfs any single dungeon floor, so
+landing in a dungeon is rare. Walls, water, obstacles, stairs and steep slopes don't count as
+standable area; buildings only exclude the floor tiles inside a room. Furniture, fences, and
+dungeon ground props only block the specific tile they occupy, so a scroll can still drop you in
+the middle of a town square. **Monsters don't affect where you land** — a teleport is not
+guaranteed to put you somewhere safe.
+
+A scroll is only consumed on a successful landing, and you can read one mid-combat. You can't use
+one while dying or while it's listed in a trade. Landing in a dungeon dismounts you, and landing
+outdoors dismounts a boat too. Teleport scrolls aren't on any shop's default stock; the shared
+world-drop chance is 1%, from monsters, chests and breakable props alike.
+
+## Bookmarks
+
+A **bookmark** saves the spot you're standing on under a name you choose. Each character gets up
+to **32 bookmarks**, names run up to **24 characters**, and no two bookmarks on the same character
+can share a name, case-insensitively. Where you can save one follows the same rule as where a
+random teleport can land: outdoor ground (never inside a dungeon floor), not inside a room, not
+in water, not on an occupied tile, not on a steep slope. You can't bookmark someone else's estate
+unless you share a family. The server re-checks that same rule again the instant you teleport to
+a bookmark, in case the spot stopped being valid since you saved it.
+
+The web client opens the bookmark window from the world map's bookmark button, or with
+`/bookmark`.
+
+## Aiming a teleport at a bookmark
+
+To send a teleport scroll at a bookmark instead of a random landing, you need one of:
+
+- **Blessed Scroll of Teleportation** (`blessed_scroll_of_teleportation`) — a teleport scroll
+  carrying the "teleport control" effect. Read it plainly and it still lands randomly like a
+  regular scroll; choose a bookmark when reading it and it goes straight there, however far away.
+- **Ring of Teleport Control** (`ring_of_teleport_control`) — wearing it lets even a plain
+  teleport scroll aim at a bookmark, turning every ordinary scroll you carry into a free blessed
+  one. The last chest of [the Garden of Stone](../../database/dungeons/) rolls this ring at 5%.
+
+Aiming requires the scroll you're reading, or something you're wearing, to carry the "teleport
+control" effect, and that you're not in combat. If either condition fails, the destination choice
+is refused — the scroll isn't consumed, and it doesn't fall back to a random teleport either. If
+you have more than one bookmark, reading a scroll that can aim shows you the destination list
+first.
+
+## Getting a scroll blessed by Maelis
+
+Maelis, at the chapel, blesses unlocked plain teleport scrolls into Blessed Scrolls of
+Teleportation for **5,000 copper apiece**, but only while she's standing at her lectern (whenever
+her current schedule entry has no other action assigned). Right-click her nearby to open the
+blessing menu; if she isn't at the lectern, she turns the request down on the spot.
+
+## Teleport presentation
+
+Random teleports, the Scroll of Return, the Scroll of Estate Return, and an accepted party summon
+all share the same effect: a blue-white pillar of light and motes rises from where you stood, your
+character fades out at 0.3 seconds, and the 0.52-second departure effect has to finish before the
+actual use request goes out. At the destination, your character reappears 0.18 seconds after the
+descending light touches the ground, and the ground ring and afterglow fade out slowly. You can't
+move or use another item for the whole span from departure to arrival; dying, using another
+teleport, or disconnecting mid-departure cancels the request before it's sent.

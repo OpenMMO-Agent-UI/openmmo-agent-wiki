@@ -213,6 +213,12 @@ export const monsters = parseCsv('monsters').map((r) => {
     reactionMs: num(r.reactionMs),
     crystalGlow: bool(r.crystalGlow),
     bodyRadius: num(r.bodyRadius),
+    /** Debuff a stare/gaze attack applies, e.g. the floating eye's hold or Medusa's petrify (data-src/monsters.csv stareDebuff). */
+    stareDebuff: r.stareDebuff || null,
+    /** Dormant until a living player comes within this many metres or strikes it (data-src/monsters.csv ambushRange). */
+    ambushRange: num(r.ambushRange),
+    /** Trails its body along its neck's path instead of swinging as a rigid whole; 'locomotion' keeps the head/torso aiming at the target while only the tail trails (data-src/monsters.csv bodyTrail). */
+    bodyTrail: r.bodyTrail === 'locomotion' ? 'locomotion' : bool(r.bodyTrail),
   };
 });
 
@@ -237,6 +243,20 @@ export const dungeons = parseCsv('dungeons').map((r) => ({
         return { itemId, chance: Number(chance) };
       })
     : [],
+  /** Floors its monsters' level/to-hit curve starts past, e.g. the Garden opening five floors deep under tier-5 (data-src/dungeons.csv depthOffset). */
+  depthOffset: num(r.depthOffset) ?? 0,
+  /** Monster level no longer rises past this floor (data-src/dungeons.csv levelCap). */
+  levelCap: num(r.levelCap),
+  /** To-hit bonus floor: starts at `base`, +1 every `floorsPerPoint` floors (data-src/dungeons.csv placeBonus, "base:floorsPerPoint"). */
+  placeBonus: (() => {
+    if (!r.placeBonus) return null;
+    const [base, floorsPerPoint] = r.placeBonus.split(':');
+    return { base: Number(base), floorsPerPoint: Number(floorsPerPoint) };
+  })(),
+  /** Keeps those its monsters turn to stone as standing statues on their floor (data-src/dungeons.csv statues). */
+  statues: bool(r.statues),
+  /** Floor to-hit never drops below this even before `placeBonus` phases in (data-src/dungeons.csv minPlaceBonus). */
+  minPlaceBonus: num(r.minPlaceBonus) ?? 0,
 }));
 
 /** Monsters a dungeon's `spawnGroup` can roll per depth (data-src/dungeon_spawns.csv). */
@@ -334,4 +354,6 @@ export const debuffs = parseCsv('debuffs').map((r) => ({
   staggerM: num(r.staggerM),
   hitMod: num(r.hitMod),
   petrifies: bool(r.petrifies),
+  /** Damage rolled when the debuff ends, e.g. a hold or gaze breaking (data-src/debuffs.csv endDamage). */
+  endDamage: r.endDamage || null,
 }));

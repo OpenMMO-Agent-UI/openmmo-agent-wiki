@@ -37,6 +37,7 @@ export const LABELS = {
   家族系統: { en: 'Families', ko: '가문 시스템', ja: '家族システム', es: 'Familias', fr: 'Familles', pt: 'Famílias', id: 'Keluarga', th: 'ระบบตระกูล', hi: 'परिवार', bn: 'পরিবার', ar: 'العائلات' },
   騎乘系統: { en: 'Mounts', ko: '탑승 시스템', ja: '騎乗システム', es: 'Monturas', fr: 'Montures', pt: 'Montarias', id: 'Tunggangan', th: 'ระบบพาหนะ', hi: 'सवारी', bn: 'বাহন', ar: 'المركوبات' },
   道具鎖定: { en: 'Item locks', ko: '아이템 잠금', ja: 'アイテムロック', es: 'Bloqueo de objetos', fr: "Verrouillage d'objets", pt: 'Bloqueio de itens', id: 'Kunci item', th: 'การล็อกไอเทม', hi: 'आइटम लॉक', bn: 'আইটেম লক', ar: 'قفل الأغراض' },
+  傳送與書籤: { en: 'Teleportation & bookmarks', ko: '순간이동과 북마크', ja: 'テレポートとブックマーク', es: 'Teletransporte y marcadores', fr: 'Téléportation et signets', pt: 'Teletransporte e marcadores', id: 'Teleportasi dan markah', th: 'การเทเลพอร์ตและบุ๊กมาร์ก', hi: 'टेलीपोर्टेशन और बुकमार्क', bn: 'টেলিপোর্টেশন ও বুকমার্ক', ar: 'الانتقال الآني والإشارات المرجعية' },
   天氣系統: { en: 'Weather', ko: '날씨 시스템', ja: '天候システム', es: 'Clima', fr: 'Météo', pt: 'Clima', id: 'Cuaca', th: 'ระบบอากาศ', hi: 'मौसम', bn: 'আবহাওয়া', ar: 'الطقس' },
   客戶端: { en: 'Client', ko: '클라이언트', ja: 'クライアント', es: 'Cliente', fr: 'Client', pt: 'Cliente', id: 'Klien', th: 'ไคลเอนต์', hi: 'क्लाइंट', bn: 'ক্লায়েন্ট', ar: 'العميل' },
   下載: { en: 'Download', ko: '다운로드', ja: 'ダウンロード', es: 'Descargar', fr: 'Télécharger', pt: 'Baixar', id: 'Unduh', th: 'ดาวน์โหลด', hi: 'डाउनलोड', bn: 'ডাউনলোড', ar: 'التنزيل' },
@@ -79,6 +80,7 @@ const NAV = [
     ['家族系統', '/guides/family/'],
     ['騎乘系統', '/guides/mounts/'],
     ['道具鎖定', '/guides/item-locks/'],
+    ['傳送與書籤', '/guides/teleportation/'],
     ['天氣系統', '/guides/weather/'],
   ]],
   ['客戶端', [
