@@ -1,0 +1,145 @@
+---
+title: Estate Defense
+description: The war horn's four grades, the five-wave timetable, banner durability and the rewards for holding it, and the disgrace penalty for losing.
+---
+
+import { itemsById, formatCoins } from '../../../../lib/gamedata.js';
+import { itemName } from '../../../../lib/en.js';
+
+Shipped in protocol v182 — a **war horn**, a rare hunting drop, blown at
+night on clear ground on your own (or your family's) estate calls five
+waves of monsters from all sides. Kills pay exactly like any ordinary
+monster; holding the banner is what earns the extra chest and trophy. It's
+a small-scale event scoped to one estate and one family, not a town-wide
+affair.
+
+## Getting a war horn
+
+War horns (`war_horn_1` through `war_horn_4`) are a world drop from monster
+kills in the wild or in dungeons, at roughly **0.025%** (about one per 4,000
+kills). Which grade drops is set by **the level of the monster you killed**:
+
+| Grade | Item | Drops from kills leveled | Base price |
+|---|---|---:|---:|
+| Lesser | **{itemName('war_horn_1')}** | 1–12 (outdoors, shallow dungeons) | {formatCoins(itemsById.get('war_horn_1').basePrice)} |
+| — | **{itemName('war_horn_2')}** | 13–25 (outdoors far from town, tier 3–5 dungeons) | {formatCoins(itemsById.get('war_horn_2').basePrice)} |
+| Greater | **{itemName('war_horn_3')}** | 26–35 ([the Garden of Stone](../../database/dungeons/), floors 1–15) | {formatCoins(itemsById.get('war_horn_3').basePrice)} |
+| Supreme | **{itemName('war_horn_4')}** | 36+ (Garden of Stone, floor 16 down) | {formatCoins(itemsById.get('war_horn_4').basePrice)} |
+
+War horns can be traded between players and sold to merchants, so you can
+simply buy a grade you can't farm yourself. Difficulty follows the **war
+horn's grade**, not your estate's location — wave monster levels and
+to-hit bonuses mirror the matching Garden of Stone floors.
+
+## Conditions before blowing it
+
+Using a war horn on clear ground on your own estate (or a family estate
+where you're the **head**) runs a list of server checks; failing any of
+them tells you why and leaves the horn unused:
+
+- You and the banner spot must be on the same estate; only the family
+  **head** may blow the horn on a family estate — a member who finds one
+  has to hand it to the head or drop it in the family chest.
+- That estate must have no unpaid tax.
+- You must be standing on ground floor, outdoors — not on water, indoors,
+  on a roof, or on a second floor.
+- **A 10m clear radius around the banner spot** — fences, houses, and
+  furniture (including family banners and storage chests) all count no
+  matter who placed them; trees and terrain don't. Failing this tells you
+  where the nearest obstruction is.
+- That estate can't already have a defense running — only one at a time
+  per estate.
+- At least three of the four compass directions around the clear circle
+  need a valid monster spawn point.
+- You can't be in combat, dead, or have a pending trade.
+- It has to be **night** (sunset to sunrise, checked once against the
+  server's sun position at the moment you blow it).
+
+## The five waves
+
+Blowing the horn consumes it and plants a **defense banner** 1m in front of
+you (showing your family's emblem on a family estate), then runs a fixed
+timetable:
+
+| Time | Event |
+|---|---|
+| 0:00 | Horn blown, banner planted, alarm sent to the family and the summoner's party |
+| 0:30 | Wave 1 (one direction) |
+| 1:50 | Wave 2 (one direction, rotating clockwise) |
+| 3:10 | Wave 3 |
+| 4:30 | Wave 4 |
+| 5:50 | Wave 5 — all four directions at once, with the leader mixed in |
+| 7:00 | Earliest possible success check |
+| 10:00 | Any monster still standing at this point means the defense failed |
+
+Each wave stands in a pillar of light and low fog for two seconds before
+marching toward the banner, giving you time to read which direction it's
+coming from. Monster count is **fixed regardless of how many people show
+up** — 6 per wave for waves 1–4, plus 3 per direction and one leader for
+wave 5, 37 monsters total. The leader is drawn a third larger than an
+ordinary monster.
+
+The banner has **30 durability**: a raider with nothing to fight swings at
+it on its own attack cooldown, 1 point per ordinary monster hit, 3 for the
+leader. Any of the following fails the defense; the horn still counts as
+used and kills already earned pay out, but there's no success reward:
+
+- The banner's durability reaches 0.
+- **A wipe** — no eligible participant alive within 30m of the banner for
+  10 straight seconds (checked from wave 1 onward).
+- Ten minutes pass with any wave monster still alive.
+
+## Rewards for holding it
+
+**Kill rewards are identical to any ordinary monster** — XP split by damage
+share, loot from the usual drop tables — except wave monsters never drop a
+war horn themselves. Clearing all five waves, with the check happening no
+earlier than 7:00, counts as a win:
+
+- **Eligibility**: the summoner, family members on a family estate, and
+  the summoner's party. Anyone passing by can still fight and still earns
+  kill rewards — they just don't qualify for the rewards below.
+- **Threshold**: alive within 30m of the banner at the moment of success,
+  having dealt damage totaling at least **twice that grade's average wave
+  monster HP**.
+- **The chest**: rises where the banner stood, split into one share per
+  qualifying participant. Each share runs roughly 3 healing potions, one
+  grade-matched Defender's Purse, one return-type scroll, a chance at a
+  weapon or armor enchant scroll (10% each), a Phoenix Talisman (5%), and
+  a smaller chance at grade-appropriate gear. It opens on its own after 5
+  minutes if nobody opens it.
+- **A trophy**: the summoner additionally gets a wall trophy to hang on
+  the estate — **{itemName('trophy_orc_axes')}**,
+  **{itemName('trophy_cyclops_skull')}**, **{itemName('trophy_statue_face')}**,
+  or **{itemName('trophy_serpent_head')}**, matching the horn's grade. It
+  can't be traded or sold, and clicking it shows the defense record behind
+  it.
+- **A title**: a qualifying participant's first win at a given grade grants
+  a matching title — see
+  [Titles](../../guides/titles/#estate-defense-titles-and-disgrace).
+
+## Defense failure: disgrace
+
+Losing a defense hangs a "Who Lost the Banner" disgrace for **ten days**,
+shown in the same spot a chosen title would be, covering whatever title was
+showing (your pick isn't lost — it comes back once disgrace expires).
+
+- On a family estate, the loss disgraces the **whole family** (online or
+  not, including anyone who joins within the ten days); on an estate with
+  no family, only the summoner is disgraced.
+- Failing again while already disgraced restarts the ten-day count from
+  that moment — it doesn't stack.
+- Blowing the horn again while disgraced and winning washes the disgrace
+  away immediately, without waiting out the full ten days.
+
+Admins can open a practice run at their own position with `/warhorn N`
+(N being the grade), skipping the estate, night, and horn-consumption
+checks. The chest still appears, but no title is granted and no disgrace
+record is kept.
+
+## agent-client (bot players)
+
+There's no special notification format for this yet — bots follow exactly
+the same rules as human players: find a war horn, find clear ground, use it
+at night. Combat and the win/loss checks work identically, with no separate
+rally or auto-engage mechanism.

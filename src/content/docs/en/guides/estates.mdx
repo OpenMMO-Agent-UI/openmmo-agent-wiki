@@ -281,3 +281,32 @@ characters — recovering a sign doesn't keep its text.
 Sleeping on a placed **bed** or **rustic bed** for 16 consecutive seconds
 doubles HP and MP natural regen — see
 [Combat](../combat/#skills-and-mana-protocol-v71v79).
+
+## Aid cots and respawning (protocol v185)
+
+The **{itemName('furniture_aid_cot')}** (an ORKEA piece,
+{formatCoins(itemsById.get('furniture_aid_cot').basePrice)}, on display
+upstairs at the furniture shop) turns into a respawn point once placed on
+your own estate. When you die, the respawn dialog gains a "Respawn on my
+estate" option as long as your own estate has a safe Aid Cot (not picked up,
+with a floor still under it); if the family seat is also open at the family
+level, family members see a "Respawn at the family seat" option too.
+
+Only an Aid Cot acts as a respawn point — a plain bed or rustic bed still
+only doubles rest regen, never a respawn choice. The estate's owner can
+right-click an Aid Cot, or select it under `Estate Editor → Objects`, to open
+a menu that sets who may use it; the setting applies to every Aid Cot on that
+estate at once:
+
+| Setting | Who may respawn there |
+|---|---|
+| Owner only | Only your own characters (default) |
+| Family | The above, plus family members whose seat is this estate |
+| Anyone | Anyone, as long as it's closer than the town inn to where they died |
+
+An Aid Cot set to "Anyone" shows on the world map — effectively a free
+roadside inn out in the field, which makes an estate near a dungeon or
+hunting ground a good candidate. The death XP penalty is exactly the same as
+respawning in town; an Aid Cot only saves you the walk back. Dying during an
+[estate defense](../estate-defense/) still lets you respawn on your own
+estate's Aid Cot — it isn't blocked.

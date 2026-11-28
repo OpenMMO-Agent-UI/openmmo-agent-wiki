@@ -328,6 +328,8 @@ export const worldDrops = parseCsv('world_drop').map((r) => ({
   chance: num(r.chance),
   lowLevelChance: num(r.lowLevelChance),
   lowLevelMaxLevel: num(r.lowLevelMaxLevel),
+  minLevel: num(r.minLevel),
+  maxLevel: num(r.maxLevel),
 }));
 
 export const mapLabels = parseCsv('map_labels').map((r) => ({

@@ -48,6 +48,7 @@ export const categoryNames = {
   house_scroll: 'House scroll',
   peddler_stall: "Peddler's stall",
   raid_token: 'Raid token',
+  war_horn: 'War horn',
 };
 
 export const slotNames = {

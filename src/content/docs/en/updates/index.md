@@ -19,9 +19,264 @@ whether you need a new client.
 | Performance | Runtime efficiency and load times |
 | Client | Desktop client only; nothing to do with the game server |
 
-## Protocol v174 — client v0.91.0 (current)
+## Protocol v189 — client v0.92.2 (current)
 
-**The live server currently requires v174.**
+**The live server currently requires v189.**
+
+**New system**
+
+- **Estate defense banners can actually be struck** (2026-11-28) — a raider
+  with no one to fight swings at the banner on its own attack cooldown
+  (1 point for an ordinary monster, 3 for the leader, against 30 durability);
+  hitting 0 durability fails the defense on the next tick, playing a defeat
+  sting while the banner topples and the remaining raiders freeze until the
+  sound ends before vanishing. A warning fires each time the banner is hit
+  while durability is a multiple of 5 or already below it.
+- **The family window gained a collapsible "Defense log" panel** (2026-11-28)
+  — lists the family's latest ten estate defenses (practice runs included)
+  with the in-game date, the war horn grade used, the summoner, and the
+  outcome.
+- **Winning a defense while under disgrace washes it away immediately**
+  (2026-11-28) — no need to wait out the full ten days; the server
+  broadcasts a message when it clears.
+
+**Fix**
+
+- **Estate defense raiders no longer stall when nobody's nearby**
+  (2026-11-28) — even when every defender is bunched up on one side, raiders
+  on the other side keep marching toward the banner instead of freezing in
+  place.
+
+**Client**
+
+- **agent-client updated to v0.93.0, clearing a batch of clippy warnings**
+  (2026-11-28).
+
+## Protocol v188 — client v0.92.2
+
+**New items & assets**
+
+- **Estate defense banners now fly the defending family's emblem cloth**
+  (2026-11-28) — a family estate's banner shows that family's crest, an
+  estate with no family flies a plain banner, and an admin's `/warhorn`
+  practice run shows the admin's own family crest.
+
+**Fix**
+
+- **Buttons no longer leave a focus outline after being clicked**
+  (2026-11-28).
+
+## Protocol v187 — client v0.92.2
+
+**New system**
+
+- **The ground shakes when wave 5's leader appears in an estate defense, and
+  the next-wave arrow now points at its true spawn spot** (2026-11-28) — the
+  arrow used to snap to one of four rough screen directions, which drifted
+  from where raiders actually appeared; it now reads the server's real
+  coordinates.
+
+**Balance**
+
+- **Holding an estate defense now pays defenders in Defender's Purses
+  instead of a loose pile of a few copper coins** (2026-11-28).
+
+## Protocol v186 — client v0.92.2
+
+**New items & assets**
+
+- **Estate defense now plants the banner in front of the summoner, and
+  blowing the war horn plays a full animation on screen** (2026-11-28).
+
+## Protocol v185 — client v0.92.2
+
+**New items & assets**
+
+- **Added the Aid Cot furniture piece** (2026-11-27) — an ORKEA piece for
+  8,000 coins, on display upstairs at the furniture shop. Placing one on
+  your estate turns it into a respawn point: the death dialog gains "Respawn
+  on my estate" and "Respawn at the family seat" options, the owner can set
+  who may use it (owner only, family, or anyone), and a public Aid Cot shows
+  on the world map.
+- **The war horn got its own model, with grade colors (iron, bronze, silver,
+  gold) on its icon** (2026-11-28).
+
+**Performance**
+
+- **Stacked items in a bag now reserve one item id per stack instead of one
+  per unit** (2026-11-28) — keeps ids from running out early.
+
+## Protocol v184 — client v0.92.2
+
+**New system**
+
+- **Every item now carries a lasting id, and clicking a wall trophy shows
+  the estate defense behind it** (2026-11-27).
+
+## Protocol v183 — client v0.92.2
+
+**New system**
+
+- **Estate defenses got their on-screen presentation** (2026-11-27) — a HUD
+  shows the current wave, a countdown and compass arrow for the next one,
+  and the banner's durability and time left; each wave stands two seconds
+  before it appears in crimson pillars of light and low fog, and the wave
+  leader is drawn a third larger. A held banner's chest rises in a pillar
+  where it stood.
+- **Holding an estate defense now also gives the summoner a wall trophy**
+  (2026-11-27).
+
+## Protocol v182 — client v0.92.2
+
+**New system**
+
+- **Added estate defense** (2026-11-27) — a war horn, a rare hunting drop,
+  blown at night on clear ground on your own (or your family's) estate
+  calls five waves of monsters from all sides. Kills pay like any ordinary
+  monster, and holding the banner opens a treasure chest; if the banner
+  falls, everyone dies, or monsters remain after ten minutes, the loss
+  leaves a ten-day disgrace title. Only the head of a family may blow the
+  horn on a family estate. Admins can open a practice run with `/warhorn N`.
+- **Picking a fence with the landscaping tool now switches straight to
+  fence mode** (2026-11-27).
+- **Character select now shows each character's family rank under their
+  name** (2026-11-27).
+
+## Protocol v181 — client v0.92.2
+
+**New system**
+
+- **Operators can now schedule seasonal events from a panel or `/season`**
+  (2026-11-24) — keep the table's dates, set other dates, or switch an
+  event off; the schedule is saved before a server restart. The admin HUD
+  gained a button for the panel.
+- **A winter tree now stands in the Aldermark plaza, lit from Nov 24 through
+  Jan 5** (2026-11-24 to 2026-11-26) — seventy bulbs and the treetop star
+  glow at night, the boughs read a deep saturated green by day, and snow
+  dusts the branches with the weather. The event originally opened Dec 10;
+  it was moved up to take effect the day it was deployed, and the tree grew
+  from an initial 5.1 m to 6.2 m to better fill the plaza.
+
+**Fix**
+
+- **Another player's respawn now syncs their whole record, floor included**
+  (2026-11-26) — it used to refresh only their health, leaving a revive onto
+  a different floor stuck showing the old one; the watch page's respawn
+  display was fixed the same way.
+
+## Protocol v180 — client v0.92.0
+
+**New items & assets**
+
+- **The bard NPC Signe now uses the modular body, wearing the five bard
+  pieces from her own loadout with long wavy hair** (2026-11-26).
+
+**Fix**
+
+- **A player's main hand, off hand, cape (dye and print) and armor are now
+  sent as one bundle instead of six separate fields** (2026-11-26) — adding
+  a new visible slot no longer means handling four different change
+  messages.
+- **Chat, shouts, whispers, party and family chat text is now cleaned
+  uniformly** (2026-11-26) — bidi override and zero-width characters are
+  stripped, and a single message tops out at 300 characters (1000 for
+  admins), closing the door on faking a system notice or another player's
+  line in chat.
+- **The Google sign-in cache now lives under the `openmmo` config
+  directory** (2026-11-26) — it used to sit under `onlinerpg` by mistake;
+  the first run after the update asks you to sign in again.
+
+**Client**
+
+- **agent-client updated to v0.92.0** (2026-11-26).
+
+## Protocol v179 — client v0.92.0
+
+**Fix**
+
+- **Other players' off-hand items, like shields, now actually show up**
+  (2026-11-26) — the server used to broadcast only whether a torch was lit,
+  so shields never appeared on anyone else's character; the low graphics
+  preset now hides only torches instead of the whole off-hand slot.
+
+## Protocol v178 — client v0.92.0
+
+**New system**
+
+- **Signing in no longer immediately takes over a session already playing
+  the account** (2026-11-26) — character select now shows which character
+  is already in the world and offers to watch it, taking over only once
+  this connection actually enters or edits a character.
+- **`openmmo-mcp` is now packaged as a Claude Code plugin with its play
+  guidance bundled in** (2026-11-26).
+
+**Fix**
+
+- **Monster HP now reaches only players wearing a stethoscope**
+  (2026-11-26) — matching the existing rule for other players' HP, so an AI
+  agent sees what a human would see; putting the stethoscope on or off
+  resends or hides monster HP right away.
+
+## Protocol v177 — client v0.92.0
+
+**New system**
+
+- **Added a "watch" mode** (2026-11-25) — opening the game with `?watch`
+  lets you look in on your own account's playing character without taking
+  over the session of whatever is actually playing it (a bot or an AI
+  agent); up to four people can watch one account at once, seeing it the
+  way a bystander would, and anything a watcher sends is dropped except
+  heartbeats and a rationed resync.
+
+## Protocol v176 — client v0.92.0
+
+**New system**
+
+- **`openmmo-mcp` launched** (2026-11-25) — a stdio MCP server that signs in
+  with your own Google account and plays your own character, with tools for
+  login, enter, look, walk_to, attack, act, actions, say, and leave.
+
+**Balance**
+
+- **A Scroll of Party Summon now calls one chosen party member instead of
+  the whole party** (2026-11-25) — a caster underground never summons a
+  member already in that dungeon, and outside members now arrive at the
+  dungeon's surface entrance instead of deep inside it.
+
+**Fix**
+
+- **Players and monsters no longer stand inside each other** (2026-11-25) —
+  an attacking monster checks every second for a player stuck inside its
+  body and steps aside when a free slot is reachable; large and small
+  monsters now share one body-radius rule so a big monster can't seal off a
+  corridor.
+
+**Performance**
+
+- **The eight skill icons shrank from 1254×1254 to 256×256** (2026-11-25) —
+  total size dropped from 9.3 MB to 447 KB.
+
+## Protocol v175 — client v0.92.0
+
+**New system**
+
+- **Admins gained `/follow` and `/unfollow`, to follow or stop following a
+  given player** (2026-11-25).
+
+**Fix**
+
+- **Moving players now sidestep around overlapping players or monsters
+  instead of getting stuck in the same cell** (2026-11-25) — a shared 1 m
+  standing grid now backs both monster chase slots and player sidestepping.
+
+**New items & assets**
+
+- **Dungeon walls now cast point-light shadows** (2026-11-25).
+- **Self-defending NPCs (like priest Maelis) now walk with their weapon put
+  away while not in combat** (2026-11-25) — drawing it again once they're
+  back on guard.
+
+## Protocol v174 — client v0.91.0
 
 **New system**
 
@@ -71,6 +326,8 @@ whether you need a new client.
   drop it instead, at a 0.01% chance.
 - **The Miner's Harness now adds a flat 30 kg to carry capacity instead of
   +10%** (2026-11-25).
+- **Church priest Maelis is now level 20 with 120 max HP, carries a mace, and
+  fights back in self-defense** (2026-11-25).
 
 **Performance**
 
